@@ -1,0 +1,29 @@
+# Secrets: never commit keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local database and uploads (re-created and re-seeded on first run)
+backend/data/*
+!backend/data/.gitkeep
+uploads/
+
+# Frontend: node_modules is local; dist IS committed so graders need only Python
+frontend/node_modules/
+frontend/.vite/
+*.tsbuildinfo
+
+# Machine-specific
+.DS_Store
+.claude/
+.idea/
+.vscode/

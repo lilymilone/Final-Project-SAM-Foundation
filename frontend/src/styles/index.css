@@ -1,0 +1,235 @@
+@import "tailwindcss";
+
+/* ── SAM SPACE design tokens ─────────────────────────────────────────────── */
+@theme {
+  --color-plum: #32124f;
+  --color-plum-900: #24093b;
+  --color-royal: #70409b;
+  --color-lavender: #b69ad9;
+  --color-lilac: #ebe2f6;
+  --color-ivory: #f8f3fc;
+  --color-blush: #f6d6e8; /* watercolor pink from the logo */
+  --color-rose: #d58ab8;
+  --color-ink: #2a1840;
+  --color-muted: #6e5a85;
+  --color-sage: #4f7a63;
+  --color-amber: #9a6516;
+  --color-danger: #a23a5a;
+
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-sans: "DM Sans Variable", "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --shadow-soft: 0 1px 2px rgb(50 18 79 / 0.06), 0 12px 32px -14px rgb(50 18 79 / 0.22);
+  --shadow-lift: 0 2px 4px rgb(50 18 79 / 0.08), 0 22px 48px -18px rgb(50 18 79 / 0.32);
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    background: var(--color-ivory);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    min-height: 100vh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-royal);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+  ::selection {
+    background: var(--color-lilac);
+    color: var(--color-plum);
+  }
+}
+
+/* ── Reusable surfaces ─────────────────────────────────────────────────── */
+@layer components {
+  .app-backdrop {
+    background:
+      radial-gradient(1100px 520px at 88% -8%, rgb(246 214 232 / 0.55), transparent 62%),
+      radial-gradient(900px 600px at -10% 18%, rgb(182 154 217 / 0.28), transparent 60%),
+      linear-gradient(180deg, #fbf8fd 0%, var(--color-ivory) 100%);
+  }
+  .sidebar-surface {
+    background:
+      radial-gradient(420px 300px at 0% 0%, rgb(182 154 217 / 0.22), transparent 70%),
+      radial-gradient(380px 380px at 100% 100%, rgb(213 138 184 / 0.18), transparent 70%),
+      linear-gradient(170deg, #3a1660 0%, var(--color-plum) 45%, var(--color-plum-900) 100%);
+  }
+  .card {
+    background: rgb(255 255 255 / 0.86);
+    border: 1px solid rgb(182 154 217 / 0.35);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(6px);
+  }
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-royal);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.6rem 1.15rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-royal) 0%, var(--color-plum) 100%);
+    box-shadow: 0 8px 20px -10px rgb(112 64 155 / 0.8);
+  }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px -10px rgb(112 64 155 / 0.9);
+  }
+  .btn-soft {
+    color: var(--color-plum);
+    background: var(--color-lilac);
+  }
+  .btn-soft:hover:not(:disabled) {
+    background: #e2d4f2;
+  }
+  .btn-ghost {
+    color: var(--color-royal);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: rgb(235 226 246 / 0.7);
+  }
+  .field {
+    width: 100%;
+    border-radius: 0.85rem;
+    border: 1px solid rgb(182 154 217 / 0.6);
+    background: #fff;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .field::placeholder {
+    color: #9c8ab2;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-royal);
+    box-shadow: 0 0 0 4px rgb(182 154 217 / 0.35);
+  }
+  .label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-plum);
+  }
+  .skeleton {
+    border-radius: 0.75rem;
+    background: linear-gradient(90deg, #efe7f8 0%, #f8f3fc 50%, #efe7f8 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.3em;
+  }
+}
+
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-fade-up {
+  animation: fade-up 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ── Butterflies ──────────────────────────────────────────────────────────
+   Decorative only: never focusable, never clickable, hidden from screen
+   readers. Wings flap on the compositor (transform only). Flight follows a
+   curved CSS motion path. */
+.butterfly-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 60;
+}
+.butterfly-flight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  offset-rotate: auto 90deg;
+  offset-anchor: center;
+  will-change: offset-distance, opacity;
+  animation-name: butterfly-fly;
+  animation-timing-function: cubic-bezier(0.37, 0, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+.butterfly-sway {
+  animation: butterfly-sway 1.8s ease-in-out infinite alternate;
+}
+.butterfly-wing-left,
+.butterfly-wing-right {
+  transform-box: fill-box;
+  animation: butterfly-flap var(--flap, 0.34s) ease-in-out infinite alternate;
+}
+.butterfly-wing-left {
+  transform-origin: 100% 55%;
+}
+.butterfly-wing-right {
+  transform-origin: 0% 55%;
+}
+.butterfly-static .butterfly-wing-left,
+.butterfly-static .butterfly-wing-right {
+  animation-duration: 2.6s;
+}
+
+@keyframes butterfly-flap {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.28); }
+}
+@keyframes butterfly-sway {
+  from { transform: rotate(-7deg) translateY(0); }
+  to { transform: rotate(7deg) translateY(-6px); }
+}
+@keyframes butterfly-fly {
+  0% { offset-distance: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Second guard (the React layer also checks): no motion when the OS asks. */
+@media (prefers-reduced-motion: reduce) {
+  .butterfly-layer {
+    display: none !important;
+  }
+  .butterfly-wing-left,
+  .butterfly-wing-right,
+  .butterfly-sway,
+  .skeleton,
+  .animate-fade-up {
+    animation: none !important;
+  }
+  .btn {
+    transition: none;
+  }
+}

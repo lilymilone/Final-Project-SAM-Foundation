@@ -1,0 +1,9 @@
+# SAM SPACE backend. Python 3.11+.
+fastapi>=0.115,<1.0
+uvicorn>=0.30
+sqlalchemy>=2.0.30
+pydantic>=2.7
+python-dotenv>=1.0.1
+openai>=1.40
+httpx>=0.27
+pytest>=8.0
