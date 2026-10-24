@@ -57,3 +57,23 @@ def test_event_validation(client):
     login(client)
     assert client.post("/api/events", json={"name": ""}).status_code == 422
     assert client.post("/api/events", json={"name": "Gala", "budget_limit_usd": -5}).status_code == 422
+
+
+def test_ledger_csv_import_validates_and_feeds_finance(client):
+    login(client)
+    bad = "period,kind,category,amount_usd\n2026-13,income,Gifts,100\n2026-10,profit,X,abc\n"
+    r = client.post("/api/finance/import", json={"csv_text": bad})
+    assert r.status_code == 422 and "Line 2" in r.json()["detail"] and "Line 3" in r.json()["detail"]
+    good = ("period,kind,category,amount_usd\n2026-10,income,=SUM(A1),4000\n2026-10,expense,Programs,\"3,000\"\n"
+            "2026-11,income,Gifts,5000\n2026-11,expense,Programs,3500\n2026-12,income,Gifts,4500\n2026-12,expense,Programs,3200\n"
+            "2026-12,reserve,Operating reserve,30000\n")
+    r = client.post("/api/finance/import", json={"csv_text": good, "replace_demo": True})
+    assert r.status_code == 200 and r.json()["imported"] == 7 and r.json()["replaced_demo_rows"] > 0
+    summary = client.get("/api/finance/summary").json()
+    assert summary["is_demo"] is False and summary["reserve_usd"] == 30000
+    assert [m["period"] for m in summary["months"]] == ["2026-10", "2026-11", "2026-12"]
+
+
+def test_member_cannot_import_ledger(client):
+    login(client, email=MEMBER)
+    assert client.post("/api/finance/import", json={"csv_text": "period,kind,category,amount_usd\n"}).status_code == 403

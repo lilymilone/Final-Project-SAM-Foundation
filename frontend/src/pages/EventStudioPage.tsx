@@ -6,6 +6,9 @@ import { formatDate, usd, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { AgentPanel } from "../components/AgentPanel";
+import { VenueCandidates } from "../components/outputs";
+import { RunLauncher } from "../components/RunLauncher";
+import { GALA_EXAMPLE } from "./ActivityPage";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, PageHeader, Toast } from "../components/ui";
 
 const EMPTY = {
@@ -148,15 +151,20 @@ export default function EventStudioPage() {
                     <span className="capitalize text-muted">{e.event_type}</span>
                   </div>
                   {e.notes && <p className="mt-2 text-sm text-ink/80">{e.notes}</p>}
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-sm font-semibold text-royal">Venue candidates from the agents</summary>
+                    <VenueCandidates eventId={e.id} />
+                  </details>
                 </li>
               ))}
             </ul>
           )}
         </Card>
-        <AgentPanel
-          agents={["fundraising_events", "orchestrator"]}
-          upcoming={["Venue research with sources", "Preliminary budgets computed in Python", "Lessons from past events applied", "Board-ready recommendation packet"]}
-        />
+        <div className="space-y-5">
+          <RunLauncher title="Plan with the agents" intent="plan_event" lockIntent eventPlans={data?.events ?? []}
+            eventPlanId={data?.events.find((e) => e.is_demo)?.id ?? null} examples={[GALA_EXAMPLE]} />
+          <AgentPanel agents={["fundraising_events", "financial_analysis", "event_intelligence"]} upcoming={[]} />
+        </div>
       </div>
       {toast && <Toast message={toast} onDone={clearToast} />}
     </>

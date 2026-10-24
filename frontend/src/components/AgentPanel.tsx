@@ -32,7 +32,7 @@ export function AgentPanel({ agents, upcoming }: { agents: string[]; upcoming: s
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-display text-xl font-semibold text-plum">{agent.display_name}</p>
                     <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-royal ring-1 ring-lavender/50">
-                      {agent.status === "planned" ? "Architecture ready · arrives next build stage" : "Active"}
+                      {agent.status === "planned" ? "Planned" : "Active agent"}
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-muted">{agent.purpose}</p>
@@ -67,7 +67,7 @@ export function AgentPanel({ agents, upcoming }: { agents: string[]; upcoming: s
             })}
           {upcoming.length > 0 && (
             <div>
-              <p className="label !mb-2">Coming to this tab</p>
+              <p className="label !mb-2">What it does here</p>
               <ul className="grid gap-1.5 text-sm text-muted sm:grid-cols-2">
                 {upcoming.map((u) => (
                   <li key={u} className="flex gap-2"><span className="text-rose">✦</span>{u}</li>

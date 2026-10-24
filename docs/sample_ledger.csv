@@ -1,0 +1,11 @@
+period,kind,category,amount_usd
+2026-07,income,Individual donations (synthetic sample),3800
+2026-07,expense,Programs (synthetic sample),2900
+2026-07,expense,Operations (synthetic sample),650
+2026-08,income,Individual donations (synthetic sample),4100
+2026-08,expense,Programs (synthetic sample),3100
+2026-08,expense,Operations (synthetic sample),640
+2026-09,income,Grants (synthetic sample),6000
+2026-09,expense,Programs (synthetic sample),3700
+2026-09,expense,Operations (synthetic sample),700
+2026-09,reserve,Operating reserve balance (synthetic sample),24000

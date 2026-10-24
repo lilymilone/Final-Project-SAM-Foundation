@@ -3,6 +3,8 @@ import type { FinanceSummary } from "../api/types";
 import { usd, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { AgentPanel } from "../components/AgentPanel";
+import { LedgerImport } from "../components/LedgerImport";
+import { RunLauncher } from "../components/RunLauncher";
 import { Card, DemoBadge, ErrorState, LoadingState, PageHeader, RestrictedState, SeverityDot, StatTile } from "../components/ui";
 
 function FinanceBody() {
@@ -65,10 +67,12 @@ function FinanceBody() {
           </p>
         </Card>
       </div>
-      <AgentPanel
-        agents={["financial_analysis"]}
-        upcoming={["Upload statements (validated CSV)", "Event affordability, computed in Python", "Budget constraints for every plan", "Clear labels: estimate vs. verified"]}
-      />
+      <div className="space-y-5">
+        <LedgerImport onImported={reload} />
+        <RunLauncher title="Ask Financial Analysis" intent="financial_review" lockIntent
+          examples={["Review our finances: how much could we responsibly spend on events this year?"]} />
+        <AgentPanel agents={["financial_analysis"]} upcoming={[]} />
+      </div>
     </div>
   );
 }

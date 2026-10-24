@@ -3,6 +3,8 @@ import type { Donations } from "../api/types";
 import { formatDate, usd, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { AgentPanel } from "../components/AgentPanel";
+import { DraftsPanel } from "../components/outputs";
+import { RunLauncher } from "../components/RunLauncher";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, PageHeader, RestrictedState, StatTile } from "../components/ui";
 
 function DonationsBody() {
@@ -59,11 +61,13 @@ function DonationsBody() {
             <ShieldCheck size={14} aria-hidden="true" /> {data.note} Donor emails stay on the server and are never shown here.
           </p>
         </Card>
-        <AgentPanel
-          agents={["donations_compliance"]}
-          upcoming={["Missing-information checks", "Acknowledgment drafts (unsent)", "Issues flagged for an accountant", "Import from spreadsheets"]}
-        />
+        <div className="space-y-5">
+          <RunLauncher title="Ask Donations & Compliance" intent="donations_review" lockIntent
+            examples={["Which donations still need thank-you letters, and what should our accountant review?"]} />
+          <AgentPanel agents={["donations_compliance"]} upcoming={[]} />
+        </div>
       </div>
+      <DraftsPanel kind="donor" title="Acknowledgment drafts (unsent)" />
     </div>
   );
 }

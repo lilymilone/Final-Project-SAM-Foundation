@@ -16,7 +16,8 @@ from fastapi.staticfiles import StaticFiles
 from .ai.availability import ModelAvailability, check_availability, describe_tiers
 from .ai.providers import AIProvider
 from .api.deps import CSRF_HEADER
-from .api.routes import activity, auth, records, settings as settings_routes, system, workspace
+from .agents.manager import WorkflowManager
+from .api.routes import activity, auth, outputs, records, runs, settings as settings_routes, system, workspace
 from .core.config import Settings, get_settings
 from .core.env import REPO_ROOT
 from .core.ratelimit import LoginLimiter
@@ -40,6 +41,8 @@ def create_app(settings: Settings | None = None, *, verify_models: bool | None =
     app.state.db = Database(settings.database_path)
     app.state.db.initialize(seed_demo=True)
     app.state.login_limiter = LoginLimiter()
+    app.state.workflows = WorkflowManager(app.state)
+    app.state.workflows.mark_interrupted()
     app.state.provider = AIProvider.from_settings(settings)
     app.state.availability = ModelAvailability(
         provider=settings.provider,
@@ -70,7 +73,7 @@ def create_app(settings: Settings | None = None, *, verify_models: bool | None =
             response.headers.setdefault("Cache-Control", "no-store")
         return response
 
-    for module in (system, auth, workspace, records, activity, settings_routes):
+    for module in (system, auth, workspace, records, activity, settings_routes, runs, outputs):
         app.include_router(module.router)
 
     @app.api_route("/api/{rest:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"], include_in_schema=False)

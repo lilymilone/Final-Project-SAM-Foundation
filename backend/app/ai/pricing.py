@@ -20,6 +20,7 @@ class PriceTable:
     retrieved_on: str
     threshold: int
     models: dict[str, dict[str, dict[str, float]]]
+    web_search_per_call: float = 0.0
 
     def has_price(self, model: str) -> bool:
         return model in self.models
@@ -54,6 +55,7 @@ class PriceTable:
             "retrieved_on": self.retrieved_on,
             "unit": "USD per 1M tokens (standard, short context)",
             "models": {m: v["short"] for m, v in self.models.items()},
+            "web_search_per_call_usd": self.web_search_per_call,
         }
 
 
@@ -64,6 +66,7 @@ def load_price_table(path: Path = PRICING_FILE) -> PriceTable:
         retrieved_on=raw["retrieved_on"],
         threshold=int(raw["long_context_threshold_input_tokens"]),
         models=raw["models"],
+        web_search_per_call=float(raw.get("tools", {}).get("web_search", {}).get("per_call_usd", 0.0)),
     )
 
 

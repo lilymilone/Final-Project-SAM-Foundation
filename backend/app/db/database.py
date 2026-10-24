@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
-from sqlalchemy import URL, create_engine, event, select
+from sqlalchemy import URL, create_engine, event, inspect, select, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from .models import Base, Organization
@@ -28,7 +28,7 @@ class Database:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.engine = create_engine(
             URL.create("sqlite", database=str(self.path)),
-            connect_args={"check_same_thread": False},
+            connect_args={"check_same_thread": False, "timeout": 30},
         )
         event.listen(self.engine, "connect", _enable_foreign_keys)
         self._sessions = sessionmaker(self.engine, expire_on_commit=False)
@@ -45,6 +45,7 @@ class Database:
         """Create tables. Seed the demo workspace if the database is empty.
         Returns True if the demo data was seeded on this call."""
         Base.metadata.create_all(self.engine)
+        self._add_missing_columns()
         if not seed_demo:
             return False
         with self.transaction() as db:
@@ -55,6 +56,20 @@ class Database:
             seed_demo_workspace(db)
             return True
 
+    def _add_missing_columns(self) -> None:
+        """Tiny forward-only migration: add any new (nullable) columns to tables
+        created by an older version. Fresh databases already have them."""
+        existing = inspect(self.engine)
+        with self.engine.begin() as conn:
+            for table in Base.metadata.sorted_tables:
+                if not existing.has_table(table.name):
+                    continue
+                present = {c["name"] for c in existing.get_columns(table.name)}
+                for column in table.columns:
+                    if column.name not in present and column.nullable:
+                        col_type = column.type.compile(dialect=self.engine.dialect)
+                        conn.execute(text(f'ALTER TABLE "{table.name}" ADD COLUMN "{column.name}" {col_type}'))
+
     def reset(self) -> None:
         self.engine.dispose()
         if self.path.exists():
@@ -64,4 +79,5 @@ class Database:
 def _enable_foreign_keys(dbapi_connection, _record) -> None:
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.execute("PRAGMA journal_mode=WAL")  # background agent runs write while the UI reads
     cursor.close()

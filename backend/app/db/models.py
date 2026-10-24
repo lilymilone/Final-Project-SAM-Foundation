@@ -91,6 +91,10 @@ class AgentRun(Base):
     user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     workflow_type: Mapped[str] = mapped_column(String(60))
     request_text: Mapped[str] = mapped_column(Text, default="")
+    research_mode: Mapped[str | None] = mapped_column(String(20), nullable=True)  # live | synthetic
+    event_plan_id: Mapped[int | None] = mapped_column(ForeignKey("event_plans.id", ondelete="SET NULL"), nullable=True)
+    plan: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="queued")  # queued|running|completed|failed|stopped
     strategy: Mapped[str] = mapped_column(String(20), default="auto")
     provider: Mapped[str | None] = mapped_column(String(20), nullable=True)
@@ -107,12 +111,18 @@ class AgentHandoff(Base):
     __tablename__ = "agent_handoffs"
     id: Mapped[int] = mapped_column(primary_key=True)
     run_id: Mapped[int] = mapped_column(ForeignKey("agent_runs.id", ondelete="CASCADE"), index=True)
+    step_key: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    kind: Mapped[str | None] = mapped_column(String(20), nullable=True)  # task | revision | verification
+    revision_round: Mapped[int | None] = mapped_column(Integer, nullable=True)
     from_agent: Mapped[str] = mapped_column(String(40))
     to_agent: Mapped[str] = mapped_column(String(40))
     objective: Mapped[str] = mapped_column(Text)
     payload: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     result: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="requested")
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = _created()
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
@@ -121,8 +131,12 @@ class AgentToolCall(Base):
     __tablename__ = "agent_tool_calls"
     id: Mapped[int] = mapped_column(primary_key=True)
     run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="CASCADE"), nullable=True, index=True)
+    handoff_id: Mapped[int | None] = mapped_column(ForeignKey("agent_handoffs.id", ondelete="CASCADE"), nullable=True)
     agent: Mapped[str] = mapped_column(String(40))
     tool_name: Mapped[str] = mapped_column(String(80))
+    ok: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     arguments: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     result_summary: Mapped[str] = mapped_column(Text, default="")
     allowed: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -136,8 +150,11 @@ class ModelUsage(Base):
     __tablename__ = "model_usage"
     id: Mapped[int] = mapped_column(primary_key=True)
     run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="CASCADE"), nullable=True, index=True)
+    handoff_id: Mapped[int | None] = mapped_column(ForeignKey("agent_handoffs.id", ondelete="CASCADE"), nullable=True)
     agent: Mapped[str] = mapped_column(String(40))
     task: Mapped[str] = mapped_column(String(120), default="")
+    web_search_calls: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    attempt: Mapped[int | None] = mapped_column(Integer, nullable=True)
     strategy: Mapped[str] = mapped_column(String(20))
     provider: Mapped[str] = mapped_column(String(20))
     requested_tier: Mapped[str] = mapped_column(String(20))
@@ -160,6 +177,25 @@ class ModelUsage(Base):
 # --- Research, events, venues -------------------------------------------------
 
 
+class SourceRecordRow(Base):
+    """Every source an agent relied on: a fetched web page, a synthetic fixture, or an internal record."""
+
+    __tablename__ = "source_records"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="CASCADE"), nullable=True, index=True)
+    handoff_id: Mapped[int | None] = mapped_column(ForeignKey("agent_handoffs.id", ondelete="CASCADE"), nullable=True)
+    source_key: Mapped[str] = mapped_column(String(60))
+    url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    title: Mapped[str] = mapped_column(String(400), default="")
+    publisher: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    published: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    retrieved_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    verification: Mapped[str] = mapped_column(String(20))  # verified | unverified | synthetic | internal
+    http_status: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = _created()
+
+
 class ResearchFinding(Base):
     __tablename__ = "research_findings"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -171,7 +207,11 @@ class ResearchFinding(Base):
     summary: Mapped[str] = mapped_column(Text, default="")
     source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     source_title: Mapped[str | None] = mapped_column(String(300), nullable=True)
-    verification_status: Mapped[str] = mapped_column(String(20), default="unverified")  # verified|unverified|estimate
+    verification_status: Mapped[str] = mapped_column(String(20), default="unverified")  # verified|unverified|synthetic
+    alignment: Mapped[str | None] = mapped_column(String(20), nullable=True)  # high|medium|low|none
+    uncertainty: Mapped[str | None] = mapped_column(Text, nullable=True)
+    published: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    is_synthetic: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     saved: Mapped[bool] = mapped_column(Boolean, default=False)
     retrieved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = _created()
@@ -206,6 +246,11 @@ class VenueCandidate(Base):
     capacity: Mapped[int | None] = mapped_column(Integer, nullable=True)
     estimated_cost_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
     cost_is_estimate: Mapped[bool] = mapped_column(Boolean, default=True)
+    fnb_per_guest_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    deposit_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    formats: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    verification: Mapped[str | None] = mapped_column(String(20), nullable=True)  # verified|unverified|synthetic
+    is_synthetic: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     notes: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = _created()
@@ -259,6 +304,8 @@ class OutreachDraft(Base):
     recipient_org: Mapped[str] = mapped_column(String(200), default="")
     subject: Mapped[str] = mapped_column(String(300), default="")
     body: Mapped[str] = mapped_column(Text, default="")
+    personalization_basis: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_synthetic_target: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="draft")  # draft | reviewed | archived
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = _created()
@@ -324,6 +371,8 @@ class HistoricalLesson(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
     run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
     lesson: Mapped[str] = mapped_column(Text)
+    kind: Mapped[str | None] = mapped_column(String(30), nullable=True)  # what_worked|recurring_problem|recommendation|disagreement
+    based_on_demo_data: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     evidence: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
     confidence: Mapped[str] = mapped_column(String(10), default="medium")
     applies_to: Mapped[str] = mapped_column(String(120), default="")

@@ -6,15 +6,8 @@ SAM SPACE helps a small, volunteer-run nonprofit board plan fundraisers, learn f
 
 *MGT 409 (AI Foundations) final project · Lily Milone · Yale School of Management*
 
-> **Build stage:** This is the application foundation:
-> - sign-in and board roles
-> - all ten screens
-> - the database and demo data
-> - deterministic finance checks
-> - the ModelRouter and spending guards
-> - the agent interfaces
->
-> The seven agents are wired in during the next stage. Screens that depend on them say so and show honest empty states.
+> **Build stage 2:** the seven-agent system works end to end with real tools, real data, and real model calls.
+> Try the controlled demo in two clicks: **Event Studio → Plan with the agents → Run the agents**.
 
 ---
 
@@ -91,10 +84,77 @@ When both keys are present, `AI_PROVIDER=auto` (the default) uses OpenAI. Set `A
 python run.py --port 8001     # if port 8000 is busy
 python run.py --reset-db      # delete the local database and re-create the demo workspace
 python run.py --open          # open the browser automatically
-python -m pytest              # run the automated tests (68 tests, no API key or network needed)
+python -m pytest              # run the automated tests (112 tests, no API key or network needed)
 ```
 
 ---
+
+## The agents
+
+```
+                      Board member's request
+                               │
+                        ┌──────▼───────┐   intake: model routing (gpt-6-luna) with keyword fallback
+                        │ Orchestrator │   plan: fixed template per intent (no invented agents or loops)
+                        └──────┬───────┘   recommend: gpt-6-astra · verify in code · one bounded fix
+     ┌───────────┬────────────┼──────────────┬───────────────┬────────────────┐
+     ▼           ▼            ▼              ▼               ▼                ▼
+ Event         Fundraising   Financial      Partnerships    Mission          Donations &
+ Intelligence  & Events      Analysis       & Outreach      Discovery        Compliance
+ lessons +     venues +      Python math:   unsent drafts   web search +     template + local
+ evidence IDs  budgets       affordability  (no send tool)  link checks      merge (no PII to AI)
+     └──lessons──►│◄──conflicts / constraints (≤1 revision round)──┘
+```
+
+| Agent | Tools (its allow-list only) | What the model does | What code does |
+|---|---|---|---|
+| Orchestrator | read/create event plan, verify result | classify the request; write the board recommendation | plan template, dispatch, revision loop, verification |
+| Event Intelligence | past events, reflections, compare outcomes, save lesson | lessons, disagreements, constraints, citing record IDs | outcome metrics; drops lessons citing records that don't exist |
+| Fundraising & Events | search venues, fetch source, budget, revenue scenarios, save venue | rank options, fundraising strategy | every budget; re-ranks if a revision still breaks Finance's limits |
+| Financial Analysis | ledger, position, break-even, sensitivity, affordability | plain-language explanation | all arithmetic, the verdict, and the conflicts |
+| Donations & Compliance | donations, flags, acknowledgment drafts | one template with merge fields + review items | merges names/amounts locally (the AI never sees them) |
+| Partnerships & Outreach | web search, fetch source, saved findings, create draft | personalized drafts | saves drafts as unsent; rejects drafts that claim an action |
+| Mission Discovery | web search, fetch source, alignment check, save finding | classify + summarize sources | verifies each link by fetching it; keyword cross-check |
+
+**The controlled example.** With the demo gala plan ($18,000 limit) and synthetic research:
+
+1. Event Intelligence reads the reflections and recommends contingency (one reflection reports a 22% catering overrun).
+2. Events shortlists a seated dinner.
+3. Finance finds it over the limit and needing more upfront cash than the $9,938 available above the reserve floor. Result: **needs revision**.
+4. The Orchestrator sends those limits back.
+5. Events switches to a reception.
+6. Finance re-checks: **affordable**.
+7. Outreach drafts unsent inquiries.
+8. Verification checks every dollar figure.
+9. The Orchestrator writes the board recommendation.
+
+The fixtures are labeled synthetic everywhere and live on `example.org`. **Live web research** is a toggle on every launcher.
+
+**Measured runs** (real OpenAI calls, official list prices, recorded in Agent Activity):
+
+| Workflow | Model calls | Tokens in / out | Cost | Time |
+|---|---|---|---|---|
+| Gala plan, synthetic research, 1 revision | 8 | 15,088 / 6,868 | $0.1967 | 112 s |
+| Mission discovery, live web search (1 search), 6 links verified | 4 | 16,030 / 2,371 | $0.0130 | 31 s |
+| Donations review | 3 | 2,255 / 1,254 | $0.0009 | 15 s |
+
+**Safeguards** (all tested):
+
+- **Bounded runs:**
+  - Revisions are capped (`MAX_REVISIONS`, default 1, hard cap 2).
+  - Handoffs per run are capped (12).
+  - The workflow budget and model-call cap are checked before every call.
+  - There is a daily spend cap.
+  - Only one workflow can run at a time, and a Stop button ends a run.
+- **Structured output:**
+  - Every model output is Pydantic-validated, with at most 2 retries.
+  - Invalid outputs fall back safely.
+- **Permissions:**
+  - Specialists cannot delegate.
+  - Tool allow-lists and board roles are enforced in the tool registry.
+  - Finance and donor details are redacted in the run log for roles without access.
+- **Web fetching:** blocks private and loopback addresses and follows at most 3 redirects. Pages are capped at 600 KB with an 8-second timeout.
+- **Logging:** activity logs show objectives, results, tools, tokens, and cost, never prompts or keys.
 
 ## What's in this stage
 
@@ -117,6 +177,7 @@ python -m pytest              # run the automated tests (68 tests, no API key or
   - Settings
 
   Each has loading, error, and empty states.
+- **CSV import of financial records:** validated row by row, and nothing is saved unless every row passes. Try `docs/sample_ledger.csv`.
 - **Working records:**
   - Plan fundraisers (Event Studio).
   - Record past events and board reflections (Our Legacy).

@@ -4,6 +4,9 @@ import type { Overview } from "../api/types";
 import { formatDate, usd, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { Butterfly } from "../butterflies/Butterfly";
+import { RunLauncher } from "../components/RunLauncher";
+import { StatusPill } from "../components/agents";
+import { GALA_EXAMPLE } from "./ActivityPage";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, PageHeader, SeverityDot, StatTile } from "../components/ui";
 
 export default function OverviewPage() {
@@ -32,6 +35,8 @@ export default function OverviewPage() {
           <Link to="/donations" className="btn btn-soft"><HandCoins size={16} aria-hidden="true" /> Review donations</Link>
         )}
       </div>
+
+      <div className="mb-5"><RunLauncher examples={[GALA_EXAMPLE]} /></div>
 
       {loading && <LoadingState rows={4} />}
       {error && <ErrorState message={error.message} onRetry={reload} />}
@@ -116,7 +121,8 @@ export default function OverviewPage() {
             ) : (
               <ul className="space-y-2 text-sm">
                 {data.recent_activity.map((r) => (
-                  <li key={r.id} className="flex justify-between"><span>{r.workflow_type}</span><span className="text-muted">{r.status}</span></li>
+                  <li key={r.id}><Link to={`/activity/runs/${r.id}`} className="flex items-center justify-between gap-2 rounded-xl px-2 py-1.5 hover:bg-lilac/50">
+                    <span className="text-plum">Workflow #{r.id} · {r.workflow_type.replace(/_/g, " ")}</span><StatusPill status={r.status} /></Link></li>
                 ))}
               </ul>
             )}

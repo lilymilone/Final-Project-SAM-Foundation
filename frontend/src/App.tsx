@@ -11,6 +11,7 @@ import FinancePage from "./pages/FinancePage";
 import LegacyPage from "./pages/LegacyPage";
 import LoginPage from "./pages/LoginPage";
 import OverviewPage from "./pages/OverviewPage";
+import RunPage from "./pages/RunPage";
 import { MissionDiscoveryPage, PartnershipsPage } from "./pages/PlaceholderPages";
 import SafetyPage from "./pages/SafetyPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -50,6 +51,7 @@ function Shell() {
           <Route path="partnerships" element={<PartnershipsPage />} />
           <Route path="legacy" element={<LegacyPage />} />
           <Route path="activity" element={<ActivityPage />} />
+          <Route path="activity/runs/:id" element={<RunPage />} />
           <Route path="safety" element={<SafetyPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

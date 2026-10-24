@@ -6,6 +6,8 @@ import { formatDate, usd, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { AgentPanel } from "../components/AgentPanel";
+import { LessonsPanel } from "../components/outputs";
+import { RunLauncher } from "../components/RunLauncher";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, PageHeader, StatTile, Toast } from "../components/ui";
 
 type Data = { events: HistoricalEvent[]; stats: HistoryStats };
@@ -203,10 +205,12 @@ export default function LegacyPage() {
             </Card>
           ))}
         </div>
-        <AgentPanel
-          agents={["event_intelligence"]}
-          upcoming={["Patterns across events and reflections", "Recurring challenges, with evidence", "Lessons applied to new event plans", "Event photo archive"]}
-        />
+        <div className="space-y-5">
+          <RunLauncher title="Learn from our history" intent="event_learning" lockIntent
+            examples={["What lessons can we learn from our previous events?", "Where do board members disagree about our past fundraisers?"]} />
+          <LessonsPanel />
+          <AgentPanel agents={["event_intelligence"]} upcoming={[]} />
+        </div>
       </div>
       {toast && <Toast message={toast} onDone={clearToast} />}
     </>
