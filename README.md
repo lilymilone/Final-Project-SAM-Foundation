@@ -240,7 +240,19 @@ The full walkthrough, with screenshots, real runs, and the 17 required tests, is
 
 ## Our Legacy (institutional memory)
 
-The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_workflow.md](docs/legacy_workflow.md)**.
+The full walkthroughs, with screenshots and measured runs, are in **[docs/legacy_workflow.md](docs/legacy_workflow.md)** and
+**[docs/legacy_import_workflow.md](docs/legacy_import_workflow.md)** (imports and organizational memory).
+
+- **Three ways to add history:**
+  - **Upload files:** PDF, CSV, XLSX, JPG/PNG photos, .txt/.md notes. Each is checked by its contents, stored privately, and read in an isolated process. Photos are never read for numbers.
+  - **Tell us about an event** in plain words.
+  - **Board reflections**, one per member, with optional attributed entry.
+- **Extraction you review first:** the Event Intelligence agent proposes details, each quoting its source.
+  - Code drops anything whose words are not in the source.
+  - Disagreeing figures become conflicts for the board, and missing details stay blank.
+  - Nothing is saved until a board member edits and approves the preview; recorded values change only with per-field confirmation.
+  - Each saved field keeps its source and quote. Imported figures are labeled *not verified accounting data* until the treasurer verifies them.
+- **Try it:** sample files for a made-up event are in [docs/samples/legacy/](docs/samples/legacy/).
 
 - **Event gallery and records:**
   - date, type, venue, attendance, goal, funds raised, expenses, **calculated net**, sponsors, summary, notes
@@ -253,9 +265,14 @@ The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_w
   - Every lesson links to its event and reflection records.
   - The board can mark lessons reviewed, adopted, or dismissed.
 - **Planning integration:**
-  - The Orchestrator asks Event Intelligence before the Events agent plans.
+  - The Orchestrator first ranks past events by similarity in code (type, area, size, recency, with reasons).
+  - It then asks Event Intelligence for lessons from those events before the Events agent plans.
   - History constraints are advisory and namespaced. Hard limits come only from Financial Analysis.
-- **Evidence test:** the same gala plan is run without and with history, and code compares the results and API usage. Experiment #1 is in [docs/evidence/history_ab_experiment_1.md](docs/evidence/history_ab_experiment_1.md).
+  - The Event Strategy Packet's **What We Learned** section shows the events consulted, the computed observations, the lessons, and which parts of the plan they shaped. Every handoff log records what history was passed.
+- **Cross-event insights:** observations computed from recorded figures (net by event type, goal attainment, cost overruns against the planned budget, sponsorship share) are kept apart from AI interpretations and board feedback, and each links to its records.
+- **Evidence test:** the same plan is run without and with history, and code compares the results and API usage.
+  - Experiment #1 is in [docs/evidence/history_ab_experiment_1.md](docs/evidence/history_ab_experiment_1.md).
+  - Experiment #2, a raffle plan using imported history, is in [docs/evidence/legacy_import/](docs/evidence/legacy_import/).
 - **Impact metrics:**
   - events, reflections, contributors, lessons
   - recurring issues (2+ records)

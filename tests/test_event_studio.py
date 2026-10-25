@@ -105,7 +105,7 @@ def test_over_budget_event_is_revised_and_packet_explains_why(client):
     assert {d["recipient"] for d in packet["drafts"]} <= {v["name"] for v in packet["venues"]}
     md = client.get(f"/api/runs/{run.id}/packet.md").text
     for heading in ("Event overview", "Original and revised strategy", "Venue shortlist", "Preliminary financial model", "Budget warnings",
-                    "Lessons from past events", "Unsent outreach drafts", "Supporting sources", "Agent handoff trace", "Token usage and cost"):
+                    "What We Learned", "Unsent outreach drafts", "Supporting sources", "Agent handoff trace", "Token usage and cost"):
         assert heading in md, heading
 
 

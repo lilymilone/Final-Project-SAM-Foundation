@@ -14,7 +14,7 @@ import { Card, ErrorState, LoadingState } from "../components/ui";
 
 const SECTIONS = [
   ["overview", "Overview"], ["recommendation", "Recommendation"], ["revision", "Original vs revised"], ["venues", "Venues"],
-  ["model", "Financial model"], ["warnings", "Budget warnings"], ["lessons", "Lessons"], ["drafts", "Outreach drafts"],
+  ["model", "Financial model"], ["warnings", "Budget warnings"], ["lessons", "What We Learned"], ["drafts", "Outreach drafts"],
   ["sources", "Sources"], ["trace", "Agent trace"], ["usage", "Tokens & cost"],
 ] as const;
 
@@ -238,11 +238,23 @@ export default function PacketPage() {
           )}
         </Section>
 
-        <Section id="lessons" title="7. Lessons from past events" icon={<History size={16} aria-hidden="true" />}>
+        <Section id="lessons" title="7. What We Learned" icon={<History size={16} aria-hidden="true" />}>
+          {(packet.what_we_learned?.events_consulted ?? []).length > 0 && (
+            <div className="mb-4"><p className="label">Past events consulted (chosen in code by similarity to this plan)</p>
+              <ul className="flex flex-wrap gap-2">{packet.what_we_learned!.events_consulted.map((c) => (
+                <li key={c.id} className="rounded-xl bg-lilac/40 px-3 py-1.5 text-sm"><Link to={`/legacy/${c.id}`} className="font-semibold text-royal underline">{c.name}</Link>
+                  <span className="block text-xs text-muted">{c.reasons.join(" · ")}</span></li>))}</ul></div>
+          )}
+          {(packet.what_we_learned?.quantitative_observations ?? []).length > 0 && (
+            <div className="mb-4"><p className="label">Computed from recorded figures</p>
+              <ul className="space-y-1.5 text-sm">{packet.what_we_learned!.quantitative_observations.map((o, i) => (
+                <li key={i} className="rounded-xl bg-ivory/80 px-3 py-2">{o.text} <span className="text-xs text-muted">{o.sample_note}</span></li>))}</ul></div>
+          )}
           {packet.lessons.length === 0 ? <p className="text-sm text-muted">Historical lessons were not used in this run.</p> : (
             <ul className="space-y-2.5">{packet.lessons.map((l, i) => (
               <li key={i} className="rounded-xl bg-ivory/80 px-3.5 py-2.5 text-sm">
-                <p><span className="mr-1.5 rounded bg-lilac px-1.5 text-[0.65rem] uppercase text-royal">{l.kind.replace(/_/g, " ")}</span>{l.text}</p>
+                <p><span className="mr-1.5 rounded bg-lilac px-1.5 text-[0.65rem] uppercase text-royal">{l.kind.replace(/_/g, " ")}</span>{l.text}
+                  {l.basis_label && <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[0.65rem] font-semibold ${l.basis === "board_feedback" ? "bg-blush/70 text-plum" : "bg-white text-royal ring-1 ring-lavender/40"}`}>{l.basis_label}</span>}</p>
                 <p className="mt-1 flex flex-wrap gap-1.5 text-xs"><span className="text-muted">Supporting records:</span>
                   {l.events.map((e) => <Link key={e.id} to={`/legacy/${e.id}`} className="text-royal underline">{e.name}</Link>)}
                   {l.reflection_ids.length > 0 && <span className="text-muted">{l.reflection_ids.length} board reflection{l.reflection_ids.length === 1 ? "" : "s"}</span>}</p>
@@ -253,6 +265,11 @@ export default function PacketPage() {
               <ul className="space-y-1.5 text-sm">{packet.community_insights?.map((c, i) => (
                 <li key={i} className="rounded-xl bg-blush/40 px-3 py-2"><b className="text-plum">{c.lens_label}:</b> {c.observation} <span className="italic text-ink/80">“{c.quote}”</span>
                   <span className="ml-1 text-xs text-muted">({c.evidence_label})</span></li>))}</ul></div>
+          )}
+          {(packet.what_we_learned?.influence ?? []).length > 0 && (
+            <div className="mt-4"><p className="label">How prior experience shaped this plan</p>
+              <ul className="space-y-1.5 text-sm">{packet.what_we_learned!.influence.filter((x) => x.area !== "History check").map((x, i) => (
+                <li key={i} className="rounded-xl bg-white/80 px-3 py-2 ring-1 ring-lavender/30"><b className="text-plum">{x.area}:</b> {x.detail} <span className="text-xs text-muted">({x.by})</span></li>))}</ul></div>
           )}
           {packet.history_checks.length > 0 && (
             <div className="mt-4"><p className="label">How history was checked against the plan</p>

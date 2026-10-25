@@ -7,6 +7,8 @@ import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { EventForm, EventGalleryCard, HistoryExperimentCard, LegacyMetricsStrip, LessonList } from "../components/legacy";
 import { ImpactPanel } from "../components/impact";
+import { InsightsPanel } from "../components/insights";
+import { AddToLegacy } from "../components/legacyImport";
 import { RunLauncher } from "../components/RunLauncher";
 import { Card, EmptyState, ErrorState, LoadingState, PageHeader, Toast } from "../components/ui";
 
@@ -28,15 +30,15 @@ export default function LegacyPage() {
       <div ref={headerRef}>
         <PageHeader eyebrow="Our Legacy" title="Every event teaches us something"
           subtitle="The foundation's memory: what happened, what it cost, what the board felt, and what we learned. Kept so the next board starts wiser."
-          actions={can("manage_events") && !open && <button className="btn btn-primary" onClick={() => setOpen(true)}><Plus size={16} aria-hidden="true" /> Record a past event</button>} />
+          actions={can("manage_events") && !open && <button className="btn btn-primary" onClick={() => setOpen(true)}><Plus size={16} aria-hidden="true" /> Add a past event</button>} />
       </div>
 
       <LegacyMetricsStrip refreshKey={metricsKey} />
 
       {open && (
-        <Card title="Record a past event" icon={<Sprout size={16} aria-hidden="true" />} className="mb-6"
+        <Card title="Add a past event" icon={<Sprout size={16} aria-hidden="true" />} className="mb-6"
           action={<button className="btn btn-ghost !p-2" onClick={() => setOpen(false)} aria-label="Close form"><X size={16} aria-hidden="true" /></button>}>
-          <EventForm onCancel={() => setOpen(false)} onSaved={(ev, milestone, anchor) => {
+          <AddToLegacy manual={<EventForm onCancel={() => setOpen(false)} onSaved={(ev, milestone, anchor) => {
             celebrate("reflection", anchor);
             if (milestone) window.setTimeout(() => celebrate("milestone", headerRef.current), 600);
             setToast(milestone ? `Milestone: ${milestone}` : `“${ev.name}” is preserved in Our Legacy`);
@@ -44,7 +46,7 @@ export default function LegacyPage() {
             setMetricsKey((k) => k + 1);
             reload();
             window.setTimeout(() => navigate(`/legacy/${ev.id}`), 900);
-          }} />
+          }} />} />
         </Card>
       )}
 
@@ -59,6 +61,8 @@ export default function LegacyPage() {
           <p className="mt-3 text-xs text-muted">Entries marked “Synthetic” are demonstration records, not real Sabrina Audrey Milone Foundation events or results. Covers without photos are decorative illustrations, not photographs.</p>
         )}
       </section>
+
+      <div className="mb-5"><InsightsPanel /></div>
 
       <div className="grid gap-5 lg:grid-cols-[1.25fr_1fr]">
         <div className="space-y-5">

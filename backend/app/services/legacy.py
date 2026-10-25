@@ -5,22 +5,28 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from ..db.models import BoardReflection, EventPhoto, HistoricalEvent, HistoricalLesson
+from ..db.models import BoardReflection, EventPhoto, HistoricalEvent, HistoricalLesson, LegacyDocument
 
 REFLECTION_QUESTIONS = [
-    ("went_well", "What worked particularly well?"),
-    ("challenges", "What did not go as planned?"),
+    ("went_well", "What worked?"),
+    ("challenges", "What was difficult, or did not go as planned?"),
+    ("should_repeat", "What would you repeat?"),
+    ("do_differently", "What would you change?"),
+    ("attendee_feedback", "How did attendees respond? What feedback did they give?"),
+    ("inclusion_improvements", "What could have made people feel more welcomed or included?"),
+    ("advice", "What advice would you give to future event planners?"),
     ("unexpected_costs", "Were there unexpected expenses or complications?"),
-    ("attendee_feedback", "What feedback did attendees provide?"),
-    ("should_repeat", "What should we repeat?"),
-    ("do_differently", "What should we change?"),
-    ("advice", "What advice would you give to the board planning the next event?"),
     # Community questions (the foundation's philosophy). Board observations, never treated as verified outcomes.
     ("welcome_inclusion", "Did attendees seem to feel welcomed and included?"),
     ("connection_moments", "Which activities or moments created connection?"),
     ("volunteer_appreciation", "Did volunteers seem to feel appreciated?"),
     ("accessibility_issues", "Were any accessibility or inclusion problems reported?"),
 ]
+VERIFICATION_LABELS = {
+    "board_reported": "Board-reported (not verified against accounting records)",
+    "document_extracted": "From uploaded documents: AI-extracted, board-approved, not verified accounting data",
+    "verified": "Figures verified against accounting records by the treasurer or chair",
+}
 ACTIVE_LESSON = ("new", "reviewed", "adopted", None)
 
 
@@ -39,6 +45,7 @@ def goal_pct(e: HistoricalEvent) -> float | None:
 def reflection_out(r: BoardReflection) -> dict:
     return {
         "id": r.id, "event_id": r.historical_event_id, "author": r.author_label or "Board member", "user_id": r.user_id,
+        "recorded_by": r.recorded_by_label,
         "answers": [{"key": k, "question": q, "answer": getattr(r, k) or ""} for k, q in REFLECTION_QUESTIONS],
         "rating": r.rating, "is_demo": r.is_demo, "created_at": r.created_at.isoformat(),
     }
@@ -47,6 +54,12 @@ def reflection_out(r: BoardReflection) -> dict:
 def photo_out(p: EventPhoto) -> dict:
     return {"id": p.id, "caption": p.caption, "url": f"/api/legacy/photos/{p.id}", "is_demo": bool(p.is_demo),
             "created_at": p.created_at.isoformat()}
+
+
+def document_out(d: LegacyDocument) -> dict:
+    return {"id": d.id, "filename": d.filename, "file_type": d.file_type, "size_bytes": d.size_bytes, "status": d.status,
+            "notes": d.parse_notes or [], "import_id": d.import_id, "event_id": d.historical_event_id,
+            "url": f"/api/legacy/documents/{d.id}", "created_at": d.created_at.isoformat()}
 
 
 def event_out(e: HistoricalEvent, *, detail: bool = False) -> dict:
@@ -60,6 +73,13 @@ def event_out(e: HistoricalEvent, *, detail: bool = False) -> dict:
         "volunteers_count": e.volunteers_count, "repeat_participants": e.repeat_participants,
         "partnerships_formed": e.partnerships_formed, "funds_directed_usd": e.funds_directed_usd,
         "community_outcomes": e.community_outcomes,
+        "event_year": e.event_year or (e.event_date.year if e.event_date else None), "planned_budget_usd": e.planned_budget_usd,
+        "positive_outcomes": e.positive_outcomes, "problems_encountered": e.problems_encountered, "lessons_learned": e.lessons_learned,
+        "verification_status": e.verification_status or "board_reported",
+        "verification_label": VERIFICATION_LABELS.get(e.verification_status or "board_reported"),
+        "verified_at": e.verified_at.isoformat() if e.verified_at else None,
+        "field_sources": e.field_sources or {},
+        "documents": [document_out(d) for d in sorted(e.documents, key=lambda d: d.id)],
         "photos": [photo_out(p) for p in sorted(e.photos, key=lambda p: p.id)],
         "updated_at": e.updated_at.isoformat() if e.updated_at else None,
     }

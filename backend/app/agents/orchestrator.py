@@ -47,6 +47,7 @@ INTENT_AGENTS: dict[str, list[AgentName]] = {
     "donations_review": [A.DONATIONS_COMPLIANCE],
     "event_learning": [A.EVENT_INTELLIGENCE],
     "document_extraction": [A.FINANCIAL_ANALYSIS],  # started only from an upload, never chosen by the classifier
+    "legacy_import": [A.EVENT_INTELLIGENCE],  # started only from Our Legacy's import, never chosen by the classifier
     "unsupported": [],
 }
 INTENT_DESCRIPTIONS = {
@@ -206,7 +207,7 @@ class _OrchestratorSelf(BaseAgent):
             if hint:  # Event Studio fixes the workflow; the model only interprets the details
                 analysis = analysis.model_copy(update={"intent": hint})
                 routing = f"{routing}, workflow set by Event Studio"
-            elif analysis.intent == "document_extraction":  # only an upload can start an extraction
+            elif analysis.intent in ("document_extraction", "legacy_import"):  # only an upload or import can start an extraction
                 analysis = analysis.model_copy(update={"intent": "unsupported"})
         agents = INTENT_AGENTS[analysis.intent]
         return self.result(task, "completed",
@@ -320,6 +321,8 @@ class Orchestrator:
 
         if intent == "document_extraction":
             return self._extract_document(ctx, intake, analysis, options)
+        if intent == "legacy_import":
+            return self._legacy_import(ctx, intake, analysis, options)
         if intent == "plan_event":
             self._plan_event(ctx, analysis, request, event_plan_id, results, extra, use_history=use_history)
         elif intent == "mission_discovery":
@@ -391,6 +394,9 @@ class Orchestrator:
             "research_mode": ctx.research_mode,
             "options": {"use_history": use_history, "historical_event_id": options.get("historical_event_id")},
             "history_constraints": extra.get("history_constraints", []),
+            "events_consulted": extra.get("events_consulted", []),
+            "quantitative_observations": results["lessons"].data.get("quantitative_observations", [])
+            if "lessons" in results and results["lessons"].status == "completed" else [],
             "events_strategy": {k: results["venues"].data.get(k) for k in ("fundraising_strategy", "logistics_notes", "changes_from_previous")}
             if "venues" in results and results["venues"].status == "completed" else None,
             "themes": results["lessons"].data.get("themes") if "lessons" in results and results["lessons"].status == "completed" else [],
@@ -468,9 +474,12 @@ class Orchestrator:
         focus = f"{event['attendance']}-guest {event['event_type']} in {event['city']}"
 
         contingency, lesson_constraints, lesson_list, community = None, [], [], []
-        if use_history:  # step 2: Event Intelligence retrieves relevant lessons
+        if use_history:  # step 2: retrieve the most relevant past events (code), then Event Intelligence draws lessons from them
+            relevant = self.me.tool(ctx, "find_relevant_events", event_type=event["event_type"], city=event["city"],
+                                    attendance=event["attendance"]).data or []
+            extra["events_consulted"] = [{"id": r["id"], "name": r["name"], "reasons": r["reasons"], "score": r["score"]} for r in relevant]
             lessons = self.dispatch(ctx, self._task(ctx, "lessons", A.EVENT_INTELLIGENCE, f"Retrieve lessons from past events for a {focus}",
-                                                    inputs={"focus": focus, "mode": "planning"}))
+                                                    inputs={"focus": focus, "mode": "planning", "relevant_events": relevant}))
             results["lessons"] = lessons
             if lessons.status == "completed":
                 contingency = lessons.data.get("recommended_contingency_pct")
@@ -570,6 +579,34 @@ class Orchestrator:
         return {"intent": "document_extraction", "routing": intake.data["routing"], "analysis": analysis.model_dump(),
                 "research_mode": ctx.research_mode, "recommendation": None, "verification": report, "document_id": doc_id,
                 "extraction": {k: res.data.get(k) for k in ("status", "summary", "reporting_period_label")} | {"count": len(figures)},
+                "specialists": {"extract": {"agent": res.agent.value, "status": res.status, "summary": res.summary}},
+                "message": res.summary}
+
+    def _legacy_import(self, ctx: RunContext, intake: AgentResult, analysis: RequestAnalysis, options: dict) -> dict:
+        """Our Legacy import -> Event Intelligence extracts a candidate -> code verifies nothing was saved without approval."""
+        import_id = options.get("import_id")
+        res = self.dispatch(ctx, self._task(ctx, "extract", A.EVENT_INTELLIGENCE, f"Extract past-event details from import #{import_id} "
+                                            "for board review", inputs={"import_id": import_id, "mode": "extract"},
+                                            constraints=[Constraint(name="review_required", detail="Stage a candidate for board review only. "
+                                                                    "Never create or change a historical event.", source_agent=A.ORCHESTRATOR)]))
+        cand = res.data.get("candidate") or {}
+        values = list((cand.get("fields") or {}).values()) + [i for items in (cand.get("lists") or {}).values() for i in items]
+        photo_ids = {s["source_id"] for s in cand.get("sources") or [] if s["kind"] == "image"}
+        checks = [
+            {"name": "Nothing was saved to Our Legacy without approval", "passed": res.status == "completed",
+             "detail": "The candidate is staged in the import; no historical event was created or changed by the agents."},
+            {"name": "Every kept value quotes its source", "passed": all(v.get("quote") and v.get("source_id") for v in values),
+             "detail": f"{len(values)} value(s) kept; {len(cand.get('dropped') or [])} removed because their words were not in the source."},
+            {"name": "No figure comes from a photograph", "passed": not any(v.get("source_id") in photo_ids for v in values),
+             "detail": f"{len(photo_ids)} photo(s) attached; photos are never read."},
+            {"name": "Conflicting figures were left for the board", "passed": all(c["field"] not in (cand.get("fields") or {})
+                                                                                  for c in cand.get("conflicts") or []),
+             "detail": f"{len(cand.get('conflicts') or [])} conflict(s) need a board decision."},
+        ]
+        report = {"passed": all(c["passed"] is not False for c in checks), "checks": checks, "unsupported_figures": []}
+        self.dispatch(ctx, self._task(ctx, "verification", A.ORCHESTRATOR, "Verify the extraction in code", inputs={"report": report}))
+        return {"intent": "legacy_import", "routing": intake.data["routing"], "analysis": analysis.model_dump(),
+                "research_mode": ctx.research_mode, "recommendation": None, "verification": report, "import_id": import_id,
                 "specialists": {"extract": {"agent": res.agent.value, "status": res.status, "summary": res.summary}},
                 "message": res.summary}
 

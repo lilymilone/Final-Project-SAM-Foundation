@@ -1,0 +1,304 @@
+{
+  "id": 5,
+  "name": "Hartford trivia night (synthetic sample)",
+  "event_date": null,
+  "location": "Hartford, CT",
+  "event_type": "trivia night fundraiser",
+  "venue": null,
+  "attendance": 60,
+  "fundraising_goal_usd": 2000.0,
+  "funds_raised_usd": 2450.0,
+  "total_cost_usd": 650.0,
+  "net_usd": 1800.0,
+  "goal_pct": 122.5,
+  "sponsorship_usd": null,
+  "sponsorship_info": null,
+  "summary": "The event was a trivia night fundraiser at a caf\u00e9 in Hartford, CT. It included a mental-health trivia round.",
+  "notes": null,
+  "is_demo": true,
+  "reflection_count": 1,
+  "volunteers_count": 9,
+  "repeat_participants": null,
+  "partnerships_formed": null,
+  "funds_directed_usd": null,
+  "community_outcomes": null,
+  "event_year": 2024,
+  "planned_budget_usd": null,
+  "positive_outcomes": "- Teams loved the mental-health trivia round.",
+  "problems_encountered": "- The room was too loud for the speaker.\n- The event ran out of name tags.",
+  "lessons_learned": "- For a future event with a speaker, consider whether the room's noise level could make the speaker difficult to hear.\n- Consider planning name-tag quantities to avoid running out.\n- A mental-health trivia round may be a popular element with teams.",
+  "verification_status": "board_reported",
+  "verification_label": "Board-reported (not verified against accounting records)",
+  "verified_at": null,
+  "field_sources": {
+    "name": {
+      "origin": "board_entered",
+      "sources": [],
+      "source_ids": [],
+      "quotes": [],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809356+00:00"
+    },
+    "event_year": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "In October 2024"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809363+00:00"
+    },
+    "location": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "in Hartford, CT"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809366+00:00"
+    },
+    "event_type": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "a trivia night fundraiser"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809367+00:00"
+    },
+    "summary": {
+      "origin": "ai_interpretation",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "a trivia night fundraiser at a caf\u00e9 in Hartford, CT"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809369+00:00"
+    },
+    "attendance": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "About 60 people came"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809370+00:00"
+    },
+    "funds_raised_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "We actually raised $2,450"
+      ],
+      "import_id": 4,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:58:09.889396+00:00"
+    },
+    "total_cost_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "expenses were $650"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809374+00:00"
+    },
+    "positive_outcomes": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "Teams loved the mental-health trivia round"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809375+00:00"
+    },
+    "problems_encountered": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "the room got too loud for our speaker",
+        "we ran out of name tags"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809377+00:00"
+    },
+    "lessons_learned": {
+      "origin": "ai_interpretation",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "the room got too loud for our speaker",
+        "we ran out of name tags",
+        "Teams loved the mental-health trivia round"
+      ],
+      "import_id": 3,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:57:14.809378+00:00"
+    },
+    "volunteers_count": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "9 volunteers helped"
+      ],
+      "import_id": 4,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:58:09.889386+00:00"
+    },
+    "fundraising_goal_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "The board member's description"
+      ],
+      "source_ids": [
+        "description"
+      ],
+      "quotes": [
+        "our fundraising goal was $2,000"
+      ],
+      "import_id": 4,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:58:09.889393+00:00"
+    }
+  },
+  "documents": [],
+  "photos": [],
+  "updated_at": "2026-10-25T11:58:09.889406",
+  "reflections": [
+    {
+      "id": 10,
+      "event_id": 5,
+      "author": "Jordan Lee (sample board member, shared by phone)",
+      "user_id": 1,
+      "recorded_by": "Avery Brooks",
+      "answers": [
+        {
+          "key": "went_well",
+          "question": "What worked?",
+          "answer": "(Sample reflection) The mental-health trivia round started real conversations between teams."
+        },
+        {
+          "key": "challenges",
+          "question": "What was difficult, or did not go as planned?",
+          "answer": "(Sample reflection) The caf\u00e9 was too loud for our speaker."
+        },
+        {
+          "key": "should_repeat",
+          "question": "What would you repeat?",
+          "answer": ""
+        },
+        {
+          "key": "do_differently",
+          "question": "What would you change?",
+          "answer": ""
+        },
+        {
+          "key": "attendee_feedback",
+          "question": "How did attendees respond? What feedback did they give?",
+          "answer": ""
+        },
+        {
+          "key": "inclusion_improvements",
+          "question": "What could have made people feel more welcomed or included?",
+          "answer": "(Sample reflection) A microphone and name tags for everyone."
+        },
+        {
+          "key": "advice",
+          "question": "What advice would you give to future event planners?",
+          "answer": ""
+        },
+        {
+          "key": "unexpected_costs",
+          "question": "Were there unexpected expenses or complications?",
+          "answer": ""
+        },
+        {
+          "key": "welcome_inclusion",
+          "question": "Did attendees seem to feel welcomed and included?",
+          "answer": ""
+        },
+        {
+          "key": "connection_moments",
+          "question": "Which activities or moments created connection?",
+          "answer": ""
+        },
+        {
+          "key": "volunteer_appreciation",
+          "question": "Did volunteers seem to feel appreciated?",
+          "answer": ""
+        },
+        {
+          "key": "accessibility_issues",
+          "question": "Were any accessibility or inclusion problems reported?",
+          "answer": ""
+        }
+      ],
+      "rating": null,
+      "is_demo": false,
+      "created_at": "2026-10-25T11:58:23.343597"
+    }
+  ]
+}

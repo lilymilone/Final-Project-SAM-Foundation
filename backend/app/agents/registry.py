@@ -36,6 +36,7 @@ CLASSIFY = _t(A.ORCHESTRATOR, "Classify the board's request", "low", False, "low
 BOARD_RECOMMENDATION = _t(A.ORCHESTRATOR, "Board-ready recommendation with trade-offs", "high", True, "high", 9000, 2500)
 SUMMARY_REPORT = _t(A.ORCHESTRATOR, "Summarize specialist results for the board", "medium", False, "medium", 5000, 1500)
 LESSONS = _t(A.EVENT_INTELLIGENCE, "Synthesize lessons from events and reflections", "medium", True, "low", 4000, 2000)
+EVENT_EXTRACT = _t(A.EVENT_INTELLIGENCE, "Extract past-event details from board sources (extraction)", "low", False, "medium", 5000, 2500)
 VENUE_STRATEGY = _t(A.FUNDRAISING_EVENTS, "Shortlist venues and fundraising strategy", "medium", True, "medium", 5000, 2000)
 VENUE_SEARCH = _t(A.FUNDRAISING_EVENTS, "Web search: venue candidates", "low", False, "low", 9000, 1500)
 FINANCE_NARRATIVE = _t(A.FINANCIAL_ANALYSIS, "Explain computed financial results", "medium", False, "high", 4000, 1200)
@@ -54,7 +55,7 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
         A.ORCHESTRATOR, "Orchestrator",
         "Reads the board's request, picks the specialists, manages dependencies and revisions, and writes the board-ready recommendation.",
         ("read_event_plan", "create_event_plan", "evaluate_constraints", "read_opportunities", "select_opportunities",
-         "verify_final_result"),
+         "verify_final_result", "find_relevant_events"),
         (CLASSIFY, BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY, SUMMARY_REPORT),
     ),
     AgentSpec(
@@ -96,8 +97,9 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     AgentSpec(
         A.EVENT_INTELLIGENCE, "Event Intelligence & Learning",
         "Compares past events and board reflections, surfaces disagreements, and shares evidence-backed lessons with the Events agent.",
-        ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "get_historical_lessons", "save_historical_lesson"),
-        (LESSONS,),
+        ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "get_historical_lessons", "save_historical_lesson",
+         "read_import_sources", "stage_event_extraction"),
+        (LESSONS, EVENT_EXTRACT),
     ),
 )
 

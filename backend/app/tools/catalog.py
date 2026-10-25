@@ -25,6 +25,8 @@ from ..db.models import (
     FinancialRecord,
     HistoricalEvent,
     HistoricalLesson,
+    LegacyDocument,
+    LegacyImport,
     OutreachDraft,
     ResearchFinding,
     User,
@@ -57,6 +59,8 @@ TOOL_SCOPES = {
     **{t: "financial_records" for t in ("read_financial_records", "compute_financial_position", "compute_financial_analysis",
                                          "read_document_text", "save_extracted_figures")},
     **{t: "board_records" for t in ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "save_historical_lesson")},
+    **{t: "board_records" for t in ("read_import_sources", "stage_event_extraction")},
+    "find_relevant_events": "event_summaries",
     "get_historical_lessons": "board_lessons",
     **{t: "public_web" for t in ("search_web", "fetch_source", "search_venues")},
     **{t: "research_findings" for t in ("save_research_finding", "read_saved_findings")},
@@ -64,6 +68,15 @@ TOOL_SCOPES = {
     **{t: "event_plan" for t in ("read_event_plan", "create_event_plan", "save_venue_candidate", "compute_event_model")},
     "create_outreach_draft": "drafts",
 }
+
+
+EVENT_TEXT_FIELDS = ("summary", "notes", "sponsorship_info", "community_outcomes", "positive_outcomes", "problems_encountered",
+                     "lessons_learned")
+REFLECTION_TEXT_KEYS = ("what_worked", "did_not_go_as_planned", "unexpected_costs_or_complications", "attendee_feedback", "repeat",
+                        "change", "advice_for_next_board", "welcome_inclusion", "connection_moments", "volunteer_appreciation",
+                        "accessibility_issues", "what_could_make_people_feel_more_welcome")
+IMPORT_TEXT_BUDGET = 40_000  # characters of source text per extraction call
+PER_SOURCE_CHARS = 15_000
 
 
 def _norm_city(city: str | None) -> str:
@@ -86,13 +99,21 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             rows = s.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == org).order_by(HistoricalEvent.event_date)).all()
         data = [{
             "id": e.id, "name": e.name, "event_date": e.event_date.isoformat() if e.event_date else None,
+            "event_year": e.event_year or (e.event_date.year if e.event_date else None),
             "location": e.location, "event_type": e.event_type, "attendance": e.attendance,
             "funds_raised_usd": e.funds_raised_usd, "total_cost_usd": e.total_cost_usd, "summary": e.summary,
             "venue": e.venue, "fundraising_goal_usd": e.fundraising_goal_usd, "sponsorship_usd": e.sponsorship_usd,
+            "sponsorship_info": e.sponsorship_info, "planned_budget_usd": e.planned_budget_usd,
             "volunteers_count": e.volunteers_count, "repeat_participants": e.repeat_participants,
             "partnerships_formed": e.partnerships_formed, "funds_directed_usd": e.funds_directed_usd,
-            "community_outcomes": e.community_outcomes, "is_demo": e.is_demo,
+            "community_outcomes": e.community_outcomes, "positive_outcomes": e.positive_outcomes,
+            "problems_encountered": e.problems_encountered, "lessons_learned": e.lessons_learned,
+            "figures_status": e.verification_status or "board_reported", "is_demo": e.is_demo,
         } for e in rows]
+        for item in data:  # board text and imported text are untrusted: screened before any model reads them
+            for key in EVENT_TEXT_FIELDS:
+                if item.get(key):
+                    item[key], _ = _screen(item[key], f"past event #{item['id']} ({key})", "event_intelligence")
         sources = [SourceRecord(id=f"event:{e['id']}", title=e["name"], verification="internal",
                                 note="synthetic demo record" if e["is_demo"] else "board record") for e in data]
         return ToolResult(tool="read_historical_events", ok=True, summary=f"{len(data)} past events", data=data, sources=sources)
@@ -112,7 +133,13 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             "repeat": r.should_repeat, "change": r.do_differently, "advice_for_next_board": r.advice, "rating": r.rating,
             "welcome_inclusion": r.welcome_inclusion, "connection_moments": r.connection_moments,
             "volunteer_appreciation": r.volunteer_appreciation, "accessibility_issues": r.accessibility_issues,
+            "what_could_make_people_feel_more_welcome": r.inclusion_improvements,
+            "recorded_by": r.recorded_by_label,
         } for r, name in rows]
+        for item in data:
+            for key in REFLECTION_TEXT_KEYS:
+                if item.get(key):
+                    item[key], _ = _screen(item[key], f"reflection #{item['id']} ({key})", "event_intelligence")
         sources = [SourceRecord(id=f"reflection:{r['id']}", title=f"Reflection on {r['event_name']} ({r['author']})",
                                 verification="internal") for r in data]
         return ToolResult(tool="read_board_reflections", ok=True, summary=f"{len(data)} reflections", data=data, sources=sources)
@@ -121,9 +148,63 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         rows = calc.compare_events(events)
         complete = [r for r in rows if r["net_usd"] is not None]
         sufficient = len(complete) >= 2
+        observations = calc.quantitative_observations(events)
         return ToolResult(tool="compare_event_outcomes", ok=True, data={"rows": rows, "sufficient": sufficient,
+                          "quantitative_observations": observations,
                           "note": None if sufficient else "Fewer than two events have both funds raised and expenses; numeric comparison is not meaningful."},
-                          summary=f"compared {len(rows)} events ({'sufficient' if sufficient else 'insufficient'} data)")
+                          summary=f"compared {len(rows)} events ({'sufficient' if sufficient else 'insufficient'} data); "
+                                  f"{len(observations)} computed observation(s)")
+
+    # ── Our Legacy imports (Event Intelligence) and relevant history (Orchestrator) ────────
+
+    def read_import_sources(import_id: int) -> ToolResult:
+        """The description and readable files of one import, screened. Photos are listed but never read."""
+        with db.session() as s:
+            imp = s.get(LegacyImport, import_id)
+            if imp is None or imp.organization_id != org:
+                return ToolResult(tool="read_import_sources", ok=False, error="Import not found in this workspace.")
+            docs_ = s.scalars(select(LegacyDocument).where(LegacyDocument.import_id == imp.id).order_by(LegacyDocument.id)).all()
+            raw = [("description", "The board member's description", "description", imp.raw_text or "")] if (imp.raw_text or "").strip() else []
+            raw += [(f"doc:{d.id}", f"{d.filename} ({d.file_type.upper() if d.file_type != 'image' else 'photo'})", d.file_type,
+                     d.text or "") for d in docs_]
+        sources, flags_total, budget = [], 0, IMPORT_TEXT_BUDGET
+        for sid, label, kind, text in raw:
+            if kind == "image" or not text.strip():
+                sources.append({"source_id": sid, "label": label, "kind": kind, "text": "",
+                                "note": "Photo: never read for text or numbers." if kind == "image" else "No readable text."})
+                continue
+            clean, flags = _screen(text, label, "event_intelligence")
+            flags_total += len(flags)
+            clipped = clean[:min(PER_SOURCE_CHARS, max(budget, 0))]
+            budget -= len(clipped)
+            sources.append({"source_id": sid, "label": label, "kind": kind, "text": clipped,
+                            "note": ("Only the first part was read." if len(clipped) < len(clean) else None)})
+        summary = f"{len(sources)} source(s)" + (f"; {flags_total} instruction-like fragment(s) removed" if flags_total else "")
+        return ToolResult(tool="read_import_sources", ok=True, summary=summary, data={"import_id": import_id, "sources": sources,
+                                                                                     "injection_flags": flags_total})
+
+    def stage_event_extraction(import_id: int, candidate: dict) -> ToolResult:
+        """Save the checked candidate for board review. Never creates or changes a historical event."""
+        with db.transaction() as s:
+            imp = s.get(LegacyImport, import_id)
+            if imp is None or imp.organization_id != org or imp.status in ("approved", "discarded"):
+                return ToolResult(tool="stage_event_extraction", ok=False, error="Import not found or already decided.")
+            imp.extraction = candidate
+            imp.status = "ready"
+        return ToolResult(tool="stage_event_extraction", ok=True, summary=f"candidate staged for board review (import #{import_id})",
+                          data={"import_id": import_id})
+
+    def find_relevant_events(event_type: str | None, city: str | None, attendance: int | None, limit: int = 5) -> ToolResult:
+        """Past events most like the one being planned (type, place, size, recency), with the reasons. Code, no model."""
+        with db.session() as s:
+            rows = s.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == org)).all()
+            items = [{"id": e.id, "name": e.name, "event_type": e.event_type, "location": e.location, "attendance": e.attendance,
+                      "year": e.event_year or (e.event_date.year if e.event_date else None), "is_demo": e.is_demo} for e in rows]
+        ranked = calc.rank_relevant_events(items, event_type=event_type, city=city, attendance=attendance)[:limit]
+        sources = [SourceRecord(id=f"event:{r['id']}", title=r["name"], verification="internal",
+                                note="synthetic demo record" if r["is_demo"] else "board record") for r in ranked]
+        return ToolResult(tool="find_relevant_events", ok=True, data=ranked, sources=sources,
+                          summary=f"{len(ranked)} relevant past event(s) of {len(items)}")
 
     superseded_scopes: set[str] = set()
 
@@ -157,6 +238,12 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
     add("compare_event_outcomes", "Net, ROI, and per-attendee metrics for past events.", ToolKind.COMPUTE, compare_event_outcomes)
     add("save_historical_lesson", "Save an evidence-backed lesson.", ToolKind.SAVE, save_historical_lesson, Permission.RUN_AGENTS)
     add("get_historical_lessons", "Read saved lessons.", ToolKind.READ, get_historical_lessons, Permission.VIEW_DASHBOARD)
+    add("read_import_sources", "Read one Our Legacy import's description and files (screened; photos are not read).", ToolKind.READ,
+        read_import_sources, Permission.MANAGE_EVENTS)
+    add("stage_event_extraction", "Stage a checked candidate for board review (never saves an event).", ToolKind.SAVE,
+        stage_event_extraction, Permission.MANAGE_EVENTS)
+    add("find_relevant_events", "Rank past events by similarity to a planned event.", ToolKind.READ, find_relevant_events,
+        Permission.VIEW_DASHBOARD)
 
     # ── Fundraising & Events ───────────────────────────────────────────────────────
 

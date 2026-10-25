@@ -1,0 +1,175 @@
+{
+  "run": {
+    "id": 32,
+    "status": "completed",
+    "research_mode": "records",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Import a past event from 5 file(s) and a description (Our Legacy import #2)",
+    "started_at": "2026-10-25T11:54:54.670293",
+    "duration_ms": 8412,
+    "spent_usd": 0.00064456,
+    "model_calls": 1,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 213,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 1,
+      "constraints": [],
+      "summary": "Intent: legacy import (board routing). Specialists: event intelligence.",
+      "warnings": []
+    },
+    {
+      "id": 214,
+      "step_key": "extract",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "event_intelligence",
+      "objective": "Extract past-event details from import #2 for board review",
+      "status": "completed",
+      "duration_ms": 8405,
+      "constraints": [
+        {
+          "name": "review_required",
+          "detail": "Stage a candidate for board review only. Never create or change a historical event.",
+          "value": null,
+          "source_agent": "orchestrator"
+        }
+      ],
+      "summary": "Staged 19 sourced detail(s) for board review; 1 conflict(s) need a decision. Nothing is saved until a board member approves.",
+      "warnings": [
+        "The sources give different attendance figures: 120 (butterfly_spring_raffle_recap.pdf (PDF)); 118 (butterfly_spring_raffle_checkin.xlsx (XLSX)). Choose one or leave it blank.",
+        "1 instruction-like fragment(s) in the sources were removed and not followed."
+      ]
+    },
+    {
+      "id": 215,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the extraction in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": []
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 214,
+      "agent": "event_intelligence",
+      "tool": "read_import_sources",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "6 source(s); 1 instruction-like fragment(s) removed",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 214,
+      "agent": "event_intelligence",
+      "tool": "stage_event_extraction",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "candidate staged for board review (import #2)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 215,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "4/4 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 214,
+      "agent": "event_intelligence",
+      "task": "Extract past-event details from board sources (extraction)",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0035 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 1724,
+      "cached_input_tokens": 1151,
+      "output_tokens": 1123,
+      "web_search_calls": 0,
+      "cost_usd": 0.00064456,
+      "latency_ms": 8395,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "legacy_import",
+    "routing": "board",
+    "analysis": {
+      "intent": "legacy_import",
+      "city": null,
+      "attendance": null,
+      "event_type": null,
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "records",
+    "recommendation": null,
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Nothing was saved to Our Legacy without approval",
+          "passed": true,
+          "detail": "The candidate is staged in the import; no historical event was created or changed by the agents."
+        },
+        {
+          "name": "Every kept value quotes its source",
+          "passed": true,
+          "detail": "19 value(s) kept; 0 removed because their words were not in the source."
+        },
+        {
+          "name": "No figure comes from a photograph",
+          "passed": true,
+          "detail": "1 photo(s) attached; photos are never read."
+        },
+        {
+          "name": "Conflicting figures were left for the board",
+          "passed": true,
+          "detail": "1 conflict(s) need a board decision."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "import_id": 2,
+    "specialists": {
+      "extract": {
+        "agent": "event_intelligence",
+        "status": "completed",
+        "summary": "Staged 19 sourced detail(s) for board review; 1 conflict(s) need a decision. Nothing is saved until a board member approves."
+      }
+    },
+    "message": "Staged 19 sourced detail(s) for board review; 1 conflict(s) need a decision. Nothing is saved until a board member approves."
+  }
+}

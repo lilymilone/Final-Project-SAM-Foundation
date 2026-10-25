@@ -109,6 +109,7 @@ export function EventGalleryCard({ event }: { event: LegacyEvent }) {
 const FIELDS: { key: keyof LegacyEvent; label: string; type?: string; span?: boolean; textarea?: boolean }[] = [
   { key: "name", label: "Event name *", span: true },
   { key: "event_date", label: "Date", type: "date" },
+  { key: "event_year", label: "Year (if the exact date is unknown)", type: "number" },
   { key: "event_type", label: "Type (walk, dinner, gala, panel…)" },
   { key: "venue", label: "Venue" },
   { key: "location", label: "City / location" },
@@ -117,6 +118,7 @@ const FIELDS: { key: keyof LegacyEvent; label: string; type?: string; span?: boo
   { key: "funds_raised_usd", label: "Funds raised (USD)", type: "number" },
   { key: "total_cost_usd", label: "Expenses (USD)", type: "number" },
   { key: "sponsorship_usd", label: "Sponsorship (USD)", type: "number" },
+  { key: "planned_budget_usd", label: "Planned budget (USD, if one was set)", type: "number" },
   { key: "sponsorship_info", label: "Sponsors and what they gave", span: true },
   { key: "summary", label: "Event summary", span: true, textarea: true },
   { key: "notes", label: "Notes", span: true, textarea: true },
@@ -125,9 +127,12 @@ const FIELDS: { key: keyof LegacyEvent; label: string; type?: string; span?: boo
   { key: "partnerships_formed", label: "Partnerships formed", type: "number" },
   { key: "funds_directed_usd", label: "Funds directed to charitable programs (USD)", type: "number" },
   { key: "community_outcomes", label: "Documented community outcomes (what actually happened, not impressions)", span: true, textarea: true },
+  { key: "positive_outcomes", label: "What worked", span: true, textarea: true },
+  { key: "problems_encountered", label: "Problems encountered", span: true, textarea: true },
+  { key: "lessons_learned", label: "Lessons the board learned (in your own words)", span: true, textarea: true },
 ];
 const NUMERIC = new Set(["attendance", "fundraising_goal_usd", "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "volunteers_count",
-  "repeat_participants", "partnerships_formed", "funds_directed_usd"]);
+  "repeat_participants", "partnerships_formed", "funds_directed_usd", "event_year", "planned_budget_usd"]);
 
 export function EventForm({ initial, onSaved, onCancel }: { initial?: LegacyEvent; onSaved: (e: LegacyEvent, milestone: string | null, anchor: Element | null) => void; onCancel: () => void }) {
   const [form, setForm] = useState<Record<string, string>>(() =>
@@ -145,7 +150,7 @@ export function EventForm({ initial, onSaved, onCancel }: { initial?: LegacyEven
     const body: Record<string, unknown> = {};
     for (const f of FIELDS) {
       const v = form[f.key].trim();
-      body[f.key] = NUMERIC.has(f.key) ? (v === "" ? null : Number(v)) : f.key === "event_date" ? v || null : v || (["sponsorship_info", "notes", "venue", "community_outcomes"].includes(f.key) ? null : "");
+      body[f.key] = NUMERIC.has(f.key) ? (v === "" ? null : Number(v)) : f.key === "event_date" ? v || null : v || (["sponsorship_info", "notes", "venue", "community_outcomes", "positive_outcomes", "problems_encountered", "lessons_learned"].includes(f.key) ? null : "");
     }
     try {
       const res = initial
@@ -189,7 +194,8 @@ export function ReflectionCard({ r }: { r: LegacyReflection }) {
   return (
     <article className="rounded-2xl border border-lavender/35 bg-white/85 p-4">
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <p className="flex items-center gap-2 font-semibold text-plum"><Quote size={14} className="text-rose" aria-hidden="true" />{r.author}</p>
+        <p className="flex items-center gap-2 font-semibold text-plum"><Quote size={14} className="text-rose" aria-hidden="true" />{r.author}
+          {r.recorded_by && <span className="text-xs font-normal text-muted">recorded by {r.recorded_by}</span>}</p>
         <p className="flex items-center gap-2 text-xs text-muted">
           {r.rating && <span aria-label={`${r.rating} of 5`}>{"★".repeat(r.rating)}</span>}
           Submitted {formatDate(r.created_at)}{r.is_demo && <DemoBadge label="Synthetic" />}
@@ -211,6 +217,7 @@ export function ReflectionCard({ r }: { r: LegacyReflection }) {
 export function ReflectionForm({ eventId, questions, onSaved }: { eventId: number; questions: { key: string; question: string }[]; onSaved: (anchor: Element | null) => void }) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [rating, setRating] = useState("");
+  const [onBehalf, setOnBehalf] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -219,10 +226,13 @@ export function ReflectionForm({ eventId, questions, onSaved }: { eventId: numbe
     setSaving(true);
     setError(null);
     try {
-      await api(`/api/legacy/events/${eventId}/reflections`, { json: { ...answers, rating: rating ? Number(rating) : null } });
+      await api(`/api/legacy/events/${eventId}/reflections`, {
+        json: { ...answers, rating: rating ? Number(rating) : null, attributed_to: onBehalf.trim() || null },
+      });
       onSaved(buttonRef.current);
       setAnswers({});
       setRating("");
+      setOnBehalf("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save.");
     } finally {
@@ -249,7 +259,12 @@ export function ReflectionForm({ eventId, questions, onSaved }: { eventId: numbe
         {error && <p role="alert" className="text-sm text-danger">{error}</p>}
         <button ref={buttonRef} className="btn btn-primary" disabled={saving || !Object.values(answers).some((v) => v.trim())}>{saving ? "Saving…" : "Submit my reflection"}</button>
       </div>
-      <p className="text-xs text-muted">Your name and today's date are saved with your answers. Reflections can't be edited afterwards, so the original record stays intact.</p>
+      <details className="text-xs text-muted">
+        <summary className="cursor-pointer font-semibold text-plum">Recording another board member's reflection?</summary>
+        <label className="label mt-2" htmlFor="rq-behalf">Their name (both names are kept: theirs as the author, yours as the recorder)</label>
+        <input id="rq-behalf" className="field !w-80" maxLength={120} value={onBehalf} onChange={(e) => setOnBehalf(e.target.value)} placeholder="e.g. Jordan Lee (shared by phone)" />
+      </details>
+      <p className="text-xs text-muted">Your name and today's date are saved with your answers. Reflections can't be edited afterwards, so the original record stays intact, and different views are kept side by side.</p>
     </form>
   );
 }

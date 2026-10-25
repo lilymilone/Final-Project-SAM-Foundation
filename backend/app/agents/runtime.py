@@ -84,6 +84,17 @@ def open_handoff(ctx: RunContext, task: AgentTask, from_agent: str) -> int:
         "inputs_provided": sorted(task.inputs.keys()),
         "depends_on": task.depends_on,
     }
+    history = {}  # organizational learning is traceable: which past events and lessons went into this step
+    if task.inputs.get("relevant_events"):
+        history["relevant_events"] = [{"id": r.get("id"), "name": r.get("name"), "reasons": r.get("reasons")}
+                                      for r in task.inputs["relevant_events"]][:10]
+    if task.inputs.get("lessons"):
+        history["lessons"] = [{"id": l.get("id"), "text": str(l.get("text", ""))[:200], "event_ids": l.get("event_ids"),
+                               "reflection_ids": l.get("reflection_ids")} for l in task.inputs["lessons"] if isinstance(l, dict)][:12]
+    if task.inputs.get("contingency_pct") is not None:
+        history["contingency_pct"] = task.inputs["contingency_pct"]
+    if history:
+        payload["history_passed"] = history
     with ctx.db.transaction() as s:
         row = HandoffRow(
             run_id=ctx.run_id, step_key=task.step_key, kind=task.kind, revision_round=task.revision_round,

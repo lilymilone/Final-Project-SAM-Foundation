@@ -20,7 +20,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, status
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
@@ -48,7 +48,9 @@ SIGNATURES = (
 )
 EVENT_FIELDS = ("name", "event_date", "event_type", "venue", "location", "attendance", "fundraising_goal_usd",
                 "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "sponsorship_info", "summary", "notes",
-                "volunteers_count", "repeat_participants", "partnerships_formed", "funds_directed_usd", "community_outcomes")
+                "volunteers_count", "repeat_participants", "partnerships_formed", "funds_directed_usd", "community_outcomes",
+                "event_year", "planned_budget_usd", "positive_outcomes", "problems_encountered", "lessons_learned")
+FIGURES = ("attendance", "fundraising_goal_usd", "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "planned_budget_usd")
 
 
 def _sniff(head: bytes) -> tuple[str, str] | None:
@@ -105,6 +107,20 @@ class HistoricalEventIn(BaseModel):
     partnerships_formed: int | None = Field(default=None, ge=0, le=10_000)
     funds_directed_usd: float | None = Field(default=None, ge=0, le=100_000_000)
     community_outcomes: str | None = Field(default=None, max_length=4000)
+    # Organizational memory: optional; unknown stays empty.
+    event_year: int | None = Field(default=None, ge=1950, le=2100)
+    planned_budget_usd: float | None = Field(default=None, ge=0, le=100_000_000)
+    positive_outcomes: str | None = Field(default=None, max_length=4000)
+    problems_encountered: str | None = Field(default=None, max_length=4000)
+    lessons_learned: str | None = Field(default=None, max_length=4000)
+
+    @model_validator(mode="after")
+    def _year(self):
+        if self.event_date and self.event_year and self.event_date.year != self.event_year:
+            raise ValueError("The year does not match the date.")
+        if self.event_date and not self.event_year:
+            self.event_year = self.event_date.year
+        return self
 
     @field_validator("name", "event_type", "location", "summary")
     @classmethod
@@ -144,7 +160,11 @@ def get_history(event_id: int, cu: CurrentUser = Depends(current_user), db: Sess
                    or any(e.get("type") == "reflection" and e.get("id") in {r.id for r in event.reflections} for e in (l.evidence or [])))]
     lessons.sort(key=lambda l: (l.focus_event_id != event_id, l.status != "adopted"))  # this event's own analysis first
     labels = lesson_evidence_labels(db, cu.organization_id, lessons)
-    return {"event": event_out(event, detail=True), "lessons": [lesson_out(l, labels[l.id]) for l in lessons],
+    out = event_out(event, detail=True)
+    for d in out["documents"]:
+        d["can_open"] = d["file_type"] == "image" or Permission.VIEW_FINANCIALS in cu.permissions or \
+            any(x.id == d["id"] and x.uploaded_by == cu.user.id for x in event.documents)
+    return {"event": out, "lessons": [lesson_out(l, labels[l.id]) for l in lessons],
             "latest_analysis": _latest_analysis(db, cu.organization_id, event_id),
             "questions": [{"key": k, "question": q} for k, q in REFLECTION_QUESTIONS]}
 
@@ -171,7 +191,9 @@ def create_history(body: HistoricalEventIn, cu: CurrentUser = Depends(require(Pe
     org = cu.organization_id
     raised_before = db.scalar(select(func.coalesce(func.sum(HistoricalEvent.funds_raised_usd), 0.0))
                               .where(HistoricalEvent.organization_id == org)) or 0.0
-    event = HistoricalEvent(organization_id=org, created_by=cu.user.id, **body.model_dump())
+    event = HistoricalEvent(organization_id=org, created_by=cu.user.id, verification_status="board_reported",
+                            field_sources={k: {"origin": "board_entered"} for k, v in body.model_dump().items() if v not in (None, "")},
+                            **body.model_dump())
     db.add(event)
     db.flush()
     count = db.scalar(select(func.count(HistoricalEvent.id)).where(HistoricalEvent.organization_id == org)) or 0
@@ -201,10 +223,28 @@ def update_history(event_id: int, body: HistoricalEventIn, cu: CurrentUser = Dep
     if changes:
         event.updated_by = cu.user.id
         event.updated_at = datetime.now(timezone.utc)
+        sources = dict(event.field_sources or {})
+        for key in changes:
+            sources[key] = {"origin": "board_edited", "edited_by": cu.user.id, "edited_at": event.updated_at.isoformat()}
+        event.field_sources = sources
+        if event.verification_status == "verified" and set(changes) & set(FIGURES):  # verified figures changed: no longer verified
+            event.verification_status, event.verified_by, event.verified_at = "board_reported", None, None
         audit(db, cu, "historical_event_edited", f"historical_event:{event.id}", changes=changes)
     db.commit()
     db.refresh(event)
     return {"event": event_out(event, detail=True), "changed_fields": sorted(changes)}
+
+
+@router.post("/legacy/events/{event_id}/verify")
+def verify_history(event_id: int, cu: CurrentUser = Depends(require(Permission.MANAGE_FINANCIALS)), db: Session = Depends(get_db)) -> dict:
+    """The treasurer or chair confirms the figures against the accounting records. AI extraction never sets this."""
+    event = _get_event(db, cu, event_id)
+    event.verification_status, event.verified_by, event.verified_at = "verified", cu.user.id, datetime.now(timezone.utc)
+    audit(db, cu, "historical_event_verified", f"historical_event:{event.id}",
+          figures={k: getattr(event, k) for k in FIGURES})
+    db.commit()
+    db.refresh(event)
+    return {"event": event_out(event, detail=True)}
 
 
 # ── Reflections (append-only) ────────────────────────────────────────────────────
@@ -222,22 +262,28 @@ class ReflectionIn(BaseModel):
     connection_moments: str = Field(default="", max_length=4000)
     volunteer_appreciation: str = Field(default="", max_length=4000)
     accessibility_issues: str = Field(default="", max_length=4000)
+    inclusion_improvements: str = Field(default="", max_length=4000)
     rating: int | None = Field(default=None, ge=1, le=5)
+    # Authorized attribution: record another board member's reflection (e.g. shared by phone). Both names are kept.
+    attributed_to: str | None = Field(default=None, max_length=120)
 
 
 @router.post("/legacy/events/{event_id}/reflections", status_code=status.HTTP_201_CREATED)
 def add_reflection(event_id: int, body: ReflectionIn, cu: CurrentUser = Depends(require(Permission.WRITE_REFLECTIONS)),
                    db: Session = Depends(get_db)) -> dict:
     event = _get_event(db, cu, event_id)
-    answers = body.model_dump(exclude={"rating"})
+    answers = body.model_dump(exclude={"rating", "attributed_to"})
     if not any(v.strip() for v in answers.values()):
         raise HTTPException(422, "Please answer at least one question.")
-    reflection = BoardReflection(historical_event_id=event.id, user_id=cu.user.id,
-                                 author_label=f"{cu.user.first_name} {cu.user.last_name}".strip(),
+    me = f"{cu.user.first_name} {cu.user.last_name}".strip()
+    on_behalf = (body.attributed_to or "").strip()
+    reflection = BoardReflection(historical_event_id=event.id, user_id=cu.user.id, author_label=on_behalf or me,
+                                 recorded_by_label=me if on_behalf else None,
                                  rating=body.rating, **{k: v.strip() for k, v in answers.items()})
     db.add(reflection)
     db.flush()
-    audit(db, cu, "reflection_created", f"historical_event:{event.id}", reflection_id=reflection.id)
+    audit(db, cu, "reflection_created", f"historical_event:{event.id}", reflection_id=reflection.id,
+          attributed_to=on_behalf or None)
     db.commit()
     return {"reflection": reflection_out(reflection)}
 
@@ -326,6 +372,52 @@ def review_lesson(lesson_id: int, body: LessonReview, cu: CurrentUser = Depends(
     audit(db, cu, "lesson_reviewed", f"lesson:{lesson.id}", status=body.status)
     db.commit()
     return {"id": lesson.id, "status": lesson.status}
+
+
+AREA_LABELS = {"fundraising_approach": "Fundraising approaches", "logistics": "Logistics", "sponsorship": "Sponsorship",
+               "board_feedback": "Board feedback", "costs": "Costs and overruns", "community": "Community building", "other": "Other"}
+BASIS_LABELS = {"board_feedback": "Board feedback (subjective)", "event_records": "Interpretation of recorded event data",
+                "records_and_feedback": "Recorded data and board feedback"}
+
+
+@router.get("/legacy/insights")
+def insights(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
+    """Cross-event learning: facts computed now from the records (no AI), plus the latest all-events analysis by the
+    Event Intelligence agent, with every lesson linked to the events and reflections behind it."""
+    from ...services import calculators as calc
+    events = db.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == cu.organization_id)).all()
+    rows = [{"id": e.id, "name": e.name, "event_type": e.event_type, "attendance": e.attendance, "funds_raised_usd": e.funds_raised_usd,
+             "total_cost_usd": e.total_cost_usd, "fundraising_goal_usd": e.fundraising_goal_usd, "sponsorship_usd": e.sponsorship_usd,
+             "planned_budget_usd": e.planned_budget_usd, "volunteers_count": e.volunteers_count,
+             "repeat_participants": e.repeat_participants, "partnerships_formed": e.partnerships_formed} for e in events]
+    names = {e.id: e.name for e in events}
+    observations = [{**o, "events": [{"id": i, "name": names.get(i)} for i in o["event_ids"]], "area_label": AREA_LABELS.get(o["area"])}
+                    for o in calc.quantitative_observations(rows)]
+    latest = None
+    runs = db.scalars(select(AgentRun).where(AgentRun.organization_id == cu.organization_id, AgentRun.workflow_type == "event_learning",
+                                             AgentRun.status.in_(("completed", "completed_with_warnings")))
+                      .order_by(AgentRun.started_at.desc()).limit(25)).all()
+    for run in runs:
+        if ((run.plan or {}).get("options") or {}).get("historical_event_id"):
+            continue  # single-event analyses are shown on that event's page
+        step = db.scalar(select(AgentHandoff).where(AgentHandoff.run_id == run.id, AgentHandoff.step_key == "lessons"))
+        data = ((step.result or {}).get("data") or {}) if step else {}
+        saved = db.scalars(select(HistoricalLesson).where(HistoricalLesson.run_id == run.id)).all()
+        labels = lesson_evidence_labels(db, cu.organization_id, saved)
+        by_text = {l.lesson: l for l in saved}
+        items = []
+        for l in data.get("lessons", []):
+            row = by_text.get(l["text"])
+            items.append({**l, "area_label": AREA_LABELS.get(l.get("area"), "Other"), "basis_label": BASIS_LABELS.get(l.get("basis"), ""),
+                          "lesson_id": row.id if row else None, "status": (row.status if row else None) or "new",
+                          "evidence": labels.get(row.id, []) if row else []})
+        latest = {"run_id": run.id, "date": run.started_at.isoformat(), "summary": (step.result or {}).get("summary") if step else None,
+                  "lessons": items, "themes": data.get("themes", []), "disagreements": data.get("disagreements", []),
+                  "community_insights": data.get("community_insights", [])}
+        break
+    return {"quantitative_observations": observations, "latest_analysis": latest, "areas": AREA_LABELS,
+            "note": "Numbers are computed from recorded figures; lessons are interpretations that cite their records. "
+                    "Imported figures are AI-extracted and board-approved, not verified accounting data, unless marked verified."}
 
 
 @router.get("/legacy/metrics")

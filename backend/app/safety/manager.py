@@ -31,7 +31,7 @@ from .redact import configured_secrets, redact
 # Least-privilege data scopes: what kinds of records each agent's tools may touch. A tool whose scope is not
 # listed for an agent is refused even if it were mistakenly added to that agent's allow-list.
 DATA_SCOPES: dict[str, frozenset[str]] = {
-    "orchestrator": frozenset({"general", "event_plan", "opportunities"}),
+    "orchestrator": frozenset({"general", "event_plan", "opportunities", "event_summaries"}),
     "mission_discovery": frozenset({"general", "public_web", "research_findings"}),
     "fundraising_events": frozenset({"general", "public_web", "event_plan", "board_lessons"}),
     "financial_analysis": frozenset({"general", "financial_records", "event_plan"}),

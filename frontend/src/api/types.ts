@@ -428,10 +428,46 @@ export type LegacyEvent = {
   updated_at: string | null; lesson_count?: number; top_lesson?: string | null;
   volunteers_count?: number | null; repeat_participants?: number | null; partnerships_formed?: number | null;
   funds_directed_usd?: number | null; community_outcomes?: string | null;
+  event_year?: number | null; planned_budget_usd?: number | null; positive_outcomes?: string | null; problems_encountered?: string | null;
+  lessons_learned?: string | null; verification_status?: "board_reported" | "document_extracted" | "verified"; verification_label?: string;
+  verified_at?: string | null; field_sources?: Record<string, FieldSource>; documents?: LegacyDocument[];
+};
+
+export type FieldSource = { origin: "source_fact" | "ai_interpretation" | "board_choice" | "board_edited" | "board_entered"; sources?: string[];
+  source_ids?: string[]; quotes?: string[]; note?: string; import_id?: number };
+export type LegacyDocument = { id: number; filename: string; file_type: "pdf" | "csv" | "xlsx" | "text" | "image"; size_bytes: number;
+  status: "readable" | "unreadable" | "photo"; notes: string[]; import_id: number | null; event_id: number | null; url: string;
+  created_at: string; can_open?: boolean };
+export type SourcedField = { value: string | number; origin: "source_fact" | "ai_interpretation"; source_id: string; source_label: string;
+  quote: string; also_in?: string[]; note?: string | null };
+export type SourcedItem = { text: string; origin: "source_fact" | "ai_interpretation"; source_id: string; source_label: string; quote: string };
+export type ImportConflict = { field: string; label: string; detail: string;
+  values: { value: number; source_id: string; source_label: string; quote: string }[] };
+export type ImportExtraction = {
+  summary: string; fields: Record<string, SourcedField>; lists: Record<"positive_outcomes" | "problems_encountered" | "lessons_learned", SourcedItem[]>;
+  conflicts: ImportConflict[]; warnings: string[]; missing: string[]; ai_noted_missing: string[]; dropped: string[];
+  sources?: { source_id: string; label: string; kind: string; note: string | null }[]; injection_flags?: number; run_id?: number;
+};
+export type LegacyImport = {
+  id: number; method: "upload" | "conversation"; status: "draft" | "extracting" | "ready" | "failed" | "approved" | "discarded";
+  raw_text: string | null; created_at: string; run: { id: number; status: string; spent_usd: number; error: string | null } | null;
+  extraction: ImportExtraction | null; candidate: Record<string, string | number | null>; documents: LegacyDocument[];
+  target_event: { id: number; name: string; values: Record<string, string | number | null> } | null;
+  approved_event_id: number | null; decision: Record<string, unknown> | null;
+};
+export type QuantObservation = { area: string; area_label?: string; text: string; event_ids: number[]; basis: "computed"; sample_note: string;
+  events?: { id: number; name: string | null }[] | string[] };
+export type InsightLesson = { kind: string; theme: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string;
+  area: string; basis: string; area_label?: string; basis_label?: string; lesson_id?: number | null; status?: string;
+  evidence?: { type: string; id: number; event_id: number; label: string }[] };
+export type LegacyInsights = {
+  quantitative_observations: QuantObservation[]; areas: Record<string, string>; note: string;
+  latest_analysis: { run_id: number; date: string; summary: string | null; lessons: InsightLesson[];
+    themes: { name: string; polarity: string; description: string }[]; disagreements: { topic: string; positions: string[] }[] } | null;
 };
 
 export type ReflectionAnswer = { key: string; question: string; answer: string };
-export type LegacyReflection = { id: number; event_id: number; author: string; user_id: number | null; answers: ReflectionAnswer[]; rating: number | null; is_demo: boolean; created_at: string };
+export type LegacyReflection = { id: number; event_id: number; author: string; user_id: number | null; recorded_by?: string | null; answers: ReflectionAnswer[]; rating: number | null; is_demo: boolean; created_at: string };
 
 export type LessonItem = {
   id: number; run_id: number | null; lesson: string; kind: string | null; theme: string | null; confidence: string; applies_to: string;
@@ -534,8 +570,17 @@ export type StrategyPacket = {
   venues: PacketVenue[];
   shortlist: { option_id: string; venue: string; event_format: string; rank: number; total_usd: number; upfront_cash_usd: number; pricing_status: string; rationale: string; lessons_applied: string[]; verification: string; website: string | null; source_url: string | null }[];
   sources: { title: string; url: string | null; verification: string; http_status: number | null; retrieved_at: string | null; note: string | null }[];
-  lessons: { kind: string; theme?: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string; events: { id: number; name: string }[] }[];
+  lessons: { kind: string; theme?: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string; events: { id: number; name: string }[];
+    basis?: string; basis_label?: string; area?: string }[];
   history_checks: { name: string; passed: boolean; detail: string; events: { id: number; name: string }[]; reflection_ids: number[] }[];
+  what_we_learned?: {
+    used: boolean;
+    events_consulted: { id: number; name: string; reasons: string[]; score: number }[];
+    quantitative_observations: { area: string; text: string; sample_note: string; events: string[]; basis_label: string }[];
+    lessons: { text: string; basis_label: string }[];
+    constraints: { name: string; detail: string }[];
+    influence: { area: string; detail: string; by: string; events?: string[] }[];
+  };
   revision: { original: PlanSnapshot | null; revised: PlanSnapshot | null; reasons: { type: string; detail: string; source: string }[]; history: PlanSnapshot[] };
   budget_warnings: { level: "conflict" | "warning" | "unknown"; text: string }[];
   drafts: { id: number; recipient: string; subject: string; body: string; status: "draft" | "reviewed" | "archived"; draft_type: string; is_synthetic_target: boolean | null }[];

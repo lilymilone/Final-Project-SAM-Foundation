@@ -5,7 +5,7 @@
  * server requires as a same-origin check.
  */
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(public status: number, message: string, public detail: unknown = null) {
     super(message);
   }
 }
@@ -23,6 +23,9 @@ function detailMessage(body: unknown, status: number): string {
   if (body && typeof body === "object" && "detail" in body) {
     const detail = (body as { detail: unknown }).detail;
     if (typeof detail === "string") return detail;
+    if (detail && typeof detail === "object" && "message" in detail && typeof (detail as { message: unknown }).message === "string") {
+      return (detail as { message: string }).message;
+    }
     if (Array.isArray(detail) && detail[0]?.msg) {
       const field = detail[0].loc?.slice(-1)[0];
       return field ? `${String(field).replace(/_/g, " ")}: ${detail[0].msg}` : detail[0].msg;
@@ -57,7 +60,8 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
     if (response.status === 401 && !path.startsWith("/api/auth/login")) {
       unauthorizedListeners.forEach((fn) => fn());
     }
-    throw new ApiError(response.status, detailMessage(body, response.status));
+    throw new ApiError(response.status, detailMessage(body, response.status),
+      body && typeof body === "object" && "detail" in body ? (body as { detail: unknown }).detail : null);
   }
   return body as T;
 }

@@ -6,6 +6,7 @@
       "purpose": "Reads the board's request, picks the specialists, manages dependencies and revisions, and writes the board-ready recommendation.",
       "data_scopes": [
         "event_plan",
+        "event_summaries",
         "general",
         "opportunities"
       ],
@@ -33,6 +34,10 @@
         {
           "tool": "verify_final_result",
           "data_scope": "general"
+        },
+        {
+          "tool": "find_relevant_events",
+          "data_scope": "event_summaries"
         }
       ]
     },
@@ -220,6 +225,14 @@
         },
         {
           "tool": "save_historical_lesson",
+          "data_scope": "board_records"
+        },
+        {
+          "tool": "read_import_sources",
+          "data_scope": "board_records"
+        },
+        {
+          "tool": "stage_event_extraction",
           "data_scope": "board_records"
         }
       ]

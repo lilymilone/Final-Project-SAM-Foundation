@@ -18,7 +18,7 @@ from .fakes import ScriptedClient
 from .test_agents import run_sync
 
 QUESTIONS = ("went_well", "challenges", "unexpected_costs", "attendee_feedback", "should_repeat", "do_differently", "advice",
-             "welcome_inclusion", "connection_moments", "volunteer_appreciation", "accessibility_issues")
+             "welcome_inclusion", "connection_moments", "volunteer_appreciation", "accessibility_issues", "inclusion_improvements")
 
 
 def tiny_png() -> bytes:
@@ -83,8 +83,12 @@ def test_structured_reflections_from_multiple_members_preserve_identity(client):
     mine = [r for r in detail["event"]["reflections"] if r["author"] in ("Avery Brooks", "Sam Rivera")]
     assert {r["author"] for r in mine} == {"Avery Brooks", "Sam Rivera"}
     chair = next(r for r in mine if r["author"] == "Avery Brooks")
-    assert [a["question"] for a in chair["answers"]][0] == "What worked particularly well?"
-    assert len(chair["answers"]) == 11 and chair["answers"][6]["answer"] == "Chair answer to advice" and chair["created_at"]
+    # The seven core questions come first, in the board's order; the community questions follow.
+    assert [a["question"] for a in chair["answers"]][:7] == [
+        "What worked?", "What was difficult, or did not go as planned?", "What would you repeat?", "What would you change?",
+        "How did attendees respond? What feedback did they give?", "What could have made people feel more welcomed or included?",
+        "What advice would you give to future event planners?"]
+    assert len(chair["answers"]) == 12 and chair["answers"][6]["answer"] == "Chair answer to advice" and chair["created_at"]
     # The four community questions are stored word for word, like the original seven.
     assert {a["key"]: a["answer"] for a in chair["answers"]}["welcome_inclusion"] == "Chair answer to welcome_inclusion"
 

@@ -1,0 +1,150 @@
+{
+  "id": 4,
+  "method": "conversation",
+  "status": "ready",
+  "raw_text": "(Synthetic sample) Update for the Hartford trivia night: our fundraising goal was $2,000 and 9 volunteers helped. We actually raised $2,450 once late online donations came in.",
+  "created_at": "2026-10-25T11:57:34.441906",
+  "run": {
+    "id": 34,
+    "status": "completed",
+    "spent_usd": 0.00037793,
+    "error": null
+  },
+  "extraction": {
+    "summary": "A Hartford trivia night had a $2,000 fundraising goal and 9 volunteers; the source says it raised $2,450 after late online donations came in.",
+    "fields": {
+      "name": {
+        "value": "Hartford trivia night",
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "Hartford trivia night"
+      },
+      "location": {
+        "value": "Hartford",
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "Hartford"
+      },
+      "event_type": {
+        "value": "trivia night",
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "trivia night"
+      },
+      "summary": {
+        "value": "The source describes a trivia night in Hartford. It states the event had a fundraising goal and that late online donations came in.",
+        "origin": "ai_interpretation",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "our fundraising goal was $2,000 and 9 volunteers helped. We actually raised $2,450 once late online donations came in."
+      },
+      "fundraising_goal_usd": {
+        "value": 2000.0,
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "our fundraising goal was $2,000",
+        "also_in": []
+      },
+      "volunteers_count": {
+        "value": 9,
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "9 volunteers helped",
+        "also_in": []
+      },
+      "funds_raised_usd": {
+        "value": 2450.0,
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "We actually raised $2,450",
+        "also_in": []
+      }
+    },
+    "lists": {
+      "positive_outcomes": [],
+      "problems_encountered": [],
+      "lessons_learned": [
+        {
+          "text": "When reporting fundraising results, account for late online donations, since the source says they came in after the event's initial fundraising activity.",
+          "origin": "ai_interpretation",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "once late online donations came in"
+        }
+      ]
+    },
+    "conflicts": [],
+    "warnings": [],
+    "missing": [
+      "Date or year",
+      "Attendance",
+      "Expenses"
+    ],
+    "ai_noted_missing": [
+      "Event date",
+      "Venue",
+      "Attendance",
+      "Total costs",
+      "Net proceeds",
+      "Sponsorship amount",
+      "Planned budget",
+      "Sponsors",
+      "What worked",
+      "What did not work"
+    ],
+    "dropped": [],
+    "sources": [
+      {
+        "source_id": "description",
+        "label": "The board member's description",
+        "kind": "description",
+        "note": null
+      }
+    ],
+    "injection_flags": 0,
+    "run_id": 34
+  },
+  "candidate": {
+    "name": "Hartford trivia night",
+    "location": "Hartford",
+    "event_type": "trivia night",
+    "summary": "The source describes a trivia night in Hartford. It states the event had a fundraising goal and that late online donations came in.",
+    "fundraising_goal_usd": 2000.0,
+    "volunteers_count": 9,
+    "funds_raised_usd": 2450.0,
+    "lessons_learned": "- When reporting fundraising results, account for late online donations, since the source says they came in after the event's initial fundraising activity."
+  },
+  "documents": [],
+  "target_event": {
+    "id": 5,
+    "name": "Hartford trivia night (synthetic sample)",
+    "values": {
+      "name": "Hartford trivia night (synthetic sample)",
+      "event_date": null,
+      "event_year": 2024,
+      "location": "Hartford, CT",
+      "venue": null,
+      "event_type": "trivia night fundraiser",
+      "summary": "The event was a trivia night fundraiser at a caf\u00e9 in Hartford, CT. It included a mental-health trivia round.",
+      "attendance": 60,
+      "fundraising_goal_usd": null,
+      "funds_raised_usd": 2300.0,
+      "total_cost_usd": 650.0,
+      "sponsorship_usd": null,
+      "sponsorship_info": null,
+      "volunteers_count": null,
+      "planned_budget_usd": null,
+      "positive_outcomes": "- Teams loved the mental-health trivia round.",
+      "problems_encountered": "- The room was too loud for the speaker.\n- The event ran out of name tags.",
+      "lessons_learned": "- For a future event with a speaker, consider whether the room's noise level could make the speaker difficult to hear.\n- Consider planning name-tag quantities to avoid running out.\n- A mental-health trivia round may be a popular element with teams."
+    }
+  },
+  "approved_event_id": null,
+  "decision": null
+}

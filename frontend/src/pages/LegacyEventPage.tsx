@@ -1,6 +1,6 @@
 import {
-  ArrowLeft, Building2, CalendarDays, CircleDollarSign, Handshake, Lightbulb, MapPin, MessageSquareHeart, Pencil, Scale, Sparkles, Target,
-  Users, Wand2,
+  ArrowLeft, BadgeCheck, Building2, CalendarDays, CircleDollarSign, FilePlus2, FolderOpen, Handshake, Lightbulb, MapPin, MessageSquareHeart, Pencil,
+  Scale, Sparkles, Target, Users, Wand2,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { StatusPill } from "../components/agents";
 import { EventCover, EventForm, FactRow, LessonList, PhotoManager, ReflectionCard, ReflectionForm } from "../components/legacy";
+import { AddToLegacy, DocumentList, Provenance } from "../components/legacyImport";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, Toast } from "../components/ui";
 
 type AnalysisData = {
@@ -87,6 +88,8 @@ export default function LegacyEventPage() {
   const { celebrate } = useButterflies();
   const { data, error, loading, reload } = useApi<LegacyEventDetail>(`/api/legacy/events/${id}`);
   const [editing, setEditing] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const clearToast = useCallback(() => setToast(null), []);
@@ -114,13 +117,14 @@ export default function LegacyEventPage() {
               <p className="eyebrow">{e.event_type}</p>
               <h1 className="mt-1 font-display text-4xl font-semibold leading-tight text-plum">{e.name}</h1>
               <p className="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted">
-                <span className="inline-flex items-center gap-1"><CalendarDays size={14} aria-hidden="true" />{formatDate(e.event_date)}</span>
+                <span className="inline-flex items-center gap-1"><CalendarDays size={14} aria-hidden="true" />{e.event_date ? formatDate(e.event_date) : e.event_year ? `${e.event_year} (exact date not recorded)` : "Date not recorded"}</span>
                 <span className="inline-flex items-center gap-1"><MapPin size={14} aria-hidden="true" />{[e.venue, e.location].filter(Boolean).join(" · ") || "Location not recorded"}</span>
                 {e.is_demo && <DemoBadge label="Synthetic demonstration record" />}
               </p>
             </div>
             <div className="flex flex-wrap items-start gap-2">
               {can("manage_events") && !editing && <button className="btn btn-soft" onClick={() => setEditing(true)}><Pencil size={14} aria-hidden="true" /> Edit record</button>}
+              {can("manage_events") && can("run_agents") && !editing && <button className="btn btn-soft" onClick={() => setAdding((a) => !a)}><FilePlus2 size={14} aria-hidden="true" /> Add files or notes</button>}
               <AnalyzeButton eventId={e.id} eventName={e.name} onDone={onAnalysisDone} />
             </div>
           </div>
@@ -149,7 +153,43 @@ export default function LegacyEventPage() {
               </div>
               {e.summary && <p className="mt-5 max-w-3xl leading-relaxed text-ink">{e.summary}</p>}
               {e.notes && <p className="mt-2 max-w-3xl text-sm text-muted"><b>Notes:</b> {e.notes}</p>}
+              {(e.positive_outcomes || e.problems_encountered || e.lessons_learned || e.planned_budget_usd != null) && (
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  {([["positive_outcomes", "What worked"], ["problems_encountered", "Problems encountered"], ["lessons_learned", "Lessons learned"]] as const).map(([k, label]) => e[k] ? (
+                    <div key={k} className="rounded-xl bg-ivory/80 px-3 py-2">
+                      <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">{label}</p>
+                      <p className="whitespace-pre-line text-sm text-plum">{e[k]}</p>
+                      <Provenance source={e.field_sources?.[k]} />
+                    </div>) : null)}
+                  {e.planned_budget_usd != null && <FactRow icon={<Target size={15} />} label="Planned budget" value={usd(e.planned_budget_usd)} />}
+                </div>
+              )}
+              <div className="mt-5 flex flex-wrap items-center gap-2 rounded-xl bg-lilac/40 px-3 py-2 text-xs text-plum">
+                <BadgeCheck size={14} className={e.verification_status === "verified" ? "text-sage" : "text-muted"} aria-hidden="true" />
+                <span><b>Figures:</b> {e.verification_label}{e.verified_at ? ` · ${formatDate(e.verified_at)}` : ""}</span>
+                {can("manage_financials") && e.verification_status !== "verified" && (
+                  <button className="btn btn-ghost !px-2 !py-0.5 text-xs" disabled={verifying} onClick={async () => {
+                    setVerifying(true);
+                    await api(`/api/legacy/events/${e.id}/verify`, { method: "POST" }).catch(() => undefined);
+                    setVerifying(false);
+                    setToast("Figures marked verified against the accounting records. The change is in the audit log.");
+                    reload();
+                  }}>Mark figures verified (treasurer)</button>
+                )}
+              </div>
+              {e.field_sources && Object.keys(e.field_sources).some((k) => ["funds_raised_usd", "total_cost_usd", "attendance", "fundraising_goal_usd"].includes(k)) && (
+                <details className="mt-2 text-xs text-muted"><summary className="cursor-pointer font-semibold text-plum">Where each figure came from</summary>
+                  <ul className="mt-1 space-y-1">{(["attendance", "fundraising_goal_usd", "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "event_date", "location"] as const)
+                    .filter((k) => e.field_sources?.[k]).map((k) => (
+                      <li key={k}><b className="text-plum">{k.replace(/_usd$/, "").replace(/_/g, " ")}</b>: <Provenance source={e.field_sources?.[k]} /></li>))}</ul></details>
+              )}
             </>
+          )}
+          {adding && (
+            <div className="mt-6 rounded-2xl border border-lavender/40 bg-white/70 p-4">
+              <p className="mb-3 text-sm text-muted">Add documents, photos, or notes about <b className="text-plum">{e.name}</b>. You'll review every proposed change first; recorded values are only replaced if you confirm each one.</p>
+              <AddToLegacy targetEventId={e.id} />
+            </div>
           )}
         </div>
       </section>
@@ -193,6 +233,10 @@ export default function LegacyEventPage() {
           </Card>
           <Card title="Photos" icon={<Sparkles size={16} aria-hidden="true" />}>
             <PhotoManager eventId={e.id} photos={e.photos} onChange={reload} />
+          </Card>
+          <Card title={`Source documents (${e.documents?.length ?? 0})`} icon={<FolderOpen size={16} aria-hidden="true" />}>
+            <DocumentList docs={e.documents ?? []} />
+            <p className="mt-2 text-xs text-muted">Originals are kept for authorized review. Text from documents was AI-extracted and approved by a board member; it is not verified accounting data unless marked verified above.</p>
           </Card>
         </div>
       </div>

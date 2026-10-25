@@ -37,6 +37,43 @@ def _usage(calls: list[ModelUsage]) -> dict:
     }
 
 
+BASIS_LABELS = {"board_feedback": "Board feedback (subjective)", "event_records": "Interpretation of recorded event data",
+                "records_and_feedback": "Recorded data and board feedback", "computed": "Computed from recorded figures"}
+
+
+def what_we_learned(r: dict, lessons: list[dict], history_checks: list[dict], event_names: dict, finance: dict | None,
+                    can_see_finance: bool) -> dict:
+    """How organizational memory reached this plan: which past events were consulted (and why), what was learned, and
+    which parts of the plan it shaped. Every influence item is derived from the run's own records, not from model claims."""
+    consulted = [{**c, "name": event_names.get(c["id"], c.get("name"))} for c in r.get("events_consulted") or []]
+    influence = []
+    for opt in r.get("shortlist") or []:
+        for applied in opt.get("lessons_applied") or []:
+            influence.append({"area": "Venue selection", "detail": f"{opt.get('venue')}: {applied}", "by": "Fundraising & Events agent"})
+    model = (finance or {}).get("model") or {}
+    cont = ((model.get("assumptions") or {}).get("contingency_pct") or {}) if can_see_finance else {}
+    if cont.get("kind") == "lesson":
+        influence.append({"area": "Budget", "detail": f"Contingency set to {cont.get('value', 0):.0%} because past reflections reported "
+                                                      "cost overruns.", "by": "Event Intelligence → Financial Analysis"})
+    for reason in r.get("revision_reasons") or []:
+        if reason.get("source") == "history":
+            influence.append({"area": "Revision", "detail": f"The first plan was revised: {reason['detail']}", "by": "Orchestrator (code check)"})
+    for h in history_checks:
+        influence.append({"area": "History check", "detail": f"{'Passed' if h['passed'] else 'Failed'}: {h['name']}. {h.get('detail', '')}".strip(),
+                          "by": "Orchestrator (code check)", "events": [e["name"] for e in h.get("events", [])]})
+    for applied in (r.get("recommendation") or {}).get("lessons_applied") or []:
+        influence.append({"area": "Recommendation", "detail": applied, "by": "Orchestrator"})
+    return {
+        "used": bool(consulted or lessons),
+        "events_consulted": consulted,
+        "quantitative_observations": [{**o, "events": [event_names.get(i, f"Event #{i}") for i in o.get("event_ids", [])],
+                                       "basis_label": BASIS_LABELS["computed"]} for o in r.get("quantitative_observations") or []],
+        "lessons": [{**l, "basis_label": BASIS_LABELS.get(l.get("basis"), "")} for l in lessons],
+        "constraints": [c for c in r.get("history_constraints") or []],
+        "influence": influence,
+    }
+
+
 def build_packet(db, run_id: int, organization_id: int, can_see_finance: bool) -> dict | None:
     with db.session() as s:
         run = s.get(AgentRun, run_id)
@@ -67,7 +104,8 @@ def build_packet(db, run_id: int, organization_id: int, can_see_finance: bool) -
     lessons = []
     lesson_step = next((st for st in steps if st.step_key == "lessons" and st.result), None)
     for l in ((lesson_step.result or {}).get("data") or {}).get("lessons", []) if lesson_step else []:
-        lessons.append({**l, "events": [{"id": i, "name": event_names.get(i, f"Event #{i}")} for i in l.get("event_ids", [])]})
+        lessons.append({**l, "basis_label": BASIS_LABELS.get(l.get("basis"), ""),
+                        "events": [{"id": i, "name": event_names.get(i, f"Event #{i}")} for i in l.get("event_ids", [])]})
     evaluation = r.get("evaluation") or {}
     history_checks = [{**h, "events": [{"id": i, "name": event_names.get(i, f"Event #{i}")} for i in h.get("event_ids", [])]}
                       for h in evaluation.get("history_checks", [])]
@@ -128,6 +166,7 @@ def build_packet(db, run_id: int, organization_id: int, can_see_finance: bool) -
         "finance_feedback": r.get("finance_feedback") or [],
         "authorized_budget_usd": r.get("authorized_budget_usd"),
         "history_checks": history_checks,
+        "what_we_learned": what_we_learned(r, lessons, history_checks, event_names, finance, can_see_finance),
         "revision": {"original": r.get("original_plan"), "revised": r.get("revised_plan"), "reasons": r.get("revision_reasons") or [],
                      "history": r.get("revision_history") or []},
         "budget_warnings": warnings,
@@ -238,13 +277,25 @@ def packet_markdown(p: dict) -> str:
         if p.get("affordability"):
             L += ["", f"_{p['affordability']['cash_note']}_"]
     L += ["", "## 6. Budget warnings", ""] + ([f"- **{w['level']}:** {w['text']}" for w in p["budget_warnings"]] or ["- None."])
-    L += ["", "## 7. Lessons from past events", ""]
-    for l in p["lessons"]:
-        L.append(f"- ({l['kind'].replace('_', ' ')}) {l['text']} [evidence: {', '.join(e['name'] for e in l['events']) or 'board reflections'}]")
-    for h in p["history_checks"]:
-        L.append(f"- **History check, {'passed' if h['passed'] else 'failed'}:** {h['name']}. {h['detail']}")
-    if not p["lessons"]:
+    w = p.get("what_we_learned") or {}
+    L += ["", "## 7. What We Learned", ""]
+    if not w.get("used"):
         L.append("- Historical lessons were not used in this run.")
+    if w.get("events_consulted"):
+        L += ["**Past events consulted** (chosen in code by similarity to this plan):", ""]
+        L += [f"- {c['name']}: {', '.join(c.get('reasons') or [])}" for c in w["events_consulted"]] + [""]
+    if w.get("quantitative_observations"):
+        L += ["**Computed from recorded figures** (quantitative):", ""]
+        L += [f"- {o['text']} {o.get('sample_note', '')}".rstrip() for o in w["quantitative_observations"]] + [""]
+    if p["lessons"]:
+        L += ["**Lessons** (each cites its records; board feedback is subjective):", ""]
+    for l in p["lessons"]:
+        basis = {"board_feedback": "board feedback", "event_records": "event records", "records_and_feedback": "records and feedback"}.get(
+            l.get("basis"), "records")
+        L.append(f"- ({l['kind'].replace('_', ' ')}; {basis}) {l['text']} [evidence: {', '.join(e['name'] for e in l['events']) or 'board reflections'}]")
+    if w.get("influence"):
+        L += ["", "**How prior experience shaped this plan:**", ""]
+        L += [f"- {i['area']}: {i['detail']} ({i['by']})" for i in w["influence"]]
     for c in p.get("community_insights") or []:
         L.append(f"- (community: {c['lens_label']}) {c['observation']} “{c['quote']}” [{c['evidence_label']}; reflections {', '.join(map(str, c['reflection_ids'])) or '—'}]")
     L += ["", "## 8. Unsent outreach drafts", ""]

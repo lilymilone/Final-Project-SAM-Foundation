@@ -1,0 +1,524 @@
+{
+  "id": 4,
+  "name": "Butterfly Spring Raffle (synthetic sample)",
+  "event_date": "2025-04-12",
+  "location": "Garden City, NY",
+  "event_type": "raffle",
+  "venue": "Garden City Community Hall",
+  "attendance": 120,
+  "fundraising_goal_usd": 10000.0,
+  "funds_raised_usd": 11850.0,
+  "total_cost_usd": 3400.0,
+  "net_usd": 8450.0,
+  "goal_pct": 118.5,
+  "sponsorship_usd": null,
+  "sponsorship_info": "Garden City Bakery (synthetic) donated raffle prizes.",
+  "summary": "The Butterfly Spring Raffle was held at the Garden City Community Hall in Garden City, NY. Guests attended, and the event included a raffle.",
+  "notes": null,
+  "is_demo": true,
+  "reflection_count": 2,
+  "volunteers_count": 14,
+  "repeat_participants": null,
+  "partnerships_formed": null,
+  "funds_directed_usd": null,
+  "community_outcomes": null,
+  "event_year": 2025,
+  "planned_budget_usd": 3000.0,
+  "positive_outcomes": "- Guests especially enjoyed the raffle.\n- The welcome table helped new guests feel at home.",
+  "problems_encountered": "- Coordinating volunteers was a challenge.\n- Several volunteers did not know their roles until the doors opened.",
+  "lessons_learned": "- Consider recruiting and briefing volunteers earlier, since some signed up late and several did not know their roles until the event began.\n- A welcome table may help new guests feel at home, according to the recap.",
+  "verification_status": "document_extracted",
+  "verification_label": "From uploaded documents: AI-extracted, board-approved, not verified accounting data",
+  "verified_at": null,
+  "field_sources": {
+    "name": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "Event recap: Butterfly Spring Raffle (synthetic sample)"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798939+00:00"
+    },
+    "event_date": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "was held on April 12, 2025"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798945+00:00"
+    },
+    "event_year": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "was held on April 12, 2025"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798948+00:00"
+    },
+    "location": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "in Garden City, NY"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798950+00:00"
+    },
+    "venue": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "at the Garden City Community Hall"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798952+00:00"
+    },
+    "event_type": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "Spring Raffle"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798953+00:00"
+    },
+    "summary": {
+      "origin": "ai_interpretation",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "The Butterfly Spring Raffle (synthetic sample) was held on April 12, 2025\nat the Garden City Community Hall in Garden City, NY."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798955+00:00"
+    },
+    "attendance": {
+      "origin": "board_choice",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "120 guests attended."
+      ],
+      "note": "Chosen by the board between conflicting sources.",
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798956+00:00"
+    },
+    "volunteers_count": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "14 volunteers signed up late"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798958+00:00"
+    },
+    "fundraising_goal_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "against a goal of $10,000."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798959+00:00"
+    },
+    "funds_raised_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "We raised $11,850"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798960+00:00"
+    },
+    "total_cost_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)",
+        "butterfly_spring_raffle_budget.csv (CSV)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "Total expenses were $3,400."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798962+00:00"
+    },
+    "planned_budget_usd": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_budget.csv (CSV)"
+      ],
+      "source_ids": [
+        "doc:7"
+      ],
+      "quotes": [
+        "Planned budget | 3000 | set in February"
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798963+00:00"
+    },
+    "sponsorship_info": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "Sponsor: Garden City Bakery (synthetic) donated raffle prizes."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798964+00:00"
+    },
+    "positive_outcomes": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "guests especially enjoyed the raffle",
+        "the welcome table helped new guests feel at home."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798966+00:00"
+    },
+    "problems_encountered": {
+      "origin": "source_fact",
+      "sources": [
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:6"
+      ],
+      "quotes": [
+        "coordinating volunteers was a challenge",
+        "several did not know their roles until the doors opened."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798967+00:00"
+    },
+    "lessons_learned": {
+      "origin": "ai_interpretation",
+      "sources": [
+        "butterfly_spring_raffle_notes.txt (TEXT)",
+        "butterfly_spring_raffle_recap.pdf (PDF)"
+      ],
+      "source_ids": [
+        "doc:10",
+        "doc:6"
+      ],
+      "quotes": [
+        "Next time, recruit and brief volunteers a month earlier.",
+        "the welcome table helped new guests feel at home."
+      ],
+      "import_id": 2,
+      "approved_by": 1,
+      "approved_at": "2026-10-25T11:56:45.798969+00:00"
+    }
+  },
+  "documents": [
+    {
+      "id": 6,
+      "filename": "butterfly_spring_raffle_recap.pdf",
+      "file_type": "pdf",
+      "size_bytes": 1303,
+      "status": "readable",
+      "notes": [],
+      "import_id": 2,
+      "event_id": 4,
+      "url": "/api/legacy/documents/6",
+      "created_at": "2026-10-25T11:54:54.670545",
+      "can_open": true
+    },
+    {
+      "id": 7,
+      "filename": "butterfly_spring_raffle_budget.csv",
+      "file_type": "csv",
+      "size_bytes": 191,
+      "status": "readable",
+      "notes": [],
+      "import_id": 2,
+      "event_id": 4,
+      "url": "/api/legacy/documents/7",
+      "created_at": "2026-10-25T11:54:54.670546",
+      "can_open": true
+    },
+    {
+      "id": 8,
+      "filename": "butterfly_spring_raffle_checkin.xlsx",
+      "file_type": "xlsx",
+      "size_bytes": 5015,
+      "status": "readable",
+      "notes": [
+        "Spreadsheet values are the saved results; formulas were not recalculated and macros never run."
+      ],
+      "import_id": 2,
+      "event_id": 4,
+      "url": "/api/legacy/documents/8",
+      "created_at": "2026-10-25T11:54:54.670546",
+      "can_open": true
+    },
+    {
+      "id": 9,
+      "filename": "butterfly_spring_raffle_table.png",
+      "file_type": "image",
+      "size_bytes": 73745,
+      "status": "photo",
+      "notes": [
+        "Kept as a photograph of the event. SAM SPACE does not read text or numbers from photos, so no figures come from this file."
+      ],
+      "import_id": 2,
+      "event_id": 4,
+      "url": "/api/legacy/documents/9",
+      "created_at": "2026-10-25T11:54:54.670547",
+      "can_open": true
+    },
+    {
+      "id": 10,
+      "filename": "butterfly_spring_raffle_notes.txt",
+      "file_type": "text",
+      "size_bytes": 205,
+      "status": "readable",
+      "notes": [],
+      "import_id": 2,
+      "event_id": 4,
+      "url": "/api/legacy/documents/10",
+      "created_at": "2026-10-25T11:54:54.670547",
+      "can_open": true
+    }
+  ],
+  "photos": [
+    {
+      "id": 2,
+      "caption": "butterfly_spring_raffle_table.png",
+      "url": "/api/legacy/photos/2",
+      "is_demo": true,
+      "created_at": "2026-10-25T11:56:45.801388"
+    }
+  ],
+  "updated_at": "2026-10-25T11:56:45.798981",
+  "reflections": [
+    {
+      "id": 8,
+      "event_id": 4,
+      "author": "Avery Brooks",
+      "user_id": 1,
+      "recorded_by": null,
+      "answers": [
+        {
+          "key": "went_well",
+          "question": "What worked?",
+          "answer": "(Sample reflection) The raffle drew everyone in, and the welcome table gave first-time guests someone to talk to."
+        },
+        {
+          "key": "challenges",
+          "question": "What was difficult, or did not go as planned?",
+          "answer": "(Sample reflection) Volunteers arrived without knowing their roles; we spent the first hour reassigning tasks."
+        },
+        {
+          "key": "should_repeat",
+          "question": "What would you repeat?",
+          "answer": "(Sample reflection) The raffle and the welcome table."
+        },
+        {
+          "key": "do_differently",
+          "question": "What would you change?",
+          "answer": "(Sample reflection) Brief volunteers by phone the week before, with one lead per station."
+        },
+        {
+          "key": "attendee_feedback",
+          "question": "How did attendees respond? What feedback did they give?",
+          "answer": "(Sample reflection) Several guests said it felt like a neighborhood gathering."
+        },
+        {
+          "key": "inclusion_improvements",
+          "question": "What could have made people feel more welcomed or included?",
+          "answer": "(Sample reflection) A quiet corner for guests who find crowds overwhelming."
+        },
+        {
+          "key": "advice",
+          "question": "What advice would you give to future event planners?",
+          "answer": "(Sample reflection) Lock the volunteer list three weeks out."
+        },
+        {
+          "key": "unexpected_costs",
+          "question": "Were there unexpected expenses or complications?",
+          "answer": ""
+        },
+        {
+          "key": "welcome_inclusion",
+          "question": "Did attendees seem to feel welcomed and included?",
+          "answer": ""
+        },
+        {
+          "key": "connection_moments",
+          "question": "Which activities or moments created connection?",
+          "answer": ""
+        },
+        {
+          "key": "volunteer_appreciation",
+          "question": "Did volunteers seem to feel appreciated?",
+          "answer": ""
+        },
+        {
+          "key": "accessibility_issues",
+          "question": "Were any accessibility or inclusion problems reported?",
+          "answer": ""
+        }
+      ],
+      "rating": 4,
+      "is_demo": false,
+      "created_at": "2026-10-25T11:58:23.339744"
+    },
+    {
+      "id": 9,
+      "event_id": 4,
+      "author": "Sam Rivera",
+      "user_id": 2,
+      "recorded_by": null,
+      "answers": [
+        {
+          "key": "went_well",
+          "question": "What worked?",
+          "answer": "(Sample reflection) Guests loved the raffle prizes from the bakery."
+        },
+        {
+          "key": "challenges",
+          "question": "What was difficult, or did not go as planned?",
+          "answer": "(Sample reflection) Costs crept over the plan because we added printing at the last minute."
+        },
+        {
+          "key": "should_repeat",
+          "question": "What would you repeat?",
+          "answer": ""
+        },
+        {
+          "key": "do_differently",
+          "question": "What would you change?",
+          "answer": "(Sample reflection) Shorten the raffle draw; it ran 40 minutes and people started leaving."
+        },
+        {
+          "key": "attendee_feedback",
+          "question": "How did attendees respond? What feedback did they give?",
+          "answer": ""
+        },
+        {
+          "key": "inclusion_improvements",
+          "question": "What could have made people feel more welcomed or included?",
+          "answer": ""
+        },
+        {
+          "key": "advice",
+          "question": "What advice would you give to future event planners?",
+          "answer": "(Sample reflection) Set the budget with a cushion for last-minute printing."
+        },
+        {
+          "key": "unexpected_costs",
+          "question": "Were there unexpected expenses or complications?",
+          "answer": ""
+        },
+        {
+          "key": "welcome_inclusion",
+          "question": "Did attendees seem to feel welcomed and included?",
+          "answer": ""
+        },
+        {
+          "key": "connection_moments",
+          "question": "Which activities or moments created connection?",
+          "answer": ""
+        },
+        {
+          "key": "volunteer_appreciation",
+          "question": "Did volunteers seem to feel appreciated?",
+          "answer": ""
+        },
+        {
+          "key": "accessibility_issues",
+          "question": "Were any accessibility or inclusion problems reported?",
+          "answer": ""
+        }
+      ],
+      "rating": 3,
+      "is_demo": false,
+      "created_at": "2026-10-25T11:58:23.341739"
+    }
+  ]
+}

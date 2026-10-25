@@ -492,6 +492,17 @@ class HistoricalEvent(Base):
     partnerships_formed: Mapped[int | None] = mapped_column(Integer, nullable=True)
     funds_directed_usd: Mapped[float | None] = mapped_column(Float, nullable=True)  # to charitable programs
     community_outcomes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Organizational memory (Prompt 8). All optional: unknown stays empty, never zero.
+    event_year: Mapped[int | None] = mapped_column(Integer, nullable=True)  # when only the year is known
+    planned_budget_usd: Mapped[float | None] = mapped_column(Float, nullable=True)  # for cost-overrun checks
+    positive_outcomes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    problems_encountered: Mapped[str | None] = mapped_column(Text, nullable=True)
+    lessons_learned: Mapped[str | None] = mapped_column(Text, nullable=True)  # the board's own words (AI lessons are separate)
+    # board_reported | document_extracted (AI-extracted, board-approved, not verified accounting) | verified (treasurer)
+    verification_status: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    field_sources: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # field -> {origin, import_id, source_id, quote}
+    verified_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -499,6 +510,54 @@ class HistoricalEvent(Base):
 
     reflections: Mapped[list[BoardReflection]] = relationship(back_populates="event", cascade="all, delete-orphan")
     photos: Mapped[list[EventPhoto]] = relationship(back_populates="event", cascade="all, delete-orphan")
+    documents: Mapped[list[LegacyDocument]] = relationship(back_populates="event")
+
+
+class LegacyImport(Base):
+    """A draft import: a board member's description or uploaded files, the AI's candidate extraction, and the board's
+    decision. Nothing reaches historical_events until a board member approves the preview."""
+
+    __tablename__ = "legacy_imports"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    method: Mapped[str] = mapped_column(String(20))  # upload | conversation
+    raw_text: Mapped[str | None] = mapped_column(Text, nullable=True)  # the description, exactly as written
+    target_event_id: Mapped[int | None] = mapped_column(ForeignKey("historical_events.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="draft")  # draft|extracting|ready|failed|approved|discarded
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    extraction: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # validated candidate (see services/legacy_import.py)
+    approved_event_id: Mapped[int | None] = mapped_column(ForeignKey("historical_events.id", ondelete="SET NULL"), nullable=True)
+    approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    decision: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # what the board changed, chose, and confirmed
+    created_at: Mapped[datetime] = _created()
+
+    documents: Mapped[list[LegacyDocument]] = relationship(back_populates="legacy_import")
+
+
+class LegacyDocument(Base):
+    """An original source file (PDF, CSV, XLSX, text notes, or a photo), kept for authorized review."""
+
+    __tablename__ = "legacy_documents"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    import_id: Mapped[int | None] = mapped_column(ForeignKey("legacy_imports.id", ondelete="SET NULL"), nullable=True, index=True)
+    historical_event_id: Mapped[int | None] = mapped_column(ForeignKey("historical_events.id", ondelete="SET NULL"), nullable=True, index=True)
+    filename: Mapped[str] = mapped_column(String(160))  # sanitized display name
+    file_type: Mapped[str] = mapped_column(String(10))  # pdf | csv | xlsx | text | image
+    content_type: Mapped[str] = mapped_column(String(80))
+    size_bytes: Mapped[int] = mapped_column(Integer)
+    sha256: Mapped[str] = mapped_column(String(64))
+    stored_name: Mapped[str] = mapped_column(String(120))  # hash-named, inside the workspace folder
+    status: Mapped[str] = mapped_column(String(20), default="stored")  # readable | unreadable | photo
+    text: Mapped[str | None] = mapped_column(Text, nullable=True)  # extracted text (untrusted; screened whenever used)
+    parse_notes: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    uploaded_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    created_at: Mapped[datetime] = _created()
+
+    legacy_import: Mapped[LegacyImport | None] = relationship(back_populates="documents")
+    event: Mapped[HistoricalEvent | None] = relationship(back_populates="documents")
 
 
 class EventPhoto(Base):
@@ -535,6 +594,9 @@ class BoardReflection(Base):
     connection_moments: Mapped[str | None] = mapped_column(Text, nullable=True)  # Which activities created connection?
     volunteer_appreciation: Mapped[str | None] = mapped_column(Text, nullable=True)  # Did volunteers feel appreciated?
     accessibility_issues: Mapped[str | None] = mapped_column(Text, nullable=True)  # Accessibility or inclusion problems?
+    inclusion_improvements: Mapped[str | None] = mapped_column(Text, nullable=True)  # What could have made people feel more welcomed?
+    # Authorized attribution: a board member may record another member's reflection (e.g. given by phone). Both are kept.
+    recorded_by_label: Mapped[str | None] = mapped_column(String(120), nullable=True)
     rating: Mapped[int | None] = mapped_column(Integer, nullable=True)  # 1-5
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = _created()

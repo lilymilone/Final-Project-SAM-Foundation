@@ -29,6 +29,14 @@ def analysis(p: dict, kw: dict) -> dict:
     return keyword_analysis(p["request"]).model_dump()
 
 
+def extraction(p: dict, kw: dict) -> dict:
+    """Default: claim nothing (tests that exercise extraction script their own replies)."""
+    none = {"value": None, "source_id": None, "quote": None}
+    return {"summary": "Nothing extracted.", "title": none, "date": none, "location": none, "venue": none, "event_type": none,
+            "description": none, "figures": [], "sponsors": [], "what_worked": [], "what_did_not_work": [], "lessons_learned": [],
+            "missing_information": ["Everything"]}
+
+
 def lessons(p: dict, kw: dict) -> dict:
     events, refl = p["events"], p["reflections"]
 
@@ -212,7 +220,7 @@ def recommendation(p: dict, kw: dict) -> dict:
 
 
 DEFAULT_HANDLERS: dict[str, Callable[[dict, dict], Any]] = {
-    "RequestAnalysis": analysis, "LessonsOutput": lessons, "EventStrategyOutput": strategy, "FinanceNarrative": finance,
+    "RequestAnalysis": analysis, "LessonsOutput": lessons, "EventExtraction": extraction, "EventStrategyOutput": strategy, "FinanceNarrative": finance,
     "AcknowledgmentTemplate": ack, "MissionAnalysis": mission, "ResearchPlan": research_plan, "DraftsOutput": drafts,
     "BoardRecommendation": recommendation, "ExtractedFigures": extracted, "FinancialReview": review,
     "DonationReview": donation_review,

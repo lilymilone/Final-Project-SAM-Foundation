@@ -1,0 +1,323 @@
+{
+  "id": 2,
+  "method": "upload",
+  "status": "ready",
+  "raw_text": "Recap, budget, check-in sheet, a photo, and notes from our spring raffle (synthetic sample).",
+  "created_at": "2026-10-25T11:54:54.550231",
+  "run": {
+    "id": 32,
+    "status": "completed",
+    "spent_usd": 0.00064456,
+    "error": null
+  },
+  "extraction": {
+    "summary": "The Butterfly Spring Raffle was held in Garden City, NY, on April 12, 2025. Sources report different attendance figures (120 guests in the recap and 118 door check-ins); the recap describes positive guest feedback and volunteer coordination challenges.",
+    "fields": {
+      "name": {
+        "value": "Butterfly Spring Raffle (synthetic sample)",
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "Event recap: Butterfly Spring Raffle (synthetic sample)"
+      },
+      "location": {
+        "value": "Garden City, NY",
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "in Garden City, NY"
+      },
+      "venue": {
+        "value": "Garden City Community Hall",
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "at the Garden City Community Hall"
+      },
+      "event_type": {
+        "value": "raffle",
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "Spring Raffle"
+      },
+      "summary": {
+        "value": "The Butterfly Spring Raffle was held at the Garden City Community Hall in Garden City, NY. Guests attended, and the event included a raffle.",
+        "origin": "ai_interpretation",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "The Butterfly Spring Raffle (synthetic sample) was held on April 12, 2025\nat the Garden City Community Hall in Garden City, NY."
+      },
+      "event_date": {
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "was held on April 12, 2025",
+        "value": "2025-04-12"
+      },
+      "event_year": {
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "was held on April 12, 2025",
+        "value": 2025,
+        "note": null
+      },
+      "funds_raised_usd": {
+        "value": 11850.0,
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "We raised $11,850",
+        "also_in": []
+      },
+      "fundraising_goal_usd": {
+        "value": 10000.0,
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "against a goal of $10,000.",
+        "also_in": []
+      },
+      "total_cost_usd": {
+        "value": 3400.0,
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "Total expenses were $3,400.",
+        "also_in": [
+          "butterfly_spring_raffle_budget.csv (CSV)"
+        ]
+      },
+      "planned_budget_usd": {
+        "value": 3000.0,
+        "origin": "source_fact",
+        "source_id": "doc:7",
+        "source_label": "butterfly_spring_raffle_budget.csv (CSV)",
+        "quote": "Planned budget | 3000 | set in February",
+        "also_in": []
+      },
+      "volunteers_count": {
+        "value": 14,
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "14 volunteers signed up late",
+        "also_in": []
+      },
+      "sponsorship_info": {
+        "value": "Garden City Bakery (synthetic) donated raffle prizes.",
+        "origin": "source_fact",
+        "source_id": "doc:6",
+        "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "quote": "Sponsor: Garden City Bakery (synthetic) donated raffle prizes."
+      }
+    },
+    "lists": {
+      "positive_outcomes": [
+        {
+          "text": "Guests especially enjoyed the raffle.",
+          "origin": "source_fact",
+          "source_id": "doc:6",
+          "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+          "quote": "guests especially enjoyed the raffle"
+        },
+        {
+          "text": "The welcome table helped new guests feel at home.",
+          "origin": "source_fact",
+          "source_id": "doc:6",
+          "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+          "quote": "the welcome table helped new guests feel at home."
+        }
+      ],
+      "problems_encountered": [
+        {
+          "text": "Coordinating volunteers was a challenge.",
+          "origin": "source_fact",
+          "source_id": "doc:6",
+          "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+          "quote": "coordinating volunteers was a challenge"
+        },
+        {
+          "text": "Several volunteers did not know their roles until the doors opened.",
+          "origin": "source_fact",
+          "source_id": "doc:6",
+          "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+          "quote": "several did not know their roles until the doors opened."
+        }
+      ],
+      "lessons_learned": [
+        {
+          "text": "Consider recruiting and briefing volunteers earlier, since some signed up late and several did not know their roles until the event began.",
+          "origin": "ai_interpretation",
+          "source_id": "doc:10",
+          "source_label": "butterfly_spring_raffle_notes.txt (TEXT)",
+          "quote": "Next time, recruit and brief volunteers a month earlier."
+        },
+        {
+          "text": "A welcome table may help new guests feel at home, according to the recap.",
+          "origin": "ai_interpretation",
+          "source_id": "doc:6",
+          "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+          "quote": "the welcome table helped new guests feel at home."
+        }
+      ]
+    },
+    "conflicts": [
+      {
+        "field": "attendance",
+        "label": "Attendance",
+        "values": [
+          {
+            "value": 120.0,
+            "source_id": "doc:6",
+            "source_label": "butterfly_spring_raffle_recap.pdf (PDF)",
+            "quote": "120 guests attended."
+          },
+          {
+            "value": 118.0,
+            "source_id": "doc:8",
+            "source_label": "butterfly_spring_raffle_checkin.xlsx (XLSX)",
+            "quote": "Attendance (door check-in count) | 118"
+          }
+        ],
+        "detail": "The sources give different attendance figures: 120 (butterfly_spring_raffle_recap.pdf (PDF)); 118 (butterfly_spring_raffle_checkin.xlsx (XLSX)). Choose one or leave it blank."
+      }
+    ],
+    "warnings": [],
+    "missing": [],
+    "ai_noted_missing": [
+      "Net proceeds were not stated.",
+      "A sponsorship dollar amount was not stated.",
+      "No monetary revenue breakdown was provided."
+    ],
+    "dropped": [],
+    "sources": [
+      {
+        "source_id": "description",
+        "label": "The board member's description",
+        "kind": "description",
+        "note": null
+      },
+      {
+        "source_id": "doc:6",
+        "label": "butterfly_spring_raffle_recap.pdf (PDF)",
+        "kind": "pdf",
+        "note": null
+      },
+      {
+        "source_id": "doc:7",
+        "label": "butterfly_spring_raffle_budget.csv (CSV)",
+        "kind": "csv",
+        "note": null
+      },
+      {
+        "source_id": "doc:8",
+        "label": "butterfly_spring_raffle_checkin.xlsx (XLSX)",
+        "kind": "xlsx",
+        "note": null
+      },
+      {
+        "source_id": "doc:9",
+        "label": "butterfly_spring_raffle_table.png (photo)",
+        "kind": "image",
+        "note": "Photo: never read for text or numbers."
+      },
+      {
+        "source_id": "doc:10",
+        "label": "butterfly_spring_raffle_notes.txt (TEXT)",
+        "kind": "text",
+        "note": null
+      }
+    ],
+    "injection_flags": 1,
+    "run_id": 32
+  },
+  "candidate": {
+    "name": "Butterfly Spring Raffle (synthetic sample)",
+    "location": "Garden City, NY",
+    "venue": "Garden City Community Hall",
+    "event_type": "raffle",
+    "summary": "The Butterfly Spring Raffle was held at the Garden City Community Hall in Garden City, NY. Guests attended, and the event included a raffle.",
+    "event_date": "2025-04-12",
+    "event_year": 2025,
+    "funds_raised_usd": 11850.0,
+    "fundraising_goal_usd": 10000.0,
+    "total_cost_usd": 3400.0,
+    "planned_budget_usd": 3000.0,
+    "volunteers_count": 14,
+    "sponsorship_info": "Garden City Bakery (synthetic) donated raffle prizes.",
+    "positive_outcomes": "- Guests especially enjoyed the raffle.\n- The welcome table helped new guests feel at home.",
+    "problems_encountered": "- Coordinating volunteers was a challenge.\n- Several volunteers did not know their roles until the doors opened.",
+    "lessons_learned": "- Consider recruiting and briefing volunteers earlier, since some signed up late and several did not know their roles until the event began.\n- A welcome table may help new guests feel at home, according to the recap."
+  },
+  "documents": [
+    {
+      "id": 6,
+      "filename": "butterfly_spring_raffle_recap.pdf",
+      "file_type": "pdf",
+      "size_bytes": 1303,
+      "status": "readable",
+      "notes": [],
+      "import_id": 2,
+      "event_id": null,
+      "url": "/api/legacy/documents/6",
+      "created_at": "2026-10-25T11:54:54.670545"
+    },
+    {
+      "id": 7,
+      "filename": "butterfly_spring_raffle_budget.csv",
+      "file_type": "csv",
+      "size_bytes": 191,
+      "status": "readable",
+      "notes": [],
+      "import_id": 2,
+      "event_id": null,
+      "url": "/api/legacy/documents/7",
+      "created_at": "2026-10-25T11:54:54.670546"
+    },
+    {
+      "id": 8,
+      "filename": "butterfly_spring_raffle_checkin.xlsx",
+      "file_type": "xlsx",
+      "size_bytes": 5015,
+      "status": "readable",
+      "notes": [
+        "Spreadsheet values are the saved results; formulas were not recalculated and macros never run."
+      ],
+      "import_id": 2,
+      "event_id": null,
+      "url": "/api/legacy/documents/8",
+      "created_at": "2026-10-25T11:54:54.670546"
+    },
+    {
+      "id": 9,
+      "filename": "butterfly_spring_raffle_table.png",
+      "file_type": "image",
+      "size_bytes": 73745,
+      "status": "photo",
+      "notes": [
+        "Kept as a photograph of the event. SAM SPACE does not read text or numbers from photos, so no figures come from this file."
+      ],
+      "import_id": 2,
+      "event_id": null,
+      "url": "/api/legacy/documents/9",
+      "created_at": "2026-10-25T11:54:54.670547"
+    },
+    {
+      "id": 10,
+      "filename": "butterfly_spring_raffle_notes.txt",
+      "file_type": "text",
+      "size_bytes": 205,
+      "status": "readable",
+      "notes": [],
+      "import_id": 2,
+      "event_id": null,
+      "url": "/api/legacy/documents/10",
+      "created_at": "2026-10-25T11:54:54.670547"
+    }
+  ],
+  "target_event": null,
+  "approved_event_id": null,
+  "decision": null
+}

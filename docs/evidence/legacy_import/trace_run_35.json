@@ -1,0 +1,1319 @@
+{
+  "run": {
+    "id": 35,
+    "status": "completed",
+    "research_mode": "synthetic",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "What lessons can we learn from our previous events? Compare fundraising approaches, recurring logistics problems, sponsorship, costs, and community building.",
+    "started_at": "2026-10-25T11:58:32.741484",
+    "duration_ms": 76309,
+    "spent_usd": 0.06091005,
+    "model_calls": 2,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 222,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 0,
+      "constraints": [],
+      "summary": "Intent: event learning (board routing). Specialists: event intelligence.",
+      "warnings": []
+    },
+    {
+      "id": 223,
+      "step_key": "lessons",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "event_intelligence",
+      "objective": "Learn from past events and reflections",
+      "status": "completed",
+      "duration_ms": 64467,
+      "constraints": [],
+      "summary": "These sample records suggest that fundraising success and community value need separate measures. The dinner generated the highest recorded net proceeds, while the walk combined strong fundraising efficiency with documented resource engagement. Recurring operational risks involved food costs, volunteer meals, late printing, program length, and preparation. Preserve welcoming activities and meaningful conversation while tightening budgets, vendor terms, payment collection, and accessibility planning. All findings are illustrative because every event is marked as demo data.",
+      "warnings": [
+        "All events are marked as demo data; these findings are illustrative rather than evidence of actual foundation performance.",
+        "Each event type has only one recorded example, so format effects cannot be separated from audience, venue, pricing, or other differences.",
+        "The proposed 15% contingency is a planning judgment prompted by reported overruns, not a recorded board-approved rate or a calculated estimate. The dinner's reported catering overrun may require separate protection.",
+        "Only the raffle has a recorded planned total budget. Reflections describe other overruns, but complete event-level budget variances cannot be established.",
+        "The dinner's recorded fundraising total is not reconciled with the report of uncollected pledges.",
+        "Sponsorship figures are missing for trivia and raffle; the valuation and treatment of donated goods are not fully explained.",
+        "Attendee feedback is reported by board members, not supplied as independent survey data. Most welcome and connection statements are impressions rather than verified outcomes.",
+        "The records do not establish whether the plated dinner increased giving or how alternative meal formats would affect attendance, welcome, or revenue.",
+        "Repeat participation, partnerships, and funds directed are missing for several events; long-term community and mission effects cannot be compared consistently."
+      ]
+    },
+    {
+      "id": 224,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 11829,
+      "constraints": [],
+      "summary": "Use past events as learning signals\u2014not proof of what will work next",
+      "warnings": []
+    },
+    {
+      "id": 225,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": []
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "read_historical_events",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5 past events",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "read_board_reflections",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "10 reflections",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "compare_event_outcomes",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "compared 5 events (sufficient data); 6 computed observation(s)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "get_historical_lessons",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "2 saved lessons",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 4,
+      "summary": "lesson #155 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #156 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #157 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #158 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #159 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #160 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #161 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #162 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #163 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #164 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #165 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #166 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #167 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #168 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #169 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #170 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #171 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #172 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #173 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #174 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #175 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #176 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #177 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #178 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 225,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "8/8 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 223,
+      "agent": "event_intelligence",
+      "task": "Synthesize lessons from events and reflections",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=low) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0756 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 6803,
+      "cached_input_tokens": 0,
+      "output_tokens": 4268,
+      "web_search_calls": 0,
+      "cost_usd": 0.059686,
+      "latency_ms": 64432,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 224,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0027 fits the remaining budget of $0.4403.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 4585,
+      "cached_input_tokens": 0,
+      "output_tokens": 1302,
+      "web_search_calls": 0,
+      "cost_usd": 0.00122405,
+      "latency_ms": 11823,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "event_learning",
+    "routing": "board",
+    "analysis": {
+      "intent": "event_learning",
+      "city": null,
+      "attendance": null,
+      "event_type": null,
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "synthetic",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [],
+    "events_consulted": [],
+    "quantitative_observations": [
+      {
+        "area": "fundraising_approach",
+        "text": "Net proceeds by event type: dinner (1 event): average net $14,700; community walk (1 event): average net $11,100; raffle (1 event): average net $8,450; trivia night fundraiser (1 event): average net $1,800; panel (1 event): average net $1,700.",
+        "event_ids": [
+          5,
+          4,
+          1,
+          2,
+          3
+        ],
+        "basis": "computed",
+        "sample_note": "Based on 5 recorded event(s)."
+      },
+      {
+        "area": "fundraising_approach",
+        "event_ids": [
+          5,
+          4,
+          1,
+          2,
+          3
+        ],
+        "text": "Goal attainment: Hartford trivia night (synthetic sample) raised 122% of its $2,000 goal; Butterfly Spring Raffle (synthetic sample) raised 118% of its $10,000 goal; Spring Awareness Walk (sample) raised 118% of its $12,000 goal; Butterfly Benefit Dinner (sample) raised 105% of its $30,000 goal; Campus Wellness Panel (sample) raised 87% of its $3,000 goal.",
+        "basis": "computed",
+        "sample_note": "Based on 5 recorded event(s)."
+      },
+      {
+        "area": "costs",
+        "event_ids": [
+          4
+        ],
+        "text": "Cost overruns against the planned budget: Butterfly Spring Raffle (synthetic sample) spent $3,400 vs $3,000 planned (+13%).",
+        "basis": "computed",
+        "sample_note": "Based on 1 recorded event(s). Small sample: treat as a signal, not a trend."
+      },
+      {
+        "area": "costs",
+        "event_ids": [
+          2,
+          3
+        ],
+        "text": "Cost per guest ranged from $8 (Campus Wellness Panel (sample)) to $177 (Butterfly Benefit Dinner (sample)).",
+        "basis": "computed",
+        "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+      },
+      {
+        "area": "sponsorship",
+        "event_ids": [
+          1,
+          2
+        ],
+        "text": "Sponsorship share of revenue: Spring Awareness Walk (sample) 13% ($1,800); Butterfly Benefit Dinner (sample) 16% ($5,000).",
+        "basis": "computed",
+        "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+      },
+      {
+        "area": "community",
+        "event_ids": [
+          5,
+          4,
+          1,
+          2,
+          3
+        ],
+        "text": "Recorded community measures: Hartford trivia night (synthetic sample): 9 volunteers; Butterfly Spring Raffle (synthetic sample): 14 volunteers; Spring Awareness Walk (sample): 24 volunteers, 38 repeat participants, 2 partnerships formed; Butterfly Benefit Dinner (sample): 12 volunteers, 1 partnerships formed; Campus Wellness Panel (sample): 6 volunteers, 1 partnerships formed.",
+        "basis": "computed",
+        "sample_note": "Based on 5 recorded event(s)."
+      }
+    ],
+    "events_strategy": null,
+    "themes": [
+      {
+        "name": "Fundraising purpose and format",
+        "polarity": "mixed",
+        "description": "The dinner led recorded net proceeds, but the panel's awareness purpose was not aligned with its fundraising expectations. The board has already adopted a recommendation to agree on event purpose before evaluating format and spending.",
+        "event_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "reflection_ids": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "name": "Food costs and volunteer meals",
+        "polarity": "weakness",
+        "description": "Walk and dinner reflections report food overruns, vendor minimums, and volunteers going short of food. Board members differ on whether the dinner meal is primarily a budget risk or an essential part of donor care.",
+        "event_ids": [
+          1,
+          2,
+          3
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "name": "Volunteer preparation",
+        "polarity": "mixed",
+        "description": "The walk's volunteer structure and dinner check-in team were praised, while raffle volunteers lacked clear roles when the event began.",
+        "event_ids": [
+          1,
+          2,
+          4
+        ],
+        "reflection_ids": [
+          4,
+          6,
+          8
+        ]
+      },
+      {
+        "name": "Sponsorship and production deadlines",
+        "polarity": "mixed",
+        "description": "Sponsors provided water, shirts, table support, and raffle prizes. Late sponsor artwork and last-minute printing created avoidable complications.",
+        "event_ids": [
+          1,
+          2,
+          4
+        ],
+        "reflection_ids": [
+          2,
+          9
+        ]
+      },
+      {
+        "name": "Connection through purposeful activities",
+        "polarity": "strength",
+        "description": "Resource tables, a recovery speaker, peer panelists, mental-health trivia, and a welcome table supported reported conversation, welcome, or engagement. Most evidence is board observation or reported attendee feedback rather than verified belonging outcomes.",
+        "event_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          8,
+          10
+        ]
+      },
+      {
+        "name": "Access and event pacing",
+        "polarity": "weakness",
+        "description": "Records describe insufficient shade and water, entrance steps, difficulty hearing a speaker, requests for quiet conversation space, and programs or draws that ran too long.",
+        "event_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "reflection_ids": [
+          1,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10
+        ]
+      }
+    ],
+    "comparison": {
+      "rows": [
+        {
+          "event_id": 2,
+          "name": "Butterfly Benefit Dinner (sample)",
+          "event_type": "dinner",
+          "net_usd": 14700.0,
+          "raised_per_dollar_spent": 1.88,
+          "raised_per_attendee_usd": 331.58,
+          "cost_per_attendee_usd": 176.84,
+          "attendance": 95
+        },
+        {
+          "event_id": 1,
+          "name": "Spring Awareness Walk (sample)",
+          "event_type": "community walk",
+          "net_usd": 11100.0,
+          "raised_per_dollar_spent": 4.58,
+          "raised_per_attendee_usd": 67.62,
+          "cost_per_attendee_usd": 14.76,
+          "attendance": 210
+        },
+        {
+          "event_id": 4,
+          "name": "Butterfly Spring Raffle (synthetic sample)",
+          "event_type": "raffle",
+          "net_usd": 8450.0,
+          "raised_per_dollar_spent": 3.49,
+          "raised_per_attendee_usd": 98.75,
+          "cost_per_attendee_usd": 28.33,
+          "attendance": 120
+        },
+        {
+          "event_id": 5,
+          "name": "Hartford trivia night (synthetic sample)",
+          "event_type": "trivia night fundraiser",
+          "net_usd": 1800.0,
+          "raised_per_dollar_spent": 3.77,
+          "raised_per_attendee_usd": 40.83,
+          "cost_per_attendee_usd": 10.83,
+          "attendance": 60
+        },
+        {
+          "event_id": 3,
+          "name": "Campus Wellness Panel (sample)",
+          "event_type": "panel",
+          "net_usd": 1700.0,
+          "raised_per_dollar_spent": 2.89,
+          "raised_per_attendee_usd": 21.67,
+          "cost_per_attendee_usd": 7.5,
+          "attendance": 120
+        }
+      ],
+      "sufficient": true,
+      "quantitative_observations": [
+        {
+          "area": "fundraising_approach",
+          "text": "Net proceeds by event type: dinner (1 event): average net $14,700; community walk (1 event): average net $11,100; raffle (1 event): average net $8,450; trivia night fundraiser (1 event): average net $1,800; panel (1 event): average net $1,700.",
+          "event_ids": [
+            5,
+            4,
+            1,
+            2,
+            3
+          ],
+          "basis": "computed",
+          "sample_note": "Based on 5 recorded event(s)."
+        },
+        {
+          "area": "fundraising_approach",
+          "event_ids": [
+            5,
+            4,
+            1,
+            2,
+            3
+          ],
+          "text": "Goal attainment: Hartford trivia night (synthetic sample) raised 122% of its $2,000 goal; Butterfly Spring Raffle (synthetic sample) raised 118% of its $10,000 goal; Spring Awareness Walk (sample) raised 118% of its $12,000 goal; Butterfly Benefit Dinner (sample) raised 105% of its $30,000 goal; Campus Wellness Panel (sample) raised 87% of its $3,000 goal.",
+          "basis": "computed",
+          "sample_note": "Based on 5 recorded event(s)."
+        },
+        {
+          "area": "costs",
+          "event_ids": [
+            4
+          ],
+          "text": "Cost overruns against the planned budget: Butterfly Spring Raffle (synthetic sample) spent $3,400 vs $3,000 planned (+13%).",
+          "basis": "computed",
+          "sample_note": "Based on 1 recorded event(s). Small sample: treat as a signal, not a trend."
+        },
+        {
+          "area": "costs",
+          "event_ids": [
+            2,
+            3
+          ],
+          "text": "Cost per guest ranged from $8 (Campus Wellness Panel (sample)) to $177 (Butterfly Benefit Dinner (sample)).",
+          "basis": "computed",
+          "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+        },
+        {
+          "area": "sponsorship",
+          "event_ids": [
+            1,
+            2
+          ],
+          "text": "Sponsorship share of revenue: Spring Awareness Walk (sample) 13% ($1,800); Butterfly Benefit Dinner (sample) 16% ($5,000).",
+          "basis": "computed",
+          "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+        },
+        {
+          "area": "community",
+          "event_ids": [
+            5,
+            4,
+            1,
+            2,
+            3
+          ],
+          "text": "Recorded community measures: Hartford trivia night (synthetic sample): 9 volunteers; Butterfly Spring Raffle (synthetic sample): 14 volunteers; Spring Awareness Walk (sample): 24 volunteers, 38 repeat participants, 2 partnerships formed; Butterfly Benefit Dinner (sample): 12 volunteers, 1 partnerships formed; Campus Wellness Panel (sample): 6 volunteers, 1 partnerships formed.",
+          "basis": "computed",
+          "sample_note": "Based on 5 recorded event(s)."
+        }
+      ],
+      "note": null
+    },
+    "recommendation": {
+      "headline": "Use past events as learning signals\u2014not proof of what will work next",
+      "recommendation": "Review and apply the lessons below while keeping fundraising, awareness, and community-building as distinct measures of event success. The records point to practical improvements in food budgeting, volunteer preparation, sponsorship handling, accessibility, and program design, but they are synthetic examples and should not be treated as evidence of actual foundation performance.",
+      "rationale": [
+        "The Butterfly Benefit Dinner had the highest recorded net proceeds, while the Spring Awareness Walk had the highest recorded raised-per-dollar-spent figure. These are different strengths, not a reliable forecast that one format will outperform another.",
+        "Dinner auction pledges were not all collected. Future tracking should distinguish pledges from payments received and plan for prompt payment collection.",
+        "Food costs and commitments caused problems across the Spring Awareness Walk, Butterfly Benefit Dinner, and Campus Wellness Panel. Volunteer meals also ran short at the walk and dinner.",
+        "Sponsorship took practical forms: water and shirts at the Spring Awareness Walk, table sponsors at the Butterfly Benefit Dinner, and donated bakery prizes at the Butterfly Spring Raffle. The records do not establish how these contributions affected giving.",
+        "Community-building activities were associated with reported engagement: the walk's resource fair, the dinner's recovery speaker, and Hartford trivia night's mental-health round. The walk also recorded resource-table participation and follow-up sign-ups.",
+        "Access, welcome, and logistics need deliberate planning. Reported issues included insufficient shade and water at the walk, entrance steps at the dinner, a request for quiet conversation space at the panel, and audibility and name-tag problems at trivia."
+      ],
+      "options": [],
+      "risks": [
+        "Each event type has only one recorded example, so differences may reflect audience, venue, pricing, or other factors rather than the format itself.",
+        "The dinner's fundraising total is not reconciled with uncollected pledges; comparisons of proceeds may therefore be incomplete.",
+        "Reported attendee impressions and feedback were relayed by board members and are not independent survey findings.",
+        "The records do not establish whether the dinner meal increased giving or whether changing the meal would improve attendance, welcome, or revenue."
+      ],
+      "decisions_for_board": [
+        "Review the recorded lessons in Our Legacy and mark each as reviewed, adopted, or dismissed.",
+        "Confirm that future event planning will define awareness, fundraising, and community objectives separately, consistent with the board's already-adopted event-purpose recommendation.",
+        "When considering a future dinner, decide how to balance catering risk, first-time guests' sense of welcome, and donor care; the records do not resolve this trade-off."
+      ],
+      "next_steps": [
+        "Review the lessons in Our Legacy and record whether each is reviewed, adopted, or dismissed.",
+        "For future planning, develop a detailed food budget, separately plan volunteer meals, set artwork and printing deadlines, and brief volunteers with clear roles before doors open.",
+        "Preserve meaningful conversation and welcome activities while planning for accessible spaces, adequate shade and water where relevant, and quieter conversation options where useful.",
+        "For fundraising events, track pledged and collected revenue separately and assess sponsorship contributions without assuming they increase giving."
+      ],
+      "lessons_applied": [
+        "Campus Wellness Panel and Butterfly Benefit Dinner: define event purpose across awareness, fundraising, and community objectives before selecting a format.",
+        "Butterfly Benefit Dinner and Spring Awareness Walk: treat recorded fundraising strengths as planning signals, not forecasts.",
+        "Butterfly Benefit Dinner: distinguish auction pledges from collected payments and plan for timely collection.",
+        "Spring Awareness Walk, Butterfly Benefit Dinner, and Campus Wellness Panel: budget and review food costs separately.",
+        "Spring Awareness Walk and Butterfly Benefit Dinner: reserve volunteer meals rather than relying on leftovers.",
+        "Spring Awareness Walk and Butterfly Benefit Dinner: retain effective team and check-in approaches; Butterfly Spring Raffle: brief volunteers and assign station leads.",
+        "Spring Awareness Walk, Butterfly Benefit Dinner, and Butterfly Spring Raffle: consider the sponsorship models recorded, without assuming their effect on fundraising.",
+        "Spring Awareness Walk and Butterfly Spring Raffle: set artwork deadlines and finalize printing needs early.",
+        "Spring Awareness Walk, Butterfly Benefit Dinner, and Hartford trivia night: preserve activities associated with meaningful conversation, with time and suitable space for discussion.",
+        "Spring Awareness Walk, Butterfly Benefit Dinner, Campus Wellness Panel, Butterfly Spring Raffle, and Hartford trivia night: address the reported access and welcome barriers before repeating those formats.",
+        "Butterfly Benefit Dinner and Butterfly Spring Raffle: consider shorter programs while retaining core activities that support connection."
+      ],
+      "caveats": [
+        "Past events, books, and donations are the synthetic demo dataset.",
+        "All event records are marked as synthetic demo data; findings are illustrative, not verified foundation performance.",
+        "Only one example is recorded for each event type, and the records cannot separate format effects from other differences.",
+        "Complete event-level budget variances are not available for all events.",
+        "Sponsorship figures are missing for trivia and the raffle, and the valuation and treatment of donated goods are not fully explained.",
+        "Community observations and attendee feedback are reported impressions unless explicitly identified as recorded outcomes."
+      ],
+      "mission_impact_considerations": [
+        "The recorded resource fair, recovery speaker, peer panel, and mental-health trivia round suggest ways events may support awareness, connection, and community engagement; the evidence is limited and mostly reported by board members.",
+        "Accessibility, quiet conversation space, volunteer care, and a welcoming experience deserve consideration alongside fundraising efficiency.",
+        "Food and other event costs compete with alternative uses of foundation resources. The synthetic records do not establish the appropriate spending level or whether any particular format is the best use of funds."
+      ]
+    },
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No unconfirmed availability claims",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No links that are not in the sources",
+          "passed": true,
+          "detail": "Every link appears in the run's sources."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "0 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Every lesson cites real events or reflections",
+          "passed": true,
+          "detail": "12 lesson(s) checked against the database."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "15 internal"
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {},
+    "revision_history": [],
+    "unresolved_conflicts": [],
+    "event_plan_id": null,
+    "specialists": {
+      "lessons": {
+        "agent": "event_intelligence",
+        "status": "completed",
+        "summary": "These sample records suggest that fundraising success and community value need separate measures. The dinner generated the highest recorded net proceeds, while the walk combined strong fundraising efficiency with documented resource engagement. Recurring operational risks involved food costs, volunteer meals, late printing, program length, and preparation. Preserve welcoming activities and meaningful conversation while tightening budgets, vendor terms, payment collection, and accessibility planning. All findings are illustrative because every event is marked as demo data."
+      }
+    },
+    "finance": null,
+    "event": null,
+    "venues": [],
+    "shortlist": [],
+    "original_plan": null,
+    "revised_plan": null,
+    "revision_reasons": [],
+    "evaluation": null,
+    "proposal_comparison": [],
+    "finance_feedback": [],
+    "authorized_budget_usd": null,
+    "drafts": [],
+    "lessons": [
+      {
+        "kind": "recommendation",
+        "theme": "Define success before selecting a format",
+        "text": "From the Campus Wellness Panel and Butterfly Benefit Dinner: distinguish awareness, fundraising, and community objectives before choosing a format. Apply the board's already-adopted event-purpose recommendation rather than treating fundraising totals as the sole measure of success.",
+        "event_ids": [
+          2,
+          3
+        ],
+        "reflection_ids": [
+          5
+        ],
+        "confidence": "high",
+        "area": "fundraising_approach",
+        "basis": "records_and_feedback",
+        "id": 155
+      },
+      {
+        "kind": "what_worked",
+        "theme": "Different fundraising strengths",
+        "text": "The Butterfly Benefit Dinner produced the highest recorded net proceeds; the Spring Awareness Walk had the highest recorded raised-per-dollar-spent figure. Use these as different planning signals, not proof that either format will outperform in the future.",
+        "event_ids": [
+          1,
+          2
+        ],
+        "reflection_ids": [],
+        "confidence": "medium",
+        "area": "fundraising_approach",
+        "basis": "event_records",
+        "id": 156
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Collect pledges promptly",
+        "text": "At the Butterfly Benefit Dinner, strong auction pledges did not all become collected payments. Plan table-side payment collection, as the reflection recommends, and distinguish pledged from collected revenue.",
+        "event_ids": [
+          2
+        ],
+        "reflection_ids": [
+          3,
+          4
+        ],
+        "confidence": "medium",
+        "area": "fundraising_approach",
+        "basis": "records_and_feedback",
+        "id": 157
+      },
+      {
+        "kind": "recurring_problem",
+        "theme": "Food commitments exceed expectations",
+        "text": "The Spring Awareness Walk reported unbudgeted food commitments, the Butterfly Benefit Dinner reported catering above its quote, and the Campus Wellness Panel reported pizza costing more than the room. Food requires its own detailed budget and vendor review.",
+        "event_ids": [
+          1,
+          2,
+          3
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          6
+        ],
+        "confidence": "high",
+        "area": "costs",
+        "basis": "records_and_feedback",
+        "id": 158
+      },
+      {
+        "kind": "recurring_problem",
+        "theme": "Volunteer meals need protection",
+        "text": "At both the Spring Awareness Walk and Butterfly Benefit Dinner, volunteers did not consistently receive enough food. Budget and reserve volunteer meals separately rather than relying on food remaining after guests eat.",
+        "event_ids": [
+          1,
+          2
+        ],
+        "reflection_ids": [
+          1,
+          7
+        ],
+        "confidence": "high",
+        "area": "logistics",
+        "basis": "records_and_feedback",
+        "id": 159
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Brief volunteers before doors open",
+        "text": "Retain the praised walk team structure and dinner check-in approach. For the Butterfly Spring Raffle, follow the proposed advance briefing and station-lead model to address unclear roles at opening.",
+        "event_ids": [
+          1,
+          2,
+          4
+        ],
+        "reflection_ids": [
+          4,
+          6,
+          8
+        ],
+        "confidence": "high",
+        "area": "logistics",
+        "basis": "records_and_feedback",
+        "id": 160
+      },
+      {
+        "kind": "what_worked",
+        "theme": "Practical sponsorship contributions",
+        "text": "The Spring Awareness Walk's water and shirt sponsorships and Butterfly Spring Raffle's donated bakery prizes were praised; the dinner also recorded table sponsors. These are documented sponsorship models to explore, without assuming their effect on giving.",
+        "event_ids": [
+          1,
+          2,
+          4
+        ],
+        "reflection_ids": [
+          2,
+          9
+        ],
+        "confidence": "medium",
+        "area": "sponsorship",
+        "basis": "records_and_feedback",
+        "id": 161
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Control printing deadlines",
+        "text": "From the Spring Awareness Walk and Butterfly Spring Raffle: set an artwork deadline and finalize printing needs early. Late sponsor artwork prompted rush printing at the walk, while late printing additions contributed to the raffle's budget overrun.",
+        "event_ids": [
+          1,
+          4
+        ],
+        "reflection_ids": [
+          2,
+          9
+        ],
+        "confidence": "high",
+        "area": "costs",
+        "basis": "records_and_feedback",
+        "id": 162
+      },
+      {
+        "kind": "what_worked",
+        "theme": "Make room for meaningful conversation",
+        "text": "The Spring Awareness Walk resource fair, Butterfly Benefit Dinner recovery speaker, and Hartford trivia night's mental-health round were associated with reported conversation or engagement. Preserve these activities while allowing time and suitable space for discussion.",
+        "event_ids": [
+          1,
+          2,
+          5
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          10
+        ],
+        "confidence": "medium",
+        "area": "community",
+        "basis": "records_and_feedback",
+        "id": 163
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Welcome and access by design",
+        "text": "Retain the Butterfly Spring Raffle welcome table. Address the walk's shade and water gaps, the dinner's entrance steps, the panel's request for quiet conversation space, and trivia's audibility and name-tag problems before repeating those formats.",
+        "event_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "reflection_ids": [
+          1,
+          5,
+          7,
+          8,
+          10
+        ],
+        "confidence": "high",
+        "area": "community",
+        "basis": "records_and_feedback",
+        "id": 164
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Shorten without losing the core activity",
+        "text": "For the Butterfly Benefit Dinner, build on the already-reviewed recommendation for a program under an hour while retaining the recovery speaker. For the Butterfly Spring Raffle, shorten the draw in response to the report that people began leaving.",
+        "event_ids": [
+          2,
+          4
+        ],
+        "reflection_ids": [
+          3,
+          4,
+          9
+        ],
+        "confidence": "medium",
+        "area": "logistics",
+        "basis": "records_and_feedback",
+        "id": 165
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Keep dinner trade-offs visible",
+        "text": "Before changing the Butterfly Benefit Dinner meal, explicitly discuss the competing concerns about catering risk, first-time guests feeling out of place, and donor care. The records do not establish that the meal caused greater giving or that cutting it would improve results.",
+        "event_ids": [
+          2
+        ],
+        "reflection_ids": [
+          3,
+          7
+        ],
+        "confidence": "high",
+        "area": "board_feedback",
+        "basis": "records_and_feedback",
+        "id": 166
+      }
+    ],
+    "disagreements": [
+      {
+        "topic": "Dinner meal spending and guest experience",
+        "positions": [
+          "Demo board member A: \"Treat catering as the biggest budget risk.\"",
+          "Demo board member A reported: \"Some first-time guests told me they felt out of place at a $250 dinner.\"",
+          "Demo board member D: \"The plated dinner made guests feel honored. It was worth the cost.\"",
+          "Demo board member D: \"Keep the dinner format; trim decor instead of food.\"",
+          "Demo board member D: \"Do not cut the meal to save money.\""
+        ],
+        "evidence_reflection_ids": [
+          3,
+          7
+        ]
+      }
+    ],
+    "findings": [],
+    "selection": null,
+    "mission_contribution": null,
+    "community_insights": [
+      {
+        "lens": "welcomed",
+        "lens_label": "Welcome and inclusion",
+        "observation": "A board member linked the raffle welcome table with helping first-time guests find someone to talk to.",
+        "quote": "(Sample reflection) The raffle drew everyone in, and the welcome table gave first-time guests someone to talk to.",
+        "reflection_ids": [
+          8
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Spring Raffle (synthetic sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 167
+      },
+      {
+        "lens": "welcomed",
+        "lens_label": "Welcome and inclusion",
+        "observation": "Some first-time dinner guests reportedly felt out of place, contrasting with another member's positive assessment of the meal.",
+        "quote": "Some first-time guests told me they felt out of place at a $250 dinner.",
+        "reflection_ids": [
+          3
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Benefit Dinner (sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 168
+      },
+      {
+        "lens": "connection",
+        "lens_label": "Connection",
+        "observation": "The recovery speaker was followed by personal conversation among tablemates, according to a board member.",
+        "quote": "After the recovery speaker, strangers at my table talked about their own families.",
+        "reflection_ids": [
+          3
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Benefit Dinner (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 169
+      },
+      {
+        "lens": "connection",
+        "lens_label": "Connection",
+        "observation": "Mental-health trivia was reported to prompt conversation across teams.",
+        "quote": "(Sample reflection) The mental-health trivia round started real conversations between teams.",
+        "reflection_ids": [
+          10
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Hartford trivia night (synthetic sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 170
+      },
+      {
+        "lens": "volunteers",
+        "lens_label": "Volunteer appreciation",
+        "observation": "Public thanks were recorded, but food shortages undermined practical volunteer care; volunteers' own feelings are not established.",
+        "quote": "We thanked volunteers by name at the finish line, but their food ran short.",
+        "reflection_ids": [
+          1
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Spring Awareness Walk (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 171
+      },
+      {
+        "lens": "community",
+        "lens_label": "Sense of community",
+        "observation": "The walk recorded resource engagement and follow-up sign-ups, rather than merely an impression of community.",
+        "quote": "Four local mental-health groups staffed resource tables, and 61 families signed up for follow-up resource emails (sample).",
+        "reflection_ids": [],
+        "event_ids": [
+          1
+        ],
+        "event_names": [
+          "Spring Awareness Walk (sample)"
+        ],
+        "evidence_type": "verified_outcome",
+        "evidence_label": "Recorded outcome",
+        "id": 172
+      },
+      {
+        "lens": "community",
+        "lens_label": "Sense of community",
+        "observation": "Guests reportedly described the raffle as a neighborhood gathering.",
+        "quote": "(Sample reflection) Several guests said it felt like a neighborhood gathering.",
+        "reflection_ids": [
+          8
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Spring Raffle (synthetic sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 173
+      },
+      {
+        "lens": "welcomed",
+        "lens_label": "Welcome and inclusion",
+        "observation": "Students reportedly associated peer panelists with feeling heard.",
+        "quote": "Students said they felt heard because the panelists were their peers.",
+        "reflection_ids": [
+          5
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Campus Wellness Panel (sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 174
+      },
+      {
+        "lens": "accessibility",
+        "lens_label": "Accessibility and inclusion",
+        "observation": "Entrance steps created a reported physical access barrier at the dinner.",
+        "quote": "The dining room had steps at the entrance, and one guest needed help getting in.",
+        "reflection_ids": [
+          7
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Benefit Dinner (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 175
+      },
+      {
+        "lens": "accessibility",
+        "lens_label": "Accessibility and inclusion",
+        "observation": "Shade and water provision were reported as insufficient for older walkers.",
+        "quote": "Not enough shade or water stations for older walkers.",
+        "reflection_ids": [
+          1
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Spring Awareness Walk (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 176
+      },
+      {
+        "lens": "improvement",
+        "lens_label": "Improvements",
+        "observation": "Panel attendees reportedly wanted a quieter place for conversation after the program.",
+        "quote": "Students wanted a quieter space to talk afterwards.",
+        "reflection_ids": [
+          5
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Campus Wellness Panel (sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 177
+      },
+      {
+        "lens": "improvement",
+        "lens_label": "Improvements",
+        "observation": "A board member proposed a quieter option for raffle guests who find crowds overwhelming; this is a recommendation, not a documented attendee outcome.",
+        "quote": "(Sample reflection) A quiet corner for guests who find crowds overwhelming.",
+        "reflection_ids": [
+          8
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Spring Raffle (synthetic sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 178
+      }
+    ],
+    "donations": "[redacted]"
+  }
+}

@@ -14,7 +14,7 @@ from pydantic import BaseModel, field_validator
 
 Intent = Literal[
     "plan_event", "mission_discovery", "partnership_outreach", "financial_review", "donations_review",
-    "event_learning", "document_extraction", "unsupported",
+    "event_learning", "document_extraction", "legacy_import", "unsupported",
 ]
 EventFormat = Literal["seated_dinner", "reception"]
 Confidence = Literal["low", "medium", "high"]
@@ -41,6 +41,9 @@ class RequestAnalysis(BaseModel):
 # --- Event Intelligence -----------------------------------------------------------
 
 
+LessonArea = Literal["fundraising_approach", "logistics", "sponsorship", "board_feedback", "costs", "community", "other"]
+
+
 class Lesson(BaseModel):
     kind: Literal["what_worked", "recurring_problem", "recommendation"]
     theme: str
@@ -48,6 +51,7 @@ class Lesson(BaseModel):
     evidence_event_ids: list[int]
     evidence_reflection_ids: list[int]
     confidence: Confidence
+    area: LessonArea | None = None
 
 
 class Theme(BaseModel):
@@ -77,6 +81,46 @@ class CommunityInsight(BaseModel):
     evidence_reflection_ids: list[int]
     evidence_event_ids: list[int]
     evidence_type: Literal["board_observation", "attendee_feedback_reported", "verified_outcome"]
+
+
+class SourcedValue(BaseModel):
+    value: str | None  # as written in the source; null when the sources do not say
+    source_id: str | None  # "description" or "doc:<id>"
+    quote: str | None  # the exact words it comes from; code checks that they are in the source
+
+
+FigureField = Literal["attendance", "fundraising_goal_usd", "funds_raised_usd", "total_cost_usd", "net_proceeds_usd",
+                      "sponsorship_usd", "volunteers_count", "planned_budget_usd"]
+
+
+class ExtractedFigure(BaseModel):
+    field: FigureField
+    value: float
+    source_id: str
+    quote: str
+
+
+class SourcedPoint(BaseModel):
+    text: str
+    source_id: str
+    quote: str
+
+
+class EventExtraction(BaseModel):
+    """Candidate details for one past event. Every value must come with the exact words it rests on."""
+    summary: str
+    title: SourcedValue
+    date: SourcedValue
+    location: SourcedValue
+    venue: SourcedValue
+    event_type: SourcedValue
+    description: SourcedValue
+    figures: list[ExtractedFigure]  # list every figure found, even when two sources disagree
+    sponsors: list[SourcedPoint]
+    what_worked: list[SourcedPoint]
+    what_did_not_work: list[SourcedPoint]
+    lessons_learned: list[SourcedPoint]  # interpretations; quote = the words each lesson rests on
+    missing_information: list[str]
 
 
 class LessonsOutput(BaseModel):

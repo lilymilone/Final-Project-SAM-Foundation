@@ -348,3 +348,110 @@ def compare_events(events: Iterable[dict]) -> list[dict]:
             "attendance": att,
         })
     return sorted(rows, key=lambda r: (r["net_usd"] is None, -(r["net_usd"] or 0)))
+
+
+def _money(x: float) -> str:
+    return f"${x:,.0f}"
+
+
+def quantitative_observations(events: Iterable[dict]) -> list[dict]:
+    """Facts computed from recorded figures only (no model, no reflections). Each names the events it rests on.
+    Nothing is reported for a measure that no event recorded."""
+    events = list(events)
+    out: list[dict] = []
+    with_net = [e for e in events if e.get("funds_raised_usd") is not None and e.get("total_cost_usd") is not None]
+    by_type: dict[str, list[dict]] = defaultdict(list)
+    for e in with_net:
+        by_type[(e.get("event_type") or "event").strip().lower()].append(e)
+    if len(by_type) >= 2:
+        parts = []
+        for t, items in sorted(by_type.items(), key=lambda kv: -sum(i["funds_raised_usd"] - i["total_cost_usd"] for i in kv[1]) / len(kv[1])):
+            avg = sum(i["funds_raised_usd"] - i["total_cost_usd"] for i in items) / len(items)
+            parts.append(f"{t} ({len(items)} event{'s' if len(items) > 1 else ''}): average net {_money(avg)}")
+        out.append({"area": "fundraising_approach", "text": "Net proceeds by event type: " + "; ".join(parts) + ".",
+                    "event_ids": [e["id"] for e in with_net]})
+    goals = [e for e in events if e.get("fundraising_goal_usd") and e.get("funds_raised_usd") is not None]
+    if goals:
+        out.append({"area": "fundraising_approach", "event_ids": [e["id"] for e in goals],
+                    "text": "Goal attainment: " + "; ".join(f"{e['name']} raised {100 * e['funds_raised_usd'] / e['fundraising_goal_usd']:.0f}% "
+                                                             f"of its {_money(e['fundraising_goal_usd'])} goal" for e in goals) + "."})
+    planned = [e for e in events if e.get("planned_budget_usd") and e.get("total_cost_usd") is not None]
+    over = [e for e in planned if e["total_cost_usd"] > e["planned_budget_usd"]]
+    if over:
+        out.append({"area": "costs", "event_ids": [e["id"] for e in over],
+                    "text": "Cost overruns against the planned budget: " + "; ".join(
+                        f"{e['name']} spent {_money(e['total_cost_usd'])} vs {_money(e['planned_budget_usd'])} planned "
+                        f"(+{100 * (e['total_cost_usd'] / e['planned_budget_usd'] - 1):.0f}%)" for e in over) + "."})
+    elif planned:
+        out.append({"area": "costs", "event_ids": [e["id"] for e in planned],
+                    "text": f"No recorded cost overrun: {len(planned)} event(s) with a planned budget stayed within it."})
+    per_guest = [e for e in events if e.get("total_cost_usd") and e.get("attendance")]
+    if len(per_guest) >= 2:
+        hi = max(per_guest, key=lambda e: e["total_cost_usd"] / e["attendance"])
+        lo = min(per_guest, key=lambda e: e["total_cost_usd"] / e["attendance"])
+        out.append({"area": "costs", "event_ids": [hi["id"], lo["id"]],
+                    "text": f"Cost per guest ranged from {_money(lo['total_cost_usd'] / lo['attendance'])} ({lo['name']}) to "
+                            f"{_money(hi['total_cost_usd'] / hi['attendance'])} ({hi['name']})."})
+    sponsored = [e for e in events if e.get("sponsorship_usd") and e.get("funds_raised_usd")]
+    if sponsored:
+        out.append({"area": "sponsorship", "event_ids": [e["id"] for e in sponsored],
+                    "text": "Sponsorship share of revenue: " + "; ".join(
+                        f"{e['name']} {100 * e['sponsorship_usd'] / e['funds_raised_usd']:.0f}% ({_money(e['sponsorship_usd'])})" for e in sponsored) + "."})
+    community = [e for e in events if e.get("repeat_participants") or e.get("partnerships_formed") or e.get("volunteers_count")]
+    if community:
+        def bits(e):
+            b = [f"{e['volunteers_count']} volunteers" if e.get("volunteers_count") else None,
+                 f"{e['repeat_participants']} repeat participants" if e.get("repeat_participants") else None,
+                 f"{e['partnerships_formed']} partnerships formed" if e.get("partnerships_formed") else None]
+            return ", ".join(x for x in b if x)
+        out.append({"area": "community", "event_ids": [e["id"] for e in community],
+                    "text": "Recorded community measures: " + "; ".join(f"{e['name']}: {bits(e)}" for e in community) + "."})
+    for o in out:
+        o["basis"] = "computed"
+        o["sample_note"] = f"Based on {len(o['event_ids'])} recorded event(s)." + (" Small sample: treat as a signal, not a trend."
+                                                                                   if len(o["event_ids"]) < 3 else "")
+    return out
+
+
+_CITY_SYNONYMS = {"manhattan": "new york", "nyc": "new york", "new york city": "new york", "brooklyn": "new york", "queens": "new york"}
+
+
+def _place_tokens(text: str | None) -> set[str]:
+    t = (text or "").lower()
+    toks = {w.strip() for w in t.split(",") if len(w.strip()) > 2}  # state codes ("NY") alone are too broad to count
+    out = set()
+    for w in toks:
+        out.add(w)
+        for k, v in _CITY_SYNONYMS.items():
+            if k in w:
+                out.add(v)
+    return out
+
+
+def rank_relevant_events(items: list[dict], *, event_type: str | None, city: str | None, attendance: int | None) -> list[dict]:
+    """Score past events by similarity to a planned one. Deterministic; every point has a stated reason."""
+    want_type = set((event_type or "").lower().replace("-", " ").split()) - {"event", "the", "a"}
+    want_place = _place_tokens(city)
+    years = [i["year"] for i in items if i.get("year")]
+    latest = max(years) if years else None
+    ranked = []
+    for i in items:
+        score, reasons = 0, []
+        have_type = set((i.get("event_type") or "").lower().replace("-", " ").split()) - {"event", "the", "a"}
+        if want_type and have_type & want_type:
+            score += 3
+            reasons.append(f"same type ({i['event_type']})")
+        if want_place and _place_tokens(i.get("location")) & want_place:
+            score += 2
+            reasons.append(f"same area ({i['location']})")
+        if attendance and i.get("attendance"):
+            ratio = i["attendance"] / attendance
+            if 0.67 <= ratio <= 1.5:
+                score += 2
+                reasons.append(f"similar size ({i['attendance']} guests)")
+        if latest and i.get("year") and latest - i["year"] <= 2:
+            score += 1
+            reasons.append(f"recent ({i['year']})")
+        ranked.append({**i, "score": score, "reasons": reasons or ["no close match; included for general lessons"]})
+    ranked.sort(key=lambda r: (-r["score"], -(r.get("year") or 0)))
+    return ranked

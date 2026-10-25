@@ -18,12 +18,15 @@ export const INTENT_LABELS: Record<string, string> = {
   financial_review: "Financial review",
   donations_review: "Donations review",
   event_learning: "Learn from past events",
+  legacy_import: "Import a past event",
+  document_extraction: "Organize a financial document",
   unsupported: "Not supported",
   auto: "Auto-detect",
 };
 
 export const STEP_LABELS: Record<string, string> = {
   intake: "Understand the request",
+  extract: "Extract details for board review",
   lessons: "Lessons from past events",
   venues: "Venue research & strategy",
   finance: "Affordability check",
@@ -80,6 +83,13 @@ export function VerificationBadge({ value }: { value: string | null | undefined 
 }
 
 export function ModeBadge({ mode }: { mode: string | null | undefined }) {
+  if (mode === "records") {  // Our Legacy imports: the board's own sources only, no web research
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-lilac px-2.5 py-0.5 text-xs font-semibold text-royal">
+        <Database size={12} aria-hidden="true" /> Board sources only (no web)
+      </span>
+    );
+  }
   if (mode === "fixture") {  // server-side safety-test fixture; never selectable from the app
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-[#fbeef3] px-2.5 py-0.5 text-xs font-semibold text-danger">

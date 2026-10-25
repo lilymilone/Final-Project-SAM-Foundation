@@ -1,7 +1,7 @@
 {
-  "ran_at": "2026-10-25T11:14:07.618327+00:00",
+  "ran_at": "2026-10-25T12:20:53.479772+00:00",
   "pytest_exit_code": 0,
-  "summary": "34 passed in 1.65s",
+  "summary": "34 passed in 1.63s",
   "tests": [
     {
       "id": "TEST A",
@@ -15,7 +15,7 @@
       "defense": "untrusted-content screening + labeled data fields + fixed workflow graph + least-privilege data + allow-lists.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.116
+      "seconds": 0.111
     },
     {
       "id": "TEST A2",
@@ -29,7 +29,7 @@
       "defense": "structured outputs + code-validated option IDs + no send tools + output verification. Worst case: the model fully obeys the injection.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.072
+      "seconds": 0.066
     },
     {
       "id": "TEST B",
@@ -43,7 +43,7 @@
       "defense": "prohibited-action registry + Outreach allow-list (drafts only) + no send routes or statuses.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.115
+      "seconds": 0.116
     },
     {
       "id": "TEST C",
@@ -57,7 +57,7 @@
       "defense": "workspace-scoped queries (is_foreign_or_missing) + server-side authorization; the attempt is logged.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.14
+      "seconds": 0.136
     },
     {
       "id": "TEST D",
@@ -71,7 +71,7 @@
       "defense": "worst-case budget reservation before every paid call (ai/budget.py), board limit clamped to hard caps.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.1
+      "seconds": 0.139
     },
     {
       "id": "TEST D2",
@@ -99,7 +99,7 @@
       "defense": "limits.clamp() on every board change and again when a workflow reads its limits; hard caps live in code.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.166
+      "seconds": 0.116
     },
     {
       "id": "TEST E",
@@ -113,7 +113,7 @@
       "defense": "revision limit + loop detector + handoff cap (SafetyManager.before_handoff).",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.084
+      "seconds": 0.082
     },
     {
       "id": "TEST E2",
@@ -127,7 +127,7 @@
       "defense": "handoff cap in SafetyManager.before_handoff + partial results kept and labeled (no fabricated success).",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.056
+      "seconds": 0.059
     },
     {
       "id": "TEST F",
@@ -141,7 +141,7 @@
       "defense": "deterministic verification (every dollar figure must trace to a calculation) + one bounded fix.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.078
+      "seconds": 0.074
     },
     {
       "id": "TEST G",
@@ -155,7 +155,7 @@
       "defense": "content-type checks, sanitized names, hash-named workspace storage, isolated text-only parsing, injection screening, and the review queue.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.291
+      "seconds": 0.285
     },
     {
       "id": "TEST H",
@@ -169,7 +169,7 @@
       "defense": "Portkey Luna-only lock in the router AND in the provider wrapper (two independent checks).",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.072
+      "seconds": 0.066
     },
     {
       "id": "TEST I",
@@ -183,7 +183,7 @@
       "defense": "per-agent allow-list, then least-privilege data scopes as a second, independent wall.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.041
+      "seconds": 0.039
     },
     {
       "id": "TEST J",
@@ -211,7 +211,7 @@
       "defense": "scrub_outbound_query on every search; private_details_in_url before every fetch; agents that browse hold no donor data.",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.042
+      "seconds": 0.041
     },
     {
       "id": "TEST K",
@@ -270,7 +270,7 @@
       "defense": "all defenses active at once; this checks they do not block legitimate work (no false positives).",
       "cases": 1,
       "inputs": [],
-      "seconds": 0.074
+      "seconds": 0.075
     },
     {
       "id": "MATRIX",

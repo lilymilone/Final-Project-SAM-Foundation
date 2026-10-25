@@ -1,0 +1,165 @@
+{
+  "id": 3,
+  "method": "conversation",
+  "status": "ready",
+  "raw_text": "(Synthetic sample) In October 2024 we held a trivia night fundraiser at a caf\u00e9 in Hartford, CT. About 60 people came and we raised $2,300; expenses were $650. Teams loved the mental-health trivia round, but the room got too loud for our speaker and we ran out of name tags.",
+  "created_at": "2026-10-25T11:55:12.280333",
+  "run": {
+    "id": 33,
+    "status": "completed",
+    "spent_usd": 0.00047581,
+    "error": null
+  },
+  "extraction": {
+    "summary": "A trivia night fundraiser was held in October 2024 at a caf\u00e9 in Hartford, Connecticut. About 60 people attended; the source reports $2,300 raised and $650 in expenses.",
+    "fields": {
+      "location": {
+        "value": "Hartford, CT",
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "in Hartford, CT"
+      },
+      "event_type": {
+        "value": "trivia night fundraiser",
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "a trivia night fundraiser"
+      },
+      "summary": {
+        "value": "The event was a trivia night fundraiser at a caf\u00e9 in Hartford, CT. It included a mental-health trivia round.",
+        "origin": "ai_interpretation",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "a trivia night fundraiser at a caf\u00e9 in Hartford, CT"
+      },
+      "event_year": {
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "In October 2024",
+        "value": 2024,
+        "note": "Month given (october 2024), but not the day."
+      },
+      "attendance": {
+        "value": 60,
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "About 60 people came",
+        "also_in": []
+      },
+      "funds_raised_usd": {
+        "value": 2300.0,
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "we raised $2,300",
+        "also_in": []
+      },
+      "total_cost_usd": {
+        "value": 650.0,
+        "origin": "source_fact",
+        "source_id": "description",
+        "source_label": "The board member's description",
+        "quote": "expenses were $650",
+        "also_in": []
+      }
+    },
+    "lists": {
+      "positive_outcomes": [
+        {
+          "text": "Teams loved the mental-health trivia round.",
+          "origin": "source_fact",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "Teams loved the mental-health trivia round"
+        }
+      ],
+      "problems_encountered": [
+        {
+          "text": "The room was too loud for the speaker.",
+          "origin": "source_fact",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "the room got too loud for our speaker"
+        },
+        {
+          "text": "The event ran out of name tags.",
+          "origin": "source_fact",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "we ran out of name tags"
+        }
+      ],
+      "lessons_learned": [
+        {
+          "text": "For a future event with a speaker, consider whether the room's noise level could make the speaker difficult to hear.",
+          "origin": "ai_interpretation",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "the room got too loud for our speaker"
+        },
+        {
+          "text": "Consider planning name-tag quantities to avoid running out.",
+          "origin": "ai_interpretation",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "we ran out of name tags"
+        },
+        {
+          "text": "A mental-health trivia round may be a popular element with teams.",
+          "origin": "ai_interpretation",
+          "source_id": "description",
+          "source_label": "The board member's description",
+          "quote": "Teams loved the mental-health trivia round"
+        }
+      ]
+    },
+    "conflicts": [],
+    "warnings": [],
+    "missing": [
+      "Event title",
+      "Fundraising goal"
+    ],
+    "ai_noted_missing": [
+      "A stated event name",
+      "The specific caf\u00e9 or venue name",
+      "An exact attendance count",
+      "Fundraising goal",
+      "Net proceeds",
+      "Sponsorship amount",
+      "Volunteer count",
+      "Planned budget",
+      "Named sponsors"
+    ],
+    "dropped": [],
+    "sources": [
+      {
+        "source_id": "description",
+        "label": "The board member's description",
+        "kind": "description",
+        "note": null
+      }
+    ],
+    "injection_flags": 0,
+    "run_id": 33
+  },
+  "candidate": {
+    "location": "Hartford, CT",
+    "event_type": "trivia night fundraiser",
+    "summary": "The event was a trivia night fundraiser at a caf\u00e9 in Hartford, CT. It included a mental-health trivia round.",
+    "event_year": 2024,
+    "attendance": 60,
+    "funds_raised_usd": 2300.0,
+    "total_cost_usd": 650.0,
+    "positive_outcomes": "- Teams loved the mental-health trivia round.",
+    "problems_encountered": "- The room was too loud for the speaker.\n- The event ran out of name tags.",
+    "lessons_learned": "- For a future event with a speaker, consider whether the room's noise level could make the speaker difficult to hear.\n- Consider planning name-tag quantities to avoid running out.\n- A mental-health trivia round may be a popular element with teams."
+  },
+  "documents": [],
+  "target_event": null,
+  "approved_event_id": null,
+  "decision": null
+}
