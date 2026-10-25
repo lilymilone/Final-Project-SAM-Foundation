@@ -47,7 +47,8 @@ SIGNATURES = (
     (b"\xff\xd8\xff", "image/jpeg", "jpg"),
 )
 EVENT_FIELDS = ("name", "event_date", "event_type", "venue", "location", "attendance", "fundraising_goal_usd",
-                "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "sponsorship_info", "summary", "notes")
+                "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "sponsorship_info", "summary", "notes",
+                "volunteers_count", "repeat_participants", "partnerships_formed", "funds_directed_usd", "community_outcomes")
 
 
 def _sniff(head: bytes) -> tuple[str, str] | None:
@@ -89,6 +90,12 @@ class HistoricalEventIn(BaseModel):
     sponsorship_info: str | None = Field(default=None, max_length=2000)
     summary: str = Field(default="", max_length=4000)
     notes: str | None = Field(default=None, max_length=4000)
+    # Community impact: leave empty when not recorded (shown as "Not recorded", never as zero).
+    volunteers_count: int | None = Field(default=None, ge=0, le=1_000_000)
+    repeat_participants: int | None = Field(default=None, ge=0, le=1_000_000)
+    partnerships_formed: int | None = Field(default=None, ge=0, le=10_000)
+    funds_directed_usd: float | None = Field(default=None, ge=0, le=100_000_000)
+    community_outcomes: str | None = Field(default=None, max_length=4000)
 
     @field_validator("name", "event_type", "location", "summary")
     @classmethod
@@ -202,6 +209,10 @@ class ReflectionIn(BaseModel):
     should_repeat: str = Field(default="", max_length=4000)
     do_differently: str = Field(default="", max_length=4000)
     advice: str = Field(default="", max_length=4000)
+    welcome_inclusion: str = Field(default="", max_length=4000)
+    connection_moments: str = Field(default="", max_length=4000)
+    volunteer_appreciation: str = Field(default="", max_length=4000)
+    accessibility_issues: str = Field(default="", max_length=4000)
     rating: int | None = Field(default=None, ge=1, le=5)
 
 

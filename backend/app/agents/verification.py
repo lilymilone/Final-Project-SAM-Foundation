@@ -45,6 +45,38 @@ def action_claims(text: str) -> list[str]:
     return found
 
 
+# Outreach may never invent a relationship or commit the foundation to anything.
+RELATIONSHIP_CLAIMS = re.compile(
+    r"\b(?:our|the)\s+(?:long[- ]?standing|longtime|ongoing|existing|continued|past|previous)\s+(?:partnership|relationship|collaboration|support)\b"
+    r"|\b(?:as|like)\s+(?:we|i)\s+(?:discussed|mentioned|agreed)\b|\bfollowing (?:up on )?our (?:conversation|call|meeting)\b"
+    r"|\b(?:we|i)\s+(?:have|'ve)\s+(?:long\s+)?(?:worked|partnered|collaborated)\s+with\b"
+    r"|\bthank you (?:again )?for your (?:continued|ongoing|past|generous) support\b"
+    r"|\b(?:we|i)\s+(?:recently\s+)?(?:met|spoke)\s+(?:with\s+)?(?:you|your team)\b"
+    r"|\byour (?:past|previous|continued) (?:gift|donation|support|sponsorship) (?:to|of) (?:us|our)\b",
+    re.IGNORECASE,
+)
+COMMITMENT_CLAIMS = re.compile(
+    r"\b(?:we|the foundation)\s+(?:will|commit to|pledge to|guarantee to|promise to|are committing to|have committed to)\s+"
+    r"(?:donate|fund|sponsor|pay|provide|contribute|give|cover|underwrite|grant)\b"
+    r"|\b(?:we|the foundation)\s+(?:pledge|guarantee|promise)\b"
+    r"|\b(?:we are|we're) pleased to confirm\b|\bthis (?:letter|email|message) confirms\b",
+    re.IGNORECASE,
+)
+
+
+def outreach_violations(text: str, allowed_amounts: set[float] | None = None) -> list[str]:
+    """Reasons a draft must not be saved: claims of actions taken, invented
+    relationships, commitments, or dollar amounts that are not in the research."""
+    problems = [f"claims an action was taken (“{c}”)" for c in action_claims(text)]
+    problems += [f"implies a relationship that does not exist (“{m.group(0)}”)" for m in RELATIONSHIP_CLAIMS.finditer(text)]
+    problems += [f"commits the foundation (“{m.group(0)}”)" for m in COMMITMENT_CLAIMS.finditer(text)]
+    if allowed_amounts is not None:
+        stray = [a for a in dollar_amounts(text) if a not in allowed_amounts]
+        if stray:
+            problems.append("mentions dollar amounts that are not in the research (" + ", ".join(f"${a:,.0f}" for a in stray) + ")")
+    return problems
+
+
 def dollar_amounts(text: str) -> list[float]:
     out = []
     for number, suffix in MONEY.findall(text):
@@ -69,6 +101,20 @@ def collect_numbers(obj: Any, out: set[float] | None = None) -> set[float]:
     elif isinstance(obj, (list, tuple)):
         for v in obj:
             collect_numbers(v, out)
+    return out
+
+
+def collect_amounts(obj: Any, out: set[float] | None = None) -> set[float]:
+    """Numbers, plus dollar amounts written inside strings (e.g. a published "$150 table fee")."""
+    out = collect_numbers(obj, out)
+    if isinstance(obj, str):
+        out.update(dollar_amounts(obj))
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            collect_amounts(v, out)
+    elif isinstance(obj, (list, tuple)):
+        for v in obj:
+            collect_amounts(v, out)
     return out
 
 
@@ -113,9 +159,22 @@ def verify_workflow(db, run_id: int, results: dict[str, AgentResult], rec: Board
                 "All options are real candidates." if not bad else f"Unknown options: {', '.join(bad)}")
 
     with db.session() as s:
-        statuses = s.scalars(select(OutreachDraft.status).where(OutreachDraft.run_id == run_id)).all()
+        drafts = s.execute(select(OutreachDraft.status, OutreachDraft.finding_id, OutreachDraft.sources)
+                           .where(OutreachDraft.run_id == run_id)).all()
+    statuses = [d[0] for d in drafts]
     add("All outreach drafts remain unsent", all(st in ("draft", "reviewed", "archived") for st in statuses),
         f"{len(statuses)} draft(s) saved; none sent (SAM SPACE has no sending tool).")
+    research_drafts = [d for d in drafts if d[1] is not None]
+    if research_drafts:
+        uncited = [d for d in research_drafts if not d[2]]
+        add("Every partnership draft carries the sources it was written from", not uncited,
+            f"{len(research_drafts) - len(uncited)} of {len(research_drafts)} drafts link to their research sources.")
+    selection = results.get("select")
+    if selection is not None and selection.status == "completed":
+        chosen = selection.data.get("selected", [])
+        bad = [c["name"] for c in chosen if c.get("verification") not in ("verified", "synthetic")]
+        add("Selected opportunities have checked sources", not bad,
+            f"{len(chosen)} selected, all with checked sources." if not bad else "Unchecked: " + ", ".join(bad))
 
     lessons = results.get("lessons")
     if lessons is not None and lessons.status == "completed":

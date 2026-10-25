@@ -121,6 +121,9 @@ def build_packet(db, run_id: int, organization_id: int, can_see_finance: bool) -
         "shortlist": r.get("shortlist") or [],
         "sources": sources,
         "lessons": lessons,
+        "community_insights": [{**c, "events": [{"id": i, "name": event_names.get(i, f"Event #{i}")} for i in c.get("event_ids", [])]}
+                               for c in r.get("community_insights") or []],
+        "mission_contribution": r.get("mission_contribution"),
         "history_checks": history_checks,
         "revision": {"original": r.get("original_plan"), "revised": r.get("revised_plan"), "reasons": r.get("revision_reasons") or [],
                      "history": r.get("revision_history") or []},
@@ -166,6 +169,13 @@ def packet_markdown(p: dict) -> str:
         if rec.get(key):
             L += [f"**{title}**", ""] + [f"- {x}" for x in rec[key]] + [""]
     rv = p["revision"]
+    mc = p.get("mission_contribution")
+    if mc:
+        L += ["### Mission contribution (alongside, not instead of, the financial checks)", ""]
+        L += [f"- **{label}:** {mc.get(key) or '—'}" for key, label in (("inclusion", "Inclusion"), ("connection", "Connection"),
+              ("accessibility", "Accessibility"), ("recognition", "Recognition"), ("charitable_alignment", "Charitable alignment"))]
+        L += [f"- Community lesson applied: {x}" for x in mc.get("community_lessons_applied") or []]
+        L += [f"- Open question: {x}" for x in mc.get("open_questions") or []] + [""]
     L += ["## 3. Original and revised strategy", ""]
     if rv.get("original"):
         o = rv["original"]
@@ -210,6 +220,8 @@ def packet_markdown(p: dict) -> str:
         L.append(f"- **History check, {'passed' if h['passed'] else 'failed'}:** {h['name']}. {h['detail']}")
     if not p["lessons"]:
         L.append("- Historical lessons were not used in this run.")
+    for c in p.get("community_insights") or []:
+        L.append(f"- (community: {c['lens_label']}) {c['observation']} “{c['quote']}” [{c['evidence_label']}; reflections {', '.join(map(str, c['reflection_ids'])) or '—'}]")
     L += ["", "## 8. Unsent outreach drafts", ""]
     for d in p["drafts"]:
         L += [f"### To {d['recipient']}: {d['subject']}", "", d["body"], ""]

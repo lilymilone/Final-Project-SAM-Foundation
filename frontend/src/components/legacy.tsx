@@ -120,8 +120,14 @@ const FIELDS: { key: keyof LegacyEvent; label: string; type?: string; span?: boo
   { key: "sponsorship_info", label: "Sponsors and what they gave", span: true },
   { key: "summary", label: "Event summary", span: true, textarea: true },
   { key: "notes", label: "Notes", span: true, textarea: true },
+  { key: "volunteers_count", label: "Volunteers (leave blank if not recorded)", type: "number" },
+  { key: "repeat_participants", label: "Returning participants (if recorded)", type: "number" },
+  { key: "partnerships_formed", label: "Partnerships formed", type: "number" },
+  { key: "funds_directed_usd", label: "Funds directed to charitable programs (USD)", type: "number" },
+  { key: "community_outcomes", label: "Documented community outcomes (what actually happened, not impressions)", span: true, textarea: true },
 ];
-const NUMERIC = new Set(["attendance", "fundraising_goal_usd", "funds_raised_usd", "total_cost_usd", "sponsorship_usd"]);
+const NUMERIC = new Set(["attendance", "fundraising_goal_usd", "funds_raised_usd", "total_cost_usd", "sponsorship_usd", "volunteers_count",
+  "repeat_participants", "partnerships_formed", "funds_directed_usd"]);
 
 export function EventForm({ initial, onSaved, onCancel }: { initial?: LegacyEvent; onSaved: (e: LegacyEvent, milestone: string | null, anchor: Element | null) => void; onCancel: () => void }) {
   const [form, setForm] = useState<Record<string, string>>(() =>
@@ -139,7 +145,7 @@ export function EventForm({ initial, onSaved, onCancel }: { initial?: LegacyEven
     const body: Record<string, unknown> = {};
     for (const f of FIELDS) {
       const v = form[f.key].trim();
-      body[f.key] = NUMERIC.has(f.key) ? (v === "" ? null : Number(v)) : f.key === "event_date" ? v || null : v || (["sponsorship_info", "notes", "venue"].includes(f.key) ? null : "");
+      body[f.key] = NUMERIC.has(f.key) ? (v === "" ? null : Number(v)) : f.key === "event_date" ? v || null : v || (["sponsorship_info", "notes", "venue", "community_outcomes"].includes(f.key) ? null : "");
     }
     try {
       const res = initial
@@ -254,6 +260,7 @@ const KIND: Record<string, { label: string; cls: string }> = {
   what_worked: { label: "Strength", cls: "bg-[#e3f1e8] text-sage" },
   recurring_problem: { label: "Recurring problem", cls: "bg-[#fbf1e3] text-amber" },
   recommendation: { label: "Recommendation", cls: "bg-lilac text-royal" },
+  community_insight: { label: "Community insight", cls: "bg-blush/70 text-plum" },
 };
 const STATUS: Record<string, string> = { new: "Not reviewed", reviewed: "Reviewed", adopted: "Adopted", dismissed: "Dismissed", superseded: "Superseded" };
 

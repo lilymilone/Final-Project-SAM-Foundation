@@ -162,3 +162,67 @@ def figures_on_page(text: str, values: list[float]) -> dict[str, bool]:
         as_int = str(int(v)) if float(v).is_integer() else None
         found[str(v)] = (as_int in numbers) if as_int else (f"{v:.2f}" in numbers or str(v) in numbers)
     return found
+
+
+# ── Dates and amounts on fetched pages ──────────────────────────────────────────
+
+_MONTHS = {m: i for i, m in enumerate(("january", "february", "march", "april", "may", "june", "july", "august", "september",
+                                        "october", "november", "december"), start=1)}
+_MONTH_RX = r"(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\.?"
+
+
+def dates_in_text(text: str, limit: int = 40) -> list[str]:
+    """ISO dates written in the text ("May 9, 2027", "2027-05-09", "5/9/2027")."""
+    import re as _re
+    from datetime import date as _date
+    found: list[str] = []
+
+    def add(y: int, m: int, d: int) -> None:
+        try:
+            iso = _date(y, m, d).isoformat()
+        except ValueError:
+            return
+        if iso not in found:
+            found.append(iso)
+
+    for mon, day, year in _re.findall(_MONTH_RX + r"\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})", text, flags=_re.IGNORECASE):
+        key = next(k for k in _MONTHS if k.startswith(mon.lower()[:3]))
+        add(int(year), _MONTHS[key], int(day))
+    for year, month, day in _re.findall(r"\b(\d{4})-(\d{2})-(\d{2})\b", text):
+        add(int(year), int(month), int(day))
+    for month, day, year in _re.findall(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b", text):
+        add(int(year), int(month), int(day))
+    return found[:limit]
+
+
+def date_status(claim: str | None, page_dates: list[str]) -> tuple[str, str | None]:
+    """Compare a date a search result claims with the dates on the fetched page.
+    Returns (status, detail): confirmed | conflicting | unconfirmed | none."""
+    from datetime import date as _date
+    if not claim:
+        return "none", None
+    claimed = dates_in_text(claim)
+    if not claimed:
+        return "unconfirmed", f"The date “{claim}” could not be read as a calendar date."
+    if any(c in page_dates for c in claimed):
+        return "confirmed", None
+    near = [p for p in page_dates for c in claimed if abs((_date.fromisoformat(p) - _date.fromisoformat(c)).days) <= 45]
+    if near:
+        return "conflicting", f"The search result says {claim}, but the page says {_long_date(near[0])}."
+    return "unconfirmed", f"The date {claim} does not appear on the page."
+
+
+def _long_date(iso: str) -> str:
+    from datetime import date as _date
+    d = _date.fromisoformat(iso)
+    return f"{d:%B} {d.day}, {d.year}"
+
+
+def money_in_text(text: str, limit: int = 40) -> list[float]:
+    import re as _re
+    out = []
+    for n in _re.findall(r"\$\s?(\d[\d,]*(?:\.\d+)?)", text):
+        v = float(n.replace(",", ""))
+        if v not in out:
+            out.append(v)
+    return out[:limit]

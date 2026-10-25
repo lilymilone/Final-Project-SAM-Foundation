@@ -214,6 +214,29 @@ class ResearchFinding(Base):
     is_synthetic: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     saved: Mapped[bool] = mapped_column(Boolean, default=False)
     retrieved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Mission Discovery dashboard (Prompt 5). Every field comes from a source or is left empty.
+    name: Mapped[str | None] = mapped_column(String(200), nullable=True)  # organization or initiative
+    website: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    geography: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    purpose: Mapped[str | None] = mapped_column(Text, nullable=True)
+    activities: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    dates_text: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    date_status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # confirmed|unconfirmed|conflicting|none
+    partnership_types: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    contribution_ways: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    known_costs: Mapped[str | None] = mapped_column(Text, nullable=True)  # only costs stated on a checked source
+    missing_info: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    next_step: Mapped[str | None] = mapped_column(Text, nullable=True)
+    alignment_detail: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)  # A charitable, B philosophical, C practical, D evidence
+    fit: Mapped[str | None] = mapped_column(String(30), nullable=True)  # Strong fit|Possible fit|Weak fit|Needs research
+    fit_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    warnings: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    injection_flags: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    last_checked: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # new|saved|dismissed
+    board_category: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)  # private board notes; never sent to a model or website
+    research_requested: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     created_at: Mapped[datetime] = _created()
 
 
@@ -317,6 +340,14 @@ class OutreachDraft(Base):
     personalization_basis: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_synthetic_target: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="draft")  # draft | reviewed | archived
+    # Partnership drafts (Prompt 5): what the board needs to review a draft before anyone sends it.
+    purpose: Mapped[str | None] = mapped_column(Text, nullable=True)
+    opportunity: Mapped[str | None] = mapped_column(Text, nullable=True)
+    next_step: Mapped[str | None] = mapped_column(Text, nullable=True)
+    foundation_background: Mapped[str | None] = mapped_column(Text, nullable=True)
+    sources: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # [{title, url, verification}]
+    finding_id: Mapped[int | None] = mapped_column(ForeignKey("research_findings.id", ondelete="SET NULL"), nullable=True)
+    review_notes: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # uncertainty carried over from research
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = _created()
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
@@ -343,6 +374,12 @@ class HistoricalEvent(Base):
     sponsorship_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
     sponsorship_info: Mapped[str | None] = mapped_column(Text, nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Community impact (Prompt 5). Board-recorded counts; empty means "not recorded", never zero.
+    volunteers_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    repeat_participants: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    partnerships_formed: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    funds_directed_usd: Mapped[float | None] = mapped_column(Float, nullable=True)  # to charitable programs
+    community_outcomes: Mapped[str | None] = mapped_column(Text, nullable=True)
     updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -381,6 +418,11 @@ class BoardReflection(Base):
     should_repeat: Mapped[str | None] = mapped_column(Text, nullable=True)  # 5. What should we repeat?
     do_differently: Mapped[str] = mapped_column(Text, default="")  # 6. What should we change?
     advice: Mapped[str | None] = mapped_column(Text, nullable=True)  # 7. Advice for the next planning board
+    # Community questions (Prompt 5). Board observations, not verified outcomes.
+    welcome_inclusion: Mapped[str | None] = mapped_column(Text, nullable=True)  # Did attendees seem welcomed and included?
+    connection_moments: Mapped[str | None] = mapped_column(Text, nullable=True)  # Which activities created connection?
+    volunteer_appreciation: Mapped[str | None] = mapped_column(Text, nullable=True)  # Did volunteers feel appreciated?
+    accessibility_issues: Mapped[str | None] = mapped_column(Text, nullable=True)  # Accessibility or inclusion problems?
     rating: Mapped[int | None] = mapped_column(Integer, nullable=True)  # 1-5
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = _created()

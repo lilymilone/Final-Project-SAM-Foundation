@@ -141,6 +141,11 @@ export default function LegacyEventPage() {
                 <FactRow icon={<Scale size={15} />} label="Net proceeds (calculated)" value={usd(e.net_usd)} />
                 <FactRow icon={<Handshake size={15} />} label="Sponsorship" value={usd(e.sponsorship_usd)} />
                 <div className="rounded-xl bg-ivory/80 px-3 py-2 sm:col-span-2"><p className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Sponsors</p><p className="text-sm text-plum">{e.sponsorship_info || "—"}</p></div>
+                <FactRow icon={<Users size={15} />} label="Volunteers" value={e.volunteers_count ?? "Not recorded"} />
+                <FactRow icon={<Users size={15} />} label="Returning participants" value={e.repeat_participants ?? "Not recorded"} />
+                <FactRow icon={<Handshake size={15} />} label="Partnerships formed" value={e.partnerships_formed ?? "Not recorded"} />
+                <FactRow icon={<CircleDollarSign size={15} />} label="Directed to programs" value={e.funds_directed_usd == null ? "Not recorded" : usd(e.funds_directed_usd)} />
+                {e.community_outcomes && <div className="rounded-xl bg-ivory/80 px-3 py-2 sm:col-span-2 lg:col-span-4"><p className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Documented community outcomes (board-recorded)</p><p className="text-sm text-plum">{e.community_outcomes}</p></div>}
               </div>
               {e.summary && <p className="mt-5 max-w-3xl leading-relaxed text-ink">{e.summary}</p>}
               {e.notes && <p className="mt-2 max-w-3xl text-sm text-muted"><b>Notes:</b> {e.notes}</p>}

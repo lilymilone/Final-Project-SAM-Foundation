@@ -40,23 +40,27 @@ VENUE_STRATEGY = _t(A.FUNDRAISING_EVENTS, "Shortlist venues and fundraising stra
 VENUE_SEARCH = _t(A.FUNDRAISING_EVENTS, "Web search: venue candidates", "low", False, "low", 9000, 1500)
 FINANCE_NARRATIVE = _t(A.FINANCIAL_ANALYSIS, "Explain computed financial results", "medium", False, "high", 4000, 1200)
 ACK_TEMPLATE = _t(A.DONATIONS_COMPLIANCE, "Draft acknowledgment template and review items", "low", False, "medium", 1500, 1200)
+MISSION_PLAN = _t(A.MISSION_DISCOVERY, "Understand the research request (extraction)", "low", False, "low", 900, 400)
 MISSION_SEARCH = _t(A.MISSION_DISCOVERY, "Web search: mission-aligned opportunities", "low", False, "low", 9000, 1500)
-MISSION_CLASSIFY = _t(A.MISSION_DISCOVERY, "Classify and summarize sources", "medium", False, "low", 4000, 1800)
-PARTNER_SEARCH = _t(A.PARTNERSHIPS_OUTREACH, "Web search: prospective partners", "low", False, "low", 9000, 1500)
-OUTREACH_DRAFTS = _t(A.PARTNERSHIPS_OUTREACH, "Write personalized outreach drafts", "low", False, "low", 2500, 1800)
+MISSION_ALIGNMENT = _t(A.MISSION_DISCOVERY, "Compare sources and synthesize mission alignment", "medium", True, "low", 6000, 4000)
+OUTREACH_DRAFTS = _t(A.PARTNERSHIPS_OUTREACH, "Short venue-inquiry drafts", "low", False, "low", 2500, 1800)
+OUTREACH_PERSONALIZED = _t(A.PARTNERSHIPS_OUTREACH, "Personalized partnership drafts from research", "medium", True, "medium", 5000, 4000)
+PARTNERSHIP_STRATEGY = _t(A.ORCHESTRATOR, "Partnership strategy packet from multi-agent findings", "high", True, "high", 8000, 2500)
 
 AGENT_SPECS: tuple[AgentSpec, ...] = (
     AgentSpec(
         A.ORCHESTRATOR, "Orchestrator",
         "Reads the board's request, picks the specialists, manages dependencies and revisions, and writes the board-ready recommendation.",
-        ("read_event_plan", "create_event_plan", "evaluate_constraints", "verify_final_result"),
-        (CLASSIFY, BOARD_RECOMMENDATION, SUMMARY_REPORT),
+        ("read_event_plan", "create_event_plan", "evaluate_constraints", "read_opportunities", "select_opportunities",
+         "verify_final_result"),
+        (CLASSIFY, BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY, SUMMARY_REPORT),
     ),
     AgentSpec(
         A.MISSION_DISCOVERY, "Mission Discovery",
-        "Researches mental-health and eating-disorder organizations, research initiatives, awareness events, and partnership opportunities.",
+        "Researches mental-health and eating-disorder organizations, research initiatives, awareness events, and partnership "
+        "opportunities, and explains their fit with the foundation's mission and philosophy from sources.",
         ("search_web", "fetch_source", "classify_mission_alignment", "save_research_finding"),
-        (MISSION_SEARCH, MISSION_CLASSIFY),
+        (MISSION_PLAN, MISSION_SEARCH, MISSION_ALIGNMENT),
     ),
     AgentSpec(
         A.FUNDRAISING_EVENTS, "Fundraising & Events",
@@ -78,9 +82,10 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     ),
     AgentSpec(
         A.PARTNERSHIPS_OUTREACH, "Partnerships & Outreach",
-        "Identifies prospective partners and writes personalized, unsent outreach drafts.",
-        ("search_web", "fetch_source", "read_saved_findings", "create_outreach_draft"),
-        (PARTNER_SEARCH, OUTREACH_DRAFTS),
+        "Writes personalized, unsent outreach drafts from verified research. It can only read findings and save drafts: "
+        "it has no web, mail, messaging, or scheduling tool.",
+        ("read_saved_findings", "create_outreach_draft"),
+        (OUTREACH_DRAFTS, OUTREACH_PERSONALIZED),
     ),
     AgentSpec(
         A.EVENT_INTELLIGENCE, "Event Intelligence & Learning",

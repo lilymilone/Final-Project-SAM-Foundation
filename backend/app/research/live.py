@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from ..agents.contracts import ToolResult
 from ..agents.outputs import SearchHits, VenueHits
-from ..agents.registry import MISSION_SEARCH, PARTNER_SEARCH, VENUE_SEARCH
+from ..agents.registry import MISSION_SEARCH, VENUE_SEARCH
 from ..ai.router import TaskProfile
 
 SEARCH_RULES = """Use web search to find real, current sources. Report only what the sources say.
@@ -50,16 +50,18 @@ def _search(ctx, agent: str, profile: TaskProfile, query: str, instructions: str
 
 
 def live_web_search(ctx, query: str, purpose: str) -> ToolResult:
-    agent = "partnerships_outreach" if purpose == "sponsors" else "mission_discovery"
-    profile = PARTNER_SEARCH if purpose == "sponsors" else MISSION_SEARCH
+    kinds = "local businesses with community-giving or sponsorship programs" if purpose == "sponsors" else \
+        "organizations, research initiatives, awareness events, or partnership opportunities"
     hits: SearchHits = _search(
-        ctx, agent, profile, query,
-        "Return up to 6 results relevant to the request: organizations, research initiatives, awareness events, "
-        "or partnership opportunities. Include a one-sentence snippet summarizing what the source says.",
+        ctx, "mission_discovery", MISSION_SEARCH, query,
+        f"Return up to 6 results relevant to the request: {kinds}. Prefer each organization's own official website. "
+        "Include a one-sentence snippet summarizing what the source says. date_claim: an upcoming event, application, or "
+        "deadline date exactly as the source states it, else null.",
         SearchHits,
     )
     data = [{"source_id": f"web:{i + 1}", "title": h.title, "url": h.url, "publisher": h.publisher, "published": h.published,
-             "snippet": h.snippet, "category_hint": None} for i, h in enumerate(hits.hits[:6])]
+             "date_claim": h.date_claim, "snippet": h.snippet, "category_hint": None, "geography": None}
+            for i, h in enumerate(hits.hits[:6])]
     return ToolResult(tool="search_web", ok=True, data=data, summary=f"{len(data)} live results (links not yet verified)",
                       warnings=[hits.search_notes] if hits.search_notes else [])
 

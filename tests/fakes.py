@@ -96,18 +96,61 @@ def ack(p: dict, kw: dict) -> dict:
                               "related_flag": "250_plus"}]}
 
 
+def research_plan(p: dict, kw: dict) -> dict:
+    return {"search_query": p["request"][:120], "geography": "New York, NY" if "new york" in p["request"].lower() else None,
+            "count_requested": None, "opportunity_types": ["organization"], "focus_criteria": ["mental health", "belonging"]}
+
+
+def _lvl(level: str, why: str) -> dict:
+    return {"level": level, "explanation": why}
+
+
 def mission(p: dict, kw: dict) -> dict:
-    return {"summary": "Found aligned organizations.", "gaps": ["Check eligibility."], "findings": [
-        {"source_id": s["source_id"], "category": "organization", "alignment": "high", "summary": s["snippet"][:120],
-         "date_text": s.get("published"), "uncertainty": "Synthetic fixture.", "why_relevant": "Mission aligned."}
-        for s in p["sources"][:3]]}
+    """Reads the sources it was given, like the real model: strong research alignment for research pages,
+    community alignment for community pages, and costs only when a dollar figure is in the page excerpt."""
+    import re as _re
+    out = []
+    for s in p["sources"]:
+        text = f"{s['title']} {s['search_snippet']} {s['page_excerpt']}".lower()
+        research = "research" in text or "clinical" in text
+        community = any(w in text for w in ("community", "welcome", "neighbors", "walk", "circle"))
+        mental = "mental-health" in text or "mental health" in text
+        cost = _re.search(r"[^.]*\$\d[\d,]*[^.]*", s["page_excerpt"])
+        out.append({
+            "source_id": s["source_id"], "name": s["title"], "category": s.get("category_hint") or "organization",
+            "geography": s.get("geography_hint"), "purpose": s["search_snippet"][:160],
+            "activities": ["Workshops"] if "workshop" in text else [], "dates_text": s.get("date_claimed_by_search"),
+            "partnership_types": ["Co-host"] if "partner" in text else [], "known_costs": cost.group(0).strip() if cost else None,
+            "contribution_ways": ["Co-host an awareness event"],
+            "charitable": {"mental_health": _lvl("strong" if mental else "unclear", "From the page."),
+                           "eating_disorders": _lvl("strong" if "eating" in text else "none", "From the page."),
+                           "community_wellbeing": _lvl("strong" if community else "unclear", "From the page.")},
+            "philosophical": {"compassion": _lvl("partial", "Peer support."), "belonging_inclusion": _lvl("strong" if community else "unclear", "Welcomes newcomers."),
+                              "human_connection": _lvl("strong" if community else "unclear", "Gatherings."),
+                              "seen_heard_valued": _lvl("unclear" if research else "partial", "Not shown.")},
+            "practical": {"geography": s.get("geography_hint") or "Unknown", "cost": "Not stated", "volunteers": "Unknown",
+                          "timing": s.get("date_claimed_by_search") or "Not stated", "operations": "Unknown",
+                          "blockers": ["Outside New York"] if (s.get("geography_hint") or "") == "Connecticut" else []},
+            "evidence": {"reliability": "official_source", "verified_items": ["Purpose"], "unconfirmed_claims": [],
+                         "missing_info": ["Contact person"]},
+            "alignment_summary": "Aligned with the foundation's purpose areas per the page.",
+            "next_step": "Ask about co-hosting a spring workshop.",
+        })
+    return {"summary": f"Analyzed {len(out)} sources.", "opportunities": out, "gaps": ["Check eligibility."]}
 
 
 def drafts(p: dict, kw: dict) -> dict:
-    return {"summary": f"{len(p['targets'])} drafts.", "drafts": [
-        {"target_id": t["target_id"], "draft_type": "venue_inquiry" if t["type"] == "venue_inquiry" else "sponsor",
-         "subject": f"Inquiry: {t['name']}", "body": f"Hello {t['name']} team,\nWe are planning an event.\n[Board member name]",
-         "personalization_basis": "Venue notes."} for t in p["targets"]]}
+    out = []
+    for t in p["targets"]:
+        venue = t["suggested_type"] == "venue_inquiry"
+        out.append({"target_id": t["target_id"], "draft_type": t["suggested_type"],
+                    "subject": f"{'Inquiry' if venue else 'Introduction'}: {t['name']}",
+                    "purpose": "To ask about a possible collaboration.", "foundation_background": "Smile Like Sab.",
+                    "opportunity": "Event inquiry." if venue else (t["details"].get("purpose") or "")[:120],
+                    "body": f"Hello {t['name']} team,\nWe are writing to ask whether you would be open to a short conversation.\n"
+                            "[Board member name]", "next_step": "A 20-minute call.", "personalization_basis": "Target details.",
+                    "source_ids": t["source_ids"]})
+    return {"summary": f"{len(p['targets'])} drafts.", "drafts": out}
 
 
 def recommendation(p: dict, kw: dict) -> dict:
@@ -122,7 +165,8 @@ def recommendation(p: dict, kw: dict) -> dict:
 
 DEFAULT_HANDLERS: dict[str, Callable[[dict, dict], Any]] = {
     "RequestAnalysis": analysis, "LessonsOutput": lessons, "EventStrategyOutput": strategy, "FinanceNarrative": finance,
-    "AcknowledgmentTemplate": ack, "MissionOutput": mission, "DraftsOutput": drafts, "BoardRecommendation": recommendation,
+    "AcknowledgmentTemplate": ack, "MissionAnalysis": mission, "ResearchPlan": research_plan, "DraftsOutput": drafts,
+    "BoardRecommendation": recommendation,
 }
 
 

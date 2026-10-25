@@ -102,19 +102,19 @@ python -m pytest              # run the automated tests (148 tests, no API key o
  Event         Fundraising   Financial      Partnerships    Mission          Donations &
  Intelligence  & Events      Analysis       & Outreach      Discovery        Compliance
  lessons +     venues +      Python math:   unsent drafts   web search +     template + local
- evidence IDs  budgets       affordability  (no send tool)  link checks      merge (no PII to AI)
+ evidence IDs  budgets       affordability  (drafts only)   A–D alignment    merge (no PII to AI)
      └──lessons──►│◄──conflicts / constraints (≤1 revision round)──┘
 ```
 
 | Agent | Tools (its allow-list only) | What the model does | What code does |
 |---|---|---|---|
-| Orchestrator | read/create event plan, verify result | classify the request; write the board recommendation | plan template, dispatch, revision loop, verification |
-| Event Intelligence | past events, reflections, compare outcomes, save lesson | lessons, disagreements, constraints, citing record IDs | outcome metrics; drops lessons citing records that don't exist |
-| Fundraising & Events | search venues, fetch source, budget, revenue scenarios, save venue | rank options, fundraising strategy | every budget; re-ranks if a revision still breaks Finance's limits |
+| Orchestrator | read/create event plan, read/select opportunities, verify result | classify the request; write the board recommendation or partnership packet | plan template, dispatch, revision loop, **candidate selection by the fit rubric**, verification |
+| Event Intelligence | past events, reflections, compare outcomes, save lesson | lessons, disagreements, constraints, community insights, citing record IDs | outcome metrics; drops lessons citing records that don't exist and community insights whose quote is not word for word in the cited record |
+| Fundraising & Events | search venues, fetch source, budget, revenue scenarios, save venue | rank options, fundraising strategy, mission contribution (inclusion, connection, accessibility, recognition) | every budget; re-ranks if a revision still breaks Finance's limits |
 | Financial Analysis | ledger, position, break-even, sensitivity, affordability | plain-language explanation | all arithmetic, the verdict, and the conflicts |
 | Donations & Compliance | donations, flags, acknowledgment drafts | one template with merge fields + review items | merges names/amounts locally (the AI never sees them) |
-| Partnerships & Outreach | web search, fetch source, saved findings, create draft | personalized drafts | saves drafts as unsent; rejects drafts that claim an action |
-| Mission Discovery | web search, fetch source, alignment check, save finding | classify + summarize sources | verifies each link by fetching it; keyword cross-check |
+| Partnerships & Outreach | saved findings, create draft (**no web, mail, messaging, or scheduling tool**) | personalized drafts with purpose, opportunity, next step | saves drafts as unsent; rejects drafts that claim an action, invent a relationship, commit the foundation, or quote an amount not in the research (one bounded rewrite) |
+| Mission Discovery | web search, fetch source, alignment check, save finding | plan the search; explain alignment in four parts (A charitable, B philosophical, C practical, D evidence) | scrubs private details from queries; fetches every link; removes injected instructions; checks dates and costs against the page; applies the fit rubric |
 
 **The controlled example.** With the demo gala plan ($18,000 limit) and synthetic research:
 
@@ -143,12 +143,15 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
 | Gala plan with history (A/B run B) | 7 | 16,718 / 7,828 | $0.2115 | 134 s |
 | Event Studio default case, **live** venue research (#10) | 9 (+2 web searches) | 44,690 / 9,450 | $0.2722 | 153 s |
 | Event Studio controlled demo from the UI (#12) | 8 | 21,141 / 8,047 | $0.2322 | 173 s |
+| **Partnership workflow, live research** (#13): research → select → 3 unsent drafts → packet | 5 (+1 web search) | 24,157 / 9,011 | $0.2271 | 124 s |
+| Partnership workflow, fixture demo with injected page and conflicting dates (#14) | 4 | 10,380 / 8,284 | $0.2171 | 102 s |
+| Event Studio with mission contribution and community feedback (#15) | 8 | 25,332 (1,042 cached) / 10,240 | $0.2950 | 172 s |
 
 **Safeguards** (all tested):
 
 - **Bounded runs:**
   - Revisions are capped (`MAX_REVISIONS`, default 1, hard cap 2).
-  - Handoffs per run are capped (12).
+  - Handoffs per run are capped (16).
   - The workflow budget and model-call cap are checked before every call.
   - There is a daily spend cap.
   - Only one workflow can run at a time, and a Stop button ends a run.
@@ -189,6 +192,17 @@ Open **Event Studio**, press **Load the default test case**, then **Generate Eve
   - downloadable as Markdown or printable to PDF
 - **Evidence:** packets and structured traces of real runs #10 (live) and #12 (controlled demo) are in `docs/evidence/event_studio/`.
 
+## Mission Discovery and Partnerships (the foundation's philosophy at work)
+
+“Be somebody who makes everybody feel like somebody.” The full walkthrough, with screenshots, real runs, and the nine required tests, is in **[docs/partnership_workflow.md](docs/partnership_workflow.md)**.
+
+- **Shared mission config** (`backend/app/mission.py`): the philosophy becomes seven decision criteria, evidence rules, and an explicit fit rubric (Strong / Possible / Weak / Needs research) applied in code. There are no numeric scores, and clinical research is never down-ranked.
+- **Mission Discovery dashboard:** cards with name, category, geography, purpose, activities, checked source, dates (confirmed / conflicting / unconfirmed), alignment A–D, partnership type, costs verified on the page, missing information, next step, and date last checked. The board can save, dismiss, categorize, add private notes (never sent to a model or website), request more research, or generate a draft. Every statistic comes from stored records.
+- **Cross-agent workflow:** *“Find three organizations in New York that support mental health awareness and community belonging, and draft partnership inquiries.”* runs Mission Discovery → Orchestrator selection (code) → Partnerships & Outreach → a board-ready **Partnership Opportunity Packet**. Sources and uncertainty travel with every handoff.
+- **Drafts only, enforced in code:** Outreach's only tools read research and save drafts; send/contact/schedule/publish tools cannot be registered; drafts have no “sent” status; the API rejects one (422).
+- **Untrusted web content:** instruction-like sentences are removed before any model sees a page, and the card says so. Private names, emails, and amounts are removed from search queries.
+- **Evidence:** `docs/evidence/partnerships/` (live run #13, fixture demo #14) and `docs/evidence/event_studio/packet_run_15.md` (mission contribution).
+
 ## Our Legacy (institutional memory)
 
 The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_workflow.md](docs/legacy_workflow.md)**.
@@ -197,7 +211,7 @@ The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_w
   - date, type, venue, attendance, goal, funds raised, expenses, **calculated net**, sponsors, summary, notes
   - photos, checked by file contents and served privately
   - edits are audited; events are never deleted
-- **Structured reflections:** seven post-event questions per board member, with name and date. They are **append-only**, and AI never edits them.
+- **Structured reflections:** seven post-event questions plus four community questions (welcome, connection, volunteer appreciation, accessibility) per board member, with name and date. They are **append-only**, and AI never edits them.
 - **"Analyze Event & Generate Lessons":**
   - Event Intelligence finds themes, strengths and weaknesses, and disagreements (in the members' own words).
   - It compares outcomes in code when the data allows.
@@ -212,6 +226,7 @@ The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_w
   - recurring issues (2+ records)
   - reviewed and adopted counts
   - outcome improvement, shown as **not yet measured**
+- **Community impact** (from records only): participants, volunteers, repeat participants, partnerships formed, funds directed to programs, feedback, reported belonging, documented outcomes, and community insights. Each is labeled **Actual observation**, **Self-reported**, **AI interpretation**, or **Estimate**. Blank fields show as “Not recorded”, never zero.
 
 ## What's in this stage
 
@@ -283,9 +298,10 @@ backend/app/
   ai/         ModelRouter, providers (OpenAI / Portkey), LLMService, budgets, pricing
   agents/     agent interfaces, the seven agent specs, orchestration plans
   tools/      tool registry with allow-lists and prohibited-action blocking
-  safety/     oversight policy, untrusted-content wrapper
-  services/   deterministic finance + donation checks
-backend/scripts/  verify_models.py, create_user.py
+  safety/     oversight policy, untrusted-content wrapper, injection screening, query scrubbing
+  services/   deterministic finance, event model, mission fit, opportunity selection, impact, packets
+  mission.py  FoundationMission: philosophy, criteria, fit rubric (shared by the agents)
+backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py
 frontend/     React + TypeScript + Vite + Tailwind (built output in frontend/dist)
 tests/        pytest suite
 assets/       Smile Like Sab logo (smile-like-sab.png)

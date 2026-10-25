@@ -183,7 +183,12 @@ export default function RunPage() {
               <span className="text-xs text-muted">{run.duration_ms ? `${secs(run.duration_ms)} total` : active ? "working…" : ""}</span>
             </div>
           </div>
-          {active && <button className="btn btn-soft" onClick={stop} disabled={stopping}><Square size={14} aria-hidden="true" /> {stopping ? "Stopping…" : "Stop"}</button>}
+          <div className="flex flex-wrap gap-2">
+            {(result?.intent ?? run.workflow_type) === "partnership_outreach" && <Link className="btn btn-primary" to={`/partnerships/packets/${run.id}`}>Partnership packet</Link>}
+            {(result?.intent ?? run.workflow_type) === "plan_event" && <Link className="btn btn-soft" to={`/events/packets/${run.id}`}>Event packet</Link>}
+            {(result?.intent ?? run.workflow_type) === "mission_discovery" && !active && <Link className="btn btn-soft" to="/mission">Research dashboard</Link>}
+            {active && <button className="btn btn-soft" onClick={stop} disabled={stopping}><Square size={14} aria-hidden="true" /> {stopping ? "Stopping…" : "Stop"}</button>}
+          </div>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-4">
           <div className="rounded-2xl bg-ivory p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted"><Coins size={12} className="mr-1 inline" aria-hidden="true" />Spend</p>

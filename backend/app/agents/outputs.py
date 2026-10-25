@@ -70,6 +70,15 @@ class PlanningConstraint(BaseModel):
     evidence_reflection_ids: list[int]
 
 
+class CommunityInsight(BaseModel):
+    lens: Literal["welcomed", "connection", "volunteers", "community", "accessibility", "improvement"]
+    observation: str
+    quote: str  # copied word for word from a cited reflection or event record; code checks it
+    evidence_reflection_ids: list[int]
+    evidence_event_ids: list[int]
+    evidence_type: Literal["board_observation", "attendee_feedback_reported", "verified_outcome"]
+
+
 class LessonsOutput(BaseModel):
     summary: str
     themes: list[Theme]
@@ -80,6 +89,8 @@ class LessonsOutput(BaseModel):
     contingency_evidence_reflection_ids: list[int]
     numeric_comparison_note: str | None
     uncertainties: list[str]
+    # None-default fields are still required in the strict schema sent to the model (None defaults are stripped).
+    community_insights: list[CommunityInsight] | None = None
 
     @field_validator("recommended_contingency_pct")
     @classmethod
@@ -99,6 +110,16 @@ class VenueChoice(BaseModel):
     lessons_applied: list[str]
 
 
+class MissionContribution(BaseModel):
+    inclusion: str
+    connection: str
+    accessibility: str
+    recognition: str
+    charitable_alignment: str
+    community_lessons_applied: list[str]
+    open_questions: list[str]
+
+
 class EventStrategyOutput(BaseModel):
     summary: str
     shortlist: list[VenueChoice]
@@ -107,6 +128,7 @@ class EventStrategyOutput(BaseModel):
     changes_from_previous: str | None
     risks: list[str]
     uncertainties: list[str]
+    mission_contribution: MissionContribution | None = None
 
     @field_validator("shortlist")
     @classmethod
@@ -156,19 +178,73 @@ class AcknowledgmentTemplate(BaseModel):
 # --- Mission Discovery ------------------------------------------------------------
 
 
-class MissionFinding(BaseModel):
+class ResearchPlan(BaseModel):
+    search_query: str
+    geography: str | None
+    count_requested: int | None
+    opportunity_types: list[Literal["organization", "research", "event", "partnership", "sponsor"]]
+    focus_criteria: list[str]
+
+
+AlignmentLevel = Literal["strong", "partial", "unclear", "none"]
+
+
+class Level(BaseModel):
+    level: AlignmentLevel
+    explanation: str
+
+
+class CharitableAlignment(BaseModel):
+    mental_health: Level
+    eating_disorders: Level
+    community_wellbeing: Level
+
+
+class PhilosophicalAlignment(BaseModel):
+    compassion: Level
+    belonging_inclusion: Level
+    human_connection: Level
+    seen_heard_valued: Level
+
+
+class PracticalFeasibility(BaseModel):
+    geography: str
+    cost: str
+    volunteers: str
+    timing: str
+    operations: str
+    blockers: list[str]
+
+
+class EvidenceQuality(BaseModel):
+    reliability: Literal["official_source", "third_party", "unclear"]
+    verified_items: list[str]
+    unconfirmed_claims: list[str]
+    missing_info: list[str]
+
+
+class OpportunityAnalysis(BaseModel):
     source_id: str
-    category: Literal["organization", "research", "event", "partnership", "cause"]
-    alignment: Literal["high", "medium", "low", "none"]
-    summary: str
-    date_text: str | None
-    uncertainty: str
-    why_relevant: str
+    name: str
+    category: Literal["organization", "research", "event", "partnership", "sponsor"]
+    geography: str | None
+    purpose: str
+    activities: list[str]
+    dates_text: str | None
+    partnership_types: list[str]
+    known_costs: str | None
+    contribution_ways: list[str]
+    charitable: CharitableAlignment
+    philosophical: PhilosophicalAlignment
+    practical: PracticalFeasibility
+    evidence: EvidenceQuality
+    alignment_summary: str
+    next_step: str
 
 
-class MissionOutput(BaseModel):
+class MissionAnalysis(BaseModel):
     summary: str
-    findings: list[MissionFinding]
+    opportunities: list[OpportunityAnalysis]
     gaps: list[str]
 
 
@@ -177,6 +253,7 @@ class SearchHit(BaseModel):
     url: str
     publisher: str | None
     published: str | None
+    date_claim: str | None  # an upcoming event or deadline date the source states
     snippet: str
 
 
@@ -212,12 +289,22 @@ class VenueHits(BaseModel):
 # --- Partnerships & Outreach ------------------------------------------------------
 
 
+DraftType = Literal["venue_inquiry", "partnership_inquiry", "corporate_sponsorship", "nonprofit_collaboration",
+                    "research_support", "community_program"]
+DRAFT_TYPES: tuple[str, ...] = DraftType.__args__  # type: ignore[attr-defined]
+
+
 class DraftOut(BaseModel):
     target_id: str
-    draft_type: Literal["venue_inquiry", "partnership", "sponsor"]
+    draft_type: DraftType
     subject: str
+    purpose: str
+    foundation_background: str
+    opportunity: str
     body: str
+    next_step: str
     personalization_basis: str
+    source_ids: list[str]
 
 
 class DraftsOutput(BaseModel):

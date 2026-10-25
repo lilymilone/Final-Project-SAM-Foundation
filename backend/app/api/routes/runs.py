@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 
 from ...core.config import Settings
 from ...core.permissions import Permission
-from ...db.models import AgentHandoff, AgentRun, AgentToolCall, EventPlan, HistoricalEvent, ModelUsage
+from ...db.models import AgentHandoff, AgentRun, AgentToolCall, EventPlan, HistoricalEvent, ModelUsage, ResearchFinding
 from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])
@@ -34,6 +34,10 @@ class RunIn(BaseModel):
     historical_event_id: int | None = None
     use_history: bool = True
     interpret: bool = False  # Event Studio: the model interprets the request details even though the workflow is fixed
+    finding_ids: list[int] | None = Field(default=None, max_length=5)  # Partnerships: draft for these opportunities
+    draft_type: Literal["partnership_inquiry", "corporate_sponsorship", "nonprofit_collaboration", "venue_inquiry",
+                        "research_support", "community_program"] | None = None
+    follow_up_finding_id: int | None = None  # Mission Discovery: "request more research" on one opportunity
 
     @field_validator("request")
     @classmethod
@@ -76,6 +80,17 @@ def start_run(
         if plan is None or plan.organization_id != cu.organization_id:
             raise HTTPException(404, "Event plan not found.")
     options = {"use_history": body.use_history, "interpret": body.interpret}
+    wanted = list(body.finding_ids or []) + ([body.follow_up_finding_id] if body.follow_up_finding_id else [])
+    if wanted:
+        rows = db.scalars(select(ResearchFinding).where(ResearchFinding.id.in_(wanted),
+                                                        ResearchFinding.organization_id == cu.organization_id)).all()
+        if len(rows) != len(set(wanted)):
+            raise HTTPException(404, "Opportunity not found.")
+    if body.finding_ids:
+        options.update(finding_ids=body.finding_ids, draft_type=body.draft_type)
+    if body.follow_up_finding_id:
+        options["follow_up_finding_id"] = body.follow_up_finding_id
+        db.get(ResearchFinding, body.follow_up_finding_id).research_requested = True
     if body.historical_event_id is not None:
         past = db.get(HistoricalEvent, body.historical_event_id)
         if past is None or past.organization_id != cu.organization_id:

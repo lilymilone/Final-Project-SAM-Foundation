@@ -318,10 +318,78 @@ export type RunDetail = {
   totals: { model_calls: number; input_tokens: number; cached_input_tokens: number; output_tokens: number; web_search_calls: number; cost_usd: number; tool_calls: number; denied_tool_calls: number; handoffs: number; revisions: number };
 };
 
+export type DraftSource = { title: string | null; url: string | null; verification: string | null; retrieved_at?: string | null };
+
 export type Draft = {
   id: number; run_id: number | null; agent: string | null; draft_type: string; recipient_name: string; recipient_org: string;
   subject: string; body: string; status: "draft" | "reviewed" | "archived"; personalization_basis: string | null;
-  is_synthetic_target: boolean | null; created_at: string;
+  is_synthetic_target: boolean | null; created_at: string; updated_at?: string | null;
+  purpose?: string | null; opportunity?: string | null; next_step?: string | null; foundation_background?: string | null;
+  sources?: DraftSource[]; finding_id?: number | null; review_notes?: string[];
+};
+
+export type AlignmentLevel = { level: "strong" | "partial" | "unclear" | "none"; explanation: string };
+export type AlignmentDetail = {
+  charitable: Record<string, AlignmentLevel>;
+  philosophical: Record<string, AlignmentLevel>;
+  practical: { geography: string; cost: string; volunteers: string; timing: string; operations: string; blockers: string[] };
+  evidence: { reliability: string; verified_items: string[]; unconfirmed_claims: string[]; missing_info: string[] };
+  summary: string;
+};
+
+export type Opportunity = {
+  id: number; run_id: number | null; name: string; title: string; category: string; geography: string | null; purpose: string | null;
+  summary: string; activities: string[]; website: string | null; source_url: string | null; source_title: string | null;
+  verification: string; dates_text: string | null; date_status: string | null; partnership_types: string[]; contribution_ways: string[];
+  known_costs: string | null; missing_info: string[]; next_step: string | null; alignment: string | null;
+  alignment_detail: AlignmentDetail | null; fit: string | null; fit_reason: string | null; warnings: string[]; injection_flagged: boolean;
+  uncertainty: string | null; is_synthetic: boolean; status: "new" | "saved" | "dismissed"; saved: boolean; board_category: string | null;
+  research_requested: boolean; last_checked: string | null; created_at: string | null; notes?: string | null;
+  selection_reason?: string; reason?: string;
+};
+
+export type OpportunityStats = {
+  total: number; by_status: Record<string, number>; by_fit: Record<string, number>; by_verification: Record<string, number>;
+  with_warnings: number; injection_flagged: number; synthetic: number; last_checked: string | null;
+};
+
+export type MissionConfig = {
+  philosophy: string; foundation: { name: string; short_name: string; established: string; purpose_areas: string[] };
+  criteria: { key: string; label: string; question: string }[]; evidence_rules: string[];
+  fit_rubric: { label: string; rule: string }[]; event_considerations: string[]; reflection_lenses: string[]; board_categories: string[];
+};
+
+export type ImpactMetric = {
+  key: string; label: string; value: number | null; display: string; type: string; basis: string; coverage: string;
+  examples: { text: string; source: string }[];
+};
+export type Impact = { metrics: ImpactMetric[]; events_recorded: number; is_demo: boolean; labels: Record<string, string> };
+
+export type TraceStep = {
+  n: number; step_key: string; from_agent: string; to_agent: string; kind: string; status: string; objective: string;
+  duration_ms: number | null; summary: string | null; models: string[]; input_tokens: number; output_tokens: number; cost_usd: number;
+  constraints?: { name: string; detail: string; source_agent: string }[];
+};
+
+export type PartnershipDraft = {
+  id: number; recipient: string; draft_type: string; subject: string; purpose: string | null; foundation_background: string | null;
+  opportunity: string | null; body: string; next_step: string | null; sources: DraftSource[]; review_notes: string[];
+  status: "draft" | "reviewed" | "archived"; finding_id: number | null; is_synthetic_target: boolean | null;
+};
+
+export type PartnershipPacket = {
+  run: { id: number; status: string; research_mode: string; strategy: string; started_at: string; duration_ms: number | null; error: string | null };
+  request: string; philosophy: string;
+  recommendation: { headline: string; recommendation: string; rationale: string[]; options: { title: string; summary: string }[]; risks: string[];
+    decisions_for_board: string[]; next_steps: string[]; lessons_applied: string[]; caveats: string[] } | null;
+  selected: Opportunity[]; excluded: (Partial<Opportunity> & { id: number; name: string; reason: string })[];
+  selection_warnings: string[]; count_requested: number | null; unresolved: { detail: string }[];
+  drafts: PartnershipDraft[];
+  sources: { title: string; url: string | null; verification: string; http_status: number | null; retrieved_at: string | null; note: string | null }[];
+  trace: TraceStep[];
+  usage: { model_calls: number; input_tokens: number; cached_input_tokens: number; output_tokens: number; web_search_calls: number; cost_usd: number;
+    by_model: Record<string, { calls: number; input_tokens: number; cached_input_tokens: number; output_tokens: number; cost_usd: number }> };
+  verification: { passed: boolean; checks: { name: string; passed: boolean | null; detail: string }[] } | null;
 };
 
 export type ResearchFindingRow = {
@@ -349,6 +417,8 @@ export type LegacyEvent = {
   net_usd: number | null; goal_pct: number | null; sponsorship_usd: number | null; sponsorship_info: string | null;
   summary: string; notes: string | null; is_demo: boolean; reflection_count: number; photos: LegacyPhoto[];
   updated_at: string | null; lesson_count?: number; top_lesson?: string | null;
+  volunteers_count?: number | null; repeat_participants?: number | null; partnerships_formed?: number | null;
+  funds_directed_usd?: number | null; community_outcomes?: string | null;
 };
 
 export type ReflectionAnswer = { key: string; question: string; answer: string };
@@ -423,7 +493,18 @@ export type PacketVenue = {
   verification: string | null; capacity: Record<string, number>; capacity_status: string | null; capacity_quote: string | null;
   pricing_status: string | null; pricing: string | null; amenities: string[]; restrictions: string[]; notes: string | null; shortlist_rank: number | null;
 };
+export type MissionContribution = {
+  inclusion: string; connection: string; accessibility: string; recognition: string; charitable_alignment: string;
+  community_lessons_applied: string[]; open_questions: string[];
+};
+export type CommunityInsight = {
+  lens: string; lens_label: string; observation: string; quote: string; reflection_ids: number[]; event_ids: number[];
+  evidence_type: string; evidence_label: string;
+};
+
 export type StrategyPacket = {
+  mission_contribution?: MissionContribution | null;
+  community_insights?: CommunityInsight[];
   run: { id: number; status: string; research_mode: string | null; strategy: string; started_at: string; duration_ms: number | null; event_plan_id: number | null; options: { use_history?: boolean } | null; error: string | null };
   overview: { event: Record<string, string | number | null> | null; request: string; interpreted: Record<string, unknown> | null; routing: string | null };
   recommendation: BoardRecommendation | null;

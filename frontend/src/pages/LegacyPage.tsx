@@ -6,6 +6,7 @@ import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { EventForm, EventGalleryCard, HistoryExperimentCard, LegacyMetricsStrip, LessonList } from "../components/legacy";
+import { ImpactPanel } from "../components/impact";
 import { RunLauncher } from "../components/RunLauncher";
 import { Card, EmptyState, ErrorState, LoadingState, PageHeader, Toast } from "../components/ui";
 
@@ -68,8 +69,11 @@ export default function LegacyPage() {
               <EmptyState title="No lessons yet">Open an event and press “Analyze Event & Generate Lessons”, or ask for lessons across all events.</EmptyState>} />}
           </Card>
         </div>
-        <RunLauncher title="Learn across all events" intent="event_learning" lockIntent
-          examples={["What lessons can we learn from our previous events?", "Where do board members disagree about our past fundraisers?"]} />
+        <div className="space-y-5">
+          <ImpactPanel />
+          <RunLauncher title="Learn across all events" intent="event_learning" lockIntent
+            examples={["What lessons can we learn from our previous events?", "Which activities made people feel welcomed and connected?"]} />
+        </div>
       </div>
       {toast && <Toast message={toast} onDone={clearToast} />}
     </>

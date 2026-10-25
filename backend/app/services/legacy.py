@@ -15,6 +15,11 @@ REFLECTION_QUESTIONS = [
     ("should_repeat", "What should we repeat?"),
     ("do_differently", "What should we change?"),
     ("advice", "What advice would you give to the board planning the next event?"),
+    # Community questions (the foundation's philosophy). Board observations, never treated as verified outcomes.
+    ("welcome_inclusion", "Did attendees seem to feel welcomed and included?"),
+    ("connection_moments", "Which activities or moments created connection?"),
+    ("volunteer_appreciation", "Did volunteers seem to feel appreciated?"),
+    ("accessibility_issues", "Were any accessibility or inclusion problems reported?"),
 ]
 ACTIVE_LESSON = ("new", "reviewed", "adopted", None)
 
@@ -52,6 +57,9 @@ def event_out(e: HistoricalEvent, *, detail: bool = False) -> dict:
         "total_cost_usd": e.total_cost_usd, "net_usd": net_usd(e), "goal_pct": goal_pct(e),
         "sponsorship_usd": e.sponsorship_usd, "sponsorship_info": e.sponsorship_info, "summary": e.summary,
         "notes": e.notes, "is_demo": e.is_demo, "reflection_count": len(e.reflections),
+        "volunteers_count": e.volunteers_count, "repeat_participants": e.repeat_participants,
+        "partnerships_formed": e.partnerships_formed, "funds_directed_usd": e.funds_directed_usd,
+        "community_outcomes": e.community_outcomes,
         "photos": [photo_out(p) for p in sorted(e.photos, key=lambda p: p.id)],
         "updated_at": e.updated_at.isoformat() if e.updated_at else None,
     }

@@ -16,6 +16,7 @@ enforces Finance's limits and the history constraints.
 
 from __future__ import annotations
 
+from ...mission import EVENT_CONSIDERATIONS, PHILOSOPHY
 from ..base import BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding, SourceRecord
 from ..outputs import EventStrategyOutput
@@ -35,7 +36,14 @@ INSTRUCTIONS = """Rank the venue options and write a fundraising strategy for th
   why in changes_from_previous. If no option satisfies them, rank the closest one and say so plainly in risks.
 - fundraising_strategy: practical ideas (ticket tiers, sponsorship asks, paddle raise, in-kind support).
 - logistics_notes: timing, guest-count lock, accessibility, volunteers, questions to ask venues.
-- uncertainties: anything unconfirmed (availability, quotes, synthetic data)."""
+- uncertainties: anything unconfirmed (availability, quotes, synthetic data).
+- mission_contribution: how the shortlisted plan serves the foundation's mission, alongside (never instead of) the
+  financial checks: inclusion (price points, format, who might feel left out), connection (moments for guests to meet),
+  accessibility (only what the venue data states; otherwise list it as an open question), recognition (volunteers,
+  sponsors, participants), and charitable_alignment (mental health, eating disorders, community). Practical, not sentimental.
+  community_lessons_applied: which "community_insights" from past events you used, naming the event; [] if none were given.
+  Never invent feedback or claim the event will create belonging; describe what the plan makes possible.
+  open_questions: what to ask the venue or board to make the event more welcoming."""
 
 GALA_TYPES = ("gala", "dinner", "benefit")
 ALL_FORMATS = ["seated_dinner", "reception"]
@@ -151,6 +159,9 @@ class FundraisingEventsAgent(BaseAgent):
             "event": {k: event.get(k) for k in ("name", "event_type", "city", "attendance", "target_date", "date_end", "ticket_price_usd",
                                                 "fundraising_goal_usd", "budget_limit_usd", "instructions")},
             "options": prompt_options, "lessons": lessons,
+            "mission": {"philosophy": PHILOSOPHY, "event_considerations": EVENT_CONSIDERATIONS},
+            "community_insights": [{k: c.get(k) for k in ("lens_label", "event_names", "observation", "quote", "evidence_label", "reflection_ids")}
+                                   for c in task.inputs.get("community_insights") or []],
             "constraints": [c.model_dump(mode="json") for c in task.constraints],
             "previous_shortlist": task.inputs.get("previous_shortlist"),
         }, EventStrategyOutput)
@@ -190,6 +201,10 @@ class FundraisingEventsAgent(BaseAgent):
                 else:
                     warnings.append("No researched option meets every constraint; the closest option is shown for the board.")
         top = shortlist[0]
+        contribution = out.mission_contribution.model_dump() if out.mission_contribution else None
+        if contribution is not None and not task.inputs.get("community_insights") and contribution["community_lessons_applied"]:
+            contribution["community_lessons_applied"] = []  # nothing was provided, so nothing could have been applied
+            warnings.append("Removed community lessons the plan claimed to apply: no community insights were provided.")
 
         plan_id = task.inputs.get("event_plan_id")
         if plan_id:
@@ -215,5 +230,6 @@ class FundraisingEventsAgent(BaseAgent):
                                "pricing_status": o["venue"].get("pricing_status")} for o in options],
                   "shortlist": shortlist, "top_choice": top,
                   "fundraising_strategy": out.fundraising_strategy, "logistics_notes": out.logistics_notes,
-                  "changes_from_previous": out.changes_from_previous, "research_mode": ctx.research_mode},
+                  "changes_from_previous": out.changes_from_previous, "research_mode": ctx.research_mode,
+                  "mission_contribution": contribution},
         )

@@ -13,6 +13,7 @@ import LegacyPage from "./pages/LegacyPage";
 import LoginPage from "./pages/LoginPage";
 import OverviewPage from "./pages/OverviewPage";
 import PacketPage from "./pages/PacketPage";
+import PartnershipPacketPage from "./pages/PartnershipPacketPage";
 import RunPage from "./pages/RunPage";
 import { MissionDiscoveryPage, PartnershipsPage } from "./pages/PlaceholderPages";
 import SafetyPage from "./pages/SafetyPage";
@@ -49,6 +50,7 @@ function Shell() {
           <Route path="mission" element={<MissionDiscoveryPage />} />
           <Route path="events" element={<EventStudioPage />} />
           <Route path="events/packets/:id" element={<PacketPage />} />
+          <Route path="partnerships/packets/:id" element={<PartnershipPacketPage />} />
           <Route path="finance" element={<FinancePage />} />
           <Route path="donations" element={<DonationsPage />} />
           <Route path="partnerships" element={<PartnershipsPage />} />

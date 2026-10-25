@@ -1,0 +1,1117 @@
+{
+  "run": {
+    "id": 14,
+    "status": "completed",
+    "research_mode": "synthetic",
+    "strategy": "auto",
+    "started_at": "2026-10-25T02:36:36.595153",
+    "duration_ms": 102464,
+    "error": null,
+    "options": {
+      "use_history": true,
+      "interpret": false
+    }
+  },
+  "request": "Find three organizations in New York that support mental health awareness and community belonging, and draft partnership inquiries.",
+  "philosophy": "Be somebody who makes everybody feel like somebody.",
+  "recommendation": {
+    "headline": "Prioritize Harbor Minds for verification; retain the selected research opportunities as a separate mission-aligned track",
+    "recommendation": "Among the three code-selected opportunities, investigate Harbor Minds Collective first: its stated peer-led mental-health workshops and Welcome Circles most directly address the requested combination of awareness and community connection. Consider Nourish NY next only if the board wants a parallel eating-disorder research inquiry. Hold Body Image Research Fund outreach until its identity and New York eligibility are established. All three are synthetic examples, not verified partners. The selection does not establish three New York organizations supporting both mental-health awareness and belonging; the board should resolve that scope mismatch before a person uses any draft.",
+    "rationale": [
+      "Charitable alignment: Harbor Minds describes mental-health awareness workshops; Nourish NY studies treatment outcomes for eating disorders; Body Image Research Fund supports eating-disorder and body-image research. Each has a stated connection to a foundation purpose area.",
+      "Philosophical alignment: Harbor Minds offers newcomers opportunities to talk and be heard, supporting human connection and helping people feel seen, heard, and valued. Inclusion across backgrounds, abilities, and circumstances remains unclear, and accessibility arrangements are unknown.",
+      "Research alignment: Nourish NY and Body Image Research Fund strongly align with the eating-disorder research purpose. Their effects on belonging, human connection, and participants feeling valued are unclear; those gaps should not erase their direct research relevance.",
+      "Practical feasibility: Harbor Minds has a stated foundation co-hosting model that provides a concrete inquiry route. The research opportunities have defined support concepts, but oversight, reporting, funding terms, and other operational requirements need confirmation.",
+      "Evidence quality: The supplied material supports illustrative comparisons only. Synthetic-source fit labels are not evidence of real-world existence, official contacts, program quality, or demonstrated impact."
+    ],
+    "options": [
+      {
+        "title": "Harbor Minds Collective (synthetic) \u2014 first verification priority",
+        "option_id": null,
+        "summary": "Strong fit. Stated work in Brooklyn and Queens combines peer-led mental-health awareness workshops with spaces for newcomers to talk and be heard. The unsent draft, \u201cExploring a mental-health awareness workshop collaboration,\u201d asks for an introductory conversation about the organization's work and workshop requirements. Identity, official contact form, costs, responsibilities, dates, accessibility, and volunteer requirements are unconfirmed."
+      },
+      {
+        "title": "Nourish NY Eating Disorder Research Network (synthetic) \u2014 separate research track",
+        "option_id": null,
+        "summary": "Strong fit for eating-disorder research, not a demonstrated match for the requested belonging shortlist. The unsent draft, \u201cInquiry about your early-career research fellowship,\u201d requests an overview confirming identity, location, partnership contact, and funding terms. The synthetic source states that \u201cfellowship gifts start at $5,000\u201d; this is not a verified offer or a recommended commitment. Real-world existence, New York location, selection procedures, research oversight, reporting, funding deadline, and gift terms remain unconfirmed."
+      },
+      {
+        "title": "Body Image Research Fund: Spring Grant Call (synthetic) \u2014 hold pending eligibility checks",
+        "option_id": null,
+        "summary": "Strong fit for eating-disorder and body-image research, with community belonging unclear. The unsent draft, \u201cInquiry about spring research grant co-funding,\u201d requests an overview of fund identity, geographic eligibility, timing, and co-funding terms. No New York connection is established. Identity, contact, grant-call year and deadline, contribution requirements, selection process, oversight, and reporting are unknown."
+      }
+    ],
+    "risks": [
+      "All targets are synthetic. None has a verified real-world identity or official contact channel, so these drafts are not ready for external use.",
+      "The code selection favors broad mission alignment over the narrower request: two selected opportunities concern research without demonstrated community belonging, and one lacks an established New York connection.",
+      "Mission Discovery's narrative references Harbor Minds, Belonging Walk NYC, and Open Table Queens as a provisional shortlist, while the actual code selection and outreach drafts cover Harbor Minds, Nourish NY, and Body Image Research Fund. This packet follows the actual selection and draft records.",
+      "Foundation budget, volunteer capacity, and preferred timing were not supplied. Costs for Harbor Minds and Body Image Research Fund are unknown.",
+      "Open Table Queens, an excluded candidate, had instruction-like text removed from its source. It was not followed; any reconsideration requires careful human source review.",
+      "Belonging Walk NYC, another excluded candidate, has conflicting source dates: May 2, 2027 and May 9, 2027. Neither should be used for planning without confirmation."
+    ],
+    "decisions_for_board": [
+      "Decide whether to preserve the original requirement that candidates support both mental-health awareness and belonging in New York, or allow a separate eating-disorder research track.",
+      "Identify a board member or volunteer to verify identities, official sources, and recipient channels before any external inquiry.",
+      "If verification succeeds, decide whether a person should send the Harbor Minds draft first and the Nourish NY draft as a separate research inquiry. Keep Body Image Research Fund on hold until New York eligibility is established.",
+      "Choose the human sender and signatory, and review wording so each inquiry remains exploratory and makes no funding, participation, or timing commitment.",
+      "If the original scope remains unchanged, request a revised, verified shortlist rather than treating these selected opportunities as a completed answer."
+    ],
+    "next_steps": [
+      "Treat the supplied drafts as illustrative review material; verify any real-world target independently before adapting them.",
+      "For Harbor Minds, confirm the workshop model, accessibility, volunteer training, responsibilities, costs, and available dates.",
+      "For Nourish NY, confirm New York location, fellowship terms, research selection and oversight, and reporting before considering support.",
+      "For Body Image Research Fund, establish identity and New York eligibility before exploring grant timing or co-funding requirements.",
+      "Review and edit the unsent drafts in Partnerships & Outreach. Only a person can send them outside SAM SPACE after the board's review and verification.",
+      "Bring verified responses back to the board for comparison against mission fit, capacity, and requirements before considering any commitment."
+    ],
+    "lessons_applied": [
+      "Mental-health awareness and human connection drive Harbor Minds' priority because both are explicitly described in its stated programming.",
+      "The philosophy \u201cBe somebody who makes everybody feel like somebody\u201d is reflected most directly in opportunities to talk and be heard, not assumed from an organization's name or charitable purpose.",
+      "Belonging, broad inclusion, practical compassion, and sustained community-building are marked unclear where the supplied evidence does not establish them.",
+      "Clinical and scientific research remains a strong mission pathway even when belonging is not directly visible.",
+      "Mission alignment, request fit, and feasibility are separate judgments: a strong research opportunity need not satisfy a New York awareness-and-belonging request."
+    ],
+    "caveats": [
+      "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+      "Past events, books, and donations are the synthetic demo dataset.",
+      "Instruction-like text aimed at AI systems was found on 1 source page(s) (Open Table Queens (synthetic)). It was removed and not followed.",
+      "Dates conflict between sources for: Belonging Walk NYC (synthetic). Confirm them directly.",
+      "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+      "This packet uses synthetic research, not live web research. No verified links or recipient contact details were supplied.",
+      "The outreach results provide subjects, purposes, and next-step summaries rather than complete message bodies. Nothing has been sent, agreed, scheduled, funded, or committed, and no existing relationship is established.",
+      "Belonging Walk NYC merits a second look for the original request because it combines stated mental-health awareness with concrete inclusion measures. It is an event rather than a demonstrated ongoing organizational partnership, and its date and organizer require verification.",
+      "Open Table Queens merits consideration for community connection through shared meals, but explicit mental-health programming is not established and its flagged source requires human review.",
+      "Campus Minds Collective describes relevant awareness and peer-listening programs, but its stated Connecticut geography excludes it from the current New York scope."
+    ]
+  },
+  "selected": [
+    {
+      "id": 14,
+      "run_id": 14,
+      "name": "Nourish NY Eating Disorder Research Network (synthetic)",
+      "title": "Nourish NY Eating Disorder Research Network (synthetic)",
+      "category": "research",
+      "geography": "New York, NY",
+      "purpose": "Study treatment outcomes for anorexia, bulimia, and binge-eating disorder.",
+      "summary": "This is a strong illustrative match for the foundation's eating-disorder research purpose, even though community belonging is not demonstrated. Unclear philosophical criteria do not diminish the direct research alignment, but this is not a demonstrated match for the requested community-belonging shortlist.",
+      "activities": [
+        "Clinical and scientific research on eating-disorder treatment outcomes",
+        "An annual early-career research fellowship"
+      ],
+      "website": "https://example.org/synthetic/organizations/nourish-research",
+      "source_url": "https://example.org/synthetic/organizations/nourish-research",
+      "source_title": "Nourish NY Eating Disorder Research Network (synthetic)",
+      "verification": "synthetic",
+      "dates_text": "Applications for the 2027 fellowship close March 1, 2027.",
+      "date_status": "confirmed",
+      "partnership_types": [
+        "Foundation support for the early-career fellowship"
+      ],
+      "contribution_ways": [
+        "Explore supporting the early-career research fellowship."
+      ],
+      "known_costs": "\u201cfellowship gifts start at $5,000\u201d",
+      "missing_info": [
+        "Verified identity, location, and partnership contact",
+        "Fellowship selection, research oversight, and reporting arrangements",
+        "Funding deadline and gift terms"
+      ],
+      "next_step": "Verify the network's identity and New York location before asking for a fellowship funding overview and the funder commitment timeline.",
+      "alignment": "high",
+      "alignment_detail": {
+        "charitable": {
+          "mental_health": {
+            "level": "strong",
+            "explanation": "The consortium studies clinical treatment outcomes for eating disorders, directly supporting mental-health research."
+          },
+          "eating_disorders": {
+            "level": "strong",
+            "explanation": "The excerpt explicitly identifies research on anorexia, bulimia, and binge-eating disorder."
+          },
+          "community_wellbeing": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe community-building activities."
+          }
+        },
+        "philosophical": {
+          "compassion": {
+            "level": "unclear",
+            "explanation": "The excerpt describes treatment research but not participant care practices."
+          },
+          "belonging_inclusion": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe inclusion or accessibility practices."
+          },
+          "human_connection": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe opportunities for interpersonal connection."
+          },
+          "seen_heard_valued": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe patient voice or recognition."
+          }
+        },
+        "practical": {
+          "geography": "Source metadata places the network in New York, NY; the excerpt does not establish its location.",
+          "cost": "Fellowship gifts start at $5,000; the foundation's budget is unknown.",
+          "volunteers": "No volunteer role is stated.",
+          "timing": "The application deadline is March 1, 2027; a funder commitment deadline is not stated.",
+          "operations": "Foundation fellowship support is explicitly offered; funding terms and reporting are unknown.",
+          "blockers": []
+        },
+        "evidence": {
+          "reliability": "unclear",
+          "verified_items": [
+            "The supplied excerpt describes treatment-outcomes research, an annual fellowship, foundation support, a gift minimum, and an application deadline.",
+            "The supplied date-check metadata agrees with the application date in the excerpt."
+          ],
+          "unconfirmed_claims": [
+            "Real-world existence, official-source status, and New York location remain unverified."
+          ],
+          "missing_info": [
+            "Verified identity, location, and partnership contact",
+            "Fellowship selection, research oversight, and reporting arrangements",
+            "Funding deadline and gift terms"
+          ]
+        },
+        "summary": "This is a strong illustrative match for the foundation's eating-disorder research purpose, even though community belonging is not demonstrated. Unclear philosophical criteria do not diminish the direct research alignment, but this is not a demonstrated match for the requested community-belonging shortlist."
+      },
+      "fit": "Strong fit",
+      "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+      "warnings": [
+        "Unconfirmed: Real-world existence, official-source status, and New York location remain unverified."
+      ],
+      "injection_flagged": false,
+      "uncertainty": "Unconfirmed: Real-world existence, official-source status, and New York location remain unverified.",
+      "is_synthetic": true,
+      "status": "new",
+      "saved": false,
+      "board_category": null,
+      "research_requested": false,
+      "last_checked": "2026-10-25T02:37:34.001813",
+      "created_at": "2026-10-25T02:37:34.001954",
+      "selection_reason": "Strong fit; synthetic demo source"
+    },
+    {
+      "id": 13,
+      "run_id": 14,
+      "name": "Harbor Minds Collective (synthetic)",
+      "title": "Harbor Minds Collective (synthetic)",
+      "category": "organization",
+      "geography": "Brooklyn and Queens, New York",
+      "purpose": "Provide peer-led mental-health awareness workshops and spaces for newcomers to talk and be heard.",
+      "summary": "This is the clearest illustrative match for both mental-health awareness and community belonging. Its stated foundation co-hosting model offers a practical starting point, subject to verification.",
+      "activities": [
+        "Peer-led mental-health awareness workshops in community centers",
+        "Free monthly Welcome Circles",
+        "Training volunteers as circle hosts"
+      ],
+      "website": "https://example.org/synthetic/organizations/harbor-minds",
+      "source_url": "https://example.org/synthetic/organizations/harbor-minds",
+      "source_title": "Harbor Minds Collective (synthetic)",
+      "verification": "synthetic",
+      "dates_text": "Monthly Welcome Circles; no specific upcoming dates stated.",
+      "date_status": "none",
+      "partnership_types": [
+        "Co-hosting awareness workshops with local foundations and community groups"
+      ],
+      "contribution_ways": [
+        "Explore co-hosting a mental-health awareness workshop.",
+        "Ask whether foundation volunteers could train as circle hosts."
+      ],
+      "known_costs": null,
+      "missing_info": [
+        "Verified organizational identity and contact form",
+        "Workshop partnership costs and responsibilities",
+        "Upcoming dates, accessibility arrangements, and volunteer requirements",
+        "Costs or giving levels are not stated on the source."
+      ],
+      "next_step": "After verifying the organization and contact form, adapt this inquiry: \u201cHello, we are exploring partnerships for the Sabrina Audrey Milone Foundation, which supports mental-health awareness and community building. Your peer-led workshops and Welcome Circles appear closely aligned with our mission. Would you be open to a brief conversation about co-hosting an awareness workshop, including the roles, training, timing, and costs involved?\u201d",
+      "alignment": "high",
+      "alignment_detail": {
+        "charitable": {
+          "mental_health": {
+            "level": "strong",
+            "explanation": "The excerpt explicitly describes peer-led mental-health awareness workshops."
+          },
+          "eating_disorders": {
+            "level": "unclear",
+            "explanation": "The excerpt does not mention eating-disorder awareness, support, or research."
+          },
+          "community_wellbeing": {
+            "level": "strong",
+            "explanation": "Monthly Welcome Circles and community-center workshops provide recurring community activities."
+          }
+        },
+        "philosophical": {
+          "compassion": {
+            "level": "strong",
+            "explanation": "Free Welcome Circles offer newcomers a place to talk and be heard."
+          },
+          "belonging_inclusion": {
+            "level": "strong",
+            "explanation": "The source explicitly describes free Welcome Circles for newcomers."
+          },
+          "human_connection": {
+            "level": "strong",
+            "explanation": "Peer-led circles give participants a recurring opportunity to talk together."
+          },
+          "seen_heard_valued": {
+            "level": "strong",
+            "explanation": "The excerpt specifically says newcomers have a place to talk and be heard."
+          }
+        },
+        "practical": {
+          "geography": "Brooklyn and Queens match the requested New York area.",
+          "cost": "Welcome Circles are described as free; workshop partnership costs are unknown.",
+          "volunteers": "Circle hosts receive training; requirements and availability are unknown.",
+          "timing": "Circles are monthly; workshop scheduling is unknown.",
+          "operations": "The excerpt welcomes partnership inquiries through a contact form, but no verified contact channel is supplied.",
+          "blockers": []
+        },
+        "evidence": {
+          "reliability": "unclear",
+          "verified_items": [
+            "The supplied excerpt describes workshops, monthly Welcome Circles, volunteer training, and foundation co-hosting.",
+            "These statements are confirmed only within the supplied synthetic text, not through independent verification."
+          ],
+          "unconfirmed_claims": [
+            "The organization's real-world existence and official-source status are unverified."
+          ],
+          "missing_info": [
+            "Verified organizational identity and contact form",
+            "Workshop partnership costs and responsibilities",
+            "Upcoming dates, accessibility arrangements, and volunteer requirements"
+          ]
+        },
+        "summary": "This is the clearest illustrative match for both mental-health awareness and community belonging. Its stated foundation co-hosting model offers a practical starting point, subject to verification."
+      },
+      "fit": "Strong fit",
+      "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+      "warnings": [
+        "Unconfirmed: The organization's real-world existence and official-source status are unverified."
+      ],
+      "injection_flagged": false,
+      "uncertainty": "Unconfirmed: The organization's real-world existence and official-source status are unverified.",
+      "is_synthetic": true,
+      "status": "new",
+      "saved": false,
+      "board_category": null,
+      "research_requested": false,
+      "last_checked": "2026-10-25T02:37:33.998896",
+      "created_at": "2026-10-25T02:37:33.999645",
+      "selection_reason": "Strong fit; synthetic demo source"
+    },
+    {
+      "id": 18,
+      "run_id": 14,
+      "name": "Body Image Research Fund: Spring Grant Call (synthetic)",
+      "title": "Body Image Research Fund: Spring Grant Call (synthetic)",
+      "category": "research",
+      "geography": null,
+      "purpose": "Support early-career researchers studying eating disorders and body image.",
+      "summary": "This is a strong illustrative eating-disorder research opportunity; the absence of stated belonging activities does not weaken that research alignment. It cannot yet support the New York community-belonging shortlist because geography and key operational details are missing.",
+      "activities": [
+        "Small research grants",
+        "Spring grant call"
+      ],
+      "website": "https://example.org/synthetic/organizations/body-image-fund",
+      "source_url": "https://example.org/synthetic/organizations/body-image-fund",
+      "source_title": "Body Image Research Fund: Spring Grant Call (synthetic)",
+      "verification": "synthetic",
+      "dates_text": "Spring grant call; no year or deadline stated.",
+      "date_status": "none",
+      "partnership_types": [
+        "Co-funding the spring grant call"
+      ],
+      "contribution_ways": [
+        "Explore co-funding eating-disorder and body-image research grants."
+      ],
+      "known_costs": null,
+      "missing_info": [
+        "Verified fund identity and contact",
+        "Geography and New York eligibility",
+        "Grant-call year and deadline",
+        "Contribution requirements, selection process, oversight, and reporting",
+        "Costs or giving levels are not stated on the source."
+      ],
+      "next_step": "Verify the fund's identity and geographic eligibility before requesting a short overview of co-funding terms.",
+      "alignment": "high",
+      "alignment_detail": {
+        "charitable": {
+          "mental_health": {
+            "level": "strong",
+            "explanation": "The source funds eating-disorder research, directly aligning with mental-health research."
+          },
+          "eating_disorders": {
+            "level": "strong",
+            "explanation": "The excerpt explicitly supports researchers studying eating disorders and body image."
+          },
+          "community_wellbeing": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe community-building activities."
+          }
+        },
+        "philosophical": {
+          "compassion": {
+            "level": "unclear",
+            "explanation": "The excerpt describes research funding but not practical care practices."
+          },
+          "belonging_inclusion": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe inclusion or accessibility."
+          },
+          "human_connection": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe interpersonal connection activities."
+          },
+          "seen_heard_valued": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe participant voice or recognition."
+          }
+        },
+        "practical": {
+          "geography": "Unknown; New York relevance is not established.",
+          "cost": "No contribution amount is stated.",
+          "volunteers": "No volunteer role is stated.",
+          "timing": "Spring is mentioned without a year or deadline.",
+          "operations": "Partner funders are explicitly invited; grant governance and funding terms are unknown.",
+          "blockers": []
+        },
+        "evidence": {
+          "reliability": "unclear",
+          "verified_items": [
+            "The supplied excerpt describes research grants for early-career researchers and invites partner co-funders."
+          ],
+          "unconfirmed_claims": [
+            "The fund's real-world existence and official-source status are unverified.",
+            "No New York connection is established."
+          ],
+          "missing_info": [
+            "Verified fund identity and contact",
+            "Geography and New York eligibility",
+            "Grant-call year and deadline",
+            "Contribution requirements, selection process, oversight, and reporting"
+          ]
+        },
+        "summary": "This is a strong illustrative eating-disorder research opportunity; the absence of stated belonging activities does not weaken that research alignment. It cannot yet support the New York community-belonging shortlist because geography and key operational details are missing."
+      },
+      "fit": "Strong fit",
+      "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+      "warnings": [
+        "Unconfirmed: The fund's real-world existence and official-source status are unverified.; No New York connection is established."
+      ],
+      "injection_flagged": false,
+      "uncertainty": "Unconfirmed: The fund's real-world existence and official-source status are unverified.; No New York connection is established.",
+      "is_synthetic": true,
+      "status": "new",
+      "saved": false,
+      "board_category": null,
+      "research_requested": false,
+      "last_checked": "2026-10-25T02:37:34.007627",
+      "created_at": "2026-10-25T02:37:34.007714",
+      "selection_reason": "Strong fit; synthetic demo source"
+    }
+  ],
+  "excluded": [
+    {
+      "id": 17,
+      "run_id": 14,
+      "name": "Campus Minds Collective (synthetic)",
+      "title": "Campus Minds Collective (synthetic)",
+      "category": "organization",
+      "geography": "Connecticut college campuses",
+      "purpose": "Organize student-run mental-health awareness and peer-listening programs.",
+      "summary": "The stated programming aligns with mental-health awareness and listening. However, its Connecticut geography rules it out for this New York-specific request.",
+      "activities": [
+        "Mental-health awareness weeks",
+        "Peer-listening programs"
+      ],
+      "website": "https://example.org/synthetic/organizations/campus-minds",
+      "source_url": "https://example.org/synthetic/organizations/campus-minds",
+      "source_title": "Campus Minds Collective (synthetic)",
+      "verification": "synthetic",
+      "dates_text": "2026-08-30",
+      "date_status": "none",
+      "partnership_types": [],
+      "contribution_ways": [
+        "If the geographic scope changes, ask whether external foundations can support its stated awareness or peer-listening programs."
+      ],
+      "known_costs": null,
+      "missing_info": [
+        "Verified organizational identity",
+        "Whether external foundation partnerships are accepted",
+        "Program dates, costs, and participation requirements",
+        "Costs or giving levels are not stated on the source.",
+        "No dates are stated."
+      ],
+      "next_step": "Set this option aside for the current search because its stated geography is outside New York.",
+      "alignment": "high",
+      "alignment_detail": {
+        "charitable": {
+          "mental_health": {
+            "level": "strong",
+            "explanation": "The excerpt explicitly describes mental-health awareness weeks and peer-listening programs."
+          },
+          "eating_disorders": {
+            "level": "unclear",
+            "explanation": "The excerpt does not mention eating disorders."
+          },
+          "community_wellbeing": {
+            "level": "partial",
+            "explanation": "Campus peer-listening programs provide a community-focused activity, but ongoing community outcomes are not described."
+          }
+        },
+        "philosophical": {
+          "compassion": {
+            "level": "partial",
+            "explanation": "Peer-listening is a stated form of interpersonal support, although care practices are not described."
+          },
+          "belonging_inclusion": {
+            "level": "unclear",
+            "explanation": "The excerpt does not state inclusion or accessibility arrangements."
+          },
+          "human_connection": {
+            "level": "strong",
+            "explanation": "Peer-listening programs explicitly involve interpersonal engagement."
+          },
+          "seen_heard_valued": {
+            "level": "strong",
+            "explanation": "Peer-listening programs directly offer an opportunity to be heard."
+          }
+        },
+        "practical": {
+          "geography": "The stated activities are on Connecticut campuses, outside the requested New York area.",
+          "cost": "No costs are stated.",
+          "volunteers": "The network is student-run; external volunteer roles are unknown.",
+          "timing": "No dates are stated.",
+          "operations": "No foundation partnership process is described.",
+          "blockers": [
+            "The stated service geography is Connecticut, outside the requested New York scope."
+          ]
+        },
+        "evidence": {
+          "reliability": "unclear",
+          "verified_items": [
+            "The supplied excerpt describes a student-run Connecticut network with awareness weeks and peer-listening programs."
+          ],
+          "unconfirmed_claims": [
+            "The network's real-world existence and official-source status are unverified."
+          ],
+          "missing_info": [
+            "Verified organizational identity",
+            "Whether external foundation partnerships are accepted",
+            "Program dates, costs, and participation requirements"
+          ]
+        },
+        "summary": "The stated programming aligns with mental-health awareness and listening. However, its Connecticut geography rules it out for this New York-specific request."
+      },
+      "fit": "Possible fit",
+      "fit_reason": "Aligned, but feasibility issues: The stated service geography is Connecticut, outside the requested New York scope..",
+      "warnings": [
+        "Unconfirmed: The network's real-world existence and official-source status are unverified."
+      ],
+      "injection_flagged": false,
+      "uncertainty": "Unconfirmed: The network's real-world existence and official-source status are unverified.",
+      "is_synthetic": true,
+      "status": "new",
+      "saved": false,
+      "board_category": null,
+      "research_requested": false,
+      "last_checked": "2026-10-25T02:37:34.006291",
+      "created_at": "2026-10-25T02:37:34.006380",
+      "reason": "Ranked below the 3 requested."
+    },
+    {
+      "id": 16,
+      "run_id": 14,
+      "name": "Open Table Queens (synthetic)",
+      "title": "Open Table Queens (synthetic)",
+      "category": "organization",
+      "geography": "Queens, NY",
+      "purpose": "Bring together neighbors who live alone, especially older adults, through community dinners.",
+      "summary": "This is a strong illustrative community-building option with direct opportunities for shared activity. It should not be presented as a mental-health awareness organization on the supplied evidence.",
+      "activities": [
+        "Weekly community dinners",
+        "Volunteer meal preparation and shared meals with guests",
+        "Winter dinner series"
+      ],
+      "website": "https://example.org/synthetic/organizations/open-table-queens",
+      "source_url": "https://example.org/synthetic/organizations/open-table-queens",
+      "source_title": "Open Table Queens (synthetic)",
+      "verification": "synthetic",
+      "dates_text": "Weekly dinners; a winter dinner series is mentioned without specific dates.",
+      "date_status": "none",
+      "partnership_types": [
+        "Community sponsorship of the winter dinner series"
+      ],
+      "contribution_ways": [
+        "Explore sponsoring the winter dinner series.",
+        "Ask whether foundation volunteers can help cook and share meals with guests."
+      ],
+      "known_costs": null,
+      "missing_info": [
+        "Verified organizational identity, location, and contact",
+        "Winter dates and sponsorship terms",
+        "Volunteer onboarding, food-safety requirements, and accessibility",
+        "Whether any mental-health awareness collaboration is offered",
+        "Costs or giving levels are not stated on the source."
+      ],
+      "next_step": "After verifying the organization, adapt this inquiry: \u201cHello, the Sabrina Audrey Milone Foundation supports community-building initiatives alongside mental-health awareness and eating-disorder research and support. Your shared dinners for neighbors who live alone appear relevant to our community mission. Could you share the winter series dates, sponsorship options, and whether foundation volunteers could help prepare and share a meal?\u201d",
+      "alignment": "high",
+      "alignment_detail": {
+        "charitable": {
+          "mental_health": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe mental-health awareness or support services."
+          },
+          "eating_disorders": {
+            "level": "unclear",
+            "explanation": "Community meals are described, but eating-disorder support or research is not."
+          },
+          "community_wellbeing": {
+            "level": "strong",
+            "explanation": "Weekly dinners explicitly bring together neighbors who live alone."
+          }
+        },
+        "philosophical": {
+          "compassion": {
+            "level": "strong",
+            "explanation": "Volunteers cook and share meals with neighbors who live alone, especially older adults."
+          },
+          "belonging_inclusion": {
+            "level": "partial",
+            "explanation": "The dinners intentionally bring together people living alone, but broader inclusion and accessibility arrangements are not stated."
+          },
+          "human_connection": {
+            "level": "strong",
+            "explanation": "Volunteers and guests share meals together each week."
+          },
+          "seen_heard_valued": {
+            "level": "unclear",
+            "explanation": "The excerpt does not explicitly describe guest voice, listening, or recognition."
+          }
+        },
+        "practical": {
+          "geography": "Source metadata places the organization in Queens, NY.",
+          "cost": "Sponsorship costs and meal charges, if any, are unknown.",
+          "volunteers": "Volunteers cook and share meals; onboarding and capacity are unknown.",
+          "timing": "Weekly programming is stated, but winter series dates are unknown.",
+          "operations": "Community sponsorship is welcomed; sponsorship terms and meal-service requirements are not stated.",
+          "blockers": []
+        },
+        "evidence": {
+          "reliability": "unclear",
+          "verified_items": [
+            "The supplied excerpt describes weekly dinners, a focus on neighbors living alone, volunteer participation, and winter sponsorship."
+          ],
+          "unconfirmed_claims": [
+            "The organization's real-world existence, official-source status, and location are not independently verified."
+          ],
+          "missing_info": [
+            "Verified organizational identity, location, and contact",
+            "Winter dates and sponsorship terms",
+            "Volunteer onboarding, food-safety requirements, and accessibility",
+            "Whether any mental-health awareness collaboration is offered"
+          ]
+        },
+        "summary": "This is a strong illustrative community-building option with direct opportunities for shared activity. It should not be presented as a mental-health awareness organization on the supplied evidence."
+      },
+      "fit": "Possible fit",
+      "fit_reason": "Aligned, but its page contained instruction-like text, so it needs a careful human check.",
+      "warnings": [
+        "This page contained instructions aimed at an AI system. They were removed and not followed; treat the source with caution.",
+        "Unconfirmed: The organization's real-world existence, official-source status, and location are not independently verified."
+      ],
+      "injection_flagged": true,
+      "uncertainty": "This page contained instructions aimed at an AI system. They were removed and not followed; treat the source with caution. Unconfirmed: The organization's real-world existence, official-source status, and location are not independently verified.",
+      "is_synthetic": true,
+      "status": "new",
+      "saved": false,
+      "board_category": null,
+      "research_requested": false,
+      "last_checked": "2026-10-25T02:37:34.004916",
+      "created_at": "2026-10-25T02:37:34.005009",
+      "reason": "Ranked below the 3 requested."
+    },
+    {
+      "id": 15,
+      "run_id": 14,
+      "name": "Belonging Walk NYC (synthetic)",
+      "title": "Belonging Walk NYC (synthetic)",
+      "category": "event",
+      "geography": "Hudson River Greenway, New York, NY; source metadata specifies Manhattan.",
+      "purpose": "Hold an annual community walk for mental-health awareness.",
+      "summary": "This event combines explicit mental-health awareness with concrete inclusion measures. It offers a defined participation route rather than an established ongoing organizational partnership, and the conflicting date must be resolved before planning.",
+      "activities": [
+        "Annual community walk",
+        "Resource tables hosted by local foundations and nonprofits"
+      ],
+      "website": "https://example.org/synthetic/organizations/belonging-walk",
+      "source_url": "https://example.org/synthetic/organizations/belonging-walk",
+      "source_title": "Belonging Walk NYC (synthetic)",
+      "verification": "synthetic",
+      "dates_text": "The page states \u201cSaturday, May 9, 2027\u201d; the search snippet states May 2, 2027. The event date requires confirmation.",
+      "date_status": "conflicting",
+      "partnership_types": [
+        "Resource-table hosting by local foundations and nonprofits"
+      ],
+      "contribution_ways": [
+        "Explore hosting a foundation resource table.",
+        "Ask what mental-health awareness materials and activities are permitted at the table."
+      ],
+      "known_costs": "\u201cthe resource table fee is $150\u201d",
+      "missing_info": [
+        "Verified organizer identity and contact channel",
+        "Confirmed event date",
+        "Table registration deadline, staffing, equipment, and materials requirements",
+        "Additional accessibility and event logistics"
+      ],
+      "next_step": "After verifying the organizer, adapt this inquiry: \u201cHello, the Sabrina Audrey Milone Foundation is exploring New York partnerships supporting mental-health awareness and community connection. We are interested in learning about hosting a resource table at Belonging Walk NYC. Could you confirm the event date and share the registration process, table requirements, staffing expectations, and what the stated fee includes?\u201d",
+      "alignment": "high",
+      "alignment_detail": {
+        "charitable": {
+          "mental_health": {
+            "level": "strong",
+            "explanation": "The excerpt explicitly identifies mental-health awareness as the walk's purpose."
+          },
+          "eating_disorders": {
+            "level": "unclear",
+            "explanation": "The excerpt does not mention eating disorders."
+          },
+          "community_wellbeing": {
+            "level": "strong",
+            "explanation": "The source describes an annual community walk involving local foundations and nonprofits."
+          }
+        },
+        "philosophical": {
+          "compassion": {
+            "level": "partial",
+            "explanation": "Welcoming walkers of every pace and ability on a step-free route shows practical consideration for participation."
+          },
+          "belonging_inclusion": {
+            "level": "strong",
+            "explanation": "The excerpt explicitly welcomes every pace and ability and states that the route is step-free."
+          },
+          "human_connection": {
+            "level": "strong",
+            "explanation": "A shared community walk and resource tables provide direct opportunities to meet others."
+          },
+          "seen_heard_valued": {
+            "level": "unclear",
+            "explanation": "The excerpt does not describe participant storytelling, listening, or recognition."
+          }
+        },
+        "practical": {
+          "geography": "The stated New York location matches the requested area.",
+          "cost": "The resource table fee is $150; other participation costs are unknown.",
+          "volunteers": "Table staffing requirements are not stated.",
+          "timing": "The search snippet and page give conflicting event dates.",
+          "operations": "Resource tables are offered; registration, materials rules, and logistics are unknown.",
+          "blockers": []
+        },
+        "evidence": {
+          "reliability": "unclear",
+          "verified_items": [
+            "The supplied excerpt describes a mental-health awareness walk, resource-table participation, a table fee, and a step-free route.",
+            "The excerpt explicitly welcomes walkers of every pace and ability."
+          ],
+          "unconfirmed_claims": [
+            "The event date is conflicting: May 2, 2027 in the snippet and May 9, 2027 on the page.",
+            "The event's real-world existence and official-source status are unverified."
+          ],
+          "missing_info": [
+            "Verified organizer identity and contact channel",
+            "Confirmed event date",
+            "Table registration deadline, staffing, equipment, and materials requirements",
+            "Additional accessibility and event logistics"
+          ]
+        },
+        "summary": "This event combines explicit mental-health awareness with concrete inclusion measures. It offers a defined participation route rather than an established ongoing organizational partnership, and the conflicting date must be resolved before planning."
+      },
+      "fit": "Possible fit",
+      "fit_reason": "Aligned, but the dates conflict between sources.",
+      "warnings": [
+        "Conflicting dates: The search result says May 2, 2027, but the page says May 9, 2027. Confirm directly before planning around it.",
+        "Unconfirmed: The event date is conflicting: May 2, 2027 in the snippet and May 9, 2027 on the page.; The event's real-world existence and official-source status are unverified."
+      ],
+      "injection_flagged": false,
+      "uncertainty": "Conflicting dates: The search result says May 2, 2027, but the page says May 9, 2027. Confirm directly before planning around it. Unconfirmed: The event date is conflicting: May 2, 2027 in the snippet and May 9, 2027 on the page.; The event's real-world existence and official-source status are unverified.",
+      "is_synthetic": true,
+      "status": "new",
+      "saved": false,
+      "board_category": null,
+      "research_requested": false,
+      "last_checked": "2026-10-25T02:37:34.003465",
+      "created_at": "2026-10-25T02:37:34.003570",
+      "reason": "Ranked below the 3 requested."
+    }
+  ],
+  "selection_warnings": [],
+  "count_requested": 3,
+  "unresolved": [],
+  "drafts": [
+    {
+      "id": 23,
+      "recipient": "Nourish NY Eating Disorder Research Network (synthetic)",
+      "draft_type": "research_support",
+      "subject": "Inquiry about your early-career research fellowship",
+      "purpose": "Explore whether the early-career research fellowship could align with the foundation\u2019s eating-disorder research focus.",
+      "foundation_background": "The Sabrina Audrey Milone Foundation (Smile Like Sab) was established in memory of Sabrina Audrey Milone. Its focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.",
+      "opportunity": "Potential foundation support for an early-career fellowship connected to research on treatment outcomes for anorexia, bulimia, and binge-eating disorder, subject to verification and review.",
+      "body": "Hello Nourish NY Eating Disorder Research Network team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.\n\nWe are exploring research-support opportunities and understand that your network studies treatment outcomes for anorexia, bulimia, and binge-eating disorder, with an early-career fellowship that may accept foundation support.\n\nWould you be willing to share a brief fellowship overview and confirm your organization\u2019s identity, New York location, and appropriate partnership contact? It would be helpful for that overview to include fellowship selection, research oversight, reporting arrangements, gift terms, and the funder commitment timeline, which may differ from the application deadline.\n\nThis is an exploratory inquiry, not a funding commitment. We would welcome information to help our board assess whether further discussion would be useful.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]",
+      "next_step": "Request a brief fellowship overview that confirms organizational identity, location, partnership contact, and funding terms.",
+      "sources": [
+        {
+          "title": "Nourish NY Eating Disorder Research Network (synthetic)",
+          "url": "https://example.org/synthetic/organizations/nourish-research",
+          "verification": "synthetic",
+          "retrieved_at": "2026-10-25T02:36:38+00:00"
+        }
+      ],
+      "review_notes": [
+        "Verified identity, location, and partnership contact",
+        "Fellowship selection, research oversight, and reporting arrangements",
+        "Funding deadline and gift terms",
+        "Unconfirmed: Real-world existence, official-source status, and New York location remain unverified."
+      ],
+      "status": "draft",
+      "finding_id": 14,
+      "is_synthetic_target": true
+    },
+    {
+      "id": 24,
+      "recipient": "Harbor Minds Collective (synthetic)",
+      "draft_type": "nonprofit_collaboration",
+      "subject": "Exploring a mental-health awareness workshop collaboration",
+      "purpose": "Explore whether co-hosting a mental-health awareness workshop could support the foundation\u2019s mental-health and community-building focus.",
+      "foundation_background": "The Sabrina Audrey Milone Foundation (Smile Like Sab) was established in memory of Sabrina Audrey Milone. Its focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.",
+      "opportunity": "A possible co-hosted mental-health awareness workshop, with questions about Welcome Circles, host training, responsibilities, accessibility, timing, and costs.",
+      "body": "Hello Harbor Minds Collective team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.\n\nWe understand that Harbor Minds Collective offers peer-led mental-health awareness workshops and Welcome Circles in Brooklyn and Queens, creating spaces for newcomers to talk and be heard. Your described approach to co-hosting workshops with local foundations and community groups appears closely aligned with our mental-health and community-building interests.\n\nWould you be open to a brief introductory conversation to confirm your organization\u2019s work and explore what a co-hosted awareness workshop might involve? We would like to understand the roles, training, accessibility arrangements, upcoming timing, and costs, as well as whether foundation volunteers could train as circle hosts.\n\nWe are gathering information only and are not committing to an event, volunteer participation, or funding at this stage.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]",
+      "next_step": "Ask for a brief introductory conversation to confirm the organization\u2019s work and explore workshop partnership requirements.",
+      "sources": [
+        {
+          "title": "Harbor Minds Collective (synthetic)",
+          "url": "https://example.org/synthetic/organizations/harbor-minds",
+          "verification": "synthetic",
+          "retrieved_at": "2026-10-25T02:36:38+00:00"
+        }
+      ],
+      "review_notes": [
+        "Verified organizational identity and contact form",
+        "Workshop partnership costs and responsibilities",
+        "Upcoming dates, accessibility arrangements, and volunteer requirements",
+        "Costs or giving levels are not stated on the source.",
+        "Unconfirmed: The organization's real-world existence and official-source status are unverified."
+      ],
+      "status": "draft",
+      "finding_id": 13,
+      "is_synthetic_target": true
+    },
+    {
+      "id": 25,
+      "recipient": "Body Image Research Fund: Spring Grant Call (synthetic)",
+      "draft_type": "research_support",
+      "subject": "Inquiry about spring research grant co-funding",
+      "purpose": "Explore whether the spring grant call offers a suitable opportunity to support eating-disorder and body-image research.",
+      "foundation_background": "The Sabrina Audrey Milone Foundation (Smile Like Sab) was established in memory of Sabrina Audrey Milone. Its focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.",
+      "opportunity": "Potential co-funding of grants for early-career researchers studying eating disorders and body image, with the fund\u2019s identity, geography, eligibility, timing, and terms still to be confirmed.",
+      "body": "Hello Body Image Research Fund team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.\n\nWe understand that your spring grant call supports early-career researchers studying eating disorders and body image and may offer a co-funding opportunity. That research focus is relevant to our foundation\u2019s mission.\n\nWould you be willing to share a short overview confirming the fund\u2019s identity, appropriate contact, geographic scope, and New York eligibility, along with the co-funding terms? The information available to us does not specify the grant-call year or deadline, so confirmation of those details would also be helpful. An overview of contribution requirements, researcher selection, oversight, and reporting would help our board assess the opportunity.\n\nThis inquiry is exploratory and does not represent a funding commitment.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]",
+      "next_step": "Request a short overview confirming fund identity, geographic eligibility, grant-call timing, and co-funding terms.",
+      "sources": [
+        {
+          "title": "Body Image Research Fund: Spring Grant Call (synthetic)",
+          "url": "https://example.org/synthetic/organizations/body-image-fund",
+          "verification": "synthetic",
+          "retrieved_at": "2026-10-25T02:36:38+00:00"
+        }
+      ],
+      "review_notes": [
+        "Verified fund identity and contact",
+        "Geography and New York eligibility",
+        "Grant-call year and deadline",
+        "Contribution requirements, selection process, oversight, and reporting",
+        "Costs or giving levels are not stated on the source.",
+        "Unconfirmed: The fund's real-world existence and official-source status are unverified.; No New York connection is established."
+      ],
+      "status": "draft",
+      "finding_id": 18,
+      "is_synthetic_target": true
+    }
+  ],
+  "sources": [
+    {
+      "title": "Harbor Minds Collective (synthetic)",
+      "url": "https://example.org/synthetic/organizations/harbor-minds",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": "2026-10-25T02:36:38+00:00",
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Nourish NY Eating Disorder Research Network (synthetic)",
+      "url": "https://example.org/synthetic/organizations/nourish-research",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": "2026-10-25T02:36:38+00:00",
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Belonging Walk NYC (synthetic)",
+      "url": "https://example.org/synthetic/organizations/belonging-walk",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": "2026-10-25T02:36:38+00:00",
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Open Table Queens (synthetic)",
+      "url": "https://example.org/synthetic/organizations/open-table-queens",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": "2026-10-25T02:36:38+00:00",
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Campus Minds Collective (synthetic)",
+      "url": "https://example.org/synthetic/organizations/campus-minds",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": "2026-10-25T02:36:38+00:00",
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Body Image Research Fund: Spring Grant Call (synthetic)",
+      "url": "https://example.org/synthetic/organizations/body-image-fund",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": "2026-10-25T02:36:38+00:00",
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    }
+  ],
+  "trace": [
+    {
+      "n": 1,
+      "step_key": "intake",
+      "from_agent": "board",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "status": "completed",
+      "objective": "Understand the request and choose specialists",
+      "duration_ms": 3,
+      "summary": "Intent: partnership outreach (board routing). Specialists: mission discovery, partnerships outreach.",
+      "constraints": [],
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "n": 2,
+      "step_key": "research",
+      "from_agent": "orchestrator",
+      "to_agent": "mission_discovery",
+      "kind": "task",
+      "status": "completed",
+      "objective": "Find and verify mission-aligned organizations, and explain their fit",
+      "duration_ms": 57408,
+      "summary": "The supplied sources are synthetic examples, not verified real-world organizations. Harbor Minds Collective most directly combines mental-health awareness with opportunities to connect; Belonging Walk NYC offers a related event partnership, while Open Table Queens supports community connection without an explicit mental-health program. Draft inquiries for these three appear below, but their identities and contact channels should be verified before use. The remaining sources are assessed as research alternatives or geographically unsuitable options.",
+      "constraints": [],
+      "models": [
+        "gpt-6-luna",
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 3996,
+      "output_tokens": 5199,
+      "cost_usd": 0.060232
+    },
+    {
+      "n": 3,
+      "step_key": "select",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "status": "completed",
+      "objective": "Select up to 3 candidates by the mission-fit rubric",
+      "duration_ms": 1,
+      "summary": "Selected 3 of 6 opportunities for outreach (requested 3).",
+      "constraints": [],
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "n": 4,
+      "step_key": "outreach",
+      "from_agent": "orchestrator",
+      "to_agent": "partnerships_outreach",
+      "kind": "task",
+      "status": "completed",
+      "objective": "Draft unsent outreach to the 3 selected opportunities",
+      "duration_ms": 19141,
+      "summary": "Three unsent, illustrative first-contact drafts are provided. All targets are synthetic and their real-world identities and contacts remain unverified. Verify each organization and recipient before using these drafts; no funding, participation, or dates are committed.",
+      "constraints": [
+        {
+          "name": "drafts_only",
+          "detail": "Generate and save unsent drafts only. Never send, schedule, or commit.",
+          "value": null,
+          "source_agent": "orchestrator"
+        },
+        {
+          "name": "confirm:14",
+          "detail": "Nourish NY Eating Disorder Research Network (synthetic): Unconfirmed: Real-world existence, official-source status, and New York location remain unverified. Verified identity, location, and partnership contact Fellowship selection, research oversight, and reporting arrangements",
+          "value": null,
+          "source_agent": "mission_discovery"
+        },
+        {
+          "name": "confirm:13",
+          "detail": "Harbor Minds Collective (synthetic): Unconfirmed: The organization's real-world existence and official-source status are unverified. Verified organizational identity and contact form Workshop partnership costs and responsibilities",
+          "value": null,
+          "source_agent": "mission_discovery"
+        },
+        {
+          "name": "confirm:18",
+          "detail": "Body Image Research Fund: Spring Grant Call (synthetic): Unconfirmed: The fund's real-world existence and official-source status are unverified.; No New York connection is established. Verified fund identity and contact Geography and New York eligibility",
+          "value": null,
+          "source_agent": "mission_discovery"
+        }
+      ],
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 1934,
+      "output_tokens": 1447,
+      "cost_usd": 0.019304
+    },
+    {
+      "n": 5,
+      "step_key": "recommendation",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "status": "completed",
+      "objective": "Write the board-ready recommendation",
+      "duration_ms": 25900,
+      "summary": "Prioritize Harbor Minds for verification; retain the selected research opportunities as a separate mission-aligned track",
+      "constraints": [],
+      "models": [
+        "gpt-6-astra"
+      ],
+      "input_tokens": 4450,
+      "output_tokens": 1638,
+      "cost_usd": 0.137517
+    },
+    {
+      "n": 6,
+      "step_key": "verification",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "status": "completed",
+      "objective": "Verify the final result in code",
+      "duration_ms": 2,
+      "summary": "All checks passed.",
+      "constraints": [],
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    }
+  ],
+  "usage": {
+    "model_calls": 4,
+    "input_tokens": 10380,
+    "cached_input_tokens": 0,
+    "output_tokens": 8284,
+    "web_search_calls": 0,
+    "cost_usd": 0.217053,
+    "by_agent": {
+      "mission_discovery": {
+        "calls": 2,
+        "input_tokens": 3996,
+        "cached_input_tokens": 0,
+        "output_tokens": 5199,
+        "cost_usd": 0.060233
+      },
+      "partnerships_outreach": {
+        "calls": 1,
+        "input_tokens": 1934,
+        "cached_input_tokens": 0,
+        "output_tokens": 1447,
+        "cost_usd": 0.019304
+      },
+      "orchestrator": {
+        "calls": 1,
+        "input_tokens": 4450,
+        "cached_input_tokens": 0,
+        "output_tokens": 1638,
+        "cost_usd": 0.137517
+      }
+    },
+    "by_model": {
+      "gpt-6-luna": {
+        "calls": 1,
+        "input_tokens": 498,
+        "cached_input_tokens": 0,
+        "output_tokens": 58,
+        "cost_usd": 7.9e-05
+      },
+      "gpt-6.1-sol": {
+        "calls": 2,
+        "input_tokens": 5432,
+        "cached_input_tokens": 0,
+        "output_tokens": 6588,
+        "cost_usd": 0.079456
+      },
+      "gpt-6-astra": {
+        "calls": 1,
+        "input_tokens": 4450,
+        "cached_input_tokens": 0,
+        "output_tokens": 1638,
+        "cost_usd": 0.137517
+      }
+    }
+  },
+  "verification": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "Every dollar figure traces to a calculation",
+        "passed": true,
+        "detail": "All figures match computed results."
+      },
+      {
+        "name": "No claims that anything was sent, booked, or paid",
+        "passed": true,
+        "detail": "None found."
+      },
+      {
+        "name": "All outreach drafts remain unsent",
+        "passed": true,
+        "detail": "3 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+      },
+      {
+        "name": "Every partnership draft carries the sources it was written from",
+        "passed": true,
+        "detail": "3 of 3 drafts link to their research sources."
+      },
+      {
+        "name": "Selected opportunities have checked sources",
+        "passed": true,
+        "detail": "3 selected, all with checked sources."
+      },
+      {
+        "name": "Sources are labeled by provenance",
+        "passed": true,
+        "detail": "6 synthetic"
+      },
+      {
+        "name": "Specialists finished",
+        "passed": true,
+        "detail": "All specialists completed."
+      }
+    ],
+    "unsupported_figures": []
+  }
+}

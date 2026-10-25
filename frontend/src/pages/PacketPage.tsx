@@ -122,6 +122,21 @@ export default function PacketPage() {
               {([["Decisions for the board", rec.decisions_for_board], ["Next steps", rec.next_steps], ["Risks", rec.risks], ["Caveats", rec.caveats]] as const).map(([t, items]) =>
                 items.length ? <div key={t}><p className="label">{t}</p><ul className="list-disc space-y-1 pl-5 text-sm">{items.map((x, i) => <li key={i}>{x}</li>)}</ul></div> : null)}
             </div>
+            {packet.mission_contribution && (
+              <div className="mt-5 rounded-2xl bg-lilac/40 p-4">
+                <p className="label">Mission contribution (alongside the financial checks, never instead of them)</p>
+                <dl className="mt-1 grid gap-2 text-sm md:grid-cols-2">
+                  {([["inclusion", "Inclusion"], ["connection", "Connection"], ["accessibility", "Accessibility"], ["recognition", "Recognition"], ["charitable_alignment", "Charitable alignment"]] as const).map(([k, l]) => (
+                    <div key={k}><dt className="font-semibold text-plum">{l}</dt><dd className="text-ink/85">{packet.mission_contribution?.[k] || "—"}</dd></div>))}
+                </dl>
+                {packet.mission_contribution.community_lessons_applied.length > 0 && (
+                  <div className="mt-3 text-sm"><b className="text-plum">Community feedback applied</b>
+                    <ul className="mt-1 list-disc space-y-0.5 pl-5">{packet.mission_contribution.community_lessons_applied.map((x, i) => <li key={i}>{x}</li>)}</ul></div>)}
+                {packet.mission_contribution.open_questions.length > 0 && (
+                  <div className="mt-2 text-sm"><b className="text-plum">Open questions</b>
+                    <ul className="mt-1 list-disc space-y-0.5 pl-5">{packet.mission_contribution.open_questions.map((x, i) => <li key={i}>{x}</li>)}</ul></div>)}
+              </div>
+            )}
           </Section>
         )}
 
@@ -191,6 +206,12 @@ export default function PacketPage() {
                   {l.events.map((e) => <Link key={e.id} to={`/legacy/${e.id}`} className="text-royal underline">{e.name}</Link>)}
                   {l.reflection_ids.length > 0 && <span className="text-muted">{l.reflection_ids.length} board reflection{l.reflection_ids.length === 1 ? "" : "s"}</span>}</p>
               </li>))}</ul>
+          )}
+          {(packet.community_insights ?? []).length > 0 && (
+            <div className="mt-4"><p className="label">Community feedback from past events (quoted from board reflections)</p>
+              <ul className="space-y-1.5 text-sm">{packet.community_insights?.map((c, i) => (
+                <li key={i} className="rounded-xl bg-blush/40 px-3 py-2"><b className="text-plum">{c.lens_label}:</b> {c.observation} <span className="italic text-ink/80">“{c.quote}”</span>
+                  <span className="ml-1 text-xs text-muted">({c.evidence_label})</span></li>))}</ul></div>
           )}
           {packet.history_checks.length > 0 && (
             <div className="mt-4"><p className="label">How history was checked against the plan</p>

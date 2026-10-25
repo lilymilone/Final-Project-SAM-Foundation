@@ -17,7 +17,8 @@ from .conftest import MEMBER, login
 from .fakes import ScriptedClient
 from .test_agents import run_sync
 
-QUESTIONS = ("went_well", "challenges", "unexpected_costs", "attendee_feedback", "should_repeat", "do_differently", "advice")
+QUESTIONS = ("went_well", "challenges", "unexpected_costs", "attendee_feedback", "should_repeat", "do_differently", "advice",
+             "welcome_inclusion", "connection_moments", "volunteer_appreciation", "accessibility_issues")
 
 
 def tiny_png() -> bytes:
@@ -83,7 +84,9 @@ def test_structured_reflections_from_multiple_members_preserve_identity(client):
     assert {r["author"] for r in mine} == {"Avery Brooks", "Sam Rivera"}
     chair = next(r for r in mine if r["author"] == "Avery Brooks")
     assert [a["question"] for a in chair["answers"]][0] == "What worked particularly well?"
-    assert len(chair["answers"]) == 7 and chair["answers"][6]["answer"] == "Chair answer to advice" and chair["created_at"]
+    assert len(chair["answers"]) == 11 and chair["answers"][6]["answer"] == "Chair answer to advice" and chair["created_at"]
+    # The four community questions are stored word for word, like the original seven.
+    assert {a["key"]: a["answer"] for a in chair["answers"]}["welcome_inclusion"] == "Chair answer to welcome_inclusion"
 
 
 def test_reflections_are_append_only(client):

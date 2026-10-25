@@ -25,13 +25,17 @@ def draft_out(d: OutreachDraft) -> dict:
     return {"id": d.id, "run_id": d.run_id, "agent": d.agent, "draft_type": d.draft_type, "recipient_name": d.recipient_name,
             "recipient_org": d.recipient_org, "subject": d.subject, "body": d.body, "status": d.status,
             "personalization_basis": d.personalization_basis, "is_synthetic_target": d.is_synthetic_target,
+            "purpose": d.purpose, "opportunity": d.opportunity, "next_step": d.next_step,
+            "foundation_background": d.foundation_background, "sources": d.sources or [], "finding_id": d.finding_id,
+            "review_notes": d.review_notes or [],
             "created_at": d.created_at.isoformat(), "updated_at": d.updated_at.isoformat() if d.updated_at else None}
 
 
 @router.get("/drafts")
-def list_drafts(kind: Literal["outreach", "donor", "all"] = "outreach", cu: CurrentUser = Depends(current_user),
+def list_drafts(kind: Literal["outreach", "donor", "all"] = "outreach", archived: bool = False, cu: CurrentUser = Depends(current_user),
                 db: Session = Depends(get_db)) -> dict:
-    q = select(OutreachDraft).where(OutreachDraft.organization_id == cu.organization_id, OutreachDraft.status != "archived")
+    q = select(OutreachDraft).where(OutreachDraft.organization_id == cu.organization_id,
+                                    OutreachDraft.status == "archived" if archived else OutreachDraft.status != "archived")
     if kind == "donor" or (kind == "all" and Permission.VIEW_DONOR_DATA in cu.permissions):
         if Permission.VIEW_DONOR_DATA not in cu.permissions:
             raise HTTPException(403, "Donor acknowledgments are limited to the chair and treasurer.")
@@ -44,8 +48,15 @@ def list_drafts(kind: Literal["outreach", "donor", "all"] = "outreach", cu: Curr
 
 
 class DraftUpdate(BaseModel):
+    """Edits a person makes to a draft. There is deliberately no "sent" status: SAM SPACE cannot send."""
+
+    model_config = {"extra": "forbid"}
     subject: str | None = Field(default=None, max_length=300)
     body: str | None = Field(default=None, max_length=8000)
+    purpose: str | None = Field(default=None, max_length=1000)
+    opportunity: str | None = Field(default=None, max_length=2000)
+    next_step: str | None = Field(default=None, max_length=1000)
+    recipient_name: str | None = Field(default=None, max_length=200)
     status: Literal["draft", "reviewed", "archived"] | None = None
 
 
@@ -86,6 +97,7 @@ def save_finding(finding_id: int, body: SaveFinding, cu: CurrentUser = Depends(r
     if f is None or f.organization_id != cu.organization_id:
         raise HTTPException(404, "Finding not found.")
     f.saved = body.saved
+    f.status = "saved" if body.saved else "new"
     audit(db, cu, "finding_saved" if body.saved else "finding_unsaved", f"finding:{f.id}")
     db.commit()
     return {"id": f.id, "saved": f.saved}

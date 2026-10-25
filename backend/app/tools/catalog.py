@@ -9,9 +9,9 @@ never contents.
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 
 from ..agents.contracts import SourceRecord, ToolResult
 from ..core.permissions import Permission
@@ -24,9 +24,12 @@ from ..db.models import (
     HistoricalLesson,
     OutreachDraft,
     ResearchFinding,
+    User,
     VenueCandidate,
 )
 from ..research import fixtures
+from ..safety.policy import sanitize_untrusted, scrub_outbound_query
+from ..services import opportunities as opp
 from ..services import calculators as calc
 from ..services import event_model as em
 from ..services.finance import donation_flags
@@ -65,7 +68,9 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             "location": e.location, "event_type": e.event_type, "attendance": e.attendance,
             "funds_raised_usd": e.funds_raised_usd, "total_cost_usd": e.total_cost_usd, "summary": e.summary,
             "venue": e.venue, "fundraising_goal_usd": e.fundraising_goal_usd, "sponsorship_usd": e.sponsorship_usd,
-            "is_demo": e.is_demo,
+            "volunteers_count": e.volunteers_count, "repeat_participants": e.repeat_participants,
+            "partnerships_formed": e.partnerships_formed, "funds_directed_usd": e.funds_directed_usd,
+            "community_outcomes": e.community_outcomes, "is_demo": e.is_demo,
         } for e in rows]
         sources = [SourceRecord(id=f"event:{e['id']}", title=e["name"], verification="internal",
                                 note="synthetic demo record" if e["is_demo"] else "board record") for e in data]
@@ -84,6 +89,8 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             "submitted": r.created_at.date().isoformat(), "what_worked": r.went_well, "did_not_go_as_planned": r.challenges,
             "unexpected_costs_or_complications": r.unexpected_costs, "attendee_feedback": r.attendee_feedback,
             "repeat": r.should_repeat, "change": r.do_differently, "advice_for_next_board": r.advice, "rating": r.rating,
+            "welcome_inclusion": r.welcome_inclusion, "connection_moments": r.connection_moments,
+            "volunteer_appreciation": r.volunteer_appreciation, "accessibility_issues": r.accessibility_issues,
         } for r, name in rows]
         sources = [SourceRecord(id=f"reflection:{r['id']}", title=f"Reflection on {r['event_name']} ({r['author']})",
                                 verification="internal") for r in data]
@@ -309,33 +316,67 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
 
     # ── Mission Discovery + Partnerships ─────────────────────────────────────────────
 
-    def search_web(query: str, purpose: str) -> ToolResult:
-        if synthetic:
-            pool = fixtures.SPONSORS if purpose == "sponsors" else fixtures.ORGANIZATIONS
-            kind = "sponsors" if purpose == "sponsors" else "organizations"
-            data = [{"source_id": f"synthetic:{kind}:{o['key']}", "title": o["title"], "url": fixtures.fixture_url(kind, o["key"]),
-                     "publisher": None, "published": o["published"], "snippet": o["summary"], "category_hint": o["category"]} for o in pool]
-            return ToolResult(tool="search_web", ok=True, data=data, summary=f"{len(data)} synthetic results",
-                              warnings=["Synthetic research fixtures, not live web research."])
-        from ..research.live import live_web_search
-        return live_web_search(ctx, query, purpose)
+    def private_terms() -> list[str]:
+        """Names that must never leave SAM SPACE in a search query (donors, board members)."""
+        with db.session() as s:
+            donors = s.scalars(select(Donation.donor_name).where(Donation.organization_id == org)).all()
+            users = s.execute(select(User.first_name, User.last_name)).all()
+        return [d for d in donors if d] + [f"{a} {b}".strip() for a, b in users if b]
 
-    def fetch_source(url: str, source_id: str, check_values: list | None = None) -> ToolResult:
+    def search_web(query: str, purpose: str) -> ToolResult:
+        clean, removed = scrub_outbound_query(query, private_terms())
+        notes = [f"Removed private details from the search query before it left SAM SPACE ({', '.join(removed)})."] if removed else []
+        if synthetic:
+            pool = fixtures.SPONSORS + fixtures.ORGANIZATIONS if purpose == "sponsors" else fixtures.ORGANIZATIONS
+            data = [{"source_id": f"synthetic:{'sponsors' if o in fixtures.SPONSORS else 'organizations'}:{o['key']}", "title": o["title"],
+                     "url": fixtures.fixture_url("sponsors" if o in fixtures.SPONSORS else "organizations", o["key"]),
+                     "publisher": None, "published": o["published"], "date_claim": o.get("date_claim"), "snippet": o["summary"],
+                     "category_hint": o["category"], "geography": o.get("geography")} for o in pool][:6]
+            return ToolResult(tool="search_web", ok=True, data=data, summary=f"{len(data)} synthetic results",
+                              warnings=["Synthetic research fixtures, not live web research."] + notes)
+        from ..research.live import live_web_search
+        result = live_web_search(ctx, clean, purpose)
+        result.warnings = notes + result.warnings
+        return result
+
+    def _page_checks(text: str, data: dict, check_terms: list | None, check_dates: list | None) -> None:
+        """Screen untrusted page text, then record what it does and does not say. The raw text is never returned."""
+        clean, flags = sanitize_untrusted(text)
+        low = clean.lower()
+        data["injection_flags"] = flags
+        data["excerpt"] = clean[:2200]
+        data["dates_on_page"] = web.dates_in_text(clean)
+        data["money_on_page"] = web.money_in_text(clean)
+        data["terms_found"] = [t for t in (check_terms or []) if t and t.lower() in low]
+        data["date_checks"] = {c: web.date_status(c, data["dates_on_page"]) for c in (check_dates or []) if c}
+
+    def fetch_source(url: str, source_id: str, check_values: list | None = None, check_terms: list | None = None,
+                     check_dates: list | None = None, screen: bool = False) -> ToolResult:
         if url.startswith("https://example.org/synthetic/"):
-            src = SourceRecord(id=source_id, title=url.rsplit("/", 1)[-1], url=url, verification="synthetic", note=fixtures.SYNTHETIC_NOTE)
-            return ToolResult(tool="fetch_source", ok=True, data={"verified": False, "synthetic": True}, sources=[src],
-                              summary="synthetic fixture (not fetched)")
+            fixture = fixtures.FIXTURE_PAGES.get(url.split("/synthetic/", 1)[1])
+            src = SourceRecord(id=source_id, title=fixture["title"] if fixture else url.rsplit("/", 1)[-1], url=url,
+                               verification="synthetic", note=fixtures.SYNTHETIC_NOTE,
+                               retrieved_at=datetime.now(timezone.utc).isoformat(timespec="seconds"))
+            data = {"verified": False, "synthetic": True, "retrieved_at": src.retrieved_at}
+            if screen:
+                _page_checks((fixture or {}).get("page_text", ""), data, check_terms, check_dates)
+            flagged = f" · {len(data.get('injection_flags') or [])} instruction-like fragment(s) removed" if data.get("injection_flags") else ""
+            return ToolResult(tool="fetch_source", ok=True, data=data, sources=[src], summary=f"synthetic fixture (not fetched){flagged}")
         if ctx.counters["page_fetches"] >= ctx.settings.max_page_fetches_per_run:
             return ToolResult(tool="fetch_source", ok=False, error="Page-fetch limit for this run reached.",
                               sources=[SourceRecord(id=source_id, title=url, url=url, verification="unverified", note="not fetched: limit")])
         ctx.counters["page_fetches"] += 1
         page = web.fetch_page(url)
-        page["figures_found"] = web.figures_on_page(page.pop("text", ""), [float(x) for x in (check_values or [])])
+        text = page.pop("text", "")
+        page["figures_found"] = web.figures_on_page(text, [float(x) for x in (check_values or [])])
+        if screen:
+            _page_checks(" ".join(x for x in (page.get("description"), text) if x), page, check_terms, check_dates)
         src = SourceRecord(id=source_id, title=page.get("title") or url, url=url, published=page.get("published"),
                            retrieved_at=page.get("retrieved_at"), verification="verified" if page["ok"] else "unverified",
                            http_status=page.get("http_status"), note=None if page["ok"] else page.get("error"))
+        flagged = f" · {len(page.get('injection_flags') or [])} instruction-like fragment(s) removed" if page.get("injection_flags") else ""
         return ToolResult(tool="fetch_source", ok=page["ok"], data=page, sources=[src], error=None if page["ok"] else page.get("error"),
-                          summary=f"HTTP {page.get('http_status')} {(page.get('title') or '')[:80]}")
+                          summary=f"HTTP {page.get('http_status')} {(page.get('title') or '')[:80]}{flagged}")
 
     def classify_mission_alignment(text: str) -> ToolResult:
         low = text.lower()
@@ -345,16 +386,36 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         return ToolResult(tool="classify_mission_alignment", ok=True, data={"keyword_label": label, "score": score, "matches": hits},
                           summary=f"keyword alignment {label}")
 
-    def save_research_finding(agent: str, category: str, title: str, summary: str, source_url: str | None, source_title: str | None,
-                              verification_status: str, alignment: str, uncertainty: str, published: str | None) -> ToolResult:
+    RESEARCH_FIELDS = ("category", "title", "summary", "source_url", "source_title", "verification_status", "alignment",
+                       "uncertainty", "published", "name", "website", "geography", "purpose", "activities", "dates_text",
+                       "date_status", "partnership_types", "contribution_ways", "known_costs", "missing_info", "next_step",
+                       "alignment_detail", "fit", "fit_reason", "warnings", "injection_flags")
+
+    def save_research_finding(agent: str, finding: dict) -> ToolResult:
+        """Save an opportunity, or refresh the existing card for the same organization.
+        Board fields (status, category, private notes) are never overwritten by research."""
+        fields = {k: finding.get(k) for k in RESEARCH_FIELDS if k in finding}
+        fields["title"] = (fields.get("title") or fields.get("name") or "Untitled")[:300]
+        site = opp.domain(fields.get("website") or fields.get("source_url"))
         with db.transaction() as s:
-            row = ResearchFinding(organization_id=org, run_id=ctx.run_id, agent=agent, category=category, title=title[:300],
-                                  summary=summary, source_url=source_url, source_title=source_title, verification_status=verification_status,
-                                  alignment=alignment, uncertainty=uncertainty, published=published, is_synthetic=verification_status == "synthetic",
-                                  retrieved_at=None, saved=False)
-            s.add(row)
+            candidates = s.scalars(select(ResearchFinding).where(
+                ResearchFinding.organization_id == org,
+                or_(ResearchFinding.name.is_not(None), ResearchFinding.website.is_not(None)))).all()
+            row = next((r for r in candidates if (site and not site.startswith("example.org") and opp.domain(r.website) == site)
+                        or (fields.get("name") and opp.norm_name(r.name) == opp.norm_name(fields["name"]))), None)
+            refreshed = row is not None
+            if row is None:
+                row = ResearchFinding(organization_id=org, agent=agent, status="new", saved=False)
+                s.add(row)
+            for k, v in fields.items():
+                setattr(row, k, v)
+            row.run_id = ctx.run_id
+            row.is_synthetic = fields.get("verification_status") == "synthetic"
+            row.last_checked = datetime.now(timezone.utc)
+            row.research_requested = False
             s.flush()
-            return ToolResult(tool="save_research_finding", ok=True, summary=f"finding #{row.id}", data={"id": row.id})
+            return ToolResult(tool="save_research_finding", ok=True, data={"id": row.id, "refreshed": refreshed},
+                              summary=f"{'refreshed' if refreshed else 'new'} opportunity #{row.id}")
 
     def read_saved_findings(categories: list) -> ToolResult:
         with db.session() as s:
@@ -364,13 +425,34 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                  "verification": f.verification_status, "saved": f.saved} for f in rows]
         return ToolResult(tool="read_saved_findings", ok=True, data=data, summary=f"{len(data)} findings")
 
+    def read_opportunities(ids: list | None = None, status: str | None = None) -> ToolResult:
+        """Opportunities as the board sees them, without private notes (notes never reach a model)."""
+        with db.session() as s:
+            q = select(ResearchFinding).where(ResearchFinding.organization_id == org)
+            if ids:
+                q = q.where(ResearchFinding.id.in_([int(i) for i in ids]))
+            rows = s.scalars(q.order_by(ResearchFinding.created_at.desc()).limit(40)).all()
+            data = [opp.opportunity_out(r, include_notes=False) for r in rows]
+        if status:
+            data = [d for d in data if d["status"] == status]
+        return ToolResult(tool="read_opportunities", ok=True, data=data, summary=f"{len(data)} opportunities")
+
+    def select_opportunities(findings: list, count: int) -> ToolResult:
+        picked = opp.select_candidates(findings, int(count))
+        return ToolResult(tool="select_opportunities", ok=True, data=picked, warnings=picked["warnings"],
+                          summary=f"selected {len(picked['selected'])} of {len(findings)} (requested {count})")
+
     def create_outreach_draft(draft_type: str, recipient_org: str, subject: str, body: str, personalization_basis: str,
-                              is_synthetic_target: bool) -> ToolResult:
+                              is_synthetic_target: bool, purpose: str | None = None, opportunity: str | None = None,
+                              next_step: str | None = None, foundation_background: str | None = None, sources: list | None = None,
+                              finding_id: int | None = None, review_notes: list | None = None) -> ToolResult:
+        """Save an UNSENT draft. There is no 'sent' status and no tool anywhere that sends it."""
         with db.transaction() as s:
             row = OutreachDraft(organization_id=org, run_id=ctx.run_id, agent="partnerships_outreach", draft_type=draft_type,
                                 recipient_org=recipient_org[:200], subject=subject[:300], body=body[:6000], status="draft",
                                 personalization_basis=personalization_basis[:1000], is_synthetic_target=is_synthetic_target,
-                                created_by=ctx.user_id)
+                                purpose=purpose, opportunity=opportunity, next_step=next_step, foundation_background=foundation_background,
+                                sources=sources or [], finding_id=finding_id, review_notes=review_notes or [], created_by=ctx.user_id)
             s.add(row)
             s.flush()
             return ToolResult(tool="create_outreach_draft", ok=True, summary=f"draft #{row.id} (unsent)", data={"id": row.id})
@@ -378,8 +460,12 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
     add("search_web", "Bounded web search (or labeled synthetic fixtures).", ToolKind.RESEARCH, search_web)
     add("fetch_source", "Fetch one public page to verify a link (SSRF-guarded).", ToolKind.RESEARCH, fetch_source)
     add("classify_mission_alignment", "Keyword cross-check of mission alignment.", ToolKind.COMPUTE, classify_mission_alignment)
-    add("save_research_finding", "Save a research finding with its source.", ToolKind.SAVE, save_research_finding, Permission.RUN_AGENTS)
+    add("save_research_finding", "Save (or refresh) an opportunity with its sources and alignment.", ToolKind.SAVE, save_research_finding,
+        Permission.RUN_AGENTS)
     add("read_saved_findings", "Read saved research findings.", ToolKind.READ, read_saved_findings, Permission.VIEW_DASHBOARD)
+    add("read_opportunities", "Read Mission Discovery opportunities (no private notes).", ToolKind.READ, read_opportunities,
+        Permission.VIEW_DASHBOARD)
+    add("select_opportunities", "Deterministically pick outreach candidates by the fit rubric.", ToolKind.COMPUTE, select_opportunities)
     add("create_outreach_draft", "Save an unsent outreach draft.", ToolKind.DRAFT, create_outreach_draft, Permission.RUN_AGENTS)
 
     # ── Orchestrator ─────────────────────────────────────────────────────────────

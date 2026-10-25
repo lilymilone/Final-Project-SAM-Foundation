@@ -4,6 +4,7 @@ import type { Overview } from "../api/types";
 import { formatDate, usd, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { Butterfly } from "../butterflies/Butterfly";
+import { PhilosophyQuote } from "../components/Philosophy";
 import { RunLauncher } from "../components/RunLauncher";
 import { StatusPill } from "../components/agents";
 import { GALA_EXAMPLE } from "./ActivityPage";
@@ -26,6 +27,8 @@ export default function OverviewPage() {
         }
         subtitle={<>Let's make a difference today. <span className="text-plum/80">{user?.organization?.name}</span></>}
       />
+
+      <PhilosophyQuote />
 
       <div className="mb-6 flex flex-wrap gap-2 animate-fade-up">
         <Link to="/events" className="btn btn-primary"><Plus size={16} aria-hidden="true" /> Plan a fundraiser</Link>

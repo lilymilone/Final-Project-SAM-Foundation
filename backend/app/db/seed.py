@@ -93,6 +93,9 @@ DEMO_HISTORY = [
         total_cost_usd=3100, sponsorship_usd=1800, sponsorship_info="Water and T-shirts from two local businesses (sample).",
         summary="Sample 5K awareness walk with a resource fair from local mental-health groups.",
         notes="Synthetic demo record for teaching-staff testing.",
+        volunteers_count=24, repeat_participants=38, partnerships_formed=2, funds_directed_usd=9000,
+        community_outcomes="Four local mental-health groups staffed resource tables, and 61 families signed up for follow-up "
+                           "resource emails (sample).",
         reflections=[
             dict(author_label="Demo board member A", went_well="Turnout beat our goal and families stayed for the resource fair.",
                  challenges="Permit paperwork took six weeks; we almost missed the deadline.",
@@ -100,7 +103,11 @@ DEMO_HISTORY = [
                  attendee_feedback="Families loved the resource fair and asked for more shade and water stations.",
                  should_repeat="The resource fair with local mental-health groups.",
                  do_differently="Start the city permit process in January.",
-                 advice="Budget food for volunteers separately from attendee food.", rating=5),
+                 advice="Budget food for volunteers separately from attendee food.", rating=5,
+                 welcome_inclusion="Families with strollers and older walkers joined; the one-mile loop meant nobody was left behind.",
+                 connection_moments="The resource fair, where families talked one-on-one with local mental-health groups.",
+                 volunteer_appreciation="We thanked volunteers by name at the finish line, but their food ran short.",
+                 accessibility_issues="Not enough shade or water stations for older walkers."),
             dict(author_label="Demo board member B", went_well="Local businesses sponsored water and T-shirts.",
                  challenges="Online registration closed early by mistake.",
                  unexpected_costs="Rush printing after a sponsor logo arrived late.",
@@ -114,7 +121,8 @@ DEMO_HISTORY = [
                  attendee_feedback="Some families left early because food ran out.",
                  should_repeat="The volunteer team structure.",
                  do_differently="Read vendor minimums before signing.",
-                 advice="Food is where small events lose money; get every food quote in writing.", rating=3),
+                 advice="Food is where small events lose money; get every food quote in writing.", rating=3,
+                 connection_moments="Volunteers who met that morning were still talking together at the end."),
         ],
     ),
     dict(
@@ -123,6 +131,7 @@ DEMO_HISTORY = [
         total_cost_usd=16800, sponsorship_usd=5000, sponsorship_info="Two table sponsors (sample).",
         summary="Sample seated dinner with a speaker on eating-disorder recovery and a silent auction.",
         notes="Synthetic demo record for teaching-staff testing.",
+        volunteers_count=12, partnerships_formed=1, funds_directed_usd=12000,
         reflections=[
             dict(author_label="Demo board member A", went_well="The speaker moved people; auction pledges were strong.",
                  challenges="Catering was 22% over the quote after the guest count changed.",
@@ -130,7 +139,9 @@ DEMO_HISTORY = [
                  attendee_feedback="Guests said the speaker was the heart of the night.",
                  should_repeat="A personal recovery speaker.",
                  do_differently="Lock the guest count two weeks out and get the per-head price in writing.",
-                 advice="Treat catering as the biggest budget risk.", rating=4),
+                 advice="Treat catering as the biggest budget risk.", rating=4,
+                 welcome_inclusion="Some first-time guests told me they felt out of place at a $250 dinner.",
+                 connection_moments="After the recovery speaker, strangers at my table talked about their own families."),
             dict(author_label="Demo board member C", went_well="Volunteers ran check-in smoothly.",
                  challenges="Several pledges were never collected after the event.",
                  unexpected_costs="Rush delivery for two auction items.",
@@ -144,7 +155,9 @@ DEMO_HISTORY = [
                  attendee_feedback="Several donors said the meal set the tone for giving.",
                  should_repeat="A seated, plated dinner. Guests give more when they feel cared for.",
                  do_differently="Keep the dinner format; trim decor instead of food.",
-                 advice="Do not cut the meal to save money.", rating=5),
+                 advice="Do not cut the meal to save money.", rating=5,
+                 volunteer_appreciation="Volunteers ate after the guests and some left hungry.",
+                 accessibility_issues="The dining room had steps at the entrance, and one guest needed help getting in."),
         ],
     ),
     dict(
@@ -153,6 +166,8 @@ DEMO_HISTORY = [
         total_cost_usd=900, sponsorship_usd=0, sponsorship_info="No sponsors (sample).",
         summary="Sample student panel on body image and asking for help, co-hosted with a campus group.",
         notes="Synthetic demo record for teaching-staff testing.",
+        volunteers_count=6, partnerships_formed=1,
+        community_outcomes="The co-hosting campus group asked to repeat the panel in the fall (sample).",
         reflections=[
             dict(author_label="Demo board member B", went_well="Students asked for a follow-up session.",
                  challenges="Low fundraising; this was an awareness event, not a fundraiser.",
@@ -160,24 +175,28 @@ DEMO_HISTORY = [
                  attendee_feedback="Students wanted a quieter space to talk afterwards.",
                  should_repeat="Co-hosting with a student group.",
                  do_differently="Pair awareness events with a small, clear giving ask.",
-                 advice="Decide up front whether an event is for awareness or for fundraising.", rating=4),
+                 advice="Decide up front whether an event is for awareness or for fundraising.", rating=4,
+                 welcome_inclusion="Students said they felt heard because the panelists were their peers.",
+                 accessibility_issues="Students wanted a quieter space to talk afterwards."),
         ],
     ),
 ]
 
 EVENT_FIELDS = ("event_date", "location", "event_type", "venue", "attendance", "fundraising_goal_usd", "funds_raised_usd",
-                "total_cost_usd", "sponsorship_usd", "sponsorship_info", "summary", "notes")
-REFLECTION_FIELDS = ("went_well", "challenges", "unexpected_costs", "attendee_feedback", "should_repeat", "do_differently", "advice", "rating")
+                "total_cost_usd", "sponsorship_usd", "sponsorship_info", "summary", "notes", "volunteers_count",
+                "repeat_participants", "partnerships_formed", "funds_directed_usd", "community_outcomes")
+REFLECTION_FIELDS = ("went_well", "challenges", "unexpected_costs", "attendee_feedback", "should_repeat", "do_differently", "advice", "rating",
+                     "welcome_inclusion", "connection_moments", "volunteer_appreciation", "accessibility_issues")
 
 
 def _seed_history(db: Session, org_id: int) -> None:
     for data in DEMO_HISTORY:
-        event = HistoricalEvent(organization_id=org_id, is_demo=True, name=data["name"], **{k: data[k] for k in EVENT_FIELDS})
+        event = HistoricalEvent(organization_id=org_id, is_demo=True, name=data["name"], **{k: data.get(k) for k in EVENT_FIELDS})
         db.add(event)
         db.flush()
         for r in data["reflections"]:
             db.add(BoardReflection(historical_event_id=event.id, is_demo=True, author_label=r["author_label"],
-                                   **{k: r[k] for k in REFLECTION_FIELDS}))
+                                   **{k: r.get(k) for k in REFLECTION_FIELDS}))
 
 
 def upgrade_demo_history(db: Session) -> int:
@@ -195,7 +214,7 @@ def upgrade_demo_history(db: Session) -> int:
         if event is None:
             continue
         for k in EVENT_FIELDS:
-            if getattr(event, k) in (None, "") and data[k] not in (None, ""):
+            if getattr(event, k) in (None, "") and data.get(k) not in (None, ""):
                 setattr(event, k, data[k])
                 changes += 1
         existing = {r.author_label: r for r in db.scalars(select(BoardReflection).where(
@@ -204,11 +223,11 @@ def upgrade_demo_history(db: Session) -> int:
             row = existing.get(r["author_label"])
             if row is None:
                 db.add(BoardReflection(historical_event_id=event.id, is_demo=True, author_label=r["author_label"],
-                                       **{k: r[k] for k in REFLECTION_FIELDS}))
+                                       **{k: r.get(k) for k in REFLECTION_FIELDS}))
                 changes += 1
                 continue
             for k in REFLECTION_FIELDS:
-                if getattr(row, k) in (None, "") and r[k] not in (None, ""):
+                if getattr(row, k) in (None, "") and r.get(k) not in (None, ""):
                     setattr(row, k, r[k])
                     changes += 1
     return changes
