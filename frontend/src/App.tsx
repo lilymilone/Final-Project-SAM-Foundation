@@ -13,6 +13,9 @@ import LegacyPage from "./pages/LegacyPage";
 import LoginPage from "./pages/LoginPage";
 import OverviewPage from "./pages/OverviewPage";
 import ImportReviewPage from "./pages/ImportReviewPage";
+import ComparisonPage from "./pages/ComparisonPage";
+import EvaluationPage from "./pages/EvaluationPage";
+import ImpactPage from "./pages/ImpactPage";
 import PacketPage from "./pages/PacketPage";
 import PartnershipPacketPage from "./pages/PartnershipPacketPage";
 import RunPage from "./pages/RunPage";
@@ -61,6 +64,9 @@ function Shell() {
           <Route path="activity" element={<ActivityPage />} />
           <Route path="activity/runs/:id" element={<RunPage />} />
           <Route path="safety" element={<SafetyPage />} />
+          <Route path="safety/impact" element={<ImpactPage />} />
+          <Route path="safety/impact/evaluations/:id" element={<EvaluationPage />} />
+          <Route path="safety/impact/comparisons/:id" element={<ComparisonPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

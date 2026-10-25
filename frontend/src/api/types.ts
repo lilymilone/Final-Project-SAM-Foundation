@@ -692,3 +692,68 @@ export type SafetyOverview = {
   };
   risks: { risk: string; mitigation: string; residual: string }[];
 };
+
+export type ImpactRunMetrics = {
+  run_id: number; status: string; research_mode: string; agents_involved: string[]; handoffs: number; venues_considered: number;
+  venues_shortlisted: number; sources_verified_live: number; sources_synthetic: number; sources_unverified: number;
+  financial_model_complete: boolean; affordability_verdict: string | null; figures_trace_to_calculations: boolean | null;
+  unsupported_figures_flagged: number; verification_passed: boolean | null; history_events_consulted: number; history_lessons: number;
+  lessons_applied: number; outreach_drafts: number; drafts_unsent: boolean; recommendation_written: boolean;
+  model_execution_minutes: number; model_calls: number; models_used: string[]; cost_usd: number; input_tokens: number; output_tokens: number;
+};
+export type AttemptStatus = "not_started" | "in_progress" | "completed" | "unavailable";
+export type ImpactEvaluation = {
+  id: number; participant_code: string; participant_role: string; display_name: string; show_name_in_reports: boolean;
+  attribution_permission: boolean; is_synthetic: boolean; status: "draft" | "submitted"; task_date: string | null; is_mine: boolean;
+  manual: { status: AttemptStatus; started_at: string | null; finished_at: string | null; minutes: number | null; tools: string[];
+    venues: number | null; verified_sources: number | null; financial_model: boolean | null; history_used: boolean | null;
+    outreach_draft: boolean | null; difficulties: string | null; comments: string | null };
+  assisted: { status: AttemptStatus; started_at: string | null; finished_at: string | null; minutes: number | null; review_minutes: number | null;
+    run_id: number | null; run_metrics: ImpactRunMetrics | null; calculations_correct: string | null; outreach_usefulness: string | null;
+    errors_encountered: string | null; unsupported_claims_found: number | null; unsupported_claims_notes: string | null; observations: string | null };
+  comparison: { manual_minutes: number | null; assisted_minutes: number | null; minutes_saved: number | null; pct_reduction: number | null };
+  scores: { condition: string; dimension: string; score: number; note: string | null }[];
+  feedback: Record<string, string | number> | null; mission: { advances_mission: string | null; dimensions: Record<string, string>; comment: string } | null;
+  feedback_saved_at: string | null; created_at: string; submitted_at: string | null;
+};
+export type ImpactScenario = {
+  scenario: { key: string; title: string; task: string; deliverables: string[]; instructions: string[]; data_note: string };
+  event_plan_id: number | null; rubric: { key: string; label: string; question: string }[]; scale: Record<string, string>;
+  feedback_questions: { key: string; question: string; kind: "scale" | "yes_no_unsure" | "yes_no_editing" | "yes_no_maybe" | "text" }[];
+  mission_dimensions: { key: string; label: string }[]; scoring_note: string;
+};
+export type ImpactSummary = {
+  completed_evaluations: number; drafts_in_progress: number; sample_note: string | null;
+  time: { manual_avg_minutes: number | null; assisted_avg_minutes: number | null; paired_evaluations: number; paired_manual_avg: number | null;
+    paired_assisted_avg: number | null; minutes_saved: number | null; pct_reduction: number | null; manual_unavailable: number; basis: string };
+  projection: { tasks_per_year: number | null; annual_hours_saved: number | null; basis: string };
+  ratings: Record<string, number | null>; answers: Record<string, Record<string, number>>;
+  sources: { manual_avg_verified: number | null; assisted_avg_verified_live: number | null; assisted_avg_synthetic: number | null };
+  financial_accuracy: { manual_avg_score: number | null; assisted_avg_score: number | null; assisted_participant_says_correct: number;
+    assisted_runs_all_figures_traced: number };
+  rubric: Record<string, Record<string, number | null>>; mission: { advances_mission: Record<string, number> };
+};
+export type ImpactFeedbackEntry = { participant: string; date: string | null; role: string; answers: Record<string, string | number>;
+  mission: ImpactEvaluation["mission"]; comments_attributed: boolean };
+export type ImpactOverview = {
+  pilot_pending: boolean; pilot_message: string; real: ImpactSummary; real_feedback: ImpactFeedbackEntry[];
+  synthetic: ImpactSummary & { feedback: ImpactFeedbackEntry[]; note: string };
+  assumptions: { tasks_per_year: number | null; editable: boolean };
+  history_comparisons: { id: number; request: string; run_a_id: number; run_b_id: number; date: string }[];
+};
+export type HistoryDimension = { key: string; label: string; without_history: string[]; with_history: string[]; verdict: string;
+  changed_by_history: { statement: string; supported_by: { kind: string; text: string; events?: string[]; name?: string; shared_words: string[] }[] }[];
+  different_without_specific_lesson: { statement: string }[]; other_differences: number };
+export type HistoryComparison = {
+  id: number; request: string; research_mode: string; date: string;
+  inputs: { request: string; event_plan_id: number | null; same_inputs_note: string | null };
+  runs: Record<"without_history" | "with_history", { run_id: number; usage: { model_calls: number; input_tokens: number; cached_input_tokens: number;
+    output_tokens: number; cost_usd: number }; duration_s: number; models: string[] | null; verification_passed: boolean | null; headline: string | null }>;
+  numbers: { measure: string; without_history: number | null; with_history: number | null; changed: boolean }[];
+  dimensions: HistoryDimension[]; events_consulted: { id: number; name: string; reasons: string[] }[];
+  lessons: { text: string; kind: string; events: string[]; reflection_ids: number[]; basis?: string }[];
+  human_scores: Record<string, Record<string, number>>;
+  summary: { dimensions_changed_with_support: number; unique_statements_changed: number; statements_changed_with_support: number; statements_different_without_lesson: number;
+    other_differences: number; budget_numbers_changed: boolean };
+  method_note: string;
+};

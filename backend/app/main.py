@@ -19,7 +19,7 @@ from .ai.availability import ModelAvailability, check_availability, describe_tie
 from .ai.providers import AIProvider
 from .api.deps import CSRF_HEADER
 from .agents.manager import WorkflowManager
-from .api.routes import activity, auth, donations as donation_routes, safety as safety_routes, experiments, finance as finance_routes, legacy, legacy_imports, mission, outputs, records, runs, settings as settings_routes, studio, system, workspace
+from .api.routes import activity, auth, donations as donation_routes, safety as safety_routes, experiments, finance as finance_routes, impact, legacy, legacy_imports, mission, outputs, records, runs, settings as settings_routes, studio, system, workspace
 from .core.config import Settings, get_settings
 from .core.env import REPO_ROOT
 from .core.ratelimit import LoginLimiter
@@ -90,7 +90,7 @@ def create_app(settings: Settings | None = None, *, verify_models: bool | None =
 
     for module in (system, auth, workspace, records, activity, settings_routes, runs, outputs, legacy, legacy_imports, experiments,
                    studio, mission,
-                   finance_routes, donation_routes, safety_routes):
+                   finance_routes, donation_routes, safety_routes, impact):
         app.include_router(module.router)
 
     @app.api_route("/api/{rest:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"], include_in_schema=False)

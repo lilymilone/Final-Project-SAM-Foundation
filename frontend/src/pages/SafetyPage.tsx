@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { ModelsOverview, SafetyOverview, SafetyPolicy, Strategy, SystemStatus } from "../api/types";
 import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
+import { AnalyticsTabs } from "../components/impactui";
 import { LimitsCard, PermissionMatrix, SafetyEvents, SafetySummary, TestResults } from "../components/safety";
 import { Card, ErrorState, LoadingState, PageHeader } from "../components/ui";
 
@@ -28,6 +29,7 @@ export default function SafetyPage() {
     <>
       <PageHeader eyebrow="Analytics & Safety" title="Guardrails you can see"
         subtitle="Which AI provider and models are in use, how each task picks its model, what it costs, and what SAM SPACE will never do." />
+      <AnalyticsTabs />
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card title="Configuration" icon={<KeyRound size={16} aria-hidden="true" />}>

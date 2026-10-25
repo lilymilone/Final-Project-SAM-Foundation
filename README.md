@@ -308,6 +308,22 @@ The walkthrough, with the threat model, test results, and screenshots, is in **[
   - `python -m backend.scripts.run_live_safety`: real models, about $1
   - `python -m backend.scripts.export_safety_evidence`: writes the evidence files
 
+## Impact & Evaluation (real-user pilot)
+
+The walkthrough is in **[docs/impact_evaluation_workflow.md](docs/impact_evaluation_workflow.md)**. Evidence is in [docs/evidence/impact/](docs/evidence/impact/).
+
+- **Analytics & Safety → Impact & Evaluation** compares the board's usual way of preparing a 150-person gala proposal with SAM SPACE.
+  - Times are recorded on the server clock and include reviewing the AI's work.
+  - The run's own logs supply venues, sources, finance, lessons, drafts, and the agents' time and cost.
+  - Both proposals are scored on the same human rubric, followed by a 12-question feedback form and mission questions.
+- **Honest by construction:**
+  - With no real submissions, the dashboard says *Pilot pending — no real-user evaluation data collected yet.*
+  - Practice runs are never counted.
+  - Negative time savings and unfavorable feedback are shown as recorded.
+  - Names appear only with the participant's permission.
+- **Historical learning:** the same plan runs without and with Our Legacy, and code shows which recommendations changed and the specific lesson each one rests on.
+- **Export:** `python -m backend.scripts.export_impact_evidence` writes the methodology, instructions, rubric, anonymized results, and comparisons.
+
 ## What's in this stage
 
 - **Board sign-in.**
@@ -384,7 +400,7 @@ backend/app/
   mission.py  FoundationMission: philosophy, criteria, fit rubric (shared by the agents)
   compliance.py  cited compliance sources (IRS, NY, CT) with jurisdiction and check date
 backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py, export_trace.py,
-                  run_safety_suite.py, run_live_safety.py, export_safety_evidence.py
+                  run_safety_suite.py, run_live_safety.py, export_safety_evidence.py, export_impact_evidence.py
 frontend/     React + TypeScript + Vite + Tailwind (built output in frontend/dist)
 tests/        pytest suite
 assets/       Smile Like Sab logo (smile-like-sab.png)

@@ -1,0 +1,141 @@
+{
+  "server": "throwaway database (verify9.db), real OpenAI models",
+  "results": [
+    {
+      "check": "Upload: 5 files stored (PDF, CSV, XLSX, photo, notes)",
+      "passed": true,
+      "observed": [
+        [
+          "butterfly_spring_raffle_recap.pdf",
+          "readable"
+        ],
+        [
+          "butterfly_spring_raffle_budget.csv",
+          "readable"
+        ],
+        [
+          "butterfly_spring_raffle_checkin.xlsx",
+          "readable"
+        ],
+        [
+          "butterfly_spring_raffle_table.png",
+          "photo"
+        ],
+        [
+          "butterfly_spring_raffle_notes.txt",
+          "readable"
+        ]
+      ]
+    },
+    {
+      "check": "Upload: real-model extraction completed",
+      "passed": true,
+      "observed": "run #1 completed $0.00095"
+    },
+    {
+      "check": "Upload: figures quoted from the source",
+      "passed": true,
+      "observed": {
+        "fundraising_goal_usd": [
+          10000.0,
+          "against a goal of $10,000."
+        ],
+        "funds_raised_usd": [
+          11850.0,
+          "We raised $11,850"
+        ],
+        "total_cost_usd": [
+          3400.0,
+          "Total expenses were $3,400."
+        ]
+      }
+    },
+    {
+      "check": "Upload: conflicting attendance left for the board",
+      "passed": true,
+      "observed": [
+        [
+          "attendance",
+          [
+            120.0,
+            118.0
+          ]
+        ]
+      ]
+    },
+    {
+      "check": "Upload: injected line screened; photo not read",
+      "passed": true,
+      "observed": "injection flags 1; photo status ['photo']"
+    },
+    {
+      "check": "Review: correction and conflict choice saved with provenance",
+      "passed": true,
+      "observed": {
+        "name": "board_edited",
+        "attendance": "board_choice",
+        "funds_raised_usd": "source_fact"
+      }
+    },
+    {
+      "check": "Save and retrieve: record listed and documents attached",
+      "passed": true,
+      "observed": "5 documents, 1 photo, verification document_extracted"
+    },
+    {
+      "check": "Conversation: details extracted, nothing invented",
+      "passed": true,
+      "observed": {
+        "fields": [
+          "attendance",
+          "event_type",
+          "event_year",
+          "funds_raised_usd",
+          "location",
+          "summary",
+          "total_cost_usd",
+          "venue"
+        ],
+        "missing": [
+          "Event title",
+          "Fundraising goal"
+        ],
+        "run": 2
+      }
+    },
+    {
+      "check": "Conversation: saved as a new record",
+      "passed": true,
+      "observed": "event #5"
+    },
+    {
+      "check": "Reflection: saved with author, time, and original words",
+      "passed": true,
+      "observed": [
+        [
+          "Avery Brooks",
+          "2026-10-25T21:32"
+        ]
+      ]
+    },
+    {
+      "check": "No browser errors during the walkthrough",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "check": "Lessons: every lesson cites existing records",
+      "passed": true,
+      "observed": "run #3: 9 lessons, $0.0478; raffle cited: True"
+    }
+  ],
+  "import_ids": [
+    1,
+    2
+  ],
+  "event_ids": [
+    4,
+    5
+  ],
+  "lessons_run": 3
+}

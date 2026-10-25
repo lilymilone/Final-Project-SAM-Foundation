@@ -645,6 +645,90 @@ class Experiment(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+# --- Impact & Evaluation (real-user pilot) ----------------------------------------
+
+
+class ImpactEvaluation(Base):
+    """One participant's evaluation of the fixed planning task: a manual baseline, a SAM SPACE-assisted attempt linked to
+    a real agent run, rubric scores, and feedback. Practice and test records are flagged is_synthetic and never counted."""
+
+    __tablename__ = "impact_evaluations"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    participant_code: Mapped[str] = mapped_column(String(20))  # "P1": what reports show unless naming is permitted
+    participant_role: Mapped[str] = mapped_column(String(60), default="")
+    show_name_in_reports: Mapped[bool] = mapped_column(Boolean, default=False)
+    attribution_permission: Mapped[bool] = mapped_column(Boolean, default=False)  # may identifiable comments be quoted publicly?
+    is_synthetic: Mapped[bool] = mapped_column(Boolean, default=False)  # practice runs and automated fixtures
+    scenario_key: Mapped[str] = mapped_column(String(40), default="gala_150_manhattan")
+    task_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="draft")  # draft | submitted
+    # Manual baseline (the participant's usual way of working).
+    manual_status: Mapped[str] = mapped_column(String(20), default="not_started")  # not_started|in_progress|completed|unavailable
+    manual_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    manual_finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    manual_minutes: Mapped[float | None] = mapped_column(Float, nullable=True)
+    manual_tools: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    manual_venues: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    manual_verified_sources: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    manual_financial_model: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    manual_history_used: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    manual_outreach_draft: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    manual_difficulties: Mapped[str | None] = mapped_column(Text, nullable=True)
+    manual_comments: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # SAM SPACE-assisted attempt. Human time (start to finish, including review) is separate from model execution time.
+    assisted_status: Mapped[str] = mapped_column(String(20), default="not_started")
+    assisted_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    assisted_finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    assisted_minutes: Mapped[float | None] = mapped_column(Float, nullable=True)
+    review_minutes: Mapped[float | None] = mapped_column(Float, nullable=True)  # part spent reviewing and correcting AI output
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    run_metrics: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # read from the run's logs when linked
+    calculations_correct: Mapped[str | None] = mapped_column(String(10), nullable=True)  # yes | no | unsure
+    outreach_usefulness: Mapped[str | None] = mapped_column(String(20), nullable=True)  # usable | needs_editing | not_usable
+    errors_encountered: Mapped[str | None] = mapped_column(Text, nullable=True)
+    unsupported_claims_found: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    unsupported_claims_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    assisted_observations: Mapped[str | None] = mapped_column(Text, nullable=True)
+    feedback: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    feedback_saved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    mission: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = _created()
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class EvaluationScore(Base):
+    """A human evaluator's rubric score for one proposal (manual, SAM SPACE-assisted, or a history-comparison run)."""
+
+    __tablename__ = "evaluation_scores"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    evaluation_id: Mapped[int | None] = mapped_column(ForeignKey("impact_evaluations.id", ondelete="CASCADE"), nullable=True, index=True)
+    experiment_id: Mapped[int | None] = mapped_column(ForeignKey("experiments.id", ondelete="CASCADE"), nullable=True, index=True)
+    condition: Mapped[str] = mapped_column(String(20))  # manual | assisted | without_history | with_history
+    dimension: Mapped[str] = mapped_column(String(40))
+    score: Mapped[int] = mapped_column(Integer)  # 0-4
+    scorer_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    scorer_kind: Mapped[str] = mapped_column(String(10), default="human")  # human (no AI scoring is used)
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = _created()
+
+
+class ImpactAssumption(Base):
+    """Administrator-entered assumptions for projections (e.g. similar tasks per year). Always labeled as assumptions."""
+
+    __tablename__ = "impact_assumptions"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    key: Mapped[str] = mapped_column(String(60))
+    value: Mapped[float] = mapped_column(Float)
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    updated_at: Mapped[datetime] = _created()
+
+
 # --- Safety + audit -----------------------------------------------------------
 
 

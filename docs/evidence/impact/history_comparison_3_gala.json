@@ -1,0 +1,2269 @@
+{
+  "id": 3,
+  "request": "Plan a 150-person Manhattan fundraising gala with three venue options, a preliminary budget, lessons from past events, and a venue inquiry draft.",
+  "research_mode": "synthetic",
+  "date": "2026-10-25T21:45:47.318426",
+  "inputs": {
+    "request": "Plan a 150-person Manhattan fundraising gala with three venue options, a preliminary budget, lessons from past events, and a venue inquiry draft.",
+    "event_plan_id": 1,
+    "same_inputs_note": "Both runs used the same request, event plan, research data, and model strategy. Only the Event Intelligence step differs. Model outputs vary between runs, so some text differences are wording, not substance."
+  },
+  "runs": {
+    "without_history": {
+      "run_id": 38,
+      "usage": {
+        "model_calls": 6,
+        "input_tokens": 17014,
+        "cached_input_tokens": 1062,
+        "output_tokens": 6730,
+        "web_search_calls": 0,
+        "cost_usd": 0.23664,
+        "by_agent": {
+          "financial_analysis": {
+            "calls": 2,
+            "cost_usd": 0.023664
+          },
+          "fundraising_events": {
+            "calls": 2,
+            "cost_usd": 0.042283
+          },
+          "orchestrator": {
+            "calls": 1,
+            "cost_usd": 0.170355
+          },
+          "partnerships_outreach": {
+            "calls": 1,
+            "cost_usd": 0.000338
+          }
+        }
+      },
+      "duration_s": 125.6,
+      "models": [
+        "gpt-6-astra",
+        "gpt-6-luna",
+        "gpt-6.1-sol"
+      ],
+      "verification_passed": true,
+      "headline": "Advance Chelsea Atelier for inquiry only; resolve accessibility, funding and the fundraising target before committing."
+    },
+    "with_history": {
+      "run_id": 39,
+      "usage": {
+        "model_calls": 7,
+        "input_tokens": 31092,
+        "cached_input_tokens": 7311,
+        "output_tokens": 10951,
+        "web_search_calls": 0,
+        "cost_usd": 0.335112,
+        "by_agent": {
+          "event_intelligence": {
+            "calls": 1,
+            "cost_usd": 0.045341
+          },
+          "financial_analysis": {
+            "calls": 2,
+            "cost_usd": 0.015878
+          },
+          "fundraising_events": {
+            "calls": 2,
+            "cost_usd": 0.057969
+          },
+          "orchestrator": {
+            "calls": 1,
+            "cost_usd": 0.21558
+          },
+          "partnerships_outreach": {
+            "calls": 1,
+            "cost_usd": 0.000344
+          }
+        }
+      },
+      "duration_s": 185.2,
+      "models": [
+        "gpt-6-astra",
+        "gpt-6-luna",
+        "gpt-6.1-sol"
+      ],
+      "verification_passed": true,
+      "headline": "Advance Chelsea Atelier for inquiry only; keep spending approval conditional"
+    }
+  },
+  "numbers": [
+    {
+      "measure": "Projected total (USD)",
+      "without_history": 15400.0,
+      "with_history": 15400.0,
+      "changed": false
+    },
+    {
+      "measure": "Upfront cash (USD)",
+      "without_history": 4250.0,
+      "with_history": 4250.0,
+      "changed": false
+    },
+    {
+      "measure": "Contingency",
+      "without_history": 0.1,
+      "with_history": 0.1,
+      "changed": false
+    },
+    {
+      "measure": "Revision rounds",
+      "without_history": 1,
+      "with_history": 1,
+      "changed": false
+    }
+  ],
+  "dimensions": [
+    {
+      "key": "venue_selection",
+      "label": "Venue-selection criteria",
+      "without_history": [
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the sole supplied venue option within the $18,000 cost ceiling. Its preliminary cost is $15,400, with $4,250 needed upfront. Finance finds it affordable with conditions\u2014not authorized. A warm reception honoring Sabrina, with a short, consent-led recovery talk, fits the intended program, but the standing-only format presents a material inclusion concern. Do not commit until seating accommodations and accessibility are confirmed, unrestricted cash is verified, and the board addresses the fundraising-target shortfall.",
+        "Chelsea\u2019s supplied reception capacity is 200 for the planned 150 guests. Outside catering is permitted, no food-and-beverage minimum is stated, and a small speaker stage supports the program. All venue details remain synthetic and unconfirmed.",
+        "Preliminary expense budget: venue $1,800; catering $8,700; entertainment $1,500; marketing $600; staffing $900; insurance and permits $500; miscellaneous $0. Supplied subtotal: $14,000; contingency: $1,400; total: $15,400. The miscellaneous allowance does not establish that no additional costs will arise.",
+        "The $4,250 upfront requirement passes the supplied model\u2019s check against $9,938 of planning capacity above the $11,562 reserve floor. That capacity must be verified as unrestricted cash still available when payments are due. Recorded income, projected ticket receipts, restricted funds and pledged sponsorship are not available deposit money.",
+        "At the modeled $250 standard ticket, the base case assumes 150 attendees, $37,500 in ticket revenue, $5,000 in sponsorship and $4,342.50 in donations. Supplied total revenue is $46,842.50 and net proceeds are $31,442.50. Sponsorship and demand are unconfirmed.",
+        "The conservative case assumes 120 attendees, $31,737 in total revenue and $16,337 in net proceeds. Optimistic net proceeds are $35,245.25. None of the supplied net scenarios reaches $40,000; the board must clarify whether that goal means gross revenue or net proceeds.",
+        "A standing-only reception could exclude guests who cannot stand for extended periods. Accessible entry, restrooms, stage access, rest seating, dietary support and a quieter area are unknown.",
+        "Whether the $40,000 goal means gross revenue or net proceeds; if it means net, whether lower projected proceeds are acceptable or the plan must be revised or deferred.",
+        "Have a board-designated person verify venue identity and contact details, review the inquiry below, and send it outside SAM SPACE only if the board agrees.",
+        "Unsent venue inquiry draft To: Chelsea Atelier (synthetic; verified contact needed) Subject: Inquiry: Manhattan Spring Gala on April 17, 2027 Hello, The Sabrina Audrey Milone Foundation is exploring a reception-style fundraising gala for 150 guests in Manhattan on April 17, 2027. We envision a warm, personal evening honoring Sabrina, with a brief tribute and a short recovery-speaker talk. Could you confirm availability, capacity and current itemized pricing, including required fees, deposit and payment schedules, cancellation terms, insurance and permit requirements? Please also confirm outside-catering rules and whether any food-and-beverage minimum applies. We understand the proposed format is standing-only. Can you permit sufficient seating accommodations for guests who cannot stand for extended periods? Please describe accessible entry, restrooms and stage access, along with dietary accommodation options and the possibility of a quieter area. We would also appreciate details on the speaker stage, AV equipment and staffing requirements. Please share these details so our board can assess suitability and affordability. This is an exploratory inquiry, not a booking or commitment. Thank you.",
+        "For the Manhattan Spring Gala sample plan, the current planning revision\u2014not a past-event lesson\u2014replaced Hudson Garden Room\u2019s over-budget dinner with Chelsea Atelier\u2019s reception. The applicable planning lesson is to review total costs and upfront cash before advancing a venue, rather than relying on projected positive proceeds.",
+        "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+        "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+        "This is synthetic research using sample venue information and a synthetic demo ledger, not verified market research.",
+        "Venue availability, pricing, accessibility and contractual terms are unconfirmed. Some outreach recipients use example.org fixtures; no verified contact or venue link is supplied.",
+        "Chelsea Atelier \u2014 reception; recommended for further inquiry: Projected cost $15,400; upfront cash $4,250. The only supplied option within the current cost ceiling. Capacity and catering flexibility support the plan, but standing-only use may exclude guests unless suitable accommodations are permitted and confirmed.",
+        "Hudson Garden Room \u2014 seated dinner; not feasible as currently planned: Projected cost $28,050; upfront cash $7,700. Supplied seated capacity is 160 and wheelchair accessibility is stated, subject to verification. In-house catering and a food-and-beverage minimum limit flexibility. It exceeds the $18,000 ceiling and would require substantive revision and a new finance review.",
+        "Gramercy Hall \u2014 reception; comparison alternative only: Projected cost $24,475; upfront cash $10,475. It exceeds both the $18,000 cost ceiling and the $9,938 supplied planning capacity for upfront payments. Capacity, accessibility and contract details are not supplied. It is not a viable fallback under current constraints.",
+        "No historical lessons were supplied; this recommendation uses current computed costs, venue restrictions and the board\u2019s instructions.",
+        "The only option satisfying the revised cost constraint. Published reception capacity is 200 for the planned 150 guests. Outside caterers are allowed, there is no food-and-beverage minimum, and a small speaker stage supports the requested recovery talk. The standing-only format requires careful accessibility review.",
+        "Draft sponsorship asks for event underwriting, community-ticket access and speaker-program support. Seek written commitments rather than treating historical sponsorship assumptions as secured revenue.",
+        "Plan around 150 guests within the published reception capacity of 200. Ask for the catering guest-count deadline and lock the count before that deadline.",
+        "Ask about step-free entry, accessible restrooms, stage access, dietary accommodations, sound levels and a quieter space. None of these accessibility features is confirmed for Chelsea Atelier."
+      ],
+      "with_history": [
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the preferred option for further investigation\u2014not booking. Its preliminary cost of $15,400 is the only supplied venue model within the $18,000 ceiling. Preserve the personal tribute to Sabrina and short recovery talk, but require written pricing, suitable seating accommodations and verified accessibility before returning for board authorization. Neither alternative below fits the current ceiling. No modeled net outcome reaches the $40,000 fundraising goal, so the board must clarify whether that goal means gross receipts or net proceeds before deciding whether to proceed.",
+        "Chelsea\u2019s listed reception capacity of 200 accommodates 150 guests. Outside caterers are permitted and no food-and-beverage minimum is listed, addressing the catering exposure that prompted revision away from Hudson. Standing receptions only and load-in after 4 pm are significant constraints.",
+        "Preliminary expense budget: venue $1,800; catering $8,700; entertainment $1,500; marketing $600; staffing $900; insurance and permits $500; miscellaneous $0. Supplied subtotal: $14,000; contingency: $1,400; total: $15,400. The miscellaneous entry means costs have not been estimated, not that none will arise.",
+        "Base revenue model: 150 attendees at $250, producing $37,500 in ticket revenue, plus $5,000 in assumed sponsorship and $4,342.50 in assumed donations. Supplied total revenue is $46,842.50 and net proceeds are $31,442.50. These are projections, not receipts.",
+        "Modeled upfront cash is $4,250 against $9,938 of calculated unrestricted planning capacity above the $11,562 reserve floor. Finance finds the option feasible with conditions, but the cash balance, restrictions and payment timing require verification. Financial feasibility is not board authorization; restricted funds and pledged sponsorship are not available money.",
+        "The operating record shows a loss, making reserve protection important. Projected surplus and expected event revenue do not establish cash available when deposits fall due.",
+        "After quotes and cash verification, authorize\u2014or decline\u2014the specific spending and deposit commitments while preserving the reserve floor and all fund restrictions.",
+        "Have a board-designated person review the unsent inquiry below and verify a real recipient before sending outside SAM SPACE. Confirm that the sample date remains the intended date.",
+        "Unsent venue inquiry draft \u2014 To: Chelsea Atelier (recipient to be verified). Subject: Venue inquiry: Manhattan Spring Gala on April 17, 2027. Hello, The Sabrina Audrey Milone Foundation is exploring a venue for a 150-person Manhattan fundraising gala on April 17, 2027: a warm, personal evening honoring Sabrina, with a short recovery-speaker talk and time for conversation. Could you confirm availability and provide a written, itemized proposal covering rental, catering requirements, any minimums, fees, deposit amounts, payment deadlines, cancellation terms and guest-count changes? Please confirm outside-caterer rules and arrangements for dietary needs and volunteer meals. We understand the supplied listing permits standing receptions only and load-in after 4 pm. Can guests who need seating be accommodated within those rules? Please describe entrance access, internal routes, accessible restrooms, quieter conversation space, stage access, microphones and sound equipment, and setup timing. Please also identify insurance, permit and staffing requirements and any costs not included in your proposal. This is an exploratory inquiry, not a reservation or spending commitment. Thank you. Your response will help our board assess suitability.",
+        "Set sponsor-artwork deadlines a month before printing. Return verified venue terms, access findings and revised financial scenarios to the board before any commitment.",
+        "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+        "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+        "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+        "All venue listings, financial records and past-event evidence are synthetic or sample data. They are planning signals, not verified foundation performance or real venue offers.",
+        "Venue availability, terms and recipient details have not been independently verified. Synthetic outreach fixtures may use example.org; no verified contact link is supplied.",
+        "Several expense lines, contingency and revenue assumptions are placeholders. Published venue pricing does not make the full event budget a firm quote.",
+        "Board spending authorization, speaker consent and required venue permissions are not established. Nothing has been sent, booked, reserved, paid or approved.",
+        "Chelsea Atelier \u2014 reception, preferred for inquiry: Synthetic listing. Modeled total $15,400; upfront cash $4,250. Capacity 200, outside catering permitted, no listed food-and-beverage minimum and a small stage. Only supplied option within the current ceiling. Standing-only format, access, rest seating, quieter space, dietary provision and sound equipment must be resolved before commitment.",
+        "Hudson Garden Room \u2014 seated dinner, not feasible as planned: Synthetic listing. Modeled total $28,050; upfront cash $7,700. Listed seated capacity 160 accommodates the guest plan. Seated events and in-house catering are required; the catering minimum exposes the event to lower-attendance costs. Wheelchair accessibility is listed but needs detailed verification. Retains the dinner format, but requires substantial repricing or a board reconsideration of scope and funding\u2014not approval under the current ceiling.",
+        "Gramercy Hall \u2014 reception, quote-dependent alternative: Synthetic listing requiring a price quote. Hypothetical modeled total $24,475; upfront cash $10,475. These exceed both the event cost ceiling and calculated upfront planning capacity. Capacity, access and operating suitability are not established in the supplied results. Consider only for a verified quote and revised financial review, not as a currently feasible fallback.",
+        "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+        "The reception capacity of 200 accommodates the planned 150 guests. Computed cost is $15,400, below the $18,000 limit; outside caterers are allowed and there is no food-and-beverage minimum. The small stage supports the recovery speaker. Standing receptions only and load-in after 4 pm are material planning restrictions; accessibility and accommodation options remain unconfirmed.",
+        "Request in-kind catering, printing or production support, but do not deduct prospective gifts from the supplied costs. Any changed pricing or revenue assumptions must return to the budget calculator.",
+        "Check entrance access, routes and restrooms; test speaker audibility and discuss a quieter conversation area. Ask whether rest seating can be accommodated within the standing-receptions-only restriction."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                2
+              ],
+              "reflection_ids": [
+                5
+              ],
+              "shared_words": [
+                "campus",
+                "format",
+                "panel",
+                "spending",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "campus",
+                "panel",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "conversation",
+                "panel",
+                "quieter"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "access",
+                "audibility",
+                "check",
+                "conversation",
+                "dinner",
+                "discomfort"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Check the entrance for step-related barriers and test whether the speaker can be heard; include a quieter space in the layout discussion.",
+              "name": "history:Access and sound checks",
+              "shared_words": [
+                "check",
+                "entrance",
+                "quieter",
+                "space"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 19,
+      "verdict": "changed, with supporting lessons"
+    },
+    {
+      "key": "budget",
+      "label": "Event budget recommendations",
+      "without_history": [
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the sole supplied venue option within the $18,000 cost ceiling. Its preliminary cost is $15,400, with $4,250 needed upfront. Finance finds it affordable with conditions\u2014not authorized. A warm reception honoring Sabrina, with a short, consent-led recovery talk, fits the intended program, but the standing-only format presents a material inclusion concern. Do not commit until seating accommodations and accessibility are confirmed, unrestricted cash is verified, and the board addresses the fundraising-target shortfall.",
+        "Chelsea\u2019s supplied reception capacity is 200 for the planned 150 guests. Outside catering is permitted, no food-and-beverage minimum is stated, and a small speaker stage supports the program. All venue details remain synthetic and unconfirmed.",
+        "Preliminary expense budget: venue $1,800; catering $8,700; entertainment $1,500; marketing $600; staffing $900; insurance and permits $500; miscellaneous $0. Supplied subtotal: $14,000; contingency: $1,400; total: $15,400. The miscellaneous allowance does not establish that no additional costs will arise.",
+        "The $4,250 upfront requirement passes the supplied model\u2019s check against $9,938 of planning capacity above the $11,562 reserve floor. That capacity must be verified as unrestricted cash still available when payments are due. Recorded income, projected ticket receipts, restricted funds and pledged sponsorship are not available deposit money.",
+        "Recent recorded expenses exceeded income, making reserve protection important. The restricted cash balance also needs verification.",
+        "Placeholder costs and unconfirmed contract terms could change affordability. The model\u2019s reported break-even attendance of 4 has no explanatory basis supplied and should not guide a commitment.",
+        "Whether to authorize any eventual spending after verified quotes, cash availability, reserve protection, accommodations and contract terms return for board review. No authorization is implied by this recommendation.",
+        "Unsent venue inquiry draft To: Chelsea Atelier (synthetic; verified contact needed) Subject: Inquiry: Manhattan Spring Gala on April 17, 2027 Hello, The Sabrina Audrey Milone Foundation is exploring a reception-style fundraising gala for 150 guests in Manhattan on April 17, 2027. We envision a warm, personal evening honoring Sabrina, with a brief tribute and a short recovery-speaker talk. Could you confirm availability, capacity and current itemized pricing, including required fees, deposit and payment schedules, cancellation terms, insurance and permit requirements? Please also confirm outside-catering rules and whether any food-and-beverage minimum applies. We understand the proposed format is standing-only. Can you permit sufficient seating accommodations for guests who cannot stand for extended periods? Please describe accessible entry, restrooms and stage access, along with dietary accommodation options and the possibility of a quieter area. We would also appreciate details on the speaker stage, AV equipment and staffing requirements. Please share these details so our board can assess suitability and affordability. This is an exploratory inquiry, not a booking or commitment. Thank you.",
+        "Replace placeholder entertainment, marketing, staffing, insurance and permit estimates with quotes; enter known miscellaneous costs and rerun finance if costs or accommodations change.",
+        "Verify unrestricted cash, the restricted cash balance and payment timing before considering deposits. Do not count pledged sponsorship as available money.",
+        "Seek documented sponsorship terms and payment timing; model community-ticket access and supporter tiers before adoption. Count in-kind savings only after confirmation and an updated budget.",
+        "For the Manhattan Spring Gala sample plan, the current planning revision\u2014not a past-event lesson\u2014replaced Hudson Garden Room\u2019s over-budget dinner with Chelsea Atelier\u2019s reception. The applicable planning lesson is to review total costs and upfront cash before advancing a venue, rather than relying on projected positive proceeds.",
+        "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+        "Several budget lines are placeholders, and the contingency does not replace quotes or estimates for known costs.",
+        "Chelsea Atelier \u2014 reception; recommended for further inquiry: Projected cost $15,400; upfront cash $4,250. The only supplied option within the current cost ceiling. Capacity and catering flexibility support the plan, but standing-only use may exclude guests unless suitable accommodations are permitted and confirmed.",
+        "Hudson Garden Room \u2014 seated dinner; not feasible as currently planned: Projected cost $28,050; upfront cash $7,700. Supplied seated capacity is 160 and wheelchair accessibility is stated, subject to verification. In-house catering and a food-and-beverage minimum limit flexibility. It exceeds the $18,000 ceiling and would require substantive revision and a new finance review.",
+        "Gramercy Hall \u2014 reception; comparison alternative only: Projected cost $24,475; upfront cash $10,475. It exceeds both the $18,000 cost ceiling and the $9,938 supplied planning capacity for upfront payments. Capacity, accessibility and contract details are not supplied. It is not a viable fallback under current constraints.",
+        "No historical lessons were supplied; this recommendation uses current computed costs, venue restrictions and the board\u2019s instructions.",
+        "The only option satisfying the revised cost constraint. Published reception capacity is 200 for the planned 150 guests. Outside caterers are allowed, there is no food-and-beverage minimum, and a small speaker stage supports the requested recovery talk. The standing-only format requires careful accessibility review.",
+        "Retain the modeled $250 standard ticket as the planning baseline. Ask the board to consider sponsor-funded community tickets and an optional supporter tier; prices and allocations remain undecided and should be modeled before adoption.",
+        "Seek in-kind catering, AV and event-support contributions where permitted. Do not count potential donations as cost savings until confirmed and reflected in updated calculator results."
+      ],
+      "with_history": [
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the preferred option for further investigation\u2014not booking. Its preliminary cost of $15,400 is the only supplied venue model within the $18,000 ceiling. Preserve the personal tribute to Sabrina and short recovery talk, but require written pricing, suitable seating accommodations and verified accessibility before returning for board authorization. Neither alternative below fits the current ceiling. No modeled net outcome reaches the $40,000 fundraising goal, so the board must clarify whether that goal means gross receipts or net proceeds before deciding whether to proceed.",
+        "Chelsea\u2019s listed reception capacity of 200 accommodates 150 guests. Outside caterers are permitted and no food-and-beverage minimum is listed, addressing the catering exposure that prompted revision away from Hudson. Standing receptions only and load-in after 4 pm are significant constraints.",
+        "Preliminary expense budget: venue $1,800; catering $8,700; entertainment $1,500; marketing $600; staffing $900; insurance and permits $500; miscellaneous $0. Supplied subtotal: $14,000; contingency: $1,400; total: $15,400. The miscellaneous entry means costs have not been estimated, not that none will arise.",
+        "Modeled upfront cash is $4,250 against $9,938 of calculated unrestricted planning capacity above the $11,562 reserve floor. Finance finds the option feasible with conditions, but the cash balance, restrictions and payment timing require verification. Financial feasibility is not board authorization; restricted funds and pledged sponsorship are not available money.",
+        "A standing reception could exclude guests who need seating. Lower cost does not establish inclusion; inability to provide suitable accommodations should prevent commitment.",
+        "Catering changes, volunteer meals, production requirements and unpriced miscellaneous items could increase costs. Contingency is a planning assumption, not evidence that all expenses are covered.",
+        "The operating record shows a loss, making reserve protection important. Projected surplus and expected event revenue do not establish cash available when deposits fall due.",
+        "After quotes and cash verification, authorize\u2014or decline\u2014the specific spending and deposit commitments while preserving the reserve floor and all fund restrictions.",
+        "Unsent venue inquiry draft \u2014 To: Chelsea Atelier (recipient to be verified). Subject: Venue inquiry: Manhattan Spring Gala on April 17, 2027. Hello, The Sabrina Audrey Milone Foundation is exploring a venue for a 150-person Manhattan fundraising gala on April 17, 2027: a warm, personal evening honoring Sabrina, with a short recovery-speaker talk and time for conversation. Could you confirm availability and provide a written, itemized proposal covering rental, catering requirements, any minimums, fees, deposit amounts, payment deadlines, cancellation terms and guest-count changes? Please confirm outside-caterer rules and arrangements for dietary needs and volunteer meals. We understand the supplied listing permits standing receptions only and load-in after 4 pm. Can guests who need seating be accommodated within those rules? Please describe entrance access, internal routes, accessible restrooms, quieter conversation space, stage access, microphones and sound equipment, and setup timing. Please also identify insurance, permit and staffing requirements and any costs not included in your proposal. This is an exploratory inquiry, not a reservation or spending commitment. Thank you. Your response will help our board assess suitability.",
+        "Replace placeholder costs with written quotes; confirm minimums, guest-count deadlines, volunteer meals, deposits and payment timing. Verify unrestricted cash and the restricted balance before finance reruns the model.",
+        "Butterfly Benefit Dinner: explicitly address reported entrance barriers and price-related discomfort. The perceived value of a dinner does not settle the affordability or inclusion question.",
+        "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+        "Several expense lines, contingency and revenue assumptions are placeholders. Published venue pricing does not make the full event budget a firm quote.",
+        "The cash calculation assumes recorded restricted gifts remain unspent because no restricted balance was recorded; that assumption needs verification.",
+        "Chelsea Atelier \u2014 reception, preferred for inquiry: Synthetic listing. Modeled total $15,400; upfront cash $4,250. Capacity 200, outside catering permitted, no listed food-and-beverage minimum and a small stage. Only supplied option within the current ceiling. Standing-only format, access, rest seating, quieter space, dietary provision and sound equipment must be resolved before commitment.",
+        "Hudson Garden Room \u2014 seated dinner, not feasible as planned: Synthetic listing. Modeled total $28,050; upfront cash $7,700. Listed seated capacity 160 accommodates the guest plan. Seated events and in-house catering are required; the catering minimum exposes the event to lower-attendance costs. Wheelchair accessibility is listed but needs detailed verification. Retains the dinner format, but requires substantial repricing or a board reconsideration of scope and funding\u2014not approval under the current ceiling.",
+        "Gramercy Hall \u2014 reception, quote-dependent alternative: Synthetic listing requiring a price quote. Hypothetical modeled total $24,475; upfront cash $10,475. These exceed both the event cost ceiling and calculated upfront planning capacity. Capacity, access and operating suitability are not established in the supplied results. Consider only for a verified quote and revised financial review, not as a currently feasible fallback.",
+        "Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner: reduce food-minimum exposure and require written catering prices and guest-count terms.",
+        "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+        "The reception capacity of 200 accommodates the planned 150 guests. Computed cost is $15,400, below the $18,000 limit; outside caterers are allowed and there is no food-and-beverage minimum. The small stage supports the recovery speaker. Standing receptions only and load-in after 4 pm are material planning restrictions; accessibility and accommodation options remain unconfirmed.",
+        "Retain the planned $250 ticket as the modeled baseline. Ask the board to consider sponsor-funded community tickets and a supporter tier with an optional additional gift; prices and allocations are not yet established and would require a new calculator run.",
+        "Request in-kind catering, printing or production support, but do not deduct prospective gifts from the supplied costs. Any changed pricing or revenue assumptions must return to the budget calculator.",
+        "Request availability for 2027-04-17 and a written scope covering catering, per-head pricing, absence of minimums, guest-count changes, deposits and cancellation terms before commitment.",
+        "Agree a guest-count lock two weeks out, subject to written caterer terms. Separately budget and confirm volunteer meals rather than relying on leftover guest food.",
+        "Review the existing placeholder and contingency assumptions with Finance, including a printing buffer, without adding unpriced costs or inventing a cushion percentage."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Butterfly Benefit Dinner: explicitly address reported entrance barriers and price-related discomfort. The perceived value of a dinner does not settle the affordability or inclusion question.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "address",
+                "dinner",
+                "discomfort",
+                "entrance",
+                "explicitly",
+                "price-related"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner",
+                "reported"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "At the Benefit Dinner, the recovery speaker was praised by guests and prompted personal conversations at a board member's table. Preserve this element in the gala draft; the evidence supports connection, not a measured causal effect on giving.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                2
+              ],
+              "reflection_ids": [
+                3
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner: reduce food-minimum exposure and require written catering prices and guest-count terms.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "benefit",
+                "campus",
+                "dinner",
+                "guest-count",
+                "panel"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                2
+              ],
+              "reflection_ids": [
+                5
+              ],
+              "shared_words": [
+                "awareness",
+                "campus",
+                "panel",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "access",
+                "audibility",
+                "check",
+                "conversation",
+                "dinner",
+                "discomfort"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Check the entrance for step-related barriers and test whether the speaker can be heard; include a quieter space in the layout discussion.",
+              "name": "history:Access and sound checks",
+              "shared_words": [
+                "check",
+                "entrance",
+                "quieter",
+                "space"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 19,
+      "verdict": "changed, with supporting lessons"
+    },
+    {
+      "key": "logistics",
+      "label": "Logistics",
+      "without_history": [
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the sole supplied venue option within the $18,000 cost ceiling. Its preliminary cost is $15,400, with $4,250 needed upfront. Finance finds it affordable with conditions\u2014not authorized. A warm reception honoring Sabrina, with a short, consent-led recovery talk, fits the intended program, but the standing-only format presents a material inclusion concern. Do not commit until seating accommodations and accessibility are confirmed, unrestricted cash is verified, and the board addresses the fundraising-target shortfall.",
+        "Chelsea\u2019s supplied reception capacity is 200 for the planned 150 guests. Outside catering is permitted, no food-and-beverage minimum is stated, and a small speaker stage supports the program. All venue details remain synthetic and unconfirmed.",
+        "Unsent venue inquiry draft To: Chelsea Atelier (synthetic; verified contact needed) Subject: Inquiry: Manhattan Spring Gala on April 17, 2027 Hello, The Sabrina Audrey Milone Foundation is exploring a reception-style fundraising gala for 150 guests in Manhattan on April 17, 2027. We envision a warm, personal evening honoring Sabrina, with a brief tribute and a short recovery-speaker talk. Could you confirm availability, capacity and current itemized pricing, including required fees, deposit and payment schedules, cancellation terms, insurance and permit requirements? Please also confirm outside-catering rules and whether any food-and-beverage minimum applies. We understand the proposed format is standing-only. Can you permit sufficient seating accommodations for guests who cannot stand for extended periods? Please describe accessible entry, restrooms and stage access, along with dietary accommodation options and the possibility of a quieter area. We would also appreciate details on the speaker stage, AV equipment and staffing requirements. Please share these details so our board can assess suitability and affordability. This is an exploratory inquiry, not a booking or commitment. Thank you.",
+        "Draft sponsorship asks for event underwriting, community-ticket access and speaker-program support. Seek written commitments rather than treating historical sponsorship assumptions as secured revenue.",
+        "Load-in is permitted only after 4 pm. Confirm sufficient setup, catering and sound-check time before setting guest arrival and program times.",
+        "Plan around 150 guests within the published reception capacity of 200. Ask for the catering guest-count deadline and lock the count before that deadline.",
+        "Respect the standing-receptions-only restriction. Ask whether rest seating and seating accommodations are permitted; do not assume a seated dinner or seated program is possible."
+      ],
+      "with_history": [
+        "Unsent venue inquiry draft \u2014 To: Chelsea Atelier (recipient to be verified). Subject: Venue inquiry: Manhattan Spring Gala on April 17, 2027. Hello, The Sabrina Audrey Milone Foundation is exploring a venue for a 150-person Manhattan fundraising gala on April 17, 2027: a warm, personal evening honoring Sabrina, with a short recovery-speaker talk and time for conversation. Could you confirm availability and provide a written, itemized proposal covering rental, catering requirements, any minimums, fees, deposit amounts, payment deadlines, cancellation terms and guest-count changes? Please confirm outside-caterer rules and arrangements for dietary needs and volunteer meals. We understand the supplied listing permits standing receptions only and load-in after 4 pm. Can guests who need seating be accommodated within those rules? Please describe entrance access, internal routes, accessible restrooms, quieter conversation space, stage access, microphones and sound equipment, and setup timing. Please also identify insurance, permit and staffing requirements and any costs not included in your proposal. This is an exploratory inquiry, not a reservation or spending commitment. Thank you. Your response will help our board assess suitability.",
+        "Replace placeholder costs with written quotes; confirm minimums, guest-count deadlines, volunteer meals, deposits and payment timing. Verify unrestricted cash and the restricted balance before finance reruns the model.",
+        "Draft a formal program under an hour, retaining Sabrina\u2019s tribute, the recovery talk, a brief voluntary appeal and concise recognition. Allow conversation afterward and explore an optional resource connection point with consent-based follow-up.",
+        "Set sponsor-artwork deadlines a month before printing. Return verified venue terms, access findings and revised financial scenarios to the board before any commitment.",
+        "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+        "Butterfly Spring Raffle: provide a staffed welcome point, brief volunteers and assign station leads; avoid extended program segments.",
+        "Butterfly Benefit Dinner: retain the recovery speaker and personal connection, keep the formal program under an hour, and collect payments during the event rather than relying solely on later pledge follow-up.",
+        "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+        "Seek business sponsorships for the reception, recovery-speaker program and community-ticket access. Offer proportionate recognition without promising unconfirmed benefits. Lock sponsor artwork a month before printing, following the Spring Awareness Walk lesson.",
+        "Include a brief, voluntary paddle raise or direct appeal linked to mental health awareness, eating disorder research and community. Keep the formal program under an hour and do not use the recovery speaker\u2019s personal story as evidence of likely donations.",
+        "Request in-kind catering, printing or production support, but do not deduct prospective gifts from the supplied costs. Any changed pricing or revenue assumptions must return to the budget calculator.",
+        "Plan load-in after 4 pm. Confirm that setup, sound testing and volunteer preparation can be completed before guest arrival; event start time is unknown.",
+        "Draft a formal program under an hour with a personal tribute to Sabrina, the short recovery talk, a concise appeal and thanks. Allow informal conversation outside the formal program.",
+        "Review the existing placeholder and contingency assumptions with Finance, including a printing buffer, without adding unpriced costs or inventing a cushion percentage."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                2
+              ],
+              "reflection_ids": [
+                5
+              ],
+              "shared_words": [
+                "campus",
+                "format",
+                "panel",
+                "spending",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "campus",
+                "panel",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "conversation",
+                "panel",
+                "quieter"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Spring Raffle: provide a staffed welcome point, brief volunteers and assign station leads; avoid extended program segments.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Butterfly Spring Raffle: retain a staffed welcome point and brief volunteers before event day, with a lead for each station. The welcome table was praised, while unassigned roles disrupted opening operations.",
+              "events": [
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                4
+              ],
+              "reflection_ids": [
+                8
+              ],
+              "shared_words": [
+                "brief",
+                "butterfly",
+                "point",
+                "staffed",
+                "station",
+                "volunteers"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "Use the board-reviewed Benefit Dinner lesson to draft a program under an hour while retaining the recovery speaker. The raffle's prolonged draw provides a separate warning about extended program segments.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)",
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                2,
+                4
+              ],
+              "reflection_ids": [
+                3,
+                4,
+                9
+              ],
+              "shared_words": [
+                "extended",
+                "program",
+                "segments"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Use the raffle reflection's proposed timetable: lock the volunteer list three weeks out and brief volunteers by phone the week before, with one lead per station.",
+              "name": "history:Advance volunteer assignments",
+              "shared_words": [
+                "brief",
+                "station",
+                "volunteers"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Benefit Dinner: retain the recovery speaker and personal connection, keep the formal program under an hour, and collect payments during the event rather than relying solely on later pledge follow-up.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Benefit Dinner: plan payment collection at the table rather than relying solely on later follow-up, because several pledges were never collected. Strong pledges should not be treated as confirmed receipts.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                2
+              ],
+              "reflection_ids": [
+                3,
+                4
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner",
+                "follow-up",
+                "later",
+                "rather",
+                "relying"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "Use the board-reviewed Benefit Dinner lesson to draft a program under an hour while retaining the recovery speaker. The raffle's prolonged draw provides a separate warning about extended program segments.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)",
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                2,
+                4
+              ],
+              "reflection_ids": [
+                3,
+                4,
+                9
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner",
+                "hour",
+                "program",
+                "recovery",
+                "speaker"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "At the Benefit Dinner, the recovery speaker was praised by guests and prompted personal conversations at a board member's table. Preserve this element in the gala draft; the evidence supports connection, not a measured causal effect on giving.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                2
+              ],
+              "reflection_ids": [
+                3
+              ],
+              "shared_words": [
+                "benefit",
+                "connection",
+                "dinner",
+                "personal",
+                "recovery",
+                "speaker"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "month",
+                "printing",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "volunteer",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Seek business sponsorships for the reception, recovery-speaker program and community-ticket access. Offer proportionate recognition without promising unconfirmed benefits. Lock sponsor artwork a month before printing, following the Spring Awareness Walk lesson.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "business",
+                "month",
+                "printing",
+                "sponsorships"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 9,
+      "verdict": "changed, with supporting lessons"
+    },
+    {
+      "key": "volunteers",
+      "label": "Volunteer coordination",
+      "without_history": [
+        "Unsent venue inquiry draft To: Chelsea Atelier (synthetic; verified contact needed) Subject: Inquiry: Manhattan Spring Gala on April 17, 2027 Hello, The Sabrina Audrey Milone Foundation is exploring a reception-style fundraising gala for 150 guests in Manhattan on April 17, 2027. We envision a warm, personal evening honoring Sabrina, with a brief tribute and a short recovery-speaker talk. Could you confirm availability, capacity and current itemized pricing, including required fees, deposit and payment schedules, cancellation terms, insurance and permit requirements? Please also confirm outside-catering rules and whether any food-and-beverage minimum applies. We understand the proposed format is standing-only. Can you permit sufficient seating accommodations for guests who cannot stand for extended periods? Please describe accessible entry, restrooms and stage access, along with dietary accommodation options and the possibility of a quieter area. We would also appreciate details on the speaker stage, AV equipment and staffing requirements. Please share these details so our board can assess suitability and affordability. This is an exploratory inquiry, not a booking or commitment. Thank you.",
+        "Confirm the recovery speaker\u2019s participation, consent boundaries, introduction preferences and technical needs. Plan volunteer welcomes, optional introductions, a brief tribute, the short talk and an optional, discreet paddle raise.",
+        "Include a brief, voluntary paddle raise after the mission presentation, with a discreet way to give. Keep the recovery speaker\u2019s contribution separate from any expectation to solicit donations or disclose more than they wish.",
+        "Assign volunteer roles for welcome, guest introductions, speaker liaison, accessibility requests and donation assistance. Confirm microphone and other AV needs rather than assuming they are included."
+      ],
+      "with_history": [
+        "The fundraising objective remains unresolved: a gross-receipts goal and a net-proceeds goal lead to different assessments. Attendance, sponsorship and donations may not materialize.",
+        "Catering changes, volunteer meals, production requirements and unpriced miscellaneous items could increase costs. Contingency is a planning assumption, not evidence that all expenses are covered.",
+        "Unsent venue inquiry draft \u2014 To: Chelsea Atelier (recipient to be verified). Subject: Venue inquiry: Manhattan Spring Gala on April 17, 2027. Hello, The Sabrina Audrey Milone Foundation is exploring a venue for a 150-person Manhattan fundraising gala on April 17, 2027: a warm, personal evening honoring Sabrina, with a short recovery-speaker talk and time for conversation. Could you confirm availability and provide a written, itemized proposal covering rental, catering requirements, any minimums, fees, deposit amounts, payment deadlines, cancellation terms and guest-count changes? Please confirm outside-caterer rules and arrangements for dietary needs and volunteer meals. We understand the supplied listing permits standing receptions only and load-in after 4 pm. Can guests who need seating be accommodated within those rules? Please describe entrance access, internal routes, accessible restrooms, quieter conversation space, stage access, microphones and sound equipment, and setup timing. Please also identify insurance, permit and staffing requirements and any costs not included in your proposal. This is an exploratory inquiry, not a reservation or spending commitment. Thank you. Your response will help our board assess suitability.",
+        "Replace placeholder costs with written quotes; confirm minimums, guest-count deadlines, volunteer meals, deposits and payment timing. Verify unrestricted cash and the restricted balance before finance reruns the model.",
+        "Draft a formal program under an hour, retaining Sabrina\u2019s tribute, the recovery talk, a brief voluntary appeal and concise recognition. Allow conversation afterward and explore an optional resource connection point with consent-based follow-up.",
+        "Plan a staffed welcome point, name tags, volunteer station leads, practical volunteer support and immediate payment collection at a designated table. Record unpaid pledges separately from receipts.",
+        "Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner: require written catering terms and guest-count rules, and protect volunteer meals separately.",
+        "Butterfly Spring Raffle: provide a staffed welcome point, brief volunteers and assign station leads; avoid extended program segments.",
+        "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+        "Butterfly Spring Raffle: staff a welcome point and assign volunteer station leads before event day.",
+        "Include a brief, voluntary paddle raise or direct appeal linked to mental health awareness, eating disorder research and community. Keep the formal program under an hour and do not use the recovery speaker\u2019s personal story as evidence of likely donations.",
+        "Plan load-in after 4 pm. Confirm that setup, sound testing and volunteer preparation can be completed before guest arrival; event start time is unknown.",
+        "Agree a guest-count lock two weeks out, subject to written caterer terms. Separately budget and confirm volunteer meals rather than relying on leftover guest food.",
+        "Lock the volunteer list three weeks out, brief volunteers by phone the week before and assign a lead for each station. Include welcome, payment collection, speaker support and guest assistance."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner: require written catering terms and guest-count rules, and protect volunteer meals separately.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "benefit",
+                "campus",
+                "dinner",
+                "guest-count",
+                "meals"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                2
+              ],
+              "reflection_ids": [
+                5
+              ],
+              "shared_words": [
+                "awareness",
+                "campus",
+                "panel",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Spring Raffle: provide a staffed welcome point, brief volunteers and assign station leads; avoid extended program segments.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Butterfly Spring Raffle: retain a staffed welcome point and brief volunteers before event day, with a lead for each station. The welcome table was praised, while unassigned roles disrupted opening operations.",
+              "events": [
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                4
+              ],
+              "reflection_ids": [
+                8
+              ],
+              "shared_words": [
+                "brief",
+                "butterfly",
+                "point",
+                "staffed",
+                "station",
+                "volunteers"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "Use the board-reviewed Benefit Dinner lesson to draft a program under an hour while retaining the recovery speaker. The raffle's prolonged draw provides a separate warning about extended program segments.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)",
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                2,
+                4
+              ],
+              "reflection_ids": [
+                3,
+                4,
+                9
+              ],
+              "shared_words": [
+                "extended",
+                "program",
+                "segments"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Use the raffle reflection's proposed timetable: lock the volunteer list three weeks out and brief volunteers by phone the week before, with one lead per station.",
+              "name": "history:Advance volunteer assignments",
+              "shared_words": [
+                "brief",
+                "station",
+                "volunteers"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "month",
+                "printing",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "volunteer",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Spring Raffle: staff a welcome point and assign volunteer station leads before event day.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Butterfly Spring Raffle: retain a staffed welcome point and brief volunteers before event day, with a lead for each station. The welcome table was praised, while unassigned roles disrupted opening operations.",
+              "events": [
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                4
+              ],
+              "reflection_ids": [
+                8
+              ],
+              "shared_words": [
+                "butterfly",
+                "point",
+                "station",
+                "welcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 10,
+      "verdict": "changed, with supporting lessons"
+    },
+    {
+      "key": "sponsorship",
+      "label": "Sponsorship strategy",
+      "without_history": [
+        "The $4,250 upfront requirement passes the supplied model\u2019s check against $9,938 of planning capacity above the $11,562 reserve floor. That capacity must be verified as unrestricted cash still available when payments are due. Recorded income, projected ticket receipts, restricted funds and pledged sponsorship are not available deposit money.",
+        "At the modeled $250 standard ticket, the base case assumes 150 attendees, $37,500 in ticket revenue, $5,000 in sponsorship and $4,342.50 in donations. Supplied total revenue is $46,842.50 and net proceeds are $31,442.50. Sponsorship and demand are unconfirmed.",
+        "Positive projected proceeds do not guarantee fundraising success or establish affordability. Ticket demand, sponsorship, donations and in-kind support remain unconfirmed.",
+        "The standard ticket may limit community participation. Sponsor-funded access is a proposal, not a secured resource.",
+        "Whether to retain the $250 planning ticket and develop sponsor-funded community access or an optional supporter tier, with allocations and financial effects reviewed before adoption.",
+        "Verify unrestricted cash, the restricted cash balance and payment timing before considering deposits. Do not count pledged sponsorship as available money.",
+        "Seek documented sponsorship terms and payment timing; model community-ticket access and supporter tiers before adoption. Count in-kind savings only after confirmation and an updated budget.",
+        "Speaker participation and consent, seating permissions, sponsorship commitments and board spending authorization are not established.",
+        "Retain the modeled $250 standard ticket as the planning baseline. Ask the board to consider sponsor-funded community tickets and an optional supporter tier; prices and allocations remain undecided and should be modeled before adoption.",
+        "Draft sponsorship asks for event underwriting, community-ticket access and speaker-program support. Seek written commitments rather than treating historical sponsorship assumptions as secured revenue.",
+        "Seek in-kind catering, AV and event-support contributions where permitted. Do not count potential donations as cost savings until confirmed and reflected in updated calculator results.",
+        "Use the supplied $31,442.50 base net and $16,337 conservative net to frame fundraising discussions. Additional fundraising is needed to reach $40,000; do not promise that ticket tiers or sponsorship ideas will close the gap."
+      ],
+      "with_history": [
+        "Base revenue model: 150 attendees at $250, producing $37,500 in ticket revenue, plus $5,000 in assumed sponsorship and $4,342.50 in assumed donations. Supplied total revenue is $46,842.50 and net proceeds are $31,442.50. These are projections, not receipts.",
+        "At 120 attendees, the conservative model includes no sponsorship and projects $16,337 net proceeds. The optimistic model projects $35,245.25 net. Even the optimistic result falls below a $40,000 net target.",
+        "Modeled upfront cash is $4,250 against $9,938 of calculated unrestricted planning capacity above the $11,562 reserve floor. Finance finds the option feasible with conditions, but the cash balance, restrictions and payment timing require verification. Financial feasibility is not board authorization; restricted funds and pledged sponsorship are not available money.",
+        "The fundraising objective remains unresolved: a gross-receipts goal and a net-proceeds goal lead to different assessments. Attendance, sponsorship and donations may not materialize.",
+        "Decide whether to retain the modeled $250 ticket and explore discreet sponsor-funded community access and an optional supporter gift. Any changed pricing or allocation requires a new financial model.",
+        "Set sponsor-artwork deadlines a month before printing. Return verified venue terms, access findings and revised financial scenarios to the board before any commitment.",
+        "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+        "Retain the planned $250 ticket as the modeled baseline. Ask the board to consider sponsor-funded community tickets and a supporter tier with an optional additional gift; prices and allocations are not yet established and would require a new calculator run.",
+        "Seek business sponsorships for the reception, recovery-speaker program and community-ticket access. Offer proportionate recognition without promising unconfirmed benefits. Lock sponsor artwork a month before printing, following the Spring Awareness Walk lesson.",
+        "Request in-kind catering, printing or production support, but do not deduct prospective gifts from the supplied costs. Any changed pricing or revenue assumptions must return to the budget calculator."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "month",
+                "printing",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "volunteer",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Seek business sponsorships for the reception, recovery-speaker program and community-ticket access. Offer proportionate recognition without promising unconfirmed benefits. Lock sponsor artwork a month before printing, following the Spring Awareness Walk lesson.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "business",
+                "month",
+                "printing",
+                "sponsorships"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 7,
+      "verdict": "changed, with supporting lessons"
+    },
+    {
+      "key": "community",
+      "label": "Community-building considerations",
+      "without_history": [
+        "The standard ticket may limit community participation. Sponsor-funded access is a proposal, not a secured resource.",
+        "Whether to retain the $250 planning ticket and develop sponsor-funded community access or an optional supporter tier, with allocations and financial effects reviewed before adoption.",
+        "Whether the proposed expenditure is an appropriate use of unrestricted resources compared with other awareness, research and community-support activities.",
+        "Seek documented sponsorship terms and payment timing; model community-ticket access and supporter tiers before adoption. Count in-kind savings only after confirmation and an updated budget.",
+        "Confirm the recovery speaker\u2019s participation, consent boundaries, introduction preferences and technical needs. Plan volunteer welcomes, optional introductions, a brief tribute, the short talk and an optional, discreet paddle raise.",
+        "Speaker participation and consent, seating permissions, sponsorship commitments and board spending authorization are not established.",
+        "Retain the modeled $250 standard ticket as the planning baseline. Ask the board to consider sponsor-funded community tickets and an optional supporter tier; prices and allocations remain undecided and should be modeled before adoption.",
+        "Draft sponsorship asks for event underwriting, community-ticket access and speaker-program support. Seek written commitments rather than treating historical sponsorship assumptions as secured revenue.",
+        "Include a brief, voluntary paddle raise after the mission presentation, with a discreet way to give. Keep the recovery speaker\u2019s contribution separate from any expectation to solicit donations or disclose more than they wish.",
+        "Assign volunteer roles for welcome, guest introductions, speaker liaison, accessibility requests and donation assistance. Confirm microphone and other AV needs rather than assuming they are included."
+      ],
+      "with_history": [
+        "Decide whether to retain the modeled $250 ticket and explore discreet sponsor-funded community access and an optional supporter gift. Any changed pricing or allocation requires a new financial model.",
+        "Unsent venue inquiry draft \u2014 To: Chelsea Atelier (recipient to be verified). Subject: Venue inquiry: Manhattan Spring Gala on April 17, 2027. Hello, The Sabrina Audrey Milone Foundation is exploring a venue for a 150-person Manhattan fundraising gala on April 17, 2027: a warm, personal evening honoring Sabrina, with a short recovery-speaker talk and time for conversation. Could you confirm availability and provide a written, itemized proposal covering rental, catering requirements, any minimums, fees, deposit amounts, payment deadlines, cancellation terms and guest-count changes? Please confirm outside-caterer rules and arrangements for dietary needs and volunteer meals. We understand the supplied listing permits standing receptions only and load-in after 4 pm. Can guests who need seating be accommodated within those rules? Please describe entrance access, internal routes, accessible restrooms, quieter conversation space, stage access, microphones and sound equipment, and setup timing. Please also identify insurance, permit and staffing requirements and any costs not included in your proposal. This is an exploratory inquiry, not a reservation or spending commitment. Thank you. Your response will help our board assess suitability.",
+        "Draft a formal program under an hour, retaining Sabrina\u2019s tribute, the recovery talk, a brief voluntary appeal and concise recognition. Allow conversation afterward and explore an optional resource connection point with consent-based follow-up.",
+        "Plan a staffed welcome point, name tags, volunteer station leads, practical volunteer support and immediate payment collection at a designated table. Record unpaid pledges separately from receipts.",
+        "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+        "Butterfly Spring Raffle: provide a staffed welcome point, brief volunteers and assign station leads; avoid extended program segments.",
+        "Butterfly Benefit Dinner: retain the recovery speaker and personal connection, keep the formal program under an hour, and collect payments during the event rather than relying solely on later pledge follow-up.",
+        "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+        "Past-event connection and welcome findings largely reflect board observations or reported feedback, not independently verified outcomes or evidence of increased giving.",
+        "Board spending authorization, speaker consent and required venue permissions are not established. Nothing has been sent, booked, reserved, paid or approved.",
+        "Butterfly Spring Raffle: staff a welcome point and assign volunteer station leads before event day.",
+        "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+        "Retain the planned $250 ticket as the modeled baseline. Ask the board to consider sponsor-funded community tickets and a supporter tier with an optional additional gift; prices and allocations are not yet established and would require a new calculator run.",
+        "Seek business sponsorships for the reception, recovery-speaker program and community-ticket access. Offer proportionate recognition without promising unconfirmed benefits. Lock sponsor artwork a month before printing, following the Spring Awareness Walk lesson.",
+        "Include a brief, voluntary paddle raise or direct appeal linked to mental health awareness, eating disorder research and community. Keep the formal program under an hour and do not use the recovery speaker\u2019s personal story as evidence of likely donations.",
+        "Lock the volunteer list three weeks out, brief volunteers by phone the week before and assign a lead for each station. Include welcome, payment collection, speaker support and guest assistance.",
+        "Check entrance access, routes and restrooms; test speaker audibility and discuss a quieter conversation area. Ask whether rest seating can be accommodated within the standing-receptions-only restriction.",
+        "Draft a formal program under an hour with a personal tribute to Sabrina, the short recovery talk, a concise appeal and thanks. Allow informal conversation outside the formal program."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                2
+              ],
+              "reflection_ids": [
+                5
+              ],
+              "shared_words": [
+                "campus",
+                "format",
+                "panel",
+                "spending",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "campus",
+                "panel",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "conversation",
+                "panel",
+                "quieter"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Spring Raffle: provide a staffed welcome point, brief volunteers and assign station leads; avoid extended program segments.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Butterfly Spring Raffle: retain a staffed welcome point and brief volunteers before event day, with a lead for each station. The welcome table was praised, while unassigned roles disrupted opening operations.",
+              "events": [
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                4
+              ],
+              "reflection_ids": [
+                8
+              ],
+              "shared_words": [
+                "brief",
+                "butterfly",
+                "point",
+                "staffed",
+                "station",
+                "volunteers"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "Use the board-reviewed Benefit Dinner lesson to draft a program under an hour while retaining the recovery speaker. The raffle's prolonged draw provides a separate warning about extended program segments.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)",
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                2,
+                4
+              ],
+              "reflection_ids": [
+                3,
+                4,
+                9
+              ],
+              "shared_words": [
+                "extended",
+                "program",
+                "segments"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Use the raffle reflection's proposed timetable: lock the volunteer list three weeks out and brief volunteers by phone the week before, with one lead per station.",
+              "name": "history:Advance volunteer assignments",
+              "shared_words": [
+                "brief",
+                "station",
+                "volunteers"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Benefit Dinner: retain the recovery speaker and personal connection, keep the formal program under an hour, and collect payments during the event rather than relying solely on later pledge follow-up.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Benefit Dinner: plan payment collection at the table rather than relying solely on later follow-up, because several pledges were never collected. Strong pledges should not be treated as confirmed receipts.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                2
+              ],
+              "reflection_ids": [
+                3,
+                4
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner",
+                "follow-up",
+                "later",
+                "rather",
+                "relying"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "Use the board-reviewed Benefit Dinner lesson to draft a program under an hour while retaining the recovery speaker. The raffle's prolonged draw provides a separate warning about extended program segments.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)",
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                2,
+                4
+              ],
+              "reflection_ids": [
+                3,
+                4,
+                9
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner",
+                "hour",
+                "program",
+                "recovery",
+                "speaker"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "At the Benefit Dinner, the recovery speaker was praised by guests and prompted personal conversations at a board member's table. Preserve this element in the gala draft; the evidence supports connection, not a measured causal effect on giving.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                2
+              ],
+              "reflection_ids": [
+                3
+              ],
+              "shared_words": [
+                "benefit",
+                "connection",
+                "dinner",
+                "personal",
+                "recovery",
+                "speaker"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Spring Awareness Walk: consider resource-provider connections, pair volunteer recognition with practical care, and secure sponsor artwork a month before printing.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "month",
+                "printing",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "volunteer",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Spring Raffle: staff a welcome point and assign volunteer station leads before event day.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Butterfly Spring Raffle: retain a staffed welcome point and brief volunteers before event day, with a lead for each station. The welcome table was praised, while unassigned roles disrupted opening operations.",
+              "events": [
+                "Butterfly Spring Raffle (synthetic sample)"
+              ],
+              "event_ids": [
+                4
+              ],
+              "reflection_ids": [
+                8
+              ],
+              "shared_words": [
+                "butterfly",
+                "point",
+                "station",
+                "welcome"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "access",
+                "audibility",
+                "check",
+                "conversation",
+                "dinner",
+                "discomfort"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Check the entrance for step-related barriers and test whether the speaker can be heard; include a quieter space in the layout discussion.",
+              "name": "history:Access and sound checks",
+              "shared_words": [
+                "check",
+                "entrance",
+                "quieter",
+                "space"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Seek business sponsorships for the reception, recovery-speaker program and community-ticket access. Offer proportionate recognition without promising unconfirmed benefits. Lock sponsor artwork a month before printing, following the Spring Awareness Walk lesson.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                2
+              ],
+              "shared_words": [
+                "artwork",
+                "awareness",
+                "business",
+                "month",
+                "printing",
+                "sponsorships"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+              "events": [
+                "Spring Awareness Walk (sample)"
+              ],
+              "event_ids": [
+                1
+              ],
+              "reflection_ids": [
+                1
+              ],
+              "shared_words": [
+                "awareness",
+                "walk"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 10,
+      "verdict": "changed, with supporting lessons"
+    },
+    {
+      "key": "accessibility",
+      "label": "Accessibility and inclusion",
+      "without_history": [
+        "Advance Chelsea Atelier for inquiry only; resolve accessibility, funding and the fundraising target before committing.",
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the sole supplied venue option within the $18,000 cost ceiling. Its preliminary cost is $15,400, with $4,250 needed upfront. Finance finds it affordable with conditions\u2014not authorized. A warm reception honoring Sabrina, with a short, consent-led recovery talk, fits the intended program, but the standing-only format presents a material inclusion concern. Do not commit until seating accommodations and accessibility are confirmed, unrestricted cash is verified, and the board addresses the fundraising-target shortfall.",
+        "A standing-only reception could exclude guests who cannot stand for extended periods. Accessible entry, restrooms, stage access, rest seating, dietary support and a quieter area are unknown.",
+        "Whether to advance Chelsea\u2019s reception for inquiry and accept a reception instead of a seated dinner, conditional on satisfactory accessibility and seating arrangements.",
+        "Unsent venue inquiry draft To: Chelsea Atelier (synthetic; verified contact needed) Subject: Inquiry: Manhattan Spring Gala on April 17, 2027 Hello, The Sabrina Audrey Milone Foundation is exploring a reception-style fundraising gala for 150 guests in Manhattan on April 17, 2027. We envision a warm, personal evening honoring Sabrina, with a brief tribute and a short recovery-speaker talk. Could you confirm availability, capacity and current itemized pricing, including required fees, deposit and payment schedules, cancellation terms, insurance and permit requirements? Please also confirm outside-catering rules and whether any food-and-beverage minimum applies. We understand the proposed format is standing-only. Can you permit sufficient seating accommodations for guests who cannot stand for extended periods? Please describe accessible entry, restrooms and stage access, along with dietary accommodation options and the possibility of a quieter area. We would also appreciate details on the speaker stage, AV equipment and staffing requirements. Please share these details so our board can assess suitability and affordability. This is an exploratory inquiry, not a booking or commitment. Thank you.",
+        "Venue availability, pricing, accessibility and contractual terms are unconfirmed. Some outreach recipients use example.org fixtures; no verified contact or venue link is supplied.",
+        "Hudson Garden Room \u2014 seated dinner; not feasible as currently planned: Projected cost $28,050; upfront cash $7,700. Supplied seated capacity is 160 and wheelchair accessibility is stated, subject to verification. In-house catering and a food-and-beverage minimum limit flexibility. It exceeds the $18,000 ceiling and would require substantive revision and a new finance review.",
+        "Gramercy Hall \u2014 reception; comparison alternative only: Projected cost $24,475; upfront cash $10,475. It exceeds both the $18,000 cost ceiling and the $9,938 supplied planning capacity for upfront payments. Capacity, accessibility and contract details are not supplied. It is not a viable fallback under current constraints.",
+        "The only option satisfying the revised cost constraint. Published reception capacity is 200 for the planned 150 guests. Outside caterers are allowed, there is no food-and-beverage minimum, and a small speaker stage supports the requested recovery talk. The standing-only format requires careful accessibility review.",
+        "Load-in is permitted only after 4 pm. Confirm sufficient setup, catering and sound-check time before setting guest arrival and program times.",
+        "Ask about step-free entry, accessible restrooms, stage access, dietary accommodations, sound levels and a quieter space. None of these accessibility features is confirmed for Chelsea Atelier.",
+        "Assign volunteer roles for welcome, guest introductions, speaker liaison, accessibility requests and donation assistance. Confirm microphone and other AV needs rather than assuming they are included."
+      ],
+      "with_history": [
+        "For the proposed 150-person Manhattan Spring Gala on April 17, 2027, pursue Chelsea Atelier\u2019s reception as the preferred option for further investigation\u2014not booking. Its preliminary cost of $15,400 is the only supplied venue model within the $18,000 ceiling. Preserve the personal tribute to Sabrina and short recovery talk, but require written pricing, suitable seating accommodations and verified accessibility before returning for board authorization. Neither alternative below fits the current ceiling. No modeled net outcome reaches the $40,000 fundraising goal, so the board must clarify whether that goal means gross receipts or net proceeds before deciding whether to proceed.",
+        "A standing reception could exclude guests who need seating. Lower cost does not establish inclusion; inability to provide suitable accommodations should prevent commitment.",
+        "Decide whether a reception is acceptable in place of a seated dinner, conditional on accessibility and seating accommodations.",
+        "Unsent venue inquiry draft \u2014 To: Chelsea Atelier (recipient to be verified). Subject: Venue inquiry: Manhattan Spring Gala on April 17, 2027. Hello, The Sabrina Audrey Milone Foundation is exploring a venue for a 150-person Manhattan fundraising gala on April 17, 2027: a warm, personal evening honoring Sabrina, with a short recovery-speaker talk and time for conversation. Could you confirm availability and provide a written, itemized proposal covering rental, catering requirements, any minimums, fees, deposit amounts, payment deadlines, cancellation terms and guest-count changes? Please confirm outside-caterer rules and arrangements for dietary needs and volunteer meals. We understand the supplied listing permits standing receptions only and load-in after 4 pm. Can guests who need seating be accommodated within those rules? Please describe entrance access, internal routes, accessible restrooms, quieter conversation space, stage access, microphones and sound equipment, and setup timing. Please also identify insurance, permit and staffing requirements and any costs not included in your proposal. This is an exploratory inquiry, not a reservation or spending commitment. Thank you. Your response will help our board assess suitability.",
+        "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+        "Butterfly Benefit Dinner: explicitly address reported entrance barriers and price-related discomfort. The perceived value of a dinner does not settle the affordability or inclusion question.",
+        "Chelsea Atelier \u2014 reception, preferred for inquiry: Synthetic listing. Modeled total $15,400; upfront cash $4,250. Capacity 200, outside catering permitted, no listed food-and-beverage minimum and a small stage. Only supplied option within the current ceiling. Standing-only format, access, rest seating, quieter space, dietary provision and sound equipment must be resolved before commitment.",
+        "Hudson Garden Room \u2014 seated dinner, not feasible as planned: Synthetic listing. Modeled total $28,050; upfront cash $7,700. Listed seated capacity 160 accommodates the guest plan. Seated events and in-house catering are required; the catering minimum exposes the event to lower-attendance costs. Wheelchair accessibility is listed but needs detailed verification. Retains the dinner format, but requires substantial repricing or a board reconsideration of scope and funding\u2014not approval under the current ceiling.",
+        "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+        "The reception capacity of 200 accommodates the planned 150 guests. Computed cost is $15,400, below the $18,000 limit; outside caterers are allowed and there is no food-and-beverage minimum. The small stage supports the recovery speaker. Standing receptions only and load-in after 4 pm are material planning restrictions; accessibility and accommodation options remain unconfirmed.",
+        "Plan load-in after 4 pm. Confirm that setup, sound testing and volunteer preparation can be completed before guest arrival; event start time is unknown.",
+        "Check entrance access, routes and restrooms; test speaker audibility and discuss a quieter conversation area. Ask whether rest seating can be accommodated within the standing-receptions-only restriction."
+      ],
+      "changed_by_history": [
+        {
+          "statement": "Campus Wellness Panel: reaffirm event purpose before judging spending and format; ask for quieter post-program conversation space.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                2
+              ],
+              "reflection_ids": [
+                5
+              ],
+              "shared_words": [
+                "campus",
+                "format",
+                "panel",
+                "spending",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "campus",
+                "panel",
+                "wellness"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "conversation",
+                "panel",
+                "quieter"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Butterfly Benefit Dinner: explicitly address reported entrance barriers and price-related discomfort. The perceived value of a dinner does not settle the affordability or inclusion question.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "address",
+                "dinner",
+                "discomfort",
+                "entrance",
+                "explicitly",
+                "price-related"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Spring Awareness Walk (sample)",
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                3,
+                1,
+                2
+              ],
+              "reflection_ids": [
+                5,
+                1,
+                6,
+                3
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner",
+                "reported"
+              ]
+            },
+            {
+              "kind": "lesson",
+              "text": "At the Benefit Dinner, the recovery speaker was praised by guests and prompted personal conversations at a board member's table. Preserve this element in the gala draft; the evidence supports connection, not a measured causal effect on giving.",
+              "events": [
+                "Butterfly Benefit Dinner (sample)"
+              ],
+              "event_ids": [
+                2
+              ],
+              "reflection_ids": [
+                3
+              ],
+              "shared_words": [
+                "benefit",
+                "dinner"
+              ]
+            }
+          ]
+        },
+        {
+          "statement": "Panel, dinner and trivia-night lessons: check entrance access, audibility, quieter conversation space and price-related discomfort.",
+          "supported_by": [
+            {
+              "kind": "lesson",
+              "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+              "events": [
+                "Campus Wellness Panel (sample)",
+                "Butterfly Benefit Dinner (sample)",
+                "Hartford trivia night (synthetic sample)"
+              ],
+              "event_ids": [
+                3,
+                2,
+                5
+              ],
+              "reflection_ids": [
+                5,
+                7,
+                10,
+                3
+              ],
+              "shared_words": [
+                "access",
+                "audibility",
+                "check",
+                "conversation",
+                "dinner",
+                "discomfort"
+              ]
+            },
+            {
+              "kind": "history_constraint",
+              "text": "Check the entrance for step-related barriers and test whether the speaker can be heard; include a quieter space in the layout discussion.",
+              "name": "history:Access and sound checks",
+              "shared_words": [
+                "check",
+                "entrance",
+                "quieter",
+                "space"
+              ]
+            }
+          ]
+        }
+      ],
+      "different_without_specific_lesson": [],
+      "other_differences": 9,
+      "verdict": "changed, with supporting lessons"
+    }
+  ],
+  "events_consulted": [
+    {
+      "id": 3,
+      "name": "Campus Wellness Panel (sample)",
+      "reasons": [
+        "similar size (120 guests)",
+        "recent (2026)"
+      ],
+      "score": 3
+    },
+    {
+      "id": 1,
+      "name": "Spring Awareness Walk (sample)",
+      "reasons": [
+        "similar size (210 guests)",
+        "recent (2025)"
+      ],
+      "score": 3
+    },
+    {
+      "id": 4,
+      "name": "Butterfly Spring Raffle (synthetic sample)",
+      "reasons": [
+        "similar size (120 guests)",
+        "recent (2025)"
+      ],
+      "score": 3
+    },
+    {
+      "id": 2,
+      "name": "Butterfly Benefit Dinner (sample)",
+      "reasons": [
+        "recent (2025)"
+      ],
+      "score": 1
+    },
+    {
+      "id": 5,
+      "name": "Hartford trivia night (synthetic sample)",
+      "reasons": [
+        "recent (2024)"
+      ],
+      "score": 1
+    }
+  ],
+  "lessons": [
+    {
+      "kind": "recommendation",
+      "theme": "Event purpose",
+      "text": "From the Campus Wellness Panel: confirm whether the gala primarily serves fundraising, awareness or both before evaluating format and spending. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+      "event_ids": [
+        3,
+        2
+      ],
+      "reflection_ids": [
+        5
+      ],
+      "confidence": "medium",
+      "area": "fundraising_approach",
+      "basis": "records_and_feedback",
+      "id": 196,
+      "events": [
+        "Campus Wellness Panel (sample)",
+        "Butterfly Benefit Dinner (sample)"
+      ]
+    },
+    {
+      "kind": "recurring_problem",
+      "theme": "Food budget exposure",
+      "text": "The Campus Wellness Panel, Spring Awareness Walk and Benefit Dinner all reported food-related cost pressure. For the gala, obtain written pricing and minimums, clarify guest-count change terms, and budget volunteer meals separately.",
+      "event_ids": [
+        3,
+        1,
+        2
+      ],
+      "reflection_ids": [
+        5,
+        1,
+        6,
+        3
+      ],
+      "confidence": "high",
+      "area": "costs",
+      "basis": "records_and_feedback",
+      "id": 197,
+      "events": [
+        "Campus Wellness Panel (sample)",
+        "Spring Awareness Walk (sample)",
+        "Butterfly Benefit Dinner (sample)"
+      ]
+    },
+    {
+      "kind": "what_worked",
+      "theme": "Community connection",
+      "text": "The Spring Awareness Walk's resource fair supported one-on-one conversations with mental-health groups and recorded follow-up resource sign-ups. Consider an appropriate resource connection opportunity at the gala without assuming it will reproduce the walk's results.",
+      "event_ids": [
+        1
+      ],
+      "reflection_ids": [
+        1
+      ],
+      "confidence": "medium",
+      "area": "community",
+      "basis": "records_and_feedback",
+      "id": 198,
+      "events": [
+        "Spring Awareness Walk (sample)"
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Welcome and volunteer briefing",
+      "text": "From the Butterfly Spring Raffle: retain a staffed welcome point and brief volunteers before event day, with a lead for each station. The welcome table was praised, while unassigned roles disrupted opening operations.",
+      "event_ids": [
+        4
+      ],
+      "reflection_ids": [
+        8
+      ],
+      "confidence": "medium",
+      "area": "logistics",
+      "basis": "records_and_feedback",
+      "id": 199,
+      "events": [
+        "Butterfly Spring Raffle (synthetic sample)"
+      ]
+    },
+    {
+      "kind": "what_worked",
+      "theme": "Recovery speaker",
+      "text": "At the Benefit Dinner, the recovery speaker was praised by guests and prompted personal conversations at a board member's table. Preserve this element in the gala draft; the evidence supports connection, not a measured causal effect on giving.",
+      "event_ids": [
+        2
+      ],
+      "reflection_ids": [
+        3
+      ],
+      "confidence": "medium",
+      "area": "community",
+      "basis": "records_and_feedback",
+      "id": 200,
+      "events": [
+        "Butterfly Benefit Dinner (sample)"
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Payment collection",
+      "text": "From the Benefit Dinner: plan payment collection at the table rather than relying solely on later follow-up, because several pledges were never collected. Strong pledges should not be treated as confirmed receipts.",
+      "event_ids": [
+        2
+      ],
+      "reflection_ids": [
+        3,
+        4
+      ],
+      "confidence": "medium",
+      "area": "fundraising_approach",
+      "basis": "records_and_feedback",
+      "id": 201,
+      "events": [
+        "Butterfly Benefit Dinner (sample)"
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Program discipline",
+      "text": "Use the board-reviewed Benefit Dinner lesson to draft a program under an hour while retaining the recovery speaker. The raffle's prolonged draw provides a separate warning about extended program segments.",
+      "event_ids": [
+        2,
+        4
+      ],
+      "reflection_ids": [
+        3,
+        4,
+        9
+      ],
+      "confidence": "medium",
+      "area": "logistics",
+      "basis": "records_and_feedback",
+      "id": 202,
+      "events": [
+        "Butterfly Benefit Dinner (sample)",
+        "Butterfly Spring Raffle (synthetic sample)"
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Inclusive venue and guest experience",
+      "text": "From the panel, dinner and trivia night: check entrance access, provide a quieter conversation option, test speaker audibility and plan name tags for all guests. Address reported price-related discomfort explicitly rather than assuming a formal dinner feels welcoming to everyone.",
+      "event_ids": [
+        3,
+        2,
+        5
+      ],
+      "reflection_ids": [
+        5,
+        7,
+        10,
+        3
+      ],
+      "confidence": "medium",
+      "area": "community",
+      "basis": "records_and_feedback",
+      "id": 203,
+      "events": [
+        "Campus Wellness Panel (sample)",
+        "Butterfly Benefit Dinner (sample)",
+        "Hartford trivia night (synthetic sample)"
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Sponsor production deadlines",
+      "text": "From the Spring Awareness Walk: set sponsor-logo deadlines a month before printing. Business sponsorships were worth repeating, but late artwork caused rush printing.",
+      "event_ids": [
+        1
+      ],
+      "reflection_ids": [
+        2
+      ],
+      "confidence": "medium",
+      "area": "sponsorship",
+      "basis": "records_and_feedback",
+      "id": 204,
+      "events": [
+        "Spring Awareness Walk (sample)"
+      ]
+    }
+  ],
+  "human_scores": {},
+  "summary": {
+    "dimensions_changed_with_support": 7,
+    "unique_statements_changed": 10,
+    "statements_changed_with_support": 26,
+    "statements_different_without_lesson": 0,
+    "other_differences": 83,
+    "budget_numbers_changed": false
+  },
+  "method_note": "A with-history statement counts as changed by history only if the agents themselves attributed it to past events (the recommendation's or shortlist's 'lessons applied', or a statement naming a recorded event) AND it rests on a specific lesson: one citing the event it names, or sharing at least three meaningful words. That lesson is shown. Other wording differences between the two runs are counted separately as possible model variation, never as improvements. This is a transparent keyword method, not a quality judgment; overall quality is left to human scores."
+}
