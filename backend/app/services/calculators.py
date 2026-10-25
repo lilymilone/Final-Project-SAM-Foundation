@@ -164,6 +164,7 @@ def revenue_scenarios(attendance: int, per_attendee_usd: float, low_factor: floa
 
 
 def financial_position(records: Iterable[dict]) -> dict:
+    records = list(records)
     by_month: dict[str, dict[str, float]] = defaultdict(lambda: {"income": 0.0, "expense": 0.0})
     reserve: tuple[str, float] | None = None
     for r in records:
@@ -188,8 +189,21 @@ def financial_position(records: Iterable[dict]) -> dict:
         "available_planning_budget_usd": None,
         "available_planning_budget_basis": None,
     }
+    # Cash and restricted funds: restricted gifts are never spendable for events.
+    from .fin_calc import latest_balance, restriction_summary, spendable_cash  # local import keeps this module dependency-free
+    restricted_income = restriction_summary(records)["restricted_usd"]
+    spend = spendable_cash(latest_balance(records, "cash"), restricted_income)
+    out["restricted_income_usd"] = restricted_income
+    out["cash"] = spend
     # Only report a planning budget when the records actually support it.
-    if reserve is None:
+    if reserve is None and spend is not None and len(months) >= MIN_MONTHS_FOR_PLANNING_BUDGET:
+        floor = RESERVE_GUIDELINE_MONTHS * avg_expense
+        out["reserve_floor_usd"] = r2(floor)
+        out["available_planning_budget_usd"] = r2(max(0.0, spend["unrestricted_usd"] - floor))
+        out["available_planning_budget_basis"] = (
+            f"Unrestricted cash ${spend['unrestricted_usd']:,.0f} (as of {spend['as_of']}; {spend['basis']}) minus a "
+            f"{RESERVE_GUIDELINE_MONTHS:g}-month floor (${floor:,.0f}).")
+    elif reserve is None:
         out["available_planning_budget_basis"] = "Not supported: no reserve balance recorded."
     elif len(months) < MIN_MONTHS_FOR_PLANNING_BUDGET:
         out["available_planning_budget_basis"] = (
@@ -204,6 +218,10 @@ def financial_position(records: Iterable[dict]) -> dict:
             f"Reserve ${reserve[1]:,.0f} minus a {RESERVE_GUIDELINE_MONTHS:g}-month floor "
             f"(${floor:,.0f} = {RESERVE_GUIDELINE_MONTHS:g} × ${avg_expense:,.0f} average monthly expense)."
         )
+        if spend is not None and spend["unrestricted_usd"] - floor < available:  # cash says less is truly spendable
+            out["available_planning_budget_usd"] = r2(max(0.0, spend["unrestricted_usd"] - floor))
+            out["available_planning_budget_basis"] += (
+                f" Capped by unrestricted cash ${spend['unrestricted_usd']:,.0f} (as of {spend['as_of']}; {spend['basis']}).")
     return out
 
 

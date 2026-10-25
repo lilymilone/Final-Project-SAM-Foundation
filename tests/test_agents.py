@@ -328,7 +328,7 @@ def test_donor_names_never_reach_the_model(client):
     sent = " ".join(c["input"] for c in fake.calls)
     assert "Sample Donor" not in sent and "donor0" not in sent
     with client.app.state.db.session() as s:
-        drafts = s.scalars(select(OutreachDraft).where(OutreachDraft.draft_type == "donor_acknowledgment")).all()
+        drafts = s.scalars(select(OutreachDraft).where(OutreachDraft.draft_type.in_(("donor_thank_you", "contribution_acknowledgment")))).all()
     assert drafts and all("Sample Donor" in d.body and "{{" not in d.body for d in drafts)
     tool_logs = [s for s in steps if s.to_agent == "donations_compliance"]
     with client.app.state.db.session() as s:

@@ -1,0 +1,173 @@
+{
+  "run": {
+    "id": 16,
+    "status": "completed",
+    "research_mode": "synthetic",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Organize the figures in sample_statement_FY2025.pdf for board review",
+    "started_at": "2026-10-25T03:41:32.376218",
+    "duration_ms": 6743,
+    "spent_usd": 0.00048355,
+    "model_calls": 1,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 108,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 3,
+      "constraints": [],
+      "summary": "Intent: document extraction (board routing). Specialists: financial analysis.",
+      "warnings": []
+    },
+    {
+      "id": 109,
+      "step_key": "extract",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "financial_analysis",
+      "objective": "Organize the figures in uploaded document #1 for board review",
+      "status": "completed",
+      "duration_ms": 6736,
+      "constraints": [
+        {
+          "name": "review_required",
+          "detail": "Stage figures for board review only. Never add them to the financial records.",
+          "value": null,
+          "source_agent": "orchestrator"
+        }
+      ],
+      "summary": "7 figure(s) organized from sample_statement_FY2025.pdf for board review. None are in the records until approved.",
+      "warnings": []
+    },
+    {
+      "id": 110,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the extraction in code",
+      "status": "completed",
+      "duration_ms": 1,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": []
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 109,
+      "agent": "financial_analysis",
+      "tool": "read_document_text",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3,
+      "summary": "[sensitive: contents not logged] 2 page(s), status readable ",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 109,
+      "agent": "financial_analysis",
+      "tool": "save_extracted_figures",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "[sensitive: contents not logged] 9 figure(s) staged for board review",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 110,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "3/3 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 109,
+      "agent": "financial_analysis",
+      "task": "Organize figures from a financial document (extraction)",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=low, reasoning=no, risk=high) under Auto \u2192 Luna (fast) tier. Estimated $0.0021 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 1157,
+      "cached_input_tokens": 0,
+      "output_tokens": 678,
+      "web_search_calls": 0,
+      "cost_usd": 0.00048355,
+      "latency_ms": 6725,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "document_extraction",
+    "routing": "board",
+    "analysis": {
+      "intent": "document_extraction",
+      "city": null,
+      "attendance": null,
+      "event_type": null,
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "synthetic",
+    "recommendation": null,
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "No extracted figure entered the records without review",
+          "passed": true,
+          "detail": "9 figure(s) staged; every one waits for a board member."
+        },
+        {
+          "name": "Every figure was checked against its page",
+          "passed": true,
+          "detail": "9 of 9 amounts were found on the cited page."
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "7 figure(s) organized from sample_statement_FY2025.pdf for board review. None are in the records until approved."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "document_id": 1,
+    "extraction": {
+      "status": "needs_review",
+      "summary": "Sample statement of activities for the year ended December 31, 2025. Cash balance is also reported on page 2.",
+      "reporting_period_label": "Year ended December 31, 2025",
+      "count": 9
+    },
+    "specialists": {
+      "extract": {
+        "agent": "financial_analysis",
+        "status": "completed",
+        "summary": "7 figure(s) organized from sample_statement_FY2025.pdf for board review. None are in the records until approved."
+      }
+    },
+    "message": "7 figure(s) organized from sample_statement_FY2025.pdf for board review. None are in the records until approved."
+  }
+}

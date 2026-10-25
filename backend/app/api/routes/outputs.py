@@ -18,7 +18,7 @@ from ...db.models import EventPlan, OutreachDraft, ResearchFinding, VenueCandida
 from ..deps import CurrentUser, audit, current_user, get_db, require
 
 router = APIRouter(prefix="/api", tags=["outputs"])
-DONOR_DRAFT = "donor_acknowledgment"
+DONOR_DRAFTS = ("donor_acknowledgment", "donor_thank_you", "contribution_acknowledgment")
 
 
 def draft_out(d: OutreachDraft) -> dict:
@@ -27,7 +27,7 @@ def draft_out(d: OutreachDraft) -> dict:
             "personalization_basis": d.personalization_basis, "is_synthetic_target": d.is_synthetic_target,
             "purpose": d.purpose, "opportunity": d.opportunity, "next_step": d.next_step,
             "foundation_background": d.foundation_background, "sources": d.sources or [], "finding_id": d.finding_id,
-            "review_notes": d.review_notes or [],
+            "review_notes": d.review_notes or [], "donation_id": d.donation_id,
             "created_at": d.created_at.isoformat(), "updated_at": d.updated_at.isoformat() if d.updated_at else None}
 
 
@@ -40,9 +40,9 @@ def list_drafts(kind: Literal["outreach", "donor", "all"] = "outreach", archived
         if Permission.VIEW_DONOR_DATA not in cu.permissions:
             raise HTTPException(403, "Donor acknowledgments are limited to the chair and treasurer.")
         if kind == "donor":
-            q = q.where(OutreachDraft.draft_type == DONOR_DRAFT)
+            q = q.where(OutreachDraft.draft_type.in_(DONOR_DRAFTS))
     else:
-        q = q.where(OutreachDraft.draft_type != DONOR_DRAFT)
+        q = q.where(OutreachDraft.draft_type.not_in(DONOR_DRAFTS))
     rows = db.scalars(q.order_by(OutreachDraft.created_at.desc()).limit(60)).all()
     return {"drafts": [draft_out(d) for d in rows]}
 
@@ -66,7 +66,7 @@ def update_draft(draft_id: int, body: DraftUpdate, cu: CurrentUser = Depends(req
     d = db.get(OutreachDraft, draft_id)
     if d is None or d.organization_id != cu.organization_id:
         raise HTTPException(404, "Draft not found.")
-    if d.draft_type == DONOR_DRAFT and Permission.VIEW_DONOR_DATA not in cu.permissions:
+    if d.draft_type in DONOR_DRAFTS and Permission.VIEW_DONOR_DATA not in cu.permissions:
         raise HTTPException(403, "Donor acknowledgments are limited to the chair and treasurer.")
     for k, v in body.model_dump(exclude_none=True).items():
         setattr(d, k, v)

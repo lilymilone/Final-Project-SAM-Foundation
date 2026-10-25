@@ -279,6 +279,7 @@ export type RunStep = {
 };
 
 export type BoardRecommendation = {
+  mission_impact_considerations?: string[] | null;
   headline: string;
   recommendation: string;
   rationale: string[];
@@ -472,13 +473,14 @@ export type Experiment = {
 // ── Event Studio ────────────────────────────────────────────────────────────────
 
 export type Assumption = { value: number | null; kind: "published" | "board" | "history" | "lesson" | "placeholder" | "hypothetical" | "missing"; basis: string };
-export type Scenario = { attendance: number; ticket_revenue_usd: number | null; sponsorship_revenue_usd: number | null; donations_usd: number | null; total_revenue_usd: number | null; total_cost_usd: number; net_usd: number | null; vs_target_usd: number | null };
+export type Scenario = { attendance: number; ticket_revenue_usd: number | null; sponsorship_revenue_usd: number | null; donations_usd: number | null; other_revenue_usd?: number | null; total_revenue_usd: number | null; total_cost_usd: number; net_usd: number | null; vs_target_usd: number | null };
 export type ModelCheck = { name: string; passed: boolean | null; detail: string; kind: string };
 export type EventModel = {
   lines: { category: string; amount_usd: number; basis: string }[];
   subtotal_usd: number; contingency_pct: number; contingency_usd: number; total_cost_usd: number; upfront_cash_usd: number;
   catering_minimum_applies: boolean; scenarios: Record<"conservative" | "base" | "optimistic", Scenario>;
   break_even_attendance: number | null; break_even_note: string | null; missing_inputs: string[]; complete: boolean;
+  break_even_confirmed_only?: number | null; sponsorship_confirmed_usd?: number; sponsorship_unconfirmed_usd?: number;
   checks: ModelCheck[]; assumptions: Record<string, Assumption>; attendance: number; max_budget_usd: number | null; target_usd: number | null;
   scenario_definitions: Record<string, string>; catering_minimum_risk?: { minimum_usd: number; guests: number; overpay_usd: number } | null;
 };
@@ -502,7 +504,20 @@ export type CommunityInsight = {
   evidence_type: string; evidence_label: string;
 };
 
+export type ProposalRow = {
+  round: number; label: string; venue: string; event_format: string; total_usd: number; upfront_cash_usd: number; base_net_usd: number | null;
+  conservative_net_usd: number | null; verdict: string | null; conflicts: string[]; change_in_total_usd: number; change_in_upfront_usd: number;
+};
+export type FinanceFeedback = {
+  venue: string; event_format: string; total_cost_usd: number; upfront_cash_usd: number; verdict: string | null;
+  cost_drivers: { line: string; amount_usd: number; share_of_total: number | null }[];
+  issues: { type: string; source: string; detail: string; limit_usd?: number; over_by_usd?: number }[];
+};
+
 export type StrategyPacket = {
+  proposal_comparison?: ProposalRow[];
+  finance_feedback?: FinanceFeedback[];
+  authorized_budget_usd?: number | null;
   mission_contribution?: MissionContribution | null;
   community_insights?: CommunityInsight[];
   run: { id: number; status: string; research_mode: string | null; strategy: string; started_at: string; duration_ms: number | null; event_plan_id: number | null; options: { use_history?: boolean } | null; error: string | null };
@@ -523,4 +538,73 @@ export type StrategyPacket = {
   verification: { passed: boolean; checks: Check[] } | null;
   finance_visible: boolean;
   financial_model?: EventModel; affordability?: Affordability; position?: Record<string, number | string | null>;
+};
+
+// ── Financial Intelligence (Prompt 6) ─────────────────────────────────────────────
+
+export type FinanceMetric = {
+  key: string; label: string; value: number | null; display: string;
+  status: "recorded" | "calculated" | "partial" | "not_documented"; explanation: string; basis: string;
+};
+export type VarianceRow = {
+  category: string; budget_usd: number | null; actual_usd: number | null; variance_usd: number | null; variance_pct: number | null; direction: string;
+};
+export type FinanceDashboard = {
+  is_demo: boolean; basis: string; metrics: FinanceMetric[];
+  monthly: { period: string; income: number; expense: number; net: number }[];
+  income_by_category: { category: string; amount_usd: number; share: number | null }[];
+  expense_by_category: { category: string; amount_usd: number; share: number | null }[];
+  expense_ratios: { total_usd: number; by_purpose: Record<string, number>; ratios: Record<string, number> };
+  restrictions: Record<string, number | null>;
+  donation_trend: { period: string; donations: number; events: number; grants: number; other: number }[];
+  gifts_by_month: { period: string; gifts: number; amount_usd: number }[] | null;
+  past_events: { id: number; name: string; event_date: string | null; fundraising_goal_usd: number | null; funds_raised_usd: number | null;
+    total_cost_usd: number | null; funds_directed_usd: number | null; net_usd: number | null; is_demo: boolean }[];
+  legacy_funds_directed_usd: number | null;
+  variances: { label: string; kind: string; months: number; months_with_actuals: number; rows: VarianceRow[] }[];
+  statements: { period_label: string; revenue_usd: number; expenses_usd: number; net_usd: number }[];
+  scenarios: { label: string; basis: string; rows: { scenario: string; revenue_usd: number; cost_usd: number; net_usd: number; vs_first_usd: number }[] } | null;
+  warnings: { severity: "high" | "medium" | "low"; title: string; detail: string }[];
+  missing: string[]; pending_review: number; method: string;
+};
+export type FinanceDocument = {
+  id: number; filename: string; file_type: "csv" | "pdf"; doc_type: string; doc_type_label: string; size_bytes: number;
+  status: string; page_count: number | null; notes: string[]; period_label: string | null; run_id: number | null; is_demo: boolean;
+  created_at: string; figures: Record<string, number>;
+};
+export type ExtractedFigureRow = {
+  id: number; document_id: number; label: string; kind: string; category: string; restriction: string | null; purpose: string | null;
+  amount_usd: number | null; original_amount: string; currency: string; period: string | null; period_label: string | null;
+  period_months: number | null; page: number | null; found_on_page: boolean | null; status: "pending" | "approved" | "rejected" | "reference";
+  check_notes: string[] | null; record_id: number | null;
+};
+
+// ── Donations & Compliance (Prompt 6) ─────────────────────────────────────────────
+
+export type DonationFlag = { code: string; severity: "high" | "medium" | "low"; text: string; ref: string | null };
+export type DonationRow = {
+  id: number; donation_id: string; donor_id: string | null; donor_name: string; has_email: boolean; amount_usd: number; currency: string;
+  received_on: string; method: string | null; designation: string; contribution_type: string; restriction: string | null;
+  payment_status: string; ack_status: string; acknowledged: boolean; campaign_id: number | null; campaign: string | null;
+  in_kind_description: string | null; goods_services_value_usd: number | null; notes: string; source: string; is_demo: boolean;
+  created_at: string | null; updated_at: string | null; tax_treatment: string; flags: DonationFlag[];
+};
+export type CampaignRow = { id: number; name: string; kind: string; goal_usd: number | null; is_demo: boolean; received_usd?: number; pledged_usd?: number; gifts?: number; progress?: number | null };
+export type DonationSummary = {
+  received_usd: number; gifts_received: number; donors: number; average_gift_usd: number | null; pledged_outstanding_usd: number; pledges: number;
+  in_kind_gifts: number; event_related_usd: number; unassigned_usd: number; by_month: { period: string; amount_usd: number }[];
+  by_campaign: CampaignRow[]; ack_status: Record<string, number>; by_restriction: Record<string, number>; duplicates_excluded: number;
+  reconciliation: { period: string; donation_records_usd: number; ledger_donations_usd: number; difference_usd: number }[]; notes: string[];
+};
+export type DonationsResponse = {
+  donations: DonationRow[]; summary: DonationSummary; campaigns: CampaignRow[];
+  totals: { count: number; amount_usd: number; needs_attention: number; unacknowledged: number }; is_demo: boolean; note: string;
+};
+export type ComplianceRef = {
+  id: string; title: string; authority: string; jurisdiction: string; kind: string; url: string; source_updated: string; checked_on: string;
+  stale: boolean; points: string[];
+};
+export type ComplianceItem = {
+  key: string; title: string; detail: string; kind: "verified_requirement" | "general_guidance" | "needs_professional_review";
+  professional: string | null; donation_ids: number[]; references: ComplianceRef[];
 };

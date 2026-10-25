@@ -37,7 +37,7 @@ def test_chair_sees_financials_with_computed_flags(client):
 def test_donations_are_flagged_for_review_not_contacted(client):
     login(client)
     body = client.get("/api/donations").json()
-    assert body["totals"]["count"] == 6
+    assert body["totals"]["count"] == 11  # fictional demo gifts, including a pledge, an in-kind gift, and a duplicate
     assert all("donor_email" not in d for d in body["donations"])  # emails never leave the server
     flagged = [d for d in body["donations"] if d["flags"]]
     assert flagged, "demo data includes records that need attention"

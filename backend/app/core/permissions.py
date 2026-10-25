@@ -14,6 +14,8 @@ class Role(str, Enum):
 class Permission(str, Enum):
     VIEW_DASHBOARD = "view_dashboard"
     VIEW_FINANCIALS = "view_financials"
+    MANAGE_FINANCIALS = "manage_financials"  # upload statements, enter figures, approve extracted figures
+    MANAGE_DONATIONS = "manage_donations"  # add, edit, import, export donation records; track acknowledgments
     VIEW_DONOR_DATA = "view_donor_data"
     MANAGE_EVENTS = "manage_events"
     WRITE_REFLECTIONS = "write_reflections"
@@ -27,7 +29,9 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
         {
             Permission.VIEW_DASHBOARD,
             Permission.VIEW_FINANCIALS,
+            Permission.MANAGE_FINANCIALS,
             Permission.VIEW_DONOR_DATA,
+            Permission.MANAGE_DONATIONS,
             Permission.MANAGE_EVENTS,
             Permission.WRITE_REFLECTIONS,
             Permission.RUN_AGENTS,

@@ -124,12 +124,15 @@ def build_packet(db, run_id: int, organization_id: int, can_see_finance: bool) -
         "community_insights": [{**c, "events": [{"id": i, "name": event_names.get(i, f"Event #{i}")} for i in c.get("event_ids", [])]}
                                for c in r.get("community_insights") or []],
         "mission_contribution": r.get("mission_contribution"),
+        "proposal_comparison": r.get("proposal_comparison") or [],
+        "finance_feedback": r.get("finance_feedback") or [],
+        "authorized_budget_usd": r.get("authorized_budget_usd"),
         "history_checks": history_checks,
         "revision": {"original": r.get("original_plan"), "revised": r.get("revised_plan"), "reasons": r.get("revision_reasons") or [],
                      "history": r.get("revision_history") or []},
         "budget_warnings": warnings,
         "drafts": [{"id": d.id, "recipient": d.recipient_org or d.recipient_name, "subject": d.subject, "body": d.body, "status": d.status,
-                    "draft_type": d.draft_type, "is_synthetic_target": d.is_synthetic_target} for d in drafts if d.draft_type != "donor_acknowledgment"],
+                    "draft_type": d.draft_type, "is_synthetic_target": d.is_synthetic_target} for d in drafts if d.draft_type not in ("donor_acknowledgment", "donor_thank_you", "contribution_acknowledgment")],
         "trace": trace,
         "usage": _usage(calls),
         "verification": r.get("verification"),
@@ -150,7 +153,9 @@ def build_packet(db, run_id: int, organization_id: int, can_see_finance: bool) -
 
 
 def _money(x) -> str:
-    return "—" if x is None else f"${x:,.0f}"
+    if x is None:
+        return "—"
+    return f"−${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
 
 
 def packet_markdown(p: dict) -> str:
@@ -176,7 +181,23 @@ def packet_markdown(p: dict) -> str:
               ("accessibility", "Accessibility"), ("recognition", "Recognition"), ("charitable_alignment", "Charitable alignment"))]
         L += [f"- Community lesson applied: {x}" for x in mc.get("community_lessons_applied") or []]
         L += [f"- Open question: {x}" for x in mc.get("open_questions") or []] + [""]
+    if rec.get("mission_impact_considerations"):
+        L += ["### Mission impact considerations (no scores; never overrides financial limits)", ""] + \
+             [f"- {x}" for x in rec["mission_impact_considerations"]] + [""]
     L += ["## 3. Original and revised strategy", ""]
+    if p.get("proposal_comparison"):
+        L += ["| Proposal | Venue | Total | Upfront | Base net | Conservative net | Finance verdict | Change in total |", "|---|---|---|---|---|---|---|---|"]
+        for c in p["proposal_comparison"]:
+            L.append(f"| {c['label']} | {c['venue']} ({c['event_format'].replace('_', ' ')}) | {_money(c['total_usd'])} | {_money(c['upfront_cash_usd'])} | "
+                     f"{_money(c['base_net_usd'])} | {_money(c.get('conservative_net_usd'))} | {(c['verdict'] or '—').replace('_', ' ')} | "
+                     f"{_money(c['change_in_total_usd'])} |")
+        L.append("")
+    for fb in p.get("finance_feedback") or []:
+        L += [f"**Structured feedback Finance sent to the Events agent about {fb['venue']}:**", ""]
+        L += [f"- {i['type'].replace('_', ' ')}: {i['detail']}" + (f" (over by {_money(i['over_by_usd'])})" if i.get("over_by_usd") is not None else "")
+              for i in fb["issues"]]
+        L += ["- Largest costs: " + "; ".join(f"{d['line']} {_money(d['amount_usd'])}" + (f" ({d['share_of_total']:.0%})" if d.get("share_of_total") else "")
+                                              for d in fb["cost_drivers"]), ""]
     if rv.get("original"):
         o = rv["original"]
         L.append(f"- **Original:** {o['venue']} ({o['event_format'].replace('_', ' ')})"

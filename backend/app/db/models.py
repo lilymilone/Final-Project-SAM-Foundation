@@ -301,7 +301,104 @@ class FinancialRecord(Base):
     category: Mapped[str] = mapped_column(String(80))
     amount_usd: Mapped[float] = mapped_column(Float)
     description: Mapped[str] = mapped_column(Text, default="")
-    source: Mapped[str] = mapped_column(String(40), default="manual")  # manual | upload | demo
+    source: Mapped[str] = mapped_column(String(40), default="manual")  # manual | upload | demo | document
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Provenance and fund status (Prompt 6). Empty restriction means "not documented", never "unrestricted".
+    restriction: Mapped[str | None] = mapped_column(String(30), nullable=True)  # unrestricted|temporarily_restricted|permanently_restricted
+    purpose: Mapped[str | None] = mapped_column(String(30), nullable=True)  # operations|program|event|fundraising
+    currency: Mapped[str | None] = mapped_column(String(3), nullable=True)
+    original_amount: Mapped[str | None] = mapped_column(String(60), nullable=True)  # exactly as written in the source
+    document_id: Mapped[int | None] = mapped_column(ForeignKey("financial_documents.id", ondelete="SET NULL"), nullable=True)
+    source_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_row: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    verification: Mapped[str | None] = mapped_column(String(30), nullable=True)  # parsed_csv|entered_by_board|board_reviewed|demo
+    period_months: Mapped[int | None] = mapped_column(Integer, nullable=True)  # months the figure covers (12 for an annual statement)
+    period_label: Mapped[str | None] = mapped_column(String(80), nullable=True)  # e.g. "Year ended Dec 31, 2025"
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    entered_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    created_at: Mapped[datetime] = _created()
+
+
+class FinancialDocument(Base):
+    """An uploaded statement or ledger. The file is stored privately, scoped to the
+    organization, under a content-hash name; the original filename is kept only as sanitized text."""
+
+    __tablename__ = "financial_documents"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    uploaded_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    filename: Mapped[str] = mapped_column(String(200))  # sanitized display name
+    file_type: Mapped[str] = mapped_column(String(10))  # csv | pdf
+    doc_type: Mapped[str] = mapped_column(String(40), default="other")
+    size_bytes: Mapped[int] = mapped_column(Integer)
+    sha256: Mapped[str] = mapped_column(String(64), index=True)
+    stored_name: Mapped[str] = mapped_column(String(120))
+    status: Mapped[str] = mapped_column(String(30))  # imported|needs_review|reviewed|unreadable|rejected
+    page_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    text_chars: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    notes: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # what the parser found (scripts ignored, scanned pages…)
+    period_label: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = _created()
+
+
+class ExtractedFigure(Base):
+    """A figure read from an uploaded document, waiting for a board member's review.
+    It never counts in any total until a person approves it into financial_records."""
+
+    __tablename__ = "extracted_figures"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    document_id: Mapped[int] = mapped_column(ForeignKey("financial_documents.id", ondelete="CASCADE"), index=True)
+    label: Mapped[str] = mapped_column(String(200))  # the line item as written
+    kind: Mapped[str] = mapped_column(String(20))
+    category: Mapped[str] = mapped_column(String(80))
+    restriction: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    purpose: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    amount_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    original_amount: Mapped[str] = mapped_column(String(60))
+    currency: Mapped[str] = mapped_column(String(3), default="USD")
+    period: Mapped[str | None] = mapped_column(String(7), nullable=True)
+    period_label: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    period_months: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    page: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    found_on_page: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending|approved|rejected
+    check_notes: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    record_id: Mapped[int | None] = mapped_column(ForeignKey("financial_records.id", ondelete="SET NULL"), nullable=True)
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    created_at: Mapped[datetime] = _created()
+
+
+class Donor(Base):
+    """Only what acknowledgments need: a name and, optionally, an email. No addresses, phone numbers, or IDs."""
+
+    __tablename__ = "donors"
+    __table_args__ = (UniqueConstraint("organization_id", "donor_code", name="uq_donor_code"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    donor_code: Mapped[str] = mapped_column(String(20))  # e.g. DNR-0007, the donor identifier shown in tables and exports
+    name: Mapped[str] = mapped_column(String(200))
+    email: Mapped[str | None] = mapped_column(String(254), nullable=True)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = _created()
+
+
+class Campaign(Base):
+    __tablename__ = "campaigns"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    name: Mapped[str] = mapped_column(String(160))
+    kind: Mapped[str] = mapped_column(String(20), default="campaign")  # campaign | event
+    goal_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    starts_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    ends_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    historical_event_id: Mapped[int | None] = mapped_column(ForeignKey("historical_events.id", ondelete="SET NULL"), nullable=True)
+    event_plan_id: Mapped[int | None] = mapped_column(ForeignKey("event_plans.id", ondelete="SET NULL"), nullable=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = _created()
 
@@ -321,6 +418,20 @@ class Donation(Base):
     notes: Mapped[str] = mapped_column(Text, default="")
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = _created()
+    # Prompt 6: the full record structure. Tax deductibility is never determined by SAM SPACE.
+    donor_id: Mapped[int | None] = mapped_column(ForeignKey("donors.id", ondelete="SET NULL"), nullable=True, index=True)
+    campaign_id: Mapped[int | None] = mapped_column(ForeignKey("campaigns.id", ondelete="SET NULL"), nullable=True, index=True)
+    currency: Mapped[str | None] = mapped_column(String(3), nullable=True)
+    contribution_type: Mapped[str | None] = mapped_column(String(20), nullable=True)  # monetary|in_kind|event_ticket|sponsorship|matching_gift
+    restriction: Mapped[str | None] = mapped_column(String(30), nullable=True)  # unrestricted|temporarily_restricted|permanently_restricted
+    payment_status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # received|pledged|pending|returned
+    ack_status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # not_started|prepared|completed|not_needed
+    in_kind_description: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    goods_services_value_usd: Mapped[float | None] = mapped_column(Float, nullable=True)  # what the donor received (e.g. dinner), if any
+    source: Mapped[str | None] = mapped_column(String(20), nullable=True)  # manual | csv_import | demo
+    import_document_sha: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
 
 
 class OutreachDraft(Base):
@@ -347,6 +458,7 @@ class OutreachDraft(Base):
     foundation_background: Mapped[str | None] = mapped_column(Text, nullable=True)
     sources: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # [{title, url, verification}]
     finding_id: Mapped[int | None] = mapped_column(ForeignKey("research_findings.id", ondelete="SET NULL"), nullable=True)
+    donation_id: Mapped[int | None] = mapped_column(ForeignKey("donations.id", ondelete="SET NULL"), nullable=True)
     review_notes: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # uncertainty carried over from research
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = _created()

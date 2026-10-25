@@ -16,13 +16,15 @@ from sqlalchemy.orm import Session
 
 from ...core.config import Settings
 from ...core.permissions import Permission
-from ...db.models import AgentHandoff, AgentRun, AgentToolCall, EventPlan, HistoricalEvent, ModelUsage, ResearchFinding
+from ...db.models import AgentHandoff, AgentRun, AgentToolCall, Donation, EventPlan, FinancialDocument, HistoricalEvent, ModelUsage, ResearchFinding
 from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])
 
-Intent = Literal["plan_event", "mission_discovery", "partnership_outreach", "financial_review", "donations_review", "event_learning"]
-INTENT_PERMISSION = {"financial_review": Permission.VIEW_FINANCIALS, "donations_review": Permission.VIEW_DONOR_DATA}
+Intent = Literal["plan_event", "mission_discovery", "partnership_outreach", "financial_review", "donations_review", "event_learning",
+                 "document_extraction"]
+INTENT_PERMISSION = {"financial_review": Permission.VIEW_FINANCIALS, "donations_review": Permission.VIEW_DONOR_DATA,
+                     "document_extraction": Permission.MANAGE_FINANCIALS}
 FINANCE_AGENT, DONATIONS_AGENT = "financial_analysis", "donations_compliance"
 
 
@@ -38,6 +40,10 @@ class RunIn(BaseModel):
     draft_type: Literal["partnership_inquiry", "corporate_sponsorship", "nonprofit_collaboration", "venue_inquiry",
                         "research_support", "community_program"] | None = None
     follow_up_finding_id: int | None = None  # Mission Discovery: "request more research" on one opportunity
+    document_id: int | None = None  # Financial Intelligence: organize figures from an uploaded PDF
+    force_reextract: bool = False  # organize a document again even though its figures are already staged
+    donation_ids: list[int] | None = Field(default=None, max_length=12)  # Donations: draft for these gifts only
+    drafts_only: bool = False
 
     @field_validator("request")
     @classmethod
@@ -88,6 +94,23 @@ def start_run(
             raise HTTPException(404, "Opportunity not found.")
     if body.finding_ids:
         options.update(finding_ids=body.finding_ids, draft_type=body.draft_type)
+    if body.intent == "document_extraction":
+        doc = db.get(FinancialDocument, body.document_id) if body.document_id else None
+        if doc is None or doc.organization_id != cu.organization_id:
+            raise HTTPException(404, "Document not found.")
+        if doc.file_type != "pdf":
+            raise HTTPException(422, "Only PDFs need extraction; CSV files are parsed in code when uploaded.")
+        if doc.status == "unreadable":
+            raise HTTPException(422, "This document has no readable text. Enter its figures manually instead.")
+        if doc.status in ("needs_review", "reviewed") and not body.force_reextract:  # no repeated paid calls for the same document
+            raise HTTPException(409, "This document's figures are already organized and waiting in the review queue. "
+                                     "Organize it again only if something was missed.")
+        options["document_id"] = doc.id
+    if body.donation_ids:
+        found = db.scalars(select(Donation.id).where(Donation.id.in_(body.donation_ids), Donation.organization_id == cu.organization_id)).all()
+        if len(found) != len(set(body.donation_ids)):
+            raise HTTPException(404, "Donation not found.")
+        options.update(donation_ids=list(dict.fromkeys(body.donation_ids)), drafts_only=body.drafts_only)
     if body.follow_up_finding_id:
         options["follow_up_finding_id"] = body.follow_up_finding_id
         db.get(ResearchFinding, body.follow_up_finding_id).research_requested = True

@@ -59,8 +59,9 @@ const KIND_STYLE: Record<string, string> = {
 const LABELS: Record<string, string> = {
   attendance: "Expected attendees", ticket_price_usd: "Ticket price", venue_rental_usd: "Venue rental", catering_per_guest_usd: "Catering per guest",
   catering_minimum_usd: "Catering minimum", entertainment_usd: "Entertainment", marketing_usd: "Marketing", staffing_usd: "Staffing",
-  insurance_usd: "Insurance", contingency_pct: "Contingency (0–0.6)", sponsorship_usd: "Sponsorship (expected)",
-  donations_per_attendee_usd: "Donations per attendee", deposit_pct: "Deposit share (0–1)",
+  insurance_usd: "Insurance and permits", misc_usd: "Miscellaneous", contingency_pct: "Contingency (0–0.6)",
+  sponsorship_usd: "Sponsorship expected (pledged or prospective)", sponsorship_confirmed_usd: "Sponsorship confirmed (signed or received)",
+  donations_per_attendee_usd: "Donations per attendee", other_revenue_usd: "Other documented revenue", deposit_pct: "Deposit share (0–1)",
 };
 
 function CheckLine({ c }: { c: ModelCheck }) {
@@ -147,7 +148,7 @@ export function FinancialModelEditor({ model, affordability, planId, minContinge
               <thead className="text-xs uppercase tracking-wide text-muted"><tr><th className="px-2 py-1"></th><th className="px-2">Conservative</th><th className="px-2">Base</th><th className="px-2">Optimistic</th></tr></thead>
               <tbody>
                 {([["Attendance", "attendance"], ["Tickets", "ticket_revenue_usd"], ["Sponsorship", "sponsorship_revenue_usd"], ["Donations", "donations_usd"],
-                   ["Revenue", "total_revenue_usd"], ["Net proceeds", "net_usd"], ["vs. target", "vs_target_usd"]] as const).map(([label, key]) => (
+                   ["Other documented", "other_revenue_usd"], ["Revenue", "total_revenue_usd"], ["Net proceeds", "net_usd"], ["vs. target", "vs_target_usd"]] as const).map(([label, key]) => (
                   <tr key={key} className={`border-t border-lavender/25 ${key === "net_usd" ? "font-semibold text-plum" : ""}`}>
                     <td className="px-2 py-1.5 text-muted">{label}</td>
                     {(["conservative", "base", "optimistic"] as const).map((n) => {
@@ -159,7 +160,10 @@ export function FinancialModelEditor({ model, affordability, planId, minContinge
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-xs text-muted">Break-even attendance: <b className="text-plum">{m.break_even_attendance ?? "—"}</b>{m.break_even_note ? ` (${m.break_even_note})` : ""}. Scenarios: {Object.entries(m.scenario_definitions).map(([k, v]) => `${k} = ${v}`).join("; ")}.</p>
+          <p className="mt-2 text-xs text-muted">Break-even attendance: <b className="text-plum">{m.break_even_attendance ?? "—"}</b>{m.break_even_note ? ` (${m.break_even_note})` : ""}
+            {m.break_even_confirmed_only != null && m.break_even_confirmed_only !== m.break_even_attendance ? <> · <b className="text-plum">{m.break_even_confirmed_only}</b> if no unconfirmed sponsorship arrives</> : null}.
+            {" "}Scenarios: {Object.entries(m.scenario_definitions).map(([k, v]) => `${k} = ${v}`).join("; ")}. Pledged sponsorship is never counted as guaranteed.</p>
+          <FinanceTerms />
         </div>
       </div>
 
@@ -192,5 +196,22 @@ export function FinancialModelEditor({ model, affordability, planId, minContinge
         </details>
       )}
     </div>
+  );
+}
+
+
+/** Plain-English definitions for board members without accounting training. */
+export function FinanceTerms() {
+  return (
+    <details className="mt-2 rounded-xl bg-lilac/40 px-3 py-2 text-xs text-ink/85">
+      <summary className="cursor-pointer font-semibold text-royal">What these terms mean</summary>
+      <dl className="mt-1 space-y-1">
+        <div><dt className="inline font-semibold text-plum">Net proceeds: </dt><dd className="inline">what is left for the mission after the event's costs are paid (revenue minus costs).</dd></div>
+        <div><dt className="inline font-semibold text-plum">Break-even attendance: </dt><dd className="inline">the number of guests needed for revenue to cover costs. Fewer guests means the event loses money.</dd></div>
+        <div><dt className="inline font-semibold text-plum">Restricted funds: </dt><dd className="inline">gifts a donor limited to a purpose (such as research). They can't pay for an event.</dd></div>
+        <div><dt className="inline font-semibold text-plum">Planning budget: </dt><dd className="inline">the limit the board authorizes for this event. Available capacity in the books is not an authorization.</dd></div>
+        <div><dt className="inline font-semibold text-plum">Financial uncertainty: </dt><dd className="inline">placeholder costs, quotes not yet received, unconfirmed sponsorship, and attendance that may fall short. The conservative scenario shows a cautious case.</dd></div>
+      </dl>
+    </details>
   );
 }

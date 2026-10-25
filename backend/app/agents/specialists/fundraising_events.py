@@ -33,7 +33,7 @@ INSTRUCTIONS = """Rank the venue options and write a fundraising strategy for th
   If a lesson conflicts with current numbers, say so in risks rather than ignoring the numbers.
 - If no lessons are provided, plan from the current data alone and do not invent historical claims.
 - If "constraints" are present (this is a revision), every shortlisted option must satisfy them; explain what changed and
-  why in changes_from_previous. If no option satisfies them, rank the closest one and say so plainly in risks.
+  why in changes_from_previous, referring to "finance_feedback" (the issues, limits, amounts over, and the cost drivers). If no option satisfies them, rank the closest one and say so plainly in risks.
 - fundraising_strategy: practical ideas (ticket tiers, sponsorship asks, paddle raise, in-kind support).
 - logistics_notes: timing, guest-count lock, accessibility, volunteers, questions to ask venues.
 - uncertainties: anything unconfirmed (availability, quotes, synthetic data).
@@ -164,6 +164,7 @@ class FundraisingEventsAgent(BaseAgent):
                                    for c in task.inputs.get("community_insights") or []],
             "constraints": [c.model_dump(mode="json") for c in task.constraints],
             "previous_shortlist": task.inputs.get("previous_shortlist"),
+            "finance_feedback": task.inputs.get("finance_feedback"),
         }, EventStrategyOutput)
 
         by_id = {o["option_id"]: o for o in options}

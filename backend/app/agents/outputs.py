@@ -14,7 +14,7 @@ from pydantic import BaseModel, field_validator
 
 Intent = Literal[
     "plan_event", "mission_discovery", "partnership_outreach", "financial_review", "donations_review",
-    "event_learning", "unsupported",
+    "event_learning", "document_extraction", "unsupported",
 ]
 EventFormat = Literal["seated_dinner", "reception"]
 Confidence = Literal["low", "medium", "high"]
@@ -141,6 +141,42 @@ class EventStrategyOutput(BaseModel):
 # --- Financial Analysis -----------------------------------------------------------
 
 
+class FigureOut(BaseModel):
+    label: str  # the line item exactly as written
+    original_amount: str  # the amount exactly as printed, e.g. "$12,400" or "(1,250)"
+    page: int
+    kind: Literal["income", "expense", "reserve", "cash"]
+    category: str
+    restriction: Literal["unrestricted", "temporarily_restricted", "permanently_restricted"] | None
+    purpose: Literal["operations", "program", "event", "fundraising"] | None
+    is_total: bool  # a subtotal or total line (kept only to cross-check the components)
+    period_end: str | None  # YYYY-MM if this figure's period differs from the document's
+
+
+class FinancialReview(BaseModel):
+    summary: str
+    performance: str
+    significant_categories: list[str]
+    variance_explanations: list[str]
+    restricted_funds_note: str
+    capacity_explanation: str
+    scenario_comparison: str
+    uncertainties: list[str]
+    questions_for_board: list[str]
+
+
+class ExtractedFigures(BaseModel):
+    summary: str
+    document_type: Literal["income_statement", "financial_position", "event_budget", "donation_summary", "expense_records",
+                           "cash_flow", "ledger", "other"]
+    reporting_period_label: str | None
+    period_end: str | None  # YYYY-MM
+    period_months: int | None
+    currency: str
+    figures: list[FigureOut]
+    unclear: list[str]
+
+
 class FinanceNarrative(BaseModel):
     summary: str
     explanation: str
@@ -151,7 +187,7 @@ class FinanceNarrative(BaseModel):
 
 # --- Donations & Compliance -------------------------------------------------------
 
-MERGE_FIELDS = ("{{donor_name}}", "{{amount}}", "{{date}}")
+MERGE_FIELDS = ("{{donor_name}}", "{{date}}")  # plus {{gift}} (or the older {{amount}}): filled in locally, never seen by the model
 
 
 class ReviewItem(BaseModel):
@@ -169,10 +205,25 @@ class AcknowledgmentTemplate(BaseModel):
     @field_validator("body")
     @classmethod
     def _merge_fields(cls, v: str) -> str:
-        missing = [f for f in MERGE_FIELDS if f not in v]
+        missing = [f for f in MERGE_FIELDS if f not in v] + ([] if "{{gift}}" in v or "{{amount}}" in v else ["{{gift}}"])
         if missing:
             raise ValueError(f"body must contain the merge fields {', '.join(missing)} (names and amounts are filled in locally)")
         return v
+
+
+class ReportingQuestion(BaseModel):
+    question: str
+    why: str
+    ref_ids: list[str]
+    kind: Literal["verified_requirement", "general_guidance", "needs_professional_review"]
+    professional: Literal["accountant", "attorney", "none"]
+
+
+class DonationReview(BaseModel):
+    summary: str
+    incomplete_records: list[str]
+    campaign_notes: list[str]
+    reporting_questions: list[ReportingQuestion]
 
 
 # --- Mission Discovery ------------------------------------------------------------
@@ -331,3 +382,4 @@ class BoardRecommendation(BaseModel):
     next_steps: list[str]
     lessons_applied: list[str]
     caveats: list[str]
+    mission_impact_considerations: list[str] | None = None  # optional; never overrides financial constraints

@@ -1,0 +1,289 @@
+{
+  "run": {
+    "id": 22,
+    "status": "completed",
+    "research_mode": "synthetic",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Draft thank-you letters for the gala ticket and the in-kind floral gift",
+    "started_at": "2026-10-25T04:17:08.280170",
+    "duration_ms": 8452,
+    "spent_usd": 0.0005429,
+    "model_calls": 2,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 140,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "Intent: donations review (board routing). Specialists: donations compliance.",
+      "warnings": []
+    },
+    {
+      "id": 141,
+      "step_key": "donations",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "donations_compliance",
+      "objective": "Draft acknowledgments for 2 selected gift(s)",
+      "status": "completed",
+      "duration_ms": 2686,
+      "constraints": [
+        {
+          "name": "drafts_only",
+          "detail": "Prepare unsent drafts only. Never send, file, or change records.",
+          "value": null,
+          "source_agent": "orchestrator"
+        }
+      ],
+      "summary": "Prepared 2 thank-you draft(s) and 2 contribution acknowledgment draft(s).",
+      "warnings": [
+        "Every draft is unsent. A board member reviews it and, if appropriate, sends it outside SAM SPACE."
+      ]
+    },
+    {
+      "id": 142,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 5755,
+      "constraints": [],
+      "summary": "Review the prepared thank-you drafts before any external use",
+      "warnings": []
+    },
+    {
+      "id": 143,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": []
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 141,
+      "agent": "donations_compliance",
+      "tool": "read_donations",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "[sensitive: contents not logged] 11 gifts ",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 141,
+      "agent": "donations_compliance",
+      "tool": "flag_donation_issues",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "7 gifts need attention",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 141,
+      "agent": "donations_compliance",
+      "tool": "create_acknowledgment_drafts",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "[sensitive: contents not logged] 2 thank-you drafts",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 141,
+      "agent": "donations_compliance",
+      "tool": "create_contribution_acknowledgments",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "[sensitive: contents not logged] 2 contribution acknowledgment drafts (for accountant review)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 143,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5/5 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 141,
+      "agent": "donations_compliance",
+      "task": "Draft a donor thank-you template",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0008 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 621,
+      "cached_input_tokens": 0,
+      "output_tokens": 142,
+      "web_search_calls": 0,
+      "cost_usd": 0.0001331,
+      "latency_ms": 2674,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 142,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0013 fits the remaining budget of $0.4999.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 963,
+      "cached_input_tokens": 0,
+      "output_tokens": 627,
+      "web_search_calls": 0,
+      "cost_usd": 0.0004098,
+      "latency_ms": 5748,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "donations_review",
+    "routing": "board",
+    "analysis": {
+      "intent": "donations_review",
+      "city": null,
+      "attendance": null,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "synthetic",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [],
+    "events_strategy": null,
+    "themes": [],
+    "comparison": null,
+    "recommendation": {
+      "headline": "Review the prepared thank-you drafts before any external use",
+      "recommendation": "Have an authorized board member review the prepared drafts for the gala ticket and in-kind floral gift in Donations & Compliance. The drafts are unsent; send them only if the reviewer finds them appropriate. The supplied results do not include the letter text or donor details, so those cannot be reproduced or assessed here.",
+      "rationale": [
+        "The donations specialist reports preparing two thank-you drafts and two contribution acknowledgment drafts.",
+        "The specialist says seven of eleven gift records need attention, so the records should be checked before any acknowledgment is sent.",
+        "The specialist notes that a board member must review the drafts and, if appropriate, send them outside SAM SPACE."
+      ],
+      "options": [],
+      "risks": [
+        "Sending a draft without verifying its recipient and gift details could result in an inaccurate acknowledgment.",
+        "The supplied results do not identify which drafts correspond to the gala ticket and floral gift, or provide their wording."
+      ],
+      "decisions_for_board": [
+        "Who will review the relevant drafts and resolve any record issues.",
+        "Whether the reviewed drafts are appropriate to send."
+      ],
+      "next_steps": [
+        "Review the four drafts in Donations & Compliance, as suggested by the specialist.",
+        "Verify the relevant donor and gift records, including records flagged for attention.",
+        "If appropriate, have an authorized board member send the reviewed letters outside SAM SPACE."
+      ],
+      "lessons_applied": [],
+      "caveats": [
+        "The research is synthetic, and the donation records are fictional demonstration data.",
+        "The specialist reports that donor details were merged locally into drafts; those details and the draft text are not included in the supplied results.",
+        "All drafts are unsent."
+      ],
+      "mission_impact_considerations": [
+        "Timely, accurate acknowledgments can support donor relationships and the foundation's community work, but the available information is insufficient to assess the specific gifts or drafts."
+      ]
+    },
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "4 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "No external sources used."
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {},
+    "revision_history": [],
+    "unresolved_conflicts": [],
+    "event_plan_id": null,
+    "specialists": {
+      "donations": "[redacted]"
+    },
+    "finance": null,
+    "event": null,
+    "venues": [],
+    "shortlist": [],
+    "original_plan": null,
+    "revised_plan": null,
+    "revision_reasons": [],
+    "evaluation": null,
+    "proposal_comparison": [],
+    "finance_feedback": [],
+    "authorized_budget_usd": null,
+    "drafts": [],
+    "lessons": [],
+    "disagreements": [],
+    "findings": [],
+    "selection": null,
+    "mission_contribution": null,
+    "community_insights": [],
+    "donations": "[redacted]"
+  }
+}

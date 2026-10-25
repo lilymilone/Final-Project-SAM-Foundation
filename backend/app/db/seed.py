@@ -19,7 +19,9 @@ from ..core.security import hash_password
 from .models import (
     BoardMembership,
     BoardReflection,
+    Campaign,
     Donation,
+    Donor,
     EventPlan,
     FinancialRecord,
     HistoricalEvent,
@@ -62,7 +64,6 @@ def seed_demo_workspace(db: Session) -> Organization:
 
     _seed_history(db, org.id)
     _seed_books(db, org.id)
-    _seed_donations(db, org.id)
     db.add(
         EventPlan(
             organization_id=org.id,
@@ -81,6 +82,8 @@ def seed_demo_workspace(db: Session) -> Organization:
             is_demo=True,
         )
     )
+    db.flush()
+    _seed_donations(db, org.id)  # after the gala plan exists, so the gala campaign can link to it
     return org
 
 
@@ -247,31 +250,148 @@ def _seed_books(db: Session, org_id: int) -> None:
         ("2026-09", "income", "Grants", 5000), ("2026-09", "expense", "Programs", 3900),
         ("2026-09", "expense", "Operations", 720),
         ("2026-09", "reserve", "Operating reserve balance", 21500),
-    ]
+    ] + DEMO_BOOK_ADDITIONS
     for period, kind, category, amount in rows:
+        restriction, purpose = DEMO_BOOK_TAGS.get(category, (None, None))
+        budget = kind.startswith("budget_")
         db.add(
             FinancialRecord(
                 organization_id=org_id, period=period, kind=kind, category=category, amount_usd=amount,
-                description="Synthetic demo figure", source="demo", is_demo=True,
+                description="Synthetic demo figure", source="demo", is_demo=True, restriction=None if budget else restriction,
+                purpose=purpose, currency="USD", verification="demo", **(DEMO_BUDGET if budget else {}),
             )
         )
+
+
+# Prompt 6: restriction and purpose tags for the demo books, and a cash balance. The $5,000 grant is
+# restricted to programs, so it is never counted as spendable for events. Totals are unchanged.
+DEMO_BOOK_TAGS = {
+    "Individual donations": ("unrestricted", None), "Event revenue": ("unrestricted", None),
+    "Grants": ("temporarily_restricted", None), "Programs": (None, "program"), "Operations": (None, "operations"),
+    "Operating reserve balance": ("unrestricted", None), "Cash in bank (all accounts)": (None, None),
+}
+DEMO_BOOK_ADDITIONS = [
+    ("2026-09", "cash", "Cash in bank (all accounts)", 26500),
+    # A board-approved budget for the same five months, so budget-vs-actual variance can be explained.
+    ("2026-09", "budget_income", "Individual donations", 12000), ("2026-09", "budget_income", "Event revenue", 2500),
+    ("2026-09", "budget_income", "Grants", 5000), ("2026-09", "budget_expense", "Programs", 16000),
+    ("2026-09", "budget_expense", "Operations", 3000),
+]
+DEMO_BUDGET = {"period_months": 5, "period_label": "Budget, May to Sep 2026 (sample)"}
+
+
+def upgrade_demo_books(db: Session) -> int:
+    """Tag older demo ledgers and add the demo cash balance. Never touches non-demo records."""
+    changes = 0
+    demo = db.scalars(select(FinancialRecord).where(FinancialRecord.is_demo.is_(True))).all()
+    if not demo:
+        return 0
+    for r in demo:
+        restriction, purpose = DEMO_BOOK_TAGS.get(r.category, (None, None))
+        if r.restriction is None and restriction:
+            r.restriction, changes = restriction, changes + 1
+        if r.purpose is None and purpose:
+            r.purpose, changes = purpose, changes + 1
+        if r.verification is None:
+            r.verification, r.currency = "demo", "USD"
+    org_id = demo[0].organization_id
+    for period, kind, category, amount in DEMO_BOOK_ADDITIONS:
+        if not any(r.kind == kind and r.category == category for r in demo):
+            budget = kind.startswith("budget_")
+            db.add(FinancialRecord(organization_id=org_id, period=period, kind=kind, category=category, amount_usd=amount,
+                                   description="Synthetic demo figure", source="demo", is_demo=True, currency="USD", verification="demo",
+                                   purpose=DEMO_BOOK_TAGS.get(category, (None, None))[1], **(DEMO_BUDGET if budget else {})))
+            changes += 1
+    return changes
+
+
+# Fictional demonstration donations (Prompt 6). Every donor and figure is invented and labeled
+# "Sample". Fields cover the cases the compliance checks look for: a $250+ gift awaiting
+# acknowledgment, a pledge (never counted as received), an in-kind gift (no value assigned),
+# a gala ticket where the donor receives a dinner, a restricted gift, and a likely duplicate.
+DEMO_CAMPAIGNS = [
+    # name, kind, goal, starts, ends, link
+    ("Fall Community Appeal 2026 (sample)", "campaign", 10000, date(2026, 8, 1), date(2026, 12, 31), None),
+    ("Manhattan Spring Gala 2027 (sample)", "event", 40000, date(2026, 9, 1), date(2027, 4, 24), "plan"),
+    ("Eating Disorder Research Fund (sample)", "campaign", None, None, None, None),
+]
+DEMO_DONATIONS = [
+    # donor, email, amount, received, method, ack_status, campaign idx, type, restriction, payment, extras
+    ("Sample Donor 01", "donor01@example.org", 500, date(2026, 8, 3), "check", "completed", 0, "monetary", "unrestricted", "received", {}),
+    ("Sample Donor 02", None, 1200, date(2026, 8, 19), "online", "not_started", 0, "monetary", None, "received", {}),
+    ("Sample Donor 03", "donor03@example.org", 75, date(2026, 9, 2), "online", "not_started", 0, "monetary", "unrestricted", "received", {}),
+    ("Sample Donor 04", "donor04@example.org", 250, date(2026, 9, 14), None, "prepared", 0, "monetary", "unrestricted", "received", {}),
+    ("Sample Donor 05", "donor05@example.org", 2500, date(2026, 9, 28), "wire", "completed", 2, "monetary", "temporarily_restricted", "received",
+     {"designation": "Eating-disorder research (donor restricted)"}),
+    ("Sample Donor 06", None, 40, date(2026, 10, 5), "cash", "not_started", None, "monetary", None, "received", {}),
+    ("Sample Donor 07", "sponsor07@example.org", 5000, date(2026, 10, 1), None, "not_started", 1, "sponsorship", "unrestricted", "pledged",
+     {"notes": "Sample: pledged gala sponsorship; not yet received."}),
+    ("Sample Donor 08", "donor08@example.org", 250, date(2026, 10, 9), "online", "not_started", 1, "event_ticket", "unrestricted", "received",
+     {"goods_services_value_usd": 95.0, "notes": "Sample: gala ticket; the guest receives a dinner valued at about $95."}),
+    ("Sample Donor 09", "florist09@example.org", 0, date(2026, 10, 12), None, "not_started", 1, "in_kind", None, "received",
+     {"in_kind_description": "Floral arrangements for the gala tables (sample)", "notes": "Sample: in-kind gift; the foundation does not assign a value."}),
+    ("Sample Donor 01", "donor01@example.org", 500, date(2026, 10, 14), "check", "not_started", 0, "monetary", "unrestricted", "received", {}),
+    ("Sample Donor 03", "donor03@example.org", 75, date(2026, 9, 2), "online", "not_started", 0, "monetary", "unrestricted", "received",
+     {"notes": "Sample: entered twice by mistake, so the duplicate check has something to find."}),
+]
+
+
+def _demo_donors(db: Session, org_id: int) -> dict[str, Donor]:
+    donors = {d.name: d for d in db.scalars(select(Donor).where(Donor.organization_id == org_id))}
+    for name, email, *_ in DEMO_DONATIONS:
+        if name not in donors:
+            donors[name] = Donor(organization_id=org_id, donor_code=f"DNR-{len(donors) + 1:04d}", name=name, email=email, is_demo=True)
+            db.add(donors[name])
+    db.flush()
+    return donors
+
+
+def _demo_campaigns(db: Session, org_id: int) -> list[Campaign]:
+    existing = {c.name: c for c in db.scalars(select(Campaign).where(Campaign.organization_id == org_id))}
+    plan = db.scalar(select(EventPlan).where(EventPlan.organization_id == org_id, EventPlan.name.like("Manhattan Spring Gala%")))
+    out = []
+    for name, kind, goal, start, end, link in DEMO_CAMPAIGNS:
+        c = existing.get(name) or Campaign(organization_id=org_id, name=name, kind=kind, goal_usd=goal, starts_on=start, ends_on=end, is_demo=True)
+        if link == "plan" and plan is not None:
+            c.event_plan_id = plan.id
+        db.add(c)
+        out.append(c)
+    db.flush()
+    return out
+
+
+def _donation_fields(row, donors, campaigns) -> dict:
+    name, email, amount, received, method, ack, camp, ctype, restriction, payment, extras = row
+    return {"donor_name": name, "donor_email": email, "amount_usd": amount, "received_on": received, "method": method,
+            "ack_status": ack, "acknowledged": ack == "completed", "acknowledged_on": received if ack == "completed" else None,
+            "campaign_id": campaigns[camp].id if camp is not None else None, "contribution_type": ctype, "restriction": restriction,
+            "payment_status": payment, "donor_id": donors[name].id, "currency": "USD", "source": "demo",
+            "designation": extras.get("designation", "General fund"), "notes": extras.get("notes", ""),
+            "in_kind_description": extras.get("in_kind_description"), "goods_services_value_usd": extras.get("goods_services_value_usd")}
 
 
 def _seed_donations(db: Session, org_id: int) -> None:
-    rows = [
-        # donor, email, amount, received, method, acknowledged
-        ("Sample Donor 01", "donor01@example.org", 500, date(2026, 8, 3), "check", True),
-        ("Sample Donor 02", None, 1200, date(2026, 8, 19), "online", False),
-        ("Sample Donor 03", "donor03@example.org", 75, date(2026, 9, 2), "online", False),
-        ("Sample Donor 04", "donor04@example.org", 250, date(2026, 9, 14), None, False),
-        ("Sample Donor 05", "donor05@example.org", 2500, date(2026, 9, 28), "wire", True),
-        ("Sample Donor 06", None, 40, date(2026, 10, 5), "cash", False),
-    ]
-    for donor, email, amount, received, method, acknowledged in rows:
-        db.add(
-            Donation(
-                organization_id=org_id, donor_name=donor, donor_email=email, amount_usd=amount,
-                received_on=received, method=method, acknowledged=acknowledged,
-                acknowledged_on=received if acknowledged else None, is_demo=True,
-            )
-        )
+    donors, campaigns = _demo_donors(db, org_id), _demo_campaigns(db, org_id)
+    for row in DEMO_DONATIONS:
+        db.add(Donation(organization_id=org_id, is_demo=True, **_donation_fields(row, donors, campaigns)))
+
+
+def upgrade_demo_donations(db: Session) -> int:
+    """Bring older demo donation tables up to the Prompt 6 structure. Only demo rows are touched."""
+    demo = db.scalars(select(Donation).where(Donation.is_demo.is_(True)).order_by(Donation.id)).all()
+    if not demo or all(d.donor_id is not None for d in demo):
+        return 0
+    org_id = demo[0].organization_id
+    donors, campaigns = _demo_donors(db, org_id), _demo_campaigns(db, org_id)
+    changes, used = 0, set()
+    for row in DEMO_DONATIONS:
+        fields = _donation_fields(row, donors, campaigns)
+        match = next((d for d in demo if d.id not in used and d.donor_name == row[0] and d.amount_usd == row[2] and d.received_on == row[3]), None)
+        if match is None:
+            db.add(Donation(organization_id=org_id, is_demo=True, **fields))
+        else:
+            used.add(match.id)
+            for k, v in fields.items():
+                setattr(match, k, v)
+        changes += 1
+    return changes

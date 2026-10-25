@@ -119,7 +119,9 @@ def collect_amounts(obj: Any, out: set[float] | None = None) -> set[float]:
 
 
 def is_supported(amount: float, allowed: set[float]) -> bool:
-    for f in allowed:
+    """Quoted amounts carry no sign ("a deficit of $1,870" quotes a computed -1,870), so compare magnitudes."""
+    amount = abs(amount)
+    for f in {abs(x) for x in allowed}:
         if abs(amount - f) <= max(1.0, 0.005 * abs(f)):
             return True
         for step in (100, 1000):  # "$17,500" or "$18K" quoting a computed $17,537.50 / $18,000

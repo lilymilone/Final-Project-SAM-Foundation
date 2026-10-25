@@ -1,73 +1,98 @@
-import { CheckCircle2, CircleAlert, HandCoins, ShieldCheck } from "lucide-react";
-import type { Donations } from "../api/types";
-import { formatDate, usd, useApi } from "../api/useApi";
+import { HandCoins, HeartHandshake, Layers, Scale, Sparkles } from "lucide-react";
+import { useMemo, useState } from "react";
+import type { DonationsResponse } from "../api/types";
+import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { AgentPanel } from "../components/AgentPanel";
+import { BarChart, SERIES_COLORS } from "../components/charts";
+import { ACK_LABEL, AckGuide, AddDonationCard, ComplianceArea, DonationTable, FilterBar, ExportButton, money } from "../components/donations";
 import { DraftsPanel } from "../components/outputs";
 import { RunLauncher } from "../components/RunLauncher";
-import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, PageHeader, RestrictedState, StatTile } from "../components/ui";
+import { Card, DemoBadge, ErrorState, LoadingState, PageHeader, RestrictedState, StatTile } from "../components/ui";
+
+const month = (p: string) => new Date(Number(p.slice(0, 4)), Number(p.slice(5, 7)) - 1, 1).toLocaleDateString("en-US", { month: "short", year: "2-digit" });
 
 function DonationsBody() {
-  const { data, error, loading, reload } = useApi<Donations>("/api/donations");
-  if (loading) return <LoadingState rows={4} />;
+  const { can } = useAuth();
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const query = useMemo(() => {
+    const p = new URLSearchParams(Object.entries(filters).filter(([, v]) => v));
+    return p.toString() ? `?${p}` : "";
+  }, [filters]);
+  const { data, error, loading, reload } = useApi<DonationsResponse>(`/api/donations${query}`);
+  if (loading && !data) return <LoadingState rows={5} />;
   if (error) return <ErrorState message={error.message} onRetry={reload} />;
   if (!data) return null;
+  const s = data.summary;
+  const needAck = (s.ack_status.not_started ?? 0) + (s.ack_status.prepared ?? 0);
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-4 animate-fade-up">
-        <StatTile label="Gifts recorded" value={data.totals.count} demo={data.is_demo} />
-        <StatTile label="Total received" value={usd(data.totals.amount_usd)} />
-        <StatTile label="Need attention" value={data.totals.needs_attention} />
-        <StatTile label="Not yet thanked" value={data.totals.unacknowledged} />
+      {data.is_demo && (
+        <p className="flex items-center gap-2 rounded-2xl bg-blush/60 px-4 py-2.5 text-sm text-plum">
+          <DemoBadge label="Fictional demonstration data" /> Every donor and gift shown is invented for testing. None are real supporters of the foundation.
+        </p>
+      )}
+      <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+        <StatTile label="Received" value={money(s.received_usd)} hint={`${s.gifts_received} gift(s) · ${s.donors} donor(s)`} />
+        <StatTile label="Average gift" value={money(s.average_gift_usd)} />
+        <StatTile label="Pledged, not received" value={money(s.pledged_outstanding_usd)} hint={`${s.pledges} pledge(s), not counted as received`} />
+        <StatTile label="Event-related" value={money(s.event_related_usd)} hint="tickets, sponsorships, event campaigns" />
+        <StatTile label="In-kind gifts" value={s.in_kind_gifts} hint="counted, never valued by us" />
+        <StatTile label="Need acknowledgment" value={needAck} hint={`${s.ack_status.completed ?? 0} completed`} />
       </div>
-      <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
-        <Card title="Donation records" icon={<HandCoins size={16} aria-hidden="true" />} action={data.is_demo ? <DemoBadge label="Synthetic donors" /> : undefined}>
-          {data.donations.length === 0 ? <EmptyState title="No donations recorded" /> : (
-            <div className="-mx-2 overflow-x-auto">
-              <table className="w-full min-w-[560px] text-left text-sm">
-                <thead>
-                  <tr className="text-xs uppercase tracking-wider text-muted">
-                    <th className="px-2 py-2 font-semibold">Donor</th>
-                    <th className="px-2 py-2 font-semibold">Amount</th>
-                    <th className="px-2 py-2 font-semibold">Received</th>
-                    <th className="px-2 py-2 font-semibold">Thanked</th>
-                    <th className="px-2 py-2 font-semibold">For review</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.donations.map((d) => (
-                    <tr key={d.id} className="border-t border-lavender/25 align-top">
-                      <td className="px-2 py-3 font-semibold text-plum">{d.donor_name}<span className="block text-xs font-normal text-muted">{d.method ?? "method missing"}</span></td>
-                      <td className="px-2 py-3">{usd(d.amount_usd)}</td>
-                      <td className="px-2 py-3 text-muted">{formatDate(d.received_on)}</td>
-                      <td className="px-2 py-3">
-                        {d.acknowledged
-                          ? <CheckCircle2 size={17} className="text-sage" aria-label="Acknowledged" />
-                          : <CircleAlert size={17} className="text-amber" aria-label="Not acknowledged" />}
-                      </td>
-                      <td className="px-2 py-3">
-                        {d.flags.length === 0 ? <span className="text-muted">—</span> : (
-                          <ul className="space-y-1">{d.flags.map((f) => <li key={f} className="rounded-lg bg-[#fbf1e3] px-2 py-1 text-xs text-amber">{f}</li>)}</ul>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+
+      <Card title="Donation records" icon={<HandCoins size={16} aria-hidden="true" />} action={<ExportButton />}>
+        <FilterBar value={filters} onChange={setFilters} campaigns={data.campaigns} />
+        <p className="my-2 text-xs text-muted">Showing {data.donations.length} of {data.totals.count} records{s.duplicates_excluded ? ` · ${s.duplicates_excluded} possible duplicate(s) counted once in the totals` : ""}.</p>
+        <DonationTable rows={data.donations} campaigns={data.campaigns} onChange={reload} />
+      </Card>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-5">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Card title="Gifts received by month" icon={<Sparkles size={16} aria-hidden="true" />}>
+              {s.by_month.length === 0 ? <p className="text-sm text-muted">No received gifts yet.</p> : (
+                <BarChart width={380} height={220} caption="Donations received by month" series={[{ key: "amount", label: "Received", color: SERIES_COLORS[0] }]}
+                  rows={s.by_month.map((m) => ({ label: month(m.period), values: { amount: m.amount_usd } }))} />)}
+              <p className="mt-2 text-xs text-muted">Pledges and in-kind gifts are excluded; duplicates count once.</p>
+            </Card>
+            <Card title="Campaigns and events" icon={<Layers size={16} aria-hidden="true" />}>
+              <ul className="space-y-3">{s.by_campaign.map((c) => (
+                <li key={c.id}>
+                  <div className="flex items-baseline justify-between gap-2 text-sm"><span className="text-plum">{c.name}<span className="ml-1 text-xs text-muted">{c.kind}</span></span>
+                    <span className="tabular-nums"><b>{money(c.received_usd)}</b>{c.goal_usd ? <span className="text-xs text-muted"> of {money(c.goal_usd)}</span> : null}</span></div>
+                  {c.goal_usd ? <div className="mt-1 h-2 rounded-full bg-lilac/60" aria-hidden="true"><div className="h-2 rounded-full bg-royal" style={{ width: `${Math.min(100, (c.progress ?? 0) * 100)}%` }} /></div> : null}
+                  <p className="text-xs text-muted">{c.gifts} gift(s){c.pledged_usd ? ` · ${money(c.pledged_usd)} pledged, not received` : ""}</p>
+                </li>))}</ul>
+              {s.unassigned_usd > 0 && <p className="mt-2 text-xs text-muted">{money(s.unassigned_usd)} received without a campaign.</p>}
+            </Card>
+          </div>
+          <Card title="Acknowledgment tracking" icon={<HeartHandshake size={16} aria-hidden="true" />}>
+            <div className="grid gap-2 sm:grid-cols-4">{Object.entries(ACK_LABEL).map(([k, v]) => (
+              <div key={k} className="rounded-2xl bg-ivory/80 px-3 py-2"><p className="text-xs text-muted">{v}</p><p className="font-display text-2xl font-semibold text-plum">{s.ack_status[k] ?? 0}</p></div>))}</div>
+            <p className="mt-2 text-xs text-muted">Received gifts only. “Completed” means a board member sent the acknowledgment outside SAM SPACE and recorded it here.</p>
+          </Card>
+          {s.reconciliation.length > 0 && (
+            <Card title="Reconciliation with the financial records" icon={<Scale size={16} aria-hidden="true" />}>
+              <table className="w-full text-sm"><thead><tr className="text-left text-xs text-muted"><th className="py-1">Month</th><th className="py-1 text-right">Donation records</th><th className="py-1 text-right">Ledger donations</th><th className="py-1 text-right">Difference</th></tr></thead>
+                <tbody>{s.reconciliation.map((r) => (
+                  <tr key={r.period} className="border-t border-lavender/30"><td className="py-1.5 text-plum">{month(r.period)}</td><td className="py-1.5 text-right tabular-nums">{money(r.donation_records_usd)}</td>
+                    <td className="py-1.5 text-right tabular-nums">{money(r.ledger_donations_usd)}</td><td className={`py-1.5 text-right tabular-nums ${r.difference_usd ? "text-amber" : "text-sage"}`}>{money(r.difference_usd)}</td></tr>))}</tbody></table>
+              <p className="mt-2 text-xs text-muted">Shown side by side, never added together, so no gift is double-counted. Differences usually mean a gift is in one record set and not the other; review them with your treasurer.</p>
+            </Card>
           )}
-          <p className="mt-4 flex items-center gap-2 rounded-xl bg-lilac/60 px-3 py-2 text-xs text-plum">
-            <ShieldCheck size={14} aria-hidden="true" /> {data.note} Donor emails stay on the server and are never shown here.
-          </p>
-        </Card>
-        <div className="space-y-5">
+          <DraftsPanel kind="donor" title="Acknowledgment drafts (unsent)" />
+        </div>
+        <div className="min-w-0 space-y-5">
+          {can("manage_donations") && <AddDonationCard campaigns={data.campaigns} onDone={reload} />}
+          <ComplianceArea />
+          <AckGuide />
           <RunLauncher title="Ask Donations & Compliance" intent="donations_review" lockIntent
             examples={["Which donations still need thank-you letters, and what should our accountant review?"]} />
           <AgentPanel agents={["donations_compliance"]} upcoming={[]} />
         </div>
       </div>
-      <DraftsPanel kind="donor" title="Acknowledgment drafts (unsent)" />
     </div>
   );
 }
@@ -77,8 +102,8 @@ export default function DonationsPage() {
   return (
     <>
       <PageHeader eyebrow="Donations & Compliance" title="Every gift, honored and in order"
-        subtitle="Organize records, spot missing details, and prepare thank-you notes. SAM SPACE never contacts donors on its own." />
-      {can("view_donor_data") ? <DonationsBody /> : <RestrictedState area="Donor records" />}
+        subtitle="Organize contributions by campaign, keep acknowledgments on track, and see what to take to your accountant. SAM SPACE never contacts donors, files anything, or decides tax treatment." />
+      {can("view_donor_data") ? <DonationsBody /> : <RestrictedState area="Donations & Compliance" />}
     </>
   );
 }

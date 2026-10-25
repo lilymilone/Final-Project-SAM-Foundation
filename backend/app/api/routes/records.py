@@ -13,8 +13,8 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from ...core.permissions import Permission
-from ...db.models import Donation, EventPlan, FinancialRecord
-from ...services.finance import donation_flags, finance_summary
+from ...db.models import EventPlan, FinancialRecord
+from ...services.finance import finance_summary
 from ..deps import CurrentUser, audit, get_db, require
 
 router = APIRouter(prefix="/api", tags=["records"])
@@ -42,7 +42,7 @@ MAX_ROWS = 2000
 
 
 @router.post("/finance/import")
-def import_ledger(body: LedgerImport, cu: CurrentUser = Depends(require(Permission.VIEW_FINANCIALS)),
+def import_ledger(body: LedgerImport, cu: CurrentUser = Depends(require(Permission.MANAGE_FINANCIALS)),
                   db: Session = Depends(get_db)) -> dict:
     """Validated CSV upload: period (YYYY-MM), kind (income|expense|reserve), category, amount_usd.
     Every row is checked. Nothing is saved unless the whole file is valid."""
@@ -76,7 +76,9 @@ def import_ledger(body: LedgerImport, cu: CurrentUser = Depends(require(Permissi
             errors.append(f"Line {line}: {'; '.join(problems)}")
             continue
         rows.append(FinancialRecord(organization_id=cu.organization_id, period=r["period"], kind=r["kind"].lower(), category=category,
-                                    amount_usd=round(amount, 2), description="Imported from CSV", source="upload", is_demo=False))
+                                    amount_usd=round(amount, 2), description="Imported from CSV", source="upload", is_demo=False,
+                                    currency="USD", original_amount=r["amount_usd"][:60], source_row=line, verification="parsed_csv",
+                                    entered_by=cu.user.id))
     if errors:
         raise HTTPException(422, "Nothing was imported. " + " | ".join(errors[:6]) + (" | …" if len(errors) > 6 else ""))
     if not rows:
@@ -89,31 +91,3 @@ def import_ledger(body: LedgerImport, cu: CurrentUser = Depends(require(Permissi
     audit(db, cu, "ledger_imported", rows=len(rows), replaced_demo_rows=replaced)
     db.commit()
     return {"imported": len(rows), "replaced_demo_rows": replaced}
-
-
-@router.get("/donations")
-def donations(cu: CurrentUser = Depends(require(Permission.VIEW_DONOR_DATA)), db: Session = Depends(get_db)) -> dict:
-    rows = db.scalars(
-        select(Donation).where(Donation.organization_id == cu.organization_id).order_by(Donation.received_on.desc())
-    ).all()
-    items = [
-        {
-            "id": d.id, "donor_name": d.donor_name, "has_email": bool(d.donor_email), "amount_usd": d.amount_usd,
-            "received_on": d.received_on.isoformat(), "method": d.method, "designation": d.designation,
-            "acknowledged": d.acknowledged, "is_demo": d.is_demo, "flags": donation_flags(d),
-        }
-        for d in rows
-    ]
-    audit(db, cu, "donor_data_viewed")
-    db.commit()
-    return {
-        "donations": items,
-        "totals": {
-            "count": len(items),
-            "amount_usd": round(sum(d["amount_usd"] for d in items), 2),
-            "needs_attention": sum(1 for d in items if d["flags"]),
-            "unacknowledged": sum(1 for d in items if not d["acknowledged"]),
-        },
-        "is_demo": any(d["is_demo"] for d in items),
-        "note": "Flags are for review by a person or a professional. SAM SPACE never contacts donors.",
-    }

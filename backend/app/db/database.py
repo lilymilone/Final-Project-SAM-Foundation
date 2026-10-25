@@ -50,9 +50,11 @@ class Database:
             return False
         with self.transaction() as db:
             if db.scalar(select(Organization.id).limit(1)) is not None:
-                from .seed import upgrade_demo_history
+                from .seed import upgrade_demo_books, upgrade_demo_donations, upgrade_demo_history
 
                 upgrade_demo_history(db)  # idempotent: fills new demo fields in older databases
+                upgrade_demo_books(db)
+                upgrade_demo_donations(db)
                 return False
             from .seed import seed_demo_workspace
 

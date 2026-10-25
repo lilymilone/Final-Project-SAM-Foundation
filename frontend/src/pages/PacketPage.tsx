@@ -122,6 +122,13 @@ export default function PacketPage() {
               {([["Decisions for the board", rec.decisions_for_board], ["Next steps", rec.next_steps], ["Risks", rec.risks], ["Caveats", rec.caveats]] as const).map(([t, items]) =>
                 items.length ? <div key={t}><p className="label">{t}</p><ul className="list-disc space-y-1 pl-5 text-sm">{items.map((x, i) => <li key={i}>{x}</li>)}</ul></div> : null)}
             </div>
+            {rec.mission_impact_considerations && rec.mission_impact_considerations.length > 0 && (
+              <div className="mt-5 rounded-2xl bg-blush/40 p-4">
+                <p className="label">Mission impact considerations</p>
+                <ul className="list-disc space-y-1 pl-5 text-sm">{rec.mission_impact_considerations.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                <p className="mt-1 text-xs text-muted">No scores. Mission alignment never overrides a financial limit or a spending restriction; the decision stays with the board.</p>
+              </div>
+            )}
             {packet.mission_contribution && (
               <div className="mt-5 rounded-2xl bg-lilac/40 p-4">
                 <p className="label">Mission contribution (alongside the financial checks, never instead of them)</p>
@@ -141,6 +148,29 @@ export default function PacketPage() {
         )}
 
         <Section id="revision" title="3. Original and revised strategy" icon={<RefreshCcw size={16} aria-hidden="true" />}>
+          {(packet.proposal_comparison ?? []).length > 1 && (
+            <div className="-mx-2 mb-4 overflow-x-auto">
+              <table className="w-full min-w-[640px] text-sm">
+                <caption className="sr-only">Proposals compared</caption>
+                <thead><tr className="text-left text-xs text-muted"><th className="px-2 py-1">Proposal</th><th className="px-2 py-1">Venue</th><th className="px-2 py-1 text-right">Total</th>
+                  <th className="px-2 py-1 text-right">Upfront</th><th className="px-2 py-1 text-right">Base net</th><th className="px-2 py-1 text-right">Conservative net</th><th className="px-2 py-1">Finance verdict</th></tr></thead>
+                <tbody>{packet.proposal_comparison!.map((c) => (
+                  <tr key={c.round} className="border-t border-lavender/30"><td className="px-2 py-1.5 font-semibold text-plum">{c.label}</td>
+                    <td className="px-2 py-1.5">{c.venue}<span className="block text-xs capitalize text-muted">{c.event_format.replace("_", " ")}</span></td>
+                    <td className="px-2 py-1.5 text-right tabular-nums">{money(c.total_usd)}{c.round > 0 && <span className="block text-xs text-sage">{money(c.change_in_total_usd)}</span>}</td>
+                    <td className="px-2 py-1.5 text-right tabular-nums">{money(c.upfront_cash_usd)}</td><td className="px-2 py-1.5 text-right tabular-nums">{c.base_net_usd == null ? "—" : money(c.base_net_usd)}</td>
+                    <td className="px-2 py-1.5 text-right tabular-nums">{c.conservative_net_usd == null ? "—" : money(c.conservative_net_usd)}</td>
+                    <td className="px-2 py-1.5 text-xs capitalize">{(c.verdict ?? "—").replace(/_/g, " ")}</td></tr>))}</tbody>
+              </table>
+            </div>
+          )}
+          {(packet.finance_feedback ?? []).map((fb, i) => (
+            <div key={i} className="mb-4 rounded-2xl bg-[#fbf1e3]/70 p-3 text-sm">
+              <p className="font-semibold text-plum">Structured feedback Finance sent to the Events agent about {fb.venue}</p>
+              <ul className="mt-1 list-disc space-y-0.5 pl-5">{fb.issues.map((x, j) => <li key={j}>{x.detail}{x.over_by_usd != null ? ` Over by ${money(x.over_by_usd)}.` : ""}</li>)}</ul>
+              <p className="mt-1 text-xs text-muted">Largest costs: {fb.cost_drivers.map((d) => `${d.line} ${money(d.amount_usd)}${d.share_of_total ? ` (${Math.round(d.share_of_total * 100)}%)` : ""}`).join(" · ")}</p>
+            </div>
+          ))}
           {packet.revision.revised ? (
             <>
               <div className="grid gap-4 md:grid-cols-2">

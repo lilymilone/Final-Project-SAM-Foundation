@@ -1,0 +1,323 @@
+{
+  "run": {
+    "id": 20,
+    "status": "completed",
+    "research_mode": "synthetic",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Which donations still need thank-you letters, and what should our accountant review?",
+    "started_at": "2026-10-25T04:14:35.146189",
+    "duration_ms": 24947,
+    "spent_usd": 0.01843765,
+    "model_calls": 3,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 132,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 0,
+      "constraints": [],
+      "summary": "Intent: donations review (board routing). Specialists: donations compliance.",
+      "warnings": []
+    },
+    {
+      "id": 133,
+      "step_key": "donations",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "donations_compliance",
+      "objective": "Review donations and draft acknowledgments",
+      "status": "completed",
+      "duration_ms": 17695,
+      "constraints": [
+        {
+          "name": "drafts_only",
+          "detail": "Prepare unsent drafts only. Never send, file, or change records.",
+          "value": null,
+          "source_agent": "orchestrator"
+        }
+      ],
+      "summary": "The records show 11 gifts recorded, $5,315 received, and 7 gifts needing attention. Prioritize the 4 gifts of $250 or more without completed acknowledgments, the 3 overdue acknowledgments, and the payment involving goods or services. These flags may overlap. Then resolve missing information, possible duplicates, and undocumented restrictions. The gala's $5,000 pledge is not received money. This review uses aggregate records only; donor details and the foundation's registration status are unknown.",
+      "warnings": [
+        "Every draft is unsent. A board member reviews it and, if appropriate, sends it outside SAM SPACE."
+      ]
+    },
+    {
+      "id": 134,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 7245,
+      "constraints": [],
+      "summary": "Review seven donation records needing attention and obtain accountant guidance before sending acknowledgments",
+      "warnings": []
+    },
+    {
+      "id": 135,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": []
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "tool": "read_donations",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "[sensitive: contents not logged] 11 gifts ",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "tool": "flag_donation_issues",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "7 gifts need attention",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "tool": "read_compliance_items",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "8 compliance items",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "tool": "create_acknowledgment_drafts",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 4,
+      "summary": "[sensitive: contents not logged] 7 thank-you drafts",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "tool": "create_contribution_acknowledgments",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "[sensitive: contents not logged] 4 contribution acknowledgment drafts (for accountant review)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 135,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5/5 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "task": "Review incomplete donation records and reporting questions",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=medium) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0260 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 2385,
+      "cached_input_tokens": 0,
+      "output_tokens": 1176,
+      "web_search_calls": 0,
+      "cost_usd": 0.017721,
+      "latency_ms": 15501,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 133,
+      "agent": "donations_compliance",
+      "task": "Draft a donor thank-you template",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0008 fits the remaining budget of $0.4823.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 621,
+      "cached_input_tokens": 0,
+      "output_tokens": 149,
+      "web_search_calls": 0,
+      "cost_usd": 0.0001366,
+      "latency_ms": 2172,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 134,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0013 fits the remaining budget of $0.4821.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 1461,
+      "cached_input_tokens": 0,
+      "output_tokens": 795,
+      "web_search_calls": 0,
+      "cost_usd": 0.00058005,
+      "latency_ms": 7239,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "donations_review",
+    "routing": "board",
+    "analysis": {
+      "intent": "donations_review",
+      "city": null,
+      "attendance": null,
+      "event_type": null,
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "synthetic",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [],
+    "events_strategy": null,
+    "themes": [],
+    "comparison": null,
+    "recommendation": {
+      "headline": "Review seven donation records needing attention and obtain accountant guidance before sending acknowledgments",
+      "recommendation": "Have a board member review the unsent acknowledgment drafts, prioritizing the four gifts at or above the federal acknowledgment threshold, the three overdue acknowledgments, and the payment involving goods or services. These categories may overlap. The aggregate records do not identify which donors or individual gifts are involved, so the specific letters cannot be named here.",
+      "rationale": [
+        "The records show 11 gifts recorded and seven gift records needing attention.",
+        "The donations specialist reports four gifts at or above the federal acknowledgment threshold without completed acknowledgments and three overdue acknowledgments; those groups may overlap.",
+        "The specialist also flagged a payment involving goods or services and an in-kind gift for review.",
+        "All drafts are unsent. Donor details are not available in this aggregate review."
+      ],
+      "options": [],
+      "risks": [
+        "Sending an acknowledgment with incomplete or incorrect wording could fail to meet applicable requirements.",
+        "The flagged categories may overlap, and the aggregate information does not show which records need which action.",
+        "Possible duplicates, missing information, and undocumented restrictions still need resolution."
+      ],
+      "decisions_for_board": [
+        "Assign a board member to review the acknowledgment drafts and decide, if appropriate, which to send.",
+        "Determine who will coordinate the accountant review and follow up on unresolved donor-record issues."
+      ],
+      "next_steps": [
+        "Review the 11 unsent draft(s) in Donations & Compliance and identify the records that correspond to the flagged categories.",
+        "Ask the accountant what acknowledgment wording to use for the four gifts at or above the federal threshold, including how to describe any goods or services provided.",
+        "Ask the accountant what written disclosure and good-faith valuation are needed for the payment involving goods or services, and whether an exception applies.",
+        "Ask the accountant how to describe the in-kind gift in its acknowledgment and whether it raises additional appraisal or reporting questions.",
+        "After confirming full-year gross receipts and total assets, ask the accountant which Form 990-series return applies and what deadline applies.",
+        "Ask the accountant how to document and account for the unreceived pledge and donor-restricted funds.",
+        "Confirm the foundation's registration or exemption status and applicable solicitation-registration and annual filing obligations in New York State and Connecticut."
+      ],
+      "lessons_applied": [],
+      "caveats": [
+        "This review uses synthetic demonstration data and aggregate records only; donor identities and gift-level details are unavailable.",
+        "The foundation's registration status is unknown.",
+        "Drafts are unsent and require board-member review; no acknowledgment has been sent.",
+        "Applicability of reporting, appraisal, registration, and filing requirements remains subject to professional review and confirmation of relevant facts."
+      ],
+      "mission_impact_considerations": null
+    },
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "11 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "No external sources used."
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {},
+    "revision_history": [],
+    "unresolved_conflicts": [],
+    "event_plan_id": null,
+    "specialists": {
+      "donations": "[redacted]"
+    },
+    "finance": null,
+    "event": null,
+    "venues": [],
+    "shortlist": [],
+    "original_plan": null,
+    "revised_plan": null,
+    "revision_reasons": [],
+    "evaluation": null,
+    "proposal_comparison": [],
+    "finance_feedback": [],
+    "authorized_budget_usd": null,
+    "drafts": [],
+    "lessons": [],
+    "disagreements": [],
+    "findings": [],
+    "selection": null,
+    "mission_contribution": null,
+    "community_insights": [],
+    "donations": "[redacted]"
+  }
+}

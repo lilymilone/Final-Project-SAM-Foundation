@@ -111,8 +111,8 @@ python -m pytest              # run the automated tests (148 tests, no API key o
 | Orchestrator | read/create event plan, read/select opportunities, verify result | classify the request; write the board recommendation or partnership packet | plan template, dispatch, revision loop, **candidate selection by the fit rubric**, verification |
 | Event Intelligence | past events, reflections, compare outcomes, save lesson | lessons, disagreements, constraints, community insights, citing record IDs | outcome metrics; drops lessons citing records that don't exist and community insights whose quote is not word for word in the cited record |
 | Fundraising & Events | search venues, fetch source, budget, revenue scenarios, save venue | rank options, fundraising strategy, mission contribution (inclusion, connection, accessibility, recognition) | every budget; re-ranks if a revision still breaks Finance's limits |
-| Financial Analysis | ledger, position, break-even, sensitivity, affordability | plain-language explanation | all arithmetic, the verdict, and the conflicts |
-| Donations & Compliance | donations, flags, acknowledgment drafts | one template with merge fields + review items | merges names/amounts locally (the AI never sees them) |
+| Financial Analysis | ledger, position, full analysis, event model, affordability, document text, stage figures | plain-English review; organizes figures from uploaded PDFs | all arithmetic, the verdict, conflicts, structured feedback to Events; every extracted figure checked against its page and held for board review |
+| Donations & Compliance | donations, flags, compliance checklist, thank-you drafts, contribution acknowledgments | reporting questions citing sources (Sol); one thank-you template (Luna) | merges donor details locally (the AI never sees them); builds contribution acknowledgments in code; never sends, files, or changes records |
 | Partnerships & Outreach | saved findings, create draft (**no web, mail, messaging, or scheduling tool**) | personalized drafts with purpose, opportunity, next step | saves drafts as unsent; rejects drafts that claim an action, invent a relationship, commit the foundation, or quote an amount not in the research (one bounded rewrite) |
 | Mission Discovery | web search, fetch source, alignment check, save finding | plan the search; explain alignment in four parts (A charitable, B philosophical, C practical, D evidence) | scrubs private details from queries; fetches every link; removes injected instructions; checks dates and costs against the page; applies the fit rubric |
 
@@ -145,6 +145,10 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
 | Event Studio controlled demo from the UI (#12) | 8 | 21,141 / 8,047 | $0.2322 | 173 s |
 | **Partnership workflow, live research** (#13): research → select → 3 unsent drafts → packet | 5 (+1 web search) | 24,157 / 9,011 | $0.2271 | 124 s |
 | Partnership workflow, fixture demo with injected page and conflicting dates (#14) | 4 | 10,380 / 8,284 | $0.2171 | 102 s |
+| Financial Intelligence: organize a sample statement PDF (#16) | 1 | 1,157 / 678 | $0.0005 | 7 s |
+| Financial review, plain English (#18) | 3 | 5,705 (2,539 cached) / 2,653 | $0.0112 | 31 s |
+| **"Can the foundation afford a 150-person gala in Manhattan?"** (#19): finance feedback → revision → comparison | 8 | 28,623 (1,062) / 10,525 | $0.3151 | 174 s |
+| Donations review with sourced compliance questions and drafts (#20) | 3 | 4,467 / 2,120 | $0.0184 | 25 s |
 | Event Studio with mission contribution and community feedback (#15) | 8 | 25,332 (1,042 cached) / 10,240 | $0.2950 | 172 s |
 
 **Safeguards** (all tested):
@@ -202,6 +206,37 @@ Open **Event Studio**, press **Load the default test case**, then **Generate Eve
 - **Drafts only, enforced in code:** Outreach's only tools read research and save drafts; send/contact/schedule/publish tools cannot be registered; drafts have no “sent” status; the API rejects one (422).
 - **Untrusted web content:** instruction-like sentences are removed before any model sees a page, and the card says so. Private names, emails, and amounts are removed from search queries.
 - **Evidence:** `docs/evidence/partnerships/` (live run #13, fixture demo #14) and `docs/evidence/event_studio/packet_run_15.md` (mission contribution).
+
+## Financial Intelligence and Donations & Compliance
+
+The full walkthrough, with screenshots, real runs, and the 17 required tests, is in **[docs/finance_donations_workflow.md](docs/finance_donations_workflow.md)**.
+
+- **Dashboard:**
+  - recorded revenue, expenses, and net result; cash on hand; restricted vs. unrestricted funds
+  - program and event spending, revenue trends, budget vs. actual, a three-month outlook (estimates)
+  - preliminary event budget capacity, warnings, and missing information
+  - each figure explained in plain English
+  - **Revenue is never shown as cash, and restricted gifts are never spendable.**
+- **Uploads:**
+  - CSV (parsed in code) and PDF (text only; scripts never run; scanned files flagged for manual entry)
+  - size limits, content checks, and sanitized names; private storage scoped to each organization; duplicate detection
+  - Figures the AI organizes from a PDF wait in a **review queue** until a board member approves, corrects, or rejects each one.
+  - Manual entry and corrections are audited.
+- **Event finance:**
+  - pledged sponsorship is never counted as guaranteed (the conservative case uses confirmed sponsorship only)
+  - Miscellaneous costs and other documented revenue lines are included.
+  - a second break-even shows the headcount needed without unconfirmed sponsorship
+  - Finance sends the Events agent structured feedback (limits, how much over, cost drivers)
+  - original and revised proposals are compared side by side
+- **Donations:**
+  - full records: IDs, campaigns, restriction, payment and acknowledgment status
+  - add, edit, CSV import and export, search and filters, campaign totals, reconciliation with the ledger
+  - duplicate and double-counting safeguards
+- **Compliance review:**
+  - each item is a cited IRS requirement (US federal), general guidance (NY and CT registration), or routed to an accountant or attorney
+  - general thank-you drafts and separate contribution-acknowledgment drafts for accountant review
+  - no send button anywhere
+- **Sample files to try:** `docs/sample_ledger.csv` and `docs/samples/sample_statement_FY2025.pdf` (both fictional).
 
 ## Our Legacy (institutional memory)
 
@@ -301,7 +336,8 @@ backend/app/
   safety/     oversight policy, untrusted-content wrapper, injection screening, query scrubbing
   services/   deterministic finance, event model, mission fit, opportunity selection, impact, packets
   mission.py  FoundationMission: philosophy, criteria, fit rubric (shared by the agents)
-backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py
+  compliance.py  cited compliance sources (IRS, NY, CT) with jurisdiction and check date
+backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py, export_trace.py
 frontend/     React + TypeScript + Vite + Tailwind (built output in frontend/dist)
 tests/        pytest suite
 assets/       Smile Like Sab logo (smile-like-sab.png)

@@ -46,6 +46,7 @@ INTENT_AGENTS: dict[str, list[AgentName]] = {
     "financial_review": [A.FINANCIAL_ANALYSIS],
     "donations_review": [A.DONATIONS_COMPLIANCE],
     "event_learning": [A.EVENT_INTELLIGENCE],
+    "document_extraction": [A.FINANCIAL_ANALYSIS],  # started only from an upload, never chosen by the classifier
     "unsupported": [],
 }
 INTENT_DESCRIPTIONS = {
@@ -67,6 +68,8 @@ KEYWORDS = [
     ("mission_discovery", ("research", "organization", "nonprofit", "awareness", "initiative", "cause", "discover", "find")),
 ]
 PLAN_EVENT = re.compile(r"\b(plan|organi[sz]e|host|throw|put on)\b.*\b(gala|fundraiser|event|dinner|walk|benefit|brunch|concert|auction|reception)\b")
+# "Can we afford a 150-person gala?" is about a specific event, so it is event planning with a finance check, not a books review.
+AFFORD_EVENT = re.compile(r"\bafford\b.*\b(gala|fundraiser|event|dinner|walk|benefit|brunch|concert|auction|reception)\b")
 CITY_PATTERNS = [
     (r"\bmanhattan\b|\bnyc\b|\bnew york\b", "Manhattan, New York, NY"),
     (r"\bnew haven\b", "New Haven, CT"),
@@ -79,7 +82,8 @@ INTAKE_INSTRUCTIONS = """Classify the board's request into exactly one intent fr
 - attendance, city, event_type (e.g. gala, dinner, walk), event_format (seated_dinner or reception, only if stated),
   budget_limit_usd (only if a number is stated), research_topic (for research or outreach requests).
 - Use null for anything not stated. Do not guess numbers.
-- If the request asks to plan an event AND to check affordability or use past lessons, the intent is plan_event."""
+- If the request asks to plan an event AND to check affordability or use past lessons, the intent is plan_event.
+- Asking whether the foundation can afford a specific event (e.g. "Can we afford a 150-person gala?") is plan_event, not financial_review."""
 
 SYNTHESIS_INSTRUCTIONS = """Write a board-ready recommendation from the specialists' validated results.
 - Lead with a clear recommendation. Be honest about trade-offs and anything unresolved.
@@ -88,7 +92,13 @@ SYNTHESIS_INSTRUCTIONS = """Write a board-ready recommendation from the speciali
 - lessons_applied: which past-event lessons shaped the plan, naming the event.
 - decisions_for_board: the specific decisions only the board can make.
 - caveats: synthetic data, unverified links, placeholder assumptions, missing permissions.
-- Never claim that anything was sent, booked, reserved, paid, or approved."""
+- Never claim that anything was sent, booked, reserved, paid, or approved.
+- Financial feasibility is not board authorization; a surplus or available capacity does not by itself make an event affordable.
+  Restricted funds and pledged sponsorship are never available money.
+- mission_impact_considerations (optional): whether the spending supports the foundation's charitable objectives, whether
+  resources are allocated responsibly, whether the activity promotes inclusion, awareness, research, or community support, and
+  whether alternative uses of the money deserve consideration. No scores. Mission alignment never overrides a financial
+  constraint or a spending restriction; describe the trade-off and leave the decision to the board."""
 
 PARTNERSHIP_INSTRUCTIONS = """Write a board-ready partnership opportunity packet from the validated results of Mission Discovery
 (research and alignment), the Orchestrator's selection (made in code), and Partnerships & Outreach (unsent drafts).
@@ -118,7 +128,7 @@ def canonical_event_type(value: str | None) -> str | None:
 def keyword_analysis(request: str) -> RequestAnalysis:
     text = request.lower()
     intent = "unsupported"
-    if PLAN_EVENT.search(text):  # "plan a gala using lessons…" is still event planning
+    if PLAN_EVENT.search(text) or AFFORD_EVENT.search(text):  # "plan a gala using lessons…" / "can we afford a gala" are event planning
         intent = "plan_event"
     else:
         for name, words in KEYWORDS:
@@ -196,6 +206,8 @@ class _OrchestratorSelf(BaseAgent):
             if hint:  # Event Studio fixes the workflow; the model only interprets the details
                 analysis = analysis.model_copy(update={"intent": hint})
                 routing = f"{routing}, workflow set by Event Studio"
+            elif analysis.intent == "document_extraction":  # only an upload can start an extraction
+                analysis = analysis.model_copy(update={"intent": "unsupported"})
         agents = INTENT_AGENTS[analysis.intent]
         return self.result(task, "completed",
                            f"Intent: {analysis.intent.replace('_', ' ')} ({routing} routing). "
@@ -292,6 +304,8 @@ class Orchestrator:
         results: dict[str, AgentResult] = {}
         extra: dict[str, Any] = {"revision_history": []}
 
+        if intent == "document_extraction":
+            return self._extract_document(ctx, intake, analysis, options)
         if intent == "plan_event":
             self._plan_event(ctx, analysis, request, event_plan_id, results, extra, use_history=use_history)
         elif intent == "mission_discovery":
@@ -308,7 +322,13 @@ class Orchestrator:
         elif intent == "financial_review":
             results["finance"] = self.dispatch(ctx, self._task(ctx, "finance", A.FINANCIAL_ANALYSIS, "Review the foundation's financial position"))
         elif intent == "donations_review":
-            results["donations"] = self.dispatch(ctx, self._task(ctx, "donations", A.DONATIONS_COMPLIANCE, "Review donations and draft acknowledgments"))
+            ids = options.get("donation_ids")
+            results["donations"] = self.dispatch(ctx, self._task(
+                ctx, "donations", A.DONATIONS_COMPLIANCE,
+                f"Draft acknowledgments for {len(ids)} selected gift(s)" if ids else "Review donations and draft acknowledgments",
+                inputs={"donation_ids": ids, "drafts_only": bool(options.get("drafts_only"))},
+                constraints=[Constraint(name="drafts_only", detail="Prepare unsent drafts only. Never send, file, or change records.",
+                                        source_agent=A.ORCHESTRATOR)]))
         elif intent == "event_learning":
             focus_id = options.get("historical_event_id")
             focus_name = options.get("historical_event_name")
@@ -378,6 +398,9 @@ class Orchestrator:
             "revised_plan": extra["revision_history"][-1] if len(extra["revision_history"]) > 1 else None,
             "revision_reasons": extra.get("revision_reasons", []),
             "evaluation": extra.get("evaluation"),
+            "proposal_comparison": extra.get("proposal_comparison", []),
+            "finance_feedback": extra.get("finance_feedback", []),
+            "authorized_budget_usd": extra.get("authorized_budget_usd"),
             "drafts": (results["outreach"].data.get("drafts") if "outreach" in results else []) or [],
             "lessons": results["lessons"].data.get("lessons") if "lessons" in results else [],
             "disagreements": results["lessons"].data.get("disagreements") if "lessons" in results else [],
@@ -482,11 +505,13 @@ class Orchestrator:
             constraints = self._revision_constraints(conflicts, lesson_constraints, contingency)
             previous = [{"option_id": s["option_id"], "venue": s["venue"]["name"], "total_usd": s["model"]["total_cost_usd"]}
                         for s in venues.data.get("shortlist", [])]
+            feedback = self._finance_feedback(finance, top, conflicts)
+            extra.setdefault("finance_feedback", []).append(feedback)
             venues = self.dispatch(ctx, self._task(
                 ctx, f"venues_revision_{round_no}", A.FUNDRAISING_EVENTS,
                 "Revise the plan to resolve: " + "; ".join(c["detail"] for c in conflicts),
                 kind="revision", revision_round=round_no,
-                inputs={**base_inputs, "previous_shortlist": previous, "candidates": extra["venues"]},
+                inputs={**base_inputs, "previous_shortlist": previous, "candidates": extra["venues"], "finance_feedback": feedback},
                 constraints=constraints, depends_on=[evaluation.step_key]))
             results["venues"] = venues
             top = venues.data.get("top_choice") if venues.status == "completed" else None
@@ -497,11 +522,38 @@ class Orchestrator:
             extra["unresolved_conflicts"] = conflicts
             if round_no >= ctx.settings.max_revisions:
                 extra["revision_limit_reached"] = True
+        extra["proposal_comparison"] = self._compare_proposals(extra["revision_history"])
+        extra["authorized_budget_usd"] = event["budget_limit_usd"]
 
         if venues.status == "completed" and venues.data.get("shortlist"):  # step 7: unsent venue inquiries
             results["outreach"] = self.dispatch(ctx, self._task(
                 ctx, "outreach", A.PARTNERSHIPS_OUTREACH, "Prepare unsent inquiry drafts for the shortlisted venues",
                 inputs={"event": event, "shortlist": venues.data["shortlist"][:3], "find_partners": False}, depends_on=[venues.step_key]))
+
+    def _extract_document(self, ctx: RunContext, intake: AgentResult, analysis: RequestAnalysis, options: dict) -> dict:
+        """Upload -> Financial Analysis organizes figures -> code verifies nothing entered the records unreviewed."""
+        doc_id = options.get("document_id")
+        res = self.dispatch(ctx, self._task(ctx, "extract", A.FINANCIAL_ANALYSIS, f"Organize the figures in uploaded document #{doc_id} "
+                                            "for board review", inputs={"document_id": doc_id},
+                                            constraints=[Constraint(name="review_required", detail="Stage figures for board review only. "
+                                                                    "Never add them to the financial records.", source_agent=A.ORCHESTRATOR)]))
+        figures = res.data.get("figures", []) if res.status == "completed" else []
+        checks = [
+            {"name": "No extracted figure entered the records without review",
+             "passed": all(f["status"] in ("pending", "reference") for f in figures),
+             "detail": f"{len(figures)} figure(s) staged; every one waits for a board member."},
+            {"name": "Every figure was checked against its page",
+             "passed": True if not figures else None if any(not f["found_on_page"] for f in figures) else True,
+             "detail": f"{sum(1 for f in figures if f['found_on_page'])} of {len(figures)} amounts were found on the cited page."},
+            {"name": "Specialists finished", "passed": True if res.status == "completed" else None, "detail": res.summary},
+        ]
+        report = {"passed": all(c["passed"] is not False for c in checks), "checks": checks, "unsupported_figures": []}
+        self.dispatch(ctx, self._task(ctx, "verification", A.ORCHESTRATOR, "Verify the extraction in code", inputs={"report": report}))
+        return {"intent": "document_extraction", "routing": intake.data["routing"], "analysis": analysis.model_dump(),
+                "research_mode": ctx.research_mode, "recommendation": None, "verification": report, "document_id": doc_id,
+                "extraction": {k: res.data.get(k) for k in ("status", "summary", "reporting_period_label")} | {"count": len(figures)},
+                "specialists": {"extract": {"agent": res.agent.value, "status": res.status, "summary": res.summary}},
+                "message": res.summary}
 
     def _partnership(self, ctx: RunContext, analysis: RequestAnalysis, request: str, options: dict,
                      results: dict[str, AgentResult], extra: dict) -> None:
@@ -555,11 +607,50 @@ class Orchestrator:
             constraints=carry, depends_on=["select"]))
 
     @staticmethod
+    def _finance_feedback(finance: AgentResult, top: dict, conflicts: list[dict]) -> dict:
+        """Structured feedback for the Events agent: what is over, by how much, and which costs drive it."""
+        m = finance.data.get("model") or top["model"]
+        total = m["total_cost_usd"]
+        drivers = sorted(m.get("lines", []), key=lambda x: -x["amount_usd"])[:3]
+        fb = {"option_id": top["option_id"], "venue": top["venue"]["name"], "event_format": top["event_format"],
+              "total_cost_usd": total, "upfront_cash_usd": m["upfront_cash_usd"], "verdict": finance.data.get("verdict"),
+              "cost_drivers": [{"line": d["category"], "amount_usd": d["amount_usd"], "share_of_total": round(d["amount_usd"] / total, 2) if total else None}
+                               for d in drivers],
+              "conservative_net_usd": (m.get("scenarios") or {}).get("conservative", {}).get("net_usd"),
+              "break_even_attendance": m.get("break_even_attendance"), "issues": []}
+        for c in conflicts:
+            item = {"type": c["type"], "source": c.get("source"), "detail": c["detail"]}
+            if c.get("max_total_usd"):
+                item.update(limit_usd=c["max_total_usd"], over_by_usd=round(total - c["max_total_usd"], 2))
+            if c.get("max_upfront_usd") is not None:
+                item.update(limit_usd=c["max_upfront_usd"], over_by_usd=round(m["upfront_cash_usd"] - c["max_upfront_usd"], 2))
+            fb["issues"].append(item)
+        return fb
+
+    @staticmethod
+    def _compare_proposals(history: list[dict]) -> list[dict]:
+        """Original vs. revised proposals side by side, with the change from the original (computed in code)."""
+        if not history:
+            return []
+        first = history[0]
+        rows = []
+        for h in history:
+            rows.append({"round": h["round"], "label": "Original proposal" if h["round"] == 0 else f"Revision {h['round']}",
+                         "venue": h["venue"], "event_format": h["event_format"], "total_usd": h["total_usd"],
+                         "upfront_cash_usd": h["upfront_cash_usd"], "base_net_usd": h["base_net_usd"],
+                         "conservative_net_usd": h.get("conservative_net_usd"), "verdict": h["verdict"],
+                         "conflicts": h["conflicts"],
+                         "change_in_total_usd": round(h["total_usd"] - first["total_usd"], 2),
+                         "change_in_upfront_usd": round(h["upfront_cash_usd"] - first["upfront_cash_usd"], 2)})
+        return rows
+
+    @staticmethod
     def _history_entry(round_no: int, top: dict, finance: AgentResult, conflicts: list[dict], venues: AgentResult) -> dict:
         m = top["model"]
         return {"round": round_no, "option_id": top["option_id"], "venue": top["venue"]["name"], "event_format": top["event_format"],
                 "pricing_status": top["venue"].get("pricing_status"), "total_usd": m["total_cost_usd"], "upfront_cash_usd": m["upfront_cash_usd"],
                 "base_net_usd": m["scenarios"]["base"]["net_usd"], "contingency_pct": m["contingency_pct"],
+                "conservative_net_usd": m["scenarios"]["conservative"]["net_usd"],
                 "finance_status": finance.status, "verdict": finance.data.get("verdict"),
                 "conflicts": [c["detail"] for c in conflicts], "conflict_sources": sorted({c["source"] for c in conflicts}),
                 "changes_from_previous": venues.data.get("changes_from_previous") if round_no else None,
@@ -669,6 +760,9 @@ class Orchestrator:
         if any("synthetic demo" in a.lower() or "demo ledger" in a.lower() or "demo records" in a.lower()
                for r in results.values() for a in r.assumptions):
             caveats.append("Past events, books, and donations are the synthetic demo dataset.")
+        if "venues" in results and extra.get("event") and not extra["event"].get("budget_limit_usd"):
+            caveats.append("No explicitly authorized planning budget is recorded for this event. The comparison uses the "
+                           "preliminary capacity from the records, which is not an authorization; the board must set a budget.")
         if extra.get("revision_limit_reached"):
             caveats.append(f"Stopped after {ctx.settings.max_revisions} revision round(s) (loop limit). Remaining conflicts need a board decision.")
         research = results.get("research")

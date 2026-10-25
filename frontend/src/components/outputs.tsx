@@ -14,6 +14,7 @@ const DRAFT_LABELS: Record<string, string> = {
   partnership_inquiry: "Partnership inquiry", nonprofit_collaboration: "Nonprofit collaboration", research_support: "Research-support inquiry",
   community_program: "Community-program proposal", corporate_sponsorship: "Corporate sponsorship", venue_inquiry: "Venue inquiry",
   partnership: "Partnership", sponsor: "Sponsor", donor_acknowledgment: "Donor acknowledgment",
+  donor_thank_you: "General thank-you (not a tax acknowledgment)", contribution_acknowledgment: "Contribution acknowledgment (for accountant review)",
 };
 
 export function DraftItem({ draft, onChange }: { draft: Draft; onChange: () => void }) {

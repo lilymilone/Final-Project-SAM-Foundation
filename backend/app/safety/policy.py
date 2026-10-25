@@ -94,9 +94,15 @@ def sanitize_untrusted(text: str | None) -> tuple[str, list[str]]:
     flags = detect_injection(text)
     if not flags:
         return text, []
-    sentences = _re.split(r"(?<=[.!?])\s+|\n+", text)
-    kept = [s for s in sentences if not detect_injection(s)]
-    clean = " ".join(kept).strip() or "[content removed: it contained instructions directed at an AI system]"
+    lines = []
+    for line in text.split("\n"):  # keep the layout (statements are line by line); drop only the offending sentences
+        if not detect_injection(line):
+            lines.append(line)
+            continue
+        kept = [s for s in _re.split(r"(?<=[.!?])\s+", line) if not detect_injection(s)]
+        if kept:
+            lines.append(" ".join(kept))
+    clean = "\n".join(lines).strip() or "[content removed: it contained instructions directed at an AI system]"
     return clean, flags
 
 

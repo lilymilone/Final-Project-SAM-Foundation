@@ -14,14 +14,21 @@ saying where it came from:
 Three scenarios vary only the revenue drivers. Costs are the same in all
 three, because catering is guaranteed on the expected headcount:
 
-  conservative  80% attendance · 50% sponsorship · 50% donations
+  conservative  80% attendance · confirmed sponsorship only · 50% donations
   base          expected attendance · expected sponsorship · historical giving
-  optimistic    full attendance · 150% sponsorship · 130% donations
+  optimistic    full attendance · 150% of expected sponsorship · 130% donations
+
+Pledged or prospective sponsorship is never treated as guaranteed: only
+sponsorship the board marks as confirmed (signed or received) counts in the
+conservative case, and a second break-even shows the headcount needed if no
+unconfirmed sponsorship arrives.
 """
 
 from __future__ import annotations
 
 from typing import Any
+
+from .fin_calc import SCENARIO_FACTORS, event_scenarios
 
 PLACEHOLDERS: dict[str, Any] = {
     "catering_per_guest_usd": {"seated_dinner": 150.0, "reception": 85.0},
@@ -30,15 +37,12 @@ PLACEHOLDERS: dict[str, Any] = {
     "marketing_usd": 600.0,
     "staffing_usd": 900.0,
     "insurance_usd": 500.0,
+    "misc_usd": 0.0,
     "contingency_pct": 0.10,
     "deposit_pct": 0.50,
 }
 
-SCENARIOS = {
-    "conservative": {"attendance": 0.80, "sponsorship": 0.50, "donations": 0.50},
-    "base": {"attendance": 1.00, "sponsorship": 1.00, "donations": 1.00},
-    "optimistic": {"attendance": 1.00, "sponsorship": 1.50, "donations": 1.30},
-}
+SCENARIOS = SCENARIO_FACTORS  # one definition, in services/fin_calc.py
 
 # Order and labels for the editable assumptions table.
 ASSUMPTION_LABELS = {
@@ -50,10 +54,13 @@ ASSUMPTION_LABELS = {
     "entertainment_usd": "Entertainment",
     "marketing_usd": "Marketing",
     "staffing_usd": "Staffing",
-    "insurance_usd": "Insurance",
+    "insurance_usd": "Insurance and permits",
+    "misc_usd": "Miscellaneous",
     "contingency_pct": "Contingency",
-    "sponsorship_usd": "Sponsorship revenue (expected)",
+    "sponsorship_usd": "Sponsorship expected (pledged or prospective)",
+    "sponsorship_confirmed_usd": "Sponsorship confirmed (signed or received)",
     "donations_per_attendee_usd": "Donations per attendee",
+    "other_revenue_usd": "Other documented revenue",
     "deposit_pct": "Deposit due before the event",
 }
 REVENUE_INPUTS = ("ticket_price_usd", "sponsorship_usd", "donations_per_attendee_usd")
@@ -117,6 +124,7 @@ def build_assumptions(*, venue: dict | None, event_format: str, event: dict, his
                                    else A(None, "missing", "No published minimum (confirm with the venue)"))
     for key in ("entertainment_usd", "marketing_usd", "staffing_usd", "insurance_usd"):
         out[key] = A(PLACEHOLDERS[key], "placeholder", "Placeholder planning figure; replace with quotes")
+    out["misc_usd"] = A(PLACEHOLDERS["misc_usd"], "placeholder", "Not estimated (contingency covers small items); enter known costs such as printing or permits")
     out["contingency_pct"] = (A(contingency_pct, "lesson", "Recommended by Event Intelligence from past cost overruns")
                               if contingency_pct is not None else A(PLACEHOLDERS["contingency_pct"], "placeholder", "Default planning contingency"))
     names = ", ".join(history.get("names") or [])
@@ -124,6 +132,8 @@ def build_assumptions(*, venue: dict | None, event_format: str, event: dict, his
         out["sponsorship_usd"] = A(history["sponsorship_usd"], "history", f"Average sponsorship at comparable past events: {names}")
     else:
         out["sponsorship_usd"] = A(None, "missing", "No sponsorship history; enter an expected amount")
+    out["sponsorship_confirmed_usd"] = A(0.0, "board", "No sponsorship confirmed yet; pledges are not counted as guaranteed")
+    out["other_revenue_usd"] = A(0.0, "board", "No other documented revenue; enter only documented amounts (e.g. a confirmed auction donation)")
     giving = history.get("guest_giving_per_attendee_usd")
     if giving is not None and ticket is not None:
         out["donations_per_attendee_usd"] = A(r2(max(0.0, giving - ticket)), "history",
@@ -155,14 +165,19 @@ def compute(assumptions: dict, *, max_budget_usd: float | None = None, target_us
     pct = float(v.get("contingency_pct") or 0.0)
     venue = float(v["venue_rental_usd"])
     catering, minimum_applies = _catering(float(v["catering_per_guest_usd"]), n, v.get("catering_minimum_usd"))
-    fixed_other = sum(float(v[k]) for k in ("entertainment_usd", "marketing_usd", "staffing_usd", "insurance_usd"))
+    v.setdefault("misc_usd", 0.0)  # models saved before these lines existed
+    v.setdefault("sponsorship_confirmed_usd", 0.0)
+    v.setdefault("other_revenue_usd", 0.0)
+    fixed_keys = ("entertainment_usd", "marketing_usd", "staffing_usd", "insurance_usd", "misc_usd")
+    fixed_other = sum(float(v[k] or 0) for k in fixed_keys)
     lines = [
         {"category": "Venue", "amount_usd": r2(venue), "basis": assumptions["venue_rental_usd"].get("basis") if isinstance(assumptions["venue_rental_usd"], dict) else ""},
         {"category": "Catering", "amount_usd": r2(catering),
          "basis": f"Venue minimum applies (${v['catering_minimum_usd']:,.0f} > {n} × ${v['catering_per_guest_usd']:,.2f})" if minimum_applies
          else f"{n} guests × ${float(v['catering_per_guest_usd']):,.2f}"},
-    ] + [{"category": ASSUMPTION_LABELS[k], "amount_usd": r2(float(v[k])), "basis": (assumptions[k] or {}).get("basis", "") if isinstance(assumptions[k], dict) else ""}
-         for k in ("entertainment_usd", "marketing_usd", "staffing_usd", "insurance_usd")]
+    ] + [{"category": ASSUMPTION_LABELS[k], "amount_usd": r2(float(v[k] or 0)),
+          "basis": (assumptions.get(k) or {}).get("basis", "") if isinstance(assumptions.get(k), dict) else ""}
+         for k in fixed_keys]
     subtotal = venue + catering + fixed_other
     contingency = subtotal * pct
     total = subtotal + contingency
@@ -170,29 +185,28 @@ def compute(assumptions: dict, *, max_budget_usd: float | None = None, target_us
 
     missing = [k for k in REVENUE_INPUTS if v.get(k) is None]
     ticket, sponsorship, donations = v.get("ticket_price_usd"), v.get("sponsorship_usd"), v.get("donations_per_attendee_usd")
-    scenarios = {}
-    for name, f in SCENARIOS.items():
-        att = max(0, round(n * f["attendance"]))
-        t = r2(att * ticket) if ticket is not None else None
-        s = r2(sponsorship * f["sponsorship"]) if sponsorship is not None else None
-        d = r2(att * donations * f["donations"]) if donations is not None else None
-        revenue = r2(t + s + d) if None not in (t, s, d) else None
-        net = r2(revenue - total) if revenue is not None else None
-        scenarios[name] = {"attendance": att, "ticket_revenue_usd": t, "sponsorship_revenue_usd": s, "donations_usd": d,
-                           "total_revenue_usd": revenue, "total_cost_usd": r2(total), "net_usd": net,
-                           "vs_target_usd": r2(net - target_usd) if net is not None and target_usd is not None else None}
+    confirmed = float(v.get("sponsorship_confirmed_usd") or 0.0)
+    other = float(v.get("other_revenue_usd") or 0.0)
+    if sponsorship is not None:
+        sponsorship = max(float(sponsorship), confirmed)  # expected can never be less than what is already confirmed
+    scenarios = event_scenarios(attendance=n, ticket_price=ticket, donations_per_attendee=donations, sponsorship_expected=sponsorship,
+                                sponsorship_confirmed=confirmed, other_revenue=other, total_cost=total, target=target_usd)
 
     # Break-even: the smallest headcount whose revenue covers its cost (catering minimum and contingency included).
-    break_even, be_note = None, None
-    if ticket is None or donations is None or sponsorship is None:
-        be_note = "Needs ticket price, sponsorship, and donations per attendee."
-    else:
+    def _break_even(sponsor: float) -> int | None:
         for guests in range(0, max(3 * n, 1000) + 1):
             cat, _ = _catering(float(v["catering_per_guest_usd"]), guests, v.get("catering_minimum_usd"))
             cost = (venue + cat + fixed_other) * (1 + pct)
-            if sponsorship + guests * (ticket + donations) >= cost:
-                break_even = guests
-                break
+            if sponsor + other + guests * (ticket + donations) >= cost:
+                return guests
+        return None
+
+    break_even, be_note, break_even_confirmed = None, None, None
+    if ticket is None or donations is None or sponsorship is None:
+        be_note = "Needs ticket price, sponsorship, and donations per attendee."
+    else:
+        break_even = _break_even(sponsorship)
+        break_even_confirmed = _break_even(confirmed)
         if break_even is None:
             be_note = "Revenue per guest never covers costs within three times the expected attendance."
         elif break_even == 0:
@@ -224,10 +238,13 @@ def compute(assumptions: dict, *, max_budget_usd: float | None = None, target_us
         "lines": lines, "subtotal_usd": r2(subtotal), "contingency_pct": pct, "contingency_usd": r2(contingency),
         "total_cost_usd": r2(total), "upfront_cash_usd": r2(upfront), "catering_minimum_applies": minimum_applies,
         "scenarios": scenarios, "break_even_attendance": break_even, "break_even_note": be_note,
+        "break_even_confirmed_only": break_even_confirmed,
+        "sponsorship_confirmed_usd": r2(confirmed), "sponsorship_unconfirmed_usd": r2(max(0.0, (sponsorship or 0) - confirmed)),
         "missing_inputs": [ASSUMPTION_LABELS[m] for m in missing], "complete": not missing, "checks": checks,
         "assumptions": assumptions, "attendance": n, "max_budget_usd": max_budget_usd, "target_usd": target_usd,
-        "scenario_definitions": {k: f"attendance {int(f['attendance'] * 100)}%, sponsorship {int(f['sponsorship'] * 100)}%, donations {int(f['donations'] * 100)}%"
-                                 for k, f in SCENARIOS.items()},
+        "scenario_definitions": {k: f"attendance {int(f['attendance'] * 100)}%, "
+                                    + ("confirmed sponsorship only" if f["sponsorship"] is None else f"sponsorship {int(f['sponsorship'] * 100)}% of expected")
+                                    + f", donations {int(f['donations'] * 100)}%" for k, f in SCENARIOS.items()},
     }
 
 
@@ -290,5 +307,6 @@ def affordability(model: dict, position: dict, min_contingency_pct: float | None
     else:
         verdict = "affordable"
     return {"verdict": verdict, "checks": checks, "conflicts": conflicts, "warnings": warnings,
-            "cash_note": "Recorded income is not treated as cash on hand. Only the recorded reserve balance above the "
-                         "board's reserve floor is counted as available for deposits."}
+            "cash_note": "Recorded income is not treated as cash on hand, restricted gifts are never counted as spendable, and "
+                         "pledged sponsorship is not guaranteed. Only unrestricted money above the board's reserve floor is counted "
+                         "as available for deposits. Financial feasibility is not board authorization."}

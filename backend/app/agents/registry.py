@@ -39,7 +39,9 @@ LESSONS = _t(A.EVENT_INTELLIGENCE, "Synthesize lessons from events and reflectio
 VENUE_STRATEGY = _t(A.FUNDRAISING_EVENTS, "Shortlist venues and fundraising strategy", "medium", True, "medium", 5000, 2000)
 VENUE_SEARCH = _t(A.FUNDRAISING_EVENTS, "Web search: venue candidates", "low", False, "low", 9000, 1500)
 FINANCE_NARRATIVE = _t(A.FINANCIAL_ANALYSIS, "Explain computed financial results", "medium", False, "high", 4000, 1200)
-ACK_TEMPLATE = _t(A.DONATIONS_COMPLIANCE, "Draft acknowledgment template and review items", "low", False, "medium", 1500, 1200)
+FINANCE_EXTRACT = _t(A.FINANCIAL_ANALYSIS, "Organize figures from a financial document (extraction)", "low", False, "high", 6000, 3000)
+ACK_TEMPLATE = _t(A.DONATIONS_COMPLIANCE, "Draft a donor thank-you template", "low", False, "medium", 1500, 1200)
+DONATION_REVIEW = _t(A.DONATIONS_COMPLIANCE, "Review incomplete donation records and reporting questions", "medium", True, "medium", 3000, 2000)
 MISSION_PLAN = _t(A.MISSION_DISCOVERY, "Understand the research request (extraction)", "low", False, "low", 900, 400)
 MISSION_SEARCH = _t(A.MISSION_DISCOVERY, "Web search: mission-aligned opportunities", "low", False, "low", 9000, 1500)
 MISSION_ALIGNMENT = _t(A.MISSION_DISCOVERY, "Compare sources and synthesize mission alignment", "medium", True, "low", 6000, 4000)
@@ -70,15 +72,19 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     ),
     AgentSpec(
         A.FINANCIAL_ANALYSIS, "Financial Analysis",
-        "Analyzes recorded financial data and checks event affordability. All arithmetic is deterministic Python.",
-        ("read_financial_records", "compute_financial_position", "recompute_event_model", "check_event_affordability"),
-        (FINANCE_NARRATIVE,),
+        "Analyzes recorded financial data, organizes figures from uploaded statements for board review, and checks event "
+        "affordability. All arithmetic is deterministic Python.",
+        ("read_financial_records", "compute_financial_position", "compute_financial_analysis", "recompute_event_model",
+         "check_event_affordability", "read_document_text", "save_extracted_figures"),
+        (FINANCE_EXTRACT, FINANCE_NARRATIVE),
     ),
     AgentSpec(
         A.DONATIONS_COMPLIANCE, "Donations & Compliance",
-        "Organizes contribution records, flags missing information, drafts acknowledgments, and lists issues for professional review.",
-        ("read_donations", "flag_donation_issues", "create_acknowledgment_drafts"),
-        (ACK_TEMPLATE,),
+        "Organizes contribution records by campaign, flags incomplete records and acknowledgments, drafts thank-you letters, and "
+        "lists reporting questions for an accountant or attorney, citing sources. It never sends, files, or changes records.",
+        ("read_donations", "flag_donation_issues", "read_compliance_items", "create_acknowledgment_drafts",
+         "create_contribution_acknowledgments"),
+        (DONATION_REVIEW, ACK_TEMPLATE),
     ),
     AgentSpec(
         A.PARTNERSHIPS_OUTREACH, "Partnerships & Outreach",

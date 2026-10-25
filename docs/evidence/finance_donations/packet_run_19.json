@@ -1,0 +1,1539 @@
+{
+  "run": {
+    "id": 19,
+    "status": "completed",
+    "research_mode": "synthetic",
+    "strategy": "auto",
+    "started_at": "2026-10-25T04:11:16.027298",
+    "duration_ms": 174498,
+    "event_plan_id": 1,
+    "options": {
+      "use_history": true,
+      "interpret": true
+    },
+    "error": null
+  },
+  "overview": {
+    "event": {
+      "name": "Manhattan Spring Gala (sample plan)",
+      "city": "New York, NY",
+      "attendance": 150,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": 18000.0,
+      "fundraising_goal_usd": 40000.0,
+      "ticket_price_usd": 250.0,
+      "target_date": "2027-04-17",
+      "date_end": null,
+      "instructions": "A warm, personal evening honoring Sabrina, with a short talk from a recovery speaker."
+    },
+    "request": "Can the foundation afford a 150-person fundraising gala in Manhattan?",
+    "interpreted": {
+      "intent": "plan_event",
+      "city": "Manhattan",
+      "attendance": 150,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "The request asks whether the foundation can afford a specific fundraising event, so it is classified as plan_event."
+    },
+    "routing": "model"
+  },
+  "recommendation": {
+    "headline": "Conditionally feasible as a reception\u2014not yet ready for a spending commitment",
+    "recommendation": "Advance the 150-person Chelsea Atelier reception for verification, rather than the seated gala. Its modeled cost of $17,080 fits the $18,000 ceiling, but real-world affordability remains unconfirmed until unrestricted cash, payment timing, complete quotes and accessibility are verified. Do not commit funds yet. If the board requires $40,000 in net fundraising proceeds, none of the supplied scenarios meets that objective.",
+    "rationale": [
+      "Chelsea is the only supplied venue option within the cost ceiling. It accommodates 150 reception guests, permits outside caterers and has no published food-and-beverage minimum, subject to confirmation.",
+      "Modeled upfront costs of $4,250 fit within the reported $9,938 planning capacity above the $11,562 reserve floor. That capacity depends on confirming current unrestricted cash and restricted-fund balances; recorded income is not cash on hand.",
+      "Projected net proceeds are $14,657 in the conservative scenario, $29,762.50 in the base scenario and $33,565.25 in the optimistic scenario. These are forecasts, not collected funds; even the optimistic case misses a $40,000 net goal.",
+      "Finance confirms a modeled 22% contingency of $3,080. Its adequacy still needs review: the historical reference was a catering overrun, not evidence of an appropriate whole-event reserve.",
+      "The reception reduces catering-minimum exposure, but trades away the seated dinner experience that some past donors valued. Its standing-only restriction presents a material inclusion concern."
+    ],
+    "options": [
+      {
+        "title": "Chelsea Atelier reception: conditional preferred option",
+        "option_id": "chelsea-atelier:reception",
+        "summary": "Continue verification using the $17,080 modeled cost and $4,250 upfront requirement. Proceed only if access, resting accommodations, quiet space, volunteer meals, complete costs and cash timing can be resolved within the ceiling."
+      },
+      {
+        "title": "Hudson Garden Room seated dinner: not affordable as planned",
+        "option_id": "hudson-garden-room:seated_dinner",
+        "summary": "Preserves a seated format, but its $31,110 modeled cost exceeds the $18,000 ceiling. Catering-minimum exposure remains a concern. Do not advance the supplied plan under the current constraint."
+      },
+      {
+        "title": "Defer or redesign the event",
+        "option_id": null,
+        "summary": "Choose this if the net fundraising goal is essential or Chelsea cannot meet access and budget requirements. A revised format or alternative use of resources would require fresh costing; no validated alternative budget is supplied."
+      }
+    ],
+    "risks": [
+      "Deposits fitting reported planning capacity does not establish funding for every obligation. Event revenue arrives after deposits are due, and the full payment schedule remains unverified.",
+      "Restricted funds and pledged sponsorship are never available money. Expected sponsorship, donations and ticket sales must not be treated as cash already collected.",
+      "Chelsea\u2019s standing-only restriction could exclude or fatigue guests. If appropriate resting accommodations are prohibited, revisit the plan rather than accepting exclusion for cost savings.",
+      "Separate volunteer meals, access provisions, sound equipment and several placeholder cost categories are not fully verified. Additional costs could undermine feasibility.",
+      "Attendance and fundraising demand are not validated. The unexplained modeled break-even attendance should not be used as a standalone ticket-sales threshold."
+    ],
+    "decisions_for_board": [
+      "Confirm whether the event primarily serves fundraising, awareness or both, and whether the $40,000 goal means gross proceeds or net funds.",
+      "Decide whether a reception is acceptable instead of a plated dinner, including the trade-off between guest experience and catering risk.",
+      "Decide whether to continue conditional planning or defer, and whether projected proceeds justify the resource commitment.",
+      "Decide whether to support sponsor-funded community places, subject to collected funding and a rechecked budget.",
+      "Retain authority over final venue selection and spending authorization after financial and operational conditions are satisfied."
+    ],
+    "next_steps": [
+      "Have a board-designated person review the unsent venue inquiry and, if authorized, send it outside SAM SPACE to verify availability, pricing, deposit terms and permissions.",
+      "Verify step-free entry, accessible restrooms, permitted resting accommodations, quiet conversation space, dietary and sensory provision, and load-in arrangements.",
+      "Obtain written catering prices, minimum guarantees and guest-count terms; separately specify volunteer meals and plan to lock the guest count two weeks out.",
+      "Replace placeholder costs with quotes, include known miscellaneous costs, and rerun finance with the required accommodations and contingency.",
+      "Confirm current unrestricted cash, restricted balances and every payment deadline while protecting the reserve floor. Return the complete funding plan to the board before commitments.",
+      "Draft a program under an hour with a personal tribute, recovery speaker and voluntary conversation. If an auction is included, establish payment collection at the table."
+    ],
+    "lessons_applied": [
+      "Butterfly Benefit Dinner (sample): retain the recovery speaker and strong volunteer check-in structure; shorten the program and collect auction payments at the table rather than relying on later follow-up.",
+      "Butterfly Benefit Dinner (sample): reported pricing discomfort and an entrance barrier support community-access proposals and pre-selection accessibility checks. Differing views on the plated dinner remain a board decision.",
+      "Spring Awareness Walk (sample): volunteer food shortages support separate meals, clear assignments and breaks alongside public recognition.",
+      "Campus Wellness Panel (sample): reported requests for quieter conversation support investigating a quiet area; peer-centered feedback informs respectful recovery programming without promising equivalent outcomes."
+    ],
+    "caveats": [
+      "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+      "Past events, books, and donations are the synthetic demo dataset.",
+      "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+      "All records, venues and financial inputs are synthetic. Connecticut sample events provide planning lessons, not a validated Manhattan budget or demand forecast.",
+      "Published pricing within this dataset is not an independently verified offer. Venue availability, contractual terms and accommodation permissions remain unknown.",
+      "Some outreach recipients use synthetic example.org fixtures; real contact details and links are unverified.",
+      "Finance validates the modeled contingency percentage, but not the completeness of all required provisions or the reserve\u2019s practical adequacy.",
+      "No board spending authorization is supplied. Nothing has been sent, booked, reserved, paid or approved."
+    ],
+    "mission_impact_considerations": [
+      "A brief tribute and recovery talk can honor Sabrina and support mental health awareness, eating disorder research and community connection, without pressuring anyone to disclose personal experiences.",
+      "Inclusion requires attention to ticket affordability, first-time guest welcome and physical access. Connection benefits from optional introductions and quieter conversation; these provisions must be verified and budgeted.",
+      "Recognition should include consent-based thanks and practical volunteer care through meals, breaks and clear roles.",
+      "The board should weigh the projected fundraising and community value against alternative uses of unrestricted resources for charitable objectives. Mission alignment does not override the cost ceiling, reserve protection or spending restrictions."
+    ]
+  },
+  "venues": [
+    {
+      "name": "Lavender Loft (synthetic)",
+      "location": "Flatiron, Manhattan (synthetic address)",
+      "website": "https://example.org/synthetic/venues/lavender-loft",
+      "website_status": "synthetic",
+      "verified_at": null,
+      "source_url": "https://example.org/synthetic/venues/lavender-loft",
+      "verification": "synthetic",
+      "capacity": {
+        "seated_dinner": 180,
+        "reception": 250
+      },
+      "capacity_status": "published",
+      "capacity_quote": "Seats 180 for dinner; 250 for receptions.",
+      "pricing_status": "published",
+      "pricing": "Rental $9,500; dinner from $145 per guest; $25,000 food-and-beverage minimum.",
+      "amenities": [
+        "In-house catering",
+        "Skylights",
+        "Built-in AV",
+        "Coat check"
+      ],
+      "restrictions": [
+        "In-house catering only",
+        "Music must end by 11 pm"
+      ],
+      "notes": "Skylit loft with in-house catering; elegant for a seated gala.",
+      "shortlist_rank": null
+    },
+    {
+      "name": "Hudson Garden Room (synthetic)",
+      "location": "West Village, Manhattan (synthetic address)",
+      "website": "https://example.org/synthetic/venues/hudson-garden-room",
+      "website_status": "synthetic",
+      "verified_at": null,
+      "source_url": "https://example.org/synthetic/venues/hudson-garden-room",
+      "verification": "synthetic",
+      "capacity": {
+        "seated_dinner": 160
+      },
+      "capacity_status": "published",
+      "capacity_quote": "Seats up to 160 for dinner.",
+      "pricing_status": "published",
+      "pricing": "Rental $4,000; dinner from $110 per guest; $18,000 food-and-beverage minimum.",
+      "amenities": [
+        "Garden view",
+        "In-house catering",
+        "Wheelchair accessible"
+      ],
+      "restrictions": [
+        "Seated events only",
+        "No outside caterers"
+      ],
+      "notes": "Garden-view dining room; seated events only.",
+      "shortlist_rank": null
+    },
+    {
+      "name": "Chelsea Atelier (synthetic)",
+      "location": "Chelsea, Manhattan (synthetic address)",
+      "website": "https://example.org/synthetic/venues/chelsea-atelier",
+      "website_status": "synthetic",
+      "verified_at": null,
+      "source_url": "https://example.org/synthetic/venues/chelsea-atelier",
+      "verification": "synthetic",
+      "capacity": {
+        "reception": 200
+      },
+      "capacity_status": "published",
+      "capacity_quote": "Standing receptions up to 200.",
+      "pricing_status": "published",
+      "pricing": "Rental $1,800; outside caterers allowed (reception menus from about $58 per guest).",
+      "amenities": [
+        "Gallery lighting",
+        "Small stage for a speaker",
+        "Outside caterers allowed"
+      ],
+      "restrictions": [
+        "Standing receptions only",
+        "Load-in after 4 pm"
+      ],
+      "notes": "Gallery space for standing receptions with passed bites; flexible staging for a speaker.",
+      "shortlist_rank": 1
+    },
+    {
+      "name": "Gramercy Hall (synthetic)",
+      "location": "Gramercy, Manhattan (synthetic address)",
+      "website": "https://example.org/synthetic/venues/gramercy-hall",
+      "website_status": "synthetic",
+      "verified_at": null,
+      "source_url": "https://example.org/synthetic/venues/gramercy-hall",
+      "verification": "synthetic",
+      "capacity": {
+        "seated_dinner": 170,
+        "reception": 220
+      },
+      "capacity_status": "published",
+      "capacity_quote": "Seats 170; receptions to 220.",
+      "pricing_status": "quote_required",
+      "pricing": "Quote required",
+      "amenities": [
+        "Ballroom",
+        "Dance floor",
+        "Bridal suite"
+      ],
+      "restrictions": [
+        "Pricing on request only"
+      ],
+      "notes": "Historic ballroom; the venue does not publish prices.",
+      "shortlist_rank": null
+    }
+  ],
+  "shortlist": [
+    {
+      "option_id": "chelsea-atelier:reception",
+      "venue": "Chelsea Atelier (synthetic)",
+      "event_format": "reception",
+      "rank": 1,
+      "total_usd": 17080.0,
+      "upfront_cash_usd": 4250.0,
+      "pricing_status": "published",
+      "rationale": "The Chelsea venue accommodates 150 guests within its published reception capacity of 200. Outside caterers are permitted, there is no food-and-beverage minimum, and the small stage supports the requested recovery speaker. The supplied computed cost of $17,080 meets the $18,000 limit. Its standing-only restriction needs careful access review; load-in cannot begin before 4 pm. No other supplied option meets the cost limit.",
+      "lessons_applied": [
+        "Food commitments and gala catering controls: avoid minimum exposure, compare written per-head pricing and guest-count change terms, and plan a guest-count lock two weeks out.",
+        "Mission-centered programming: retain the recovery speaker and opportunities for direct conversation.",
+        "Volunteer meals and team structure: assign clear check-in roles and separately specify volunteer food and meal times.",
+        "Accessible and welcoming gala: verify entrance access and a quieter conversation area before selection.",
+        "Event purpose and program length: apply the adopted purpose-setting lesson; present the reviewed under-an-hour program for board approval rather than treating it as adopted."
+      ],
+      "verification": "synthetic",
+      "website": "https://example.org/synthetic/venues/chelsea-atelier",
+      "source_url": "https://example.org/synthetic/venues/chelsea-atelier"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Lavender Loft (synthetic)",
+      "url": "https://example.org/synthetic/venues/lavender-loft",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": null,
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Hudson Garden Room (synthetic)",
+      "url": "https://example.org/synthetic/venues/hudson-garden-room",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": null,
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Chelsea Atelier (synthetic)",
+      "url": "https://example.org/synthetic/venues/chelsea-atelier",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": null,
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    },
+    {
+      "title": "Gramercy Hall (synthetic)",
+      "url": "https://example.org/synthetic/venues/gramercy-hall",
+      "verification": "synthetic",
+      "http_status": null,
+      "retrieved_at": null,
+      "note": "Synthetic fixture for the controlled demo, not live web research."
+    }
+  ],
+  "lessons": [
+    {
+      "kind": "what_worked",
+      "theme": "Mission-centered programming",
+      "text": "Retain space for personal recovery stories and direct conversations. The dinner speaker and walk resource fair received positive reported feedback, and the campus partner requested another panel.",
+      "event_ids": [
+        1,
+        2,
+        3
+      ],
+      "reflection_ids": [
+        1,
+        3,
+        5
+      ],
+      "confidence": "high",
+      "id": 77,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "what_worked",
+      "theme": "Volunteer team structure",
+      "text": "Preserve the volunteer check-in team and clear team structure; board members reported smooth dinner check-in and energized walk volunteers.",
+      "event_ids": [
+        1,
+        2
+      ],
+      "reflection_ids": [
+        4,
+        6
+      ],
+      "confidence": "high",
+      "id": 78,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recurring_problem",
+      "theme": "Food commitments",
+      "text": "Food costs and availability repeatedly departed from expectations. Written pricing alone should not substitute for checking minimum guarantees, guest-count terms, and adequate meal quantities.",
+      "event_ids": [
+        1,
+        2,
+        3
+      ],
+      "reflection_ids": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ],
+      "confidence": "high",
+      "id": 79,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recurring_problem",
+      "theme": "Volunteer meals",
+      "text": "Volunteer recognition was not consistently matched by adequate food: walk volunteers ran short, and some dinner volunteers left hungry.",
+      "event_ids": [
+        1,
+        2
+      ],
+      "reflection_ids": [
+        1,
+        7
+      ],
+      "confidence": "high",
+      "id": 80,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Gala catering controls",
+      "text": "For the proposed gala, compare written catering terms and minimums before venue selection, obtain the per-head price in writing, and plan to lock the guest count two weeks out. Keep the meal-format decision open for board discussion rather than treating cost reduction as agreed.",
+      "event_ids": [
+        1,
+        2
+      ],
+      "reflection_ids": [
+        3,
+        6,
+        7
+      ],
+      "confidence": "high",
+      "id": 81,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Payment collection",
+      "text": "Plan to collect auction payments at the table rather than relying on later follow-up. Strong pledges should not be treated as proof of collected revenue.",
+      "event_ids": [
+        2
+      ],
+      "reflection_ids": [
+        3,
+        4
+      ],
+      "confidence": "medium",
+      "id": 82,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Event purpose",
+      "text": "Apply the already-adopted lesson: agree whether the gala primarily serves fundraising, awareness, or both before judging format and spending.",
+      "event_ids": [
+        2,
+        3
+      ],
+      "reflection_ids": [
+        5
+      ],
+      "confidence": "medium",
+      "id": 83,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Program length",
+      "text": "Use the already-reviewed proposal to draft a program under an hour while retaining the recovery speaker. This responds to reported length concerns without discarding a praised element.",
+      "event_ids": [
+        2
+      ],
+      "reflection_ids": [
+        3,
+        4
+      ],
+      "confidence": "medium",
+      "id": 84,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Accessible and welcoming gala",
+      "text": "Check step-free entry, consider how pricing may affect first-time guests, and provide a quieter place for conversation. These address reported barriers rather than assuming all guests experienced the dinner alike.",
+      "event_ids": [
+        2,
+        3
+      ],
+      "reflection_ids": [
+        3,
+        5,
+        7
+      ],
+      "confidence": "medium",
+      "id": 85,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    }
+  ],
+  "community_insights": [
+    {
+      "lens": "welcomed",
+      "lens_label": "Welcome and inclusion",
+      "observation": "One board member observed that the shorter walk route supported participation by families and older walkers; this is not a verified account of every attendee's experience.",
+      "quote": "Families with strollers and older walkers joined; the one-mile loop meant nobody was left behind.",
+      "reflection_ids": [
+        1
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Spring Awareness Walk (sample)"
+      ],
+      "evidence_type": "board_observation",
+      "evidence_label": "Board observation (not a verified outcome)",
+      "id": 86,
+      "events": []
+    },
+    {
+      "lens": "welcomed",
+      "lens_label": "Welcome and inclusion",
+      "observation": "Some first-time dinner guests reportedly experienced discomfort associated with the price point.",
+      "quote": "Some first-time guests told me they felt out of place at a $250 dinner.",
+      "reflection_ids": [
+        3
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Butterfly Benefit Dinner (sample)"
+      ],
+      "evidence_type": "attendee_feedback_reported",
+      "evidence_label": "Attendee feedback, as reported by the board",
+      "id": 87,
+      "events": []
+    },
+    {
+      "lens": "connection",
+      "lens_label": "Connection",
+      "observation": "The recovery speaker was followed by personal conversation among previously unacquainted tablemates.",
+      "quote": "After the recovery speaker, strangers at my table talked about their own families.",
+      "reflection_ids": [
+        3
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Butterfly Benefit Dinner (sample)"
+      ],
+      "evidence_type": "board_observation",
+      "evidence_label": "Board observation (not a verified outcome)",
+      "id": 88,
+      "events": []
+    },
+    {
+      "lens": "volunteers",
+      "lens_label": "Volunteer appreciation",
+      "observation": "Public recognition occurred at the walk, but insufficient food complicated volunteer care; feeling appreciated was not directly established.",
+      "quote": "We thanked volunteers by name at the finish line, but their food ran short.",
+      "reflection_ids": [
+        1
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Spring Awareness Walk (sample)"
+      ],
+      "evidence_type": "board_observation",
+      "evidence_label": "Board observation (not a verified outcome)",
+      "id": 89,
+      "events": []
+    },
+    {
+      "lens": "community",
+      "lens_label": "Sense of community",
+      "observation": "The walk records concrete participation in local resource connections and follow-up signups, rather than a verified feeling of belonging.",
+      "quote": "Four local mental-health groups staffed resource tables, and 61 families signed up for follow-up resource emails (sample).",
+      "reflection_ids": [],
+      "event_ids": [
+        1
+      ],
+      "event_names": [
+        "Spring Awareness Walk (sample)"
+      ],
+      "evidence_type": "verified_outcome",
+      "evidence_label": "Recorded outcome",
+      "id": 90,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        }
+      ]
+    },
+    {
+      "lens": "community",
+      "lens_label": "Sense of community",
+      "observation": "Students reportedly associated peer panelists with feeling heard.",
+      "quote": "Students said they felt heard because the panelists were their peers.",
+      "reflection_ids": [
+        5
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Campus Wellness Panel (sample)"
+      ],
+      "evidence_type": "attendee_feedback_reported",
+      "evidence_label": "Attendee feedback, as reported by the board",
+      "id": 91,
+      "events": []
+    },
+    {
+      "lens": "accessibility",
+      "lens_label": "Accessibility and inclusion",
+      "observation": "The dinner entrance presented a physical access barrier for one guest.",
+      "quote": "The dining room had steps at the entrance, and one guest needed help getting in.",
+      "reflection_ids": [
+        7
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Butterfly Benefit Dinner (sample)"
+      ],
+      "evidence_type": "board_observation",
+      "evidence_label": "Board observation (not a verified outcome)",
+      "id": 92,
+      "events": []
+    },
+    {
+      "lens": "accessibility",
+      "lens_label": "Accessibility and inclusion",
+      "observation": "Shade and water provision were reported as inadequate for older walkers.",
+      "quote": "Not enough shade or water stations for older walkers.",
+      "reflection_ids": [
+        1
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Spring Awareness Walk (sample)"
+      ],
+      "evidence_type": "board_observation",
+      "evidence_label": "Board observation (not a verified outcome)",
+      "id": 93,
+      "events": []
+    },
+    {
+      "lens": "improvement",
+      "lens_label": "Improvements",
+      "observation": "A quieter post-program space would respond to a specific reported participant request.",
+      "quote": "Students wanted a quieter space to talk afterwards.",
+      "reflection_ids": [
+        5
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Campus Wellness Panel (sample)"
+      ],
+      "evidence_type": "attendee_feedback_reported",
+      "evidence_label": "Attendee feedback, as reported by the board",
+      "id": 94,
+      "events": []
+    },
+    {
+      "lens": "improvement",
+      "lens_label": "Improvements",
+      "observation": "Some guests reportedly wanted a shorter dinner program; this supports reviewing length without assuming universal dissatisfaction.",
+      "quote": "A few guests found the program too long.",
+      "reflection_ids": [
+        4
+      ],
+      "event_ids": [],
+      "event_names": [
+        "Butterfly Benefit Dinner (sample)"
+      ],
+      "evidence_type": "attendee_feedback_reported",
+      "evidence_label": "Attendee feedback, as reported by the board",
+      "id": 95,
+      "events": []
+    }
+  ],
+  "mission_contribution": {
+    "inclusion": "Offer the board a sponsor-funded access approach rather than assuming the $250 ticket is comfortable for everyone. Explain the reception format clearly before registration. First-time guests and people who cannot comfortably stand may feel excluded unless pricing and access concerns are resolved.",
+    "connection": "Retain the recovery speaker, provide optional introductions and allow unstructured conversation afterward. A quieter conversation area is a requirement to investigate, not a confirmed amenity.",
+    "accessibility": "Chelsea\u2019s supplied data does not state physical accessibility. Its standing-only restriction is confirmed. Verify entrance access, restrooms, resting accommodations, sensory needs and dietary provision before selection.",
+    "recognition": "Thank volunteers, sponsors and participants with consent, while matching recognition with practical care: clear assignments, scheduled breaks and separately arranged meals. Keep sponsor acknowledgments proportionate to the personal, mission-centered program.",
+    "charitable_alignment": "Honor Sabrina through a brief personal tribute and recovery talk connected to mental health awareness, eating disorder research and community. Offer optional resource information and follow-up interest registration without promising unconfirmed partners or outcomes.",
+    "community_lessons_applied": [
+      "Butterfly Benefit Dinner (sample): reported first-time guest discomfort with pricing informs sponsor-funded access proposals; observed conversation after the recovery speaker supports retaining the talk and conversation time.",
+      "Butterfly Benefit Dinner (sample): the reported entrance barrier informs pre-selection access checks, and reported program-length concerns inform the shorter program proposal.",
+      "Spring Awareness Walk (sample): reported volunteer food shortages inform separate meal provision; recorded resource connections and follow-up signups inform optional resource information and follow-up registration.",
+      "Campus Wellness Panel (sample): the reported request for quieter conversation informs the quiet-space requirement; reported responses to peer panelists support respectful recovery-centered programming without assuming the same outcome."
+    ],
+    "open_questions": [
+      "Can Chelsea provide step-free access, accessible restrooms and appropriate resting accommodations within its standing-only restriction?",
+      "Is there a quieter area for voluntary conversation after the speaker?",
+      "What dietary and sensory accommodations can be supported within the verified budget?",
+      "Will the board support sponsor-funded places and a welcoming introduction process for first-time guests?",
+      "What boundaries and support does the recovery speaker want around introductions, questions and personal disclosure?",
+      "Can all required access, volunteer-food and contingency provisions be confirmed without exceeding the cost limit?"
+    ]
+  },
+  "proposal_comparison": [
+    {
+      "round": 0,
+      "label": "Original proposal",
+      "venue": "Hudson Garden Room (synthetic)",
+      "event_format": "seated_dinner",
+      "total_usd": 31110.0,
+      "upfront_cash_usd": 7700.0,
+      "base_net_usd": 15732.5,
+      "conservative_net_usd": 627.0,
+      "verdict": "not_affordable_as_planned",
+      "conflicts": [
+        "Projected cost $31,110 vs maximum $18,000.",
+        "Hudson Garden Room (synthetic)'s $18,000 catering minimum would still be charged if only 120 guests come ($4,800 above per-head cost), the food-cost exposure past events warned about."
+      ],
+      "change_in_total_usd": 0.0,
+      "change_in_upfront_usd": 0.0
+    },
+    {
+      "round": 1,
+      "label": "Revision 1",
+      "venue": "Chelsea Atelier (synthetic)",
+      "event_format": "reception",
+      "total_usd": 17080.0,
+      "upfront_cash_usd": 4250.0,
+      "base_net_usd": 29762.5,
+      "conservative_net_usd": 14657.0,
+      "verdict": "affordable_with_conditions",
+      "conflicts": [],
+      "change_in_total_usd": -14030.0,
+      "change_in_upfront_usd": -3450.0
+    }
+  ],
+  "finance_feedback": [
+    {
+      "option_id": "hudson-garden-room:seated_dinner",
+      "venue": "Hudson Garden Room (synthetic)",
+      "event_format": "seated_dinner",
+      "total_cost_usd": 31110.0,
+      "upfront_cash_usd": 7700.0,
+      "verdict": "not_affordable_as_planned",
+      "cost_drivers": [
+        {
+          "line": "Catering",
+          "amount_usd": 18000.0,
+          "share_of_total": 0.58
+        },
+        {
+          "line": "Venue",
+          "amount_usd": 4000.0,
+          "share_of_total": 0.13
+        },
+        {
+          "line": "Entertainment",
+          "amount_usd": 1500.0,
+          "share_of_total": 0.05
+        }
+      ],
+      "conservative_net_usd": 627.0,
+      "break_even_attendance": 94,
+      "issues": [
+        {
+          "type": "over_budget_limit",
+          "source": "finance",
+          "detail": "Projected cost $31,110 vs maximum $18,000.",
+          "limit_usd": 18000.0,
+          "over_by_usd": 13110.0
+        },
+        {
+          "type": "history_catering_minimum",
+          "source": "history",
+          "detail": "Hudson Garden Room (synthetic)'s $18,000 catering minimum would still be charged if only 120 guests come ($4,800 above per-head cost), the food-cost exposure past events warned about."
+        }
+      ]
+    }
+  ],
+  "authorized_budget_usd": 18000.0,
+  "history_checks": [
+    {
+      "name": "Food-cost lesson respected (no binding catering minimum)",
+      "passed": true,
+      "detail": "No binding catering minimum at conservative attendance.",
+      "lessons": [
+        "Food costs and availability repeatedly departed from expectations. Written pricing alone should not substitute for checking minimum guarantees, guest-count terms, and adequate meal quantities.",
+        "Volunteer recognition was not consistently matched by adequate food: walk volunteers ran short, and some dinner volunteers left hungry.",
+        "For the proposed gala, compare written catering terms and minimums before venue selection, obtain the per-head price in writing, and plan to lock the guest count two weeks out. Keep the meal-format decision open for board discussion rather than treating cost reduction as agreed."
+      ],
+      "event_ids": [
+        1,
+        2,
+        3
+      ],
+      "reflection_ids": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ],
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    }
+  ],
+  "revision": {
+    "original": {
+      "round": 0,
+      "option_id": "hudson-garden-room:seated_dinner",
+      "venue": "Hudson Garden Room (synthetic)",
+      "event_format": "seated_dinner",
+      "pricing_status": "published",
+      "total_usd": 31110.0,
+      "upfront_cash_usd": 7700.0,
+      "base_net_usd": 15732.5,
+      "contingency_pct": 0.22,
+      "conservative_net_usd": 627.0,
+      "finance_status": "needs_revision",
+      "verdict": "not_affordable_as_planned",
+      "conflicts": [
+        "Projected cost $31,110 vs maximum $18,000.",
+        "Hudson Garden Room (synthetic)'s $18,000 catering minimum would still be charged if only 120 guests come ($4,800 above per-head cost), the food-cost exposure past events warned about."
+      ],
+      "conflict_sources": [
+        "finance",
+        "history"
+      ],
+      "changes_from_previous": null,
+      "rationale": "The strongest relative financial position: computed total $31,110, upfront cash $7,700, base net $15,732.50, and conservative net $627. Both net scenarios fall below the $40,000 fundraising goal if that goal means net proceeds. Published seated capacity is 160, and wheelchair accessibility is listed. However, the venue remains over budget, and contractual and contingency checks are incomplete. Seated events only and no outside caterers must be respected."
+    },
+    "revised": {
+      "round": 1,
+      "option_id": "chelsea-atelier:reception",
+      "venue": "Chelsea Atelier (synthetic)",
+      "event_format": "reception",
+      "pricing_status": "published",
+      "total_usd": 17080.0,
+      "upfront_cash_usd": 4250.0,
+      "base_net_usd": 29762.5,
+      "contingency_pct": 0.22,
+      "conservative_net_usd": 14657.0,
+      "finance_status": "completed",
+      "verdict": "affordable_with_conditions",
+      "conflicts": [],
+      "conflict_sources": [],
+      "changes_from_previous": "Replace Hudson Garden Room\u2019s seated dinner with Chelsea Atelier\u2019s reception, using the permitted format change. Finance judged Hudson not affordable as planned: its $31,110 cost exceeds the $18,000 maximum by $13,110, with $7,700 upfront and only $627 conservative net. Reported cost drivers were catering at $18,000, venue at $4,000 and entertainment at $1,500. At 120 guests, Hudson\u2019s catering minimum creates $4,800 of exposure above per-head cost. Chelsea\u2019s supplied $17,080 total and absence of a food-and-beverage minimum address those financial issues. Historical operating requirements remain explicit conditions; the supplied data does not establish that every constraint is already satisfied.",
+      "rationale": "The Chelsea venue accommodates 150 guests within its published reception capacity of 200. Outside caterers are permitted, there is no food-and-beverage minimum, and the small stage supports the requested recovery speaker. The supplied computed cost of $17,080 meets the $18,000 limit. Its standing-only restriction needs careful access review; load-in cannot begin before 4 pm. No other supplied option meets the cost limit."
+    },
+    "reasons": [
+      {
+        "type": "over_budget_limit",
+        "detail": "Projected cost $31,110 vs maximum $18,000.",
+        "source": "finance",
+        "max_total_usd": 18000.0
+      },
+      {
+        "type": "history_catering_minimum",
+        "source": "history",
+        "detail": "Hudson Garden Room (synthetic)'s $18,000 catering minimum would still be charged if only 120 guests come ($4,800 above per-head cost), the food-cost exposure past events warned about.",
+        "conservative_share": 0.8
+      }
+    ],
+    "history": [
+      {
+        "round": 0,
+        "option_id": "hudson-garden-room:seated_dinner",
+        "venue": "Hudson Garden Room (synthetic)",
+        "event_format": "seated_dinner",
+        "pricing_status": "published",
+        "total_usd": 31110.0,
+        "upfront_cash_usd": 7700.0,
+        "base_net_usd": 15732.5,
+        "contingency_pct": 0.22,
+        "conservative_net_usd": 627.0,
+        "finance_status": "needs_revision",
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $31,110 vs maximum $18,000.",
+          "Hudson Garden Room (synthetic)'s $18,000 catering minimum would still be charged if only 120 guests come ($4,800 above per-head cost), the food-cost exposure past events warned about."
+        ],
+        "conflict_sources": [
+          "finance",
+          "history"
+        ],
+        "changes_from_previous": null,
+        "rationale": "The strongest relative financial position: computed total $31,110, upfront cash $7,700, base net $15,732.50, and conservative net $627. Both net scenarios fall below the $40,000 fundraising goal if that goal means net proceeds. Published seated capacity is 160, and wheelchair accessibility is listed. However, the venue remains over budget, and contractual and contingency checks are incomplete. Seated events only and no outside caterers must be respected."
+      },
+      {
+        "round": 1,
+        "option_id": "chelsea-atelier:reception",
+        "venue": "Chelsea Atelier (synthetic)",
+        "event_format": "reception",
+        "pricing_status": "published",
+        "total_usd": 17080.0,
+        "upfront_cash_usd": 4250.0,
+        "base_net_usd": 29762.5,
+        "contingency_pct": 0.22,
+        "conservative_net_usd": 14657.0,
+        "finance_status": "completed",
+        "verdict": "affordable_with_conditions",
+        "conflicts": [],
+        "conflict_sources": [],
+        "changes_from_previous": "Replace Hudson Garden Room\u2019s seated dinner with Chelsea Atelier\u2019s reception, using the permitted format change. Finance judged Hudson not affordable as planned: its $31,110 cost exceeds the $18,000 maximum by $13,110, with $7,700 upfront and only $627 conservative net. Reported cost drivers were catering at $18,000, venue at $4,000 and entertainment at $1,500. At 120 guests, Hudson\u2019s catering minimum creates $4,800 of exposure above per-head cost. Chelsea\u2019s supplied $17,080 total and absence of a food-and-beverage minimum address those financial issues. Historical operating requirements remain explicit conditions; the supplied data does not establish that every constraint is already satisfied.",
+        "rationale": "The Chelsea venue accommodates 150 guests within its published reception capacity of 200. Outside caterers are permitted, there is no food-and-beverage minimum, and the small stage supports the requested recovery speaker. The supplied computed cost of $17,080 meets the $18,000 limit. Its standing-only restriction needs careful access review; load-in cannot begin before 4 pm. No other supplied option meets the cost limit."
+      }
+    ]
+  },
+  "budget_warnings": [
+    {
+      "level": "warning",
+      "text": "Base case meets the fundraising target: Base-case net $29,762 vs target $40,000."
+    },
+    {
+      "level": "warning",
+      "text": "Gramercy Hall (synthetic): Quote required. Any venue figure in the model is a hypothetical estimate."
+    }
+  ],
+  "drafts": [
+    {
+      "id": 27,
+      "recipient": "Chelsea Atelier (synthetic)",
+      "subject": "Inquiry: Manhattan Spring Gala on April 17, 2027",
+      "body": "Hello Chelsea Atelier team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation to ask about Chelsea Atelier for our Manhattan Spring Gala, planned for April 17, 2027. We anticipate 150 guests and are considering a standing reception with passed bites and a short talk from a recovery speaker.\n\nCould you please let us know whether the space is available on that date, its capacity for this format, and your pricing, deposit requirements, and any nonprofit rates? We would also appreciate information about accessibility and any relevant arrangements for guests or the speaker.\n\nThank you for your time. We would be glad to learn more.\n\nWarmly,\n[Board member name]\n[Phone]",
+      "status": "draft",
+      "draft_type": "venue_inquiry",
+      "is_synthetic_target": true
+    }
+  ],
+  "trace": [
+    {
+      "n": 1,
+      "step_key": "intake",
+      "from_agent": "board",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Understand the request and choose specialists",
+      "duration_ms": 3489,
+      "summary": "Intent: plan event (model routing). Specialists: event intelligence, fundraising events, financial analysis, partnerships outreach.",
+      "models": [
+        "gpt-6-luna"
+      ],
+      "input_tokens": 704,
+      "output_tokens": 110,
+      "cost_usd": 0.000125
+    },
+    {
+      "n": 2,
+      "step_key": "lessons",
+      "from_agent": "orchestrator",
+      "to_agent": "event_intelligence",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Retrieve lessons from past events for a 150-guest gala in New York, NY",
+      "duration_ms": 42112,
+      "summary": "The sample records support a gala built around a recovery speaker, strong volunteer operations, and clear fundraising collection procedures. Food costs, vendor minimums, volunteer meals, and inclusion need explicit safeguards. Board members differ on the value of protecting the plated dinner versus controlling catering risk. These Connecticut demo events offer planning lessons, not a validated budget or demand forecast for a 150-guest New York gala.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 4105,
+      "output_tokens": 3341,
+      "cost_usd": 0.043671
+    },
+    {
+      "n": 3,
+      "step_key": "venues",
+      "from_agent": "orchestrator",
+      "to_agent": "fundraising_events",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Research venues and a fundraising strategy for a 150-guest gala in New York, NY",
+      "duration_ms": 34878,
+      "summary": "Hudson Garden Room is the closest option for further diligence, not a commitment recommendation. It accommodates 150 seated guests and has the lowest computed cost, but its $31,110 total exceeds the $18,000 budget. No option is currently demonstrated to meet all constraints. Before evaluating spending further, the board should agree whether the gala primarily serves fundraising, awareness, or both.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 4437,
+      "output_tokens": 1732,
+      "cost_usd": 0.028411
+    },
+    {
+      "n": 4,
+      "step_key": "finance",
+      "from_agent": "orchestrator",
+      "to_agent": "financial_analysis",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "needs_revision",
+      "objective": "Check whether we can afford Hudson Garden Room (synthetic) (seated dinner)",
+      "duration_ms": 13829,
+      "summary": "The computed verdict is not affordable as planned for the Hudson Garden Room seated dinner. Projected costs of $31,110 exceed the $18,000 maximum planning budget, and the base-case net of $15,732.50 falls short of the $40,000 fundraising target. Although upfront costs fit the available planning funds and all scenarios show a surplus, those strengths do not resolve the budget conflict or target shortfall.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 1856,
+      "output_tokens": 823,
+      "cost_usd": 0.012868
+    },
+    {
+      "n": 5,
+      "step_key": "evaluate",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "needs_revision",
+      "objective": "Evaluate cost, history, and plan constraints",
+      "duration_ms": 2,
+      "summary": "2 conflict(s) to resolve: finance; history.",
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "n": 6,
+      "step_key": "venues_revision_1",
+      "from_agent": "orchestrator",
+      "to_agent": "fundraising_events",
+      "kind": "revision",
+      "revision_round": 1,
+      "status": "completed",
+      "objective": "Revise the plan to resolve: Projected cost $31,110 vs maximum $18,000.; Hudson Garden Room (synthetic)'s $18,000 catering minimum would still be charged if only 120 guests come ($4,800 above per-head cost), the food-cost exposure past events warned about.",
+      "duration_ms": 36176,
+      "summary": "Recommend Chelsea Atelier\u2019s reception as the only supplied option within the $18,000 cost limit and without a food-and-beverage minimum. Its computed cost is $17,080, with $4,250 upfront, $29,762.50 base net and $14,657 conservative net. This is a conditional recommendation for further review, not approval: accessibility, quieter conversation space, separate volunteer meals and the required contingency remain unverified. The board should confirm the event\u2019s purpose before approving a reception format.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 6042,
+      "output_tokens": 1829,
+      "cost_usd": 0.030845
+    },
+    {
+      "n": 7,
+      "step_key": "finance_revision_1",
+      "from_agent": "orchestrator",
+      "to_agent": "financial_analysis",
+      "kind": "revision",
+      "revision_round": 1,
+      "status": "completed",
+      "objective": "Re-check whether we can afford Chelsea Atelier (synthetic) (reception)",
+      "duration_ms": 12661,
+      "summary": "The computed verdict is affordable with conditions for the Chelsea Atelier (synthetic) reception. Projected costs are within the maximum budget, and all scenarios show a surplus. However, none reaches the fundraising target. Financial feasibility is not board authorization.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 1802,
+      "output_tokens": 738,
+      "cost_usd": 0.011883
+    },
+    {
+      "n": 8,
+      "step_key": "evaluate_revision_1",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "revision",
+      "revision_round": 1,
+      "status": "completed",
+      "objective": "Evaluate cost, history, and plan constraints",
+      "duration_ms": 2,
+      "summary": "No conflicts: the plan fits the budget and respects the lessons checked.",
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "n": 9,
+      "step_key": "outreach",
+      "from_agent": "orchestrator",
+      "to_agent": "partnerships_outreach",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Prepare unsent inquiry drafts for the shortlisted venues",
+      "duration_ms": 4399,
+      "summary": "One unsent venue inquiry draft based on the supplied venue details.",
+      "models": [
+        "gpt-6-luna"
+      ],
+      "input_tokens": 966,
+      "output_tokens": 389,
+      "cost_usd": 0.000291
+    },
+    {
+      "n": 10,
+      "step_key": "recommendation",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Write the board-ready recommendation",
+      "duration_ms": 26926,
+      "summary": "Conditionally feasible as a reception\u2014not yet ready for a spending commitment",
+      "models": [
+        "gpt-6-astra"
+      ],
+      "input_tokens": 8711,
+      "output_tokens": 1563,
+      "cost_usd": 0.18703
+    },
+    {
+      "n": 11,
+      "step_key": "verification",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Verify the final result in code",
+      "duration_ms": 2,
+      "summary": "All checks passed.",
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    }
+  ],
+  "usage": {
+    "model_calls": 8,
+    "input_tokens": 28623,
+    "cached_input_tokens": 1062,
+    "output_tokens": 10525,
+    "web_search_calls": 0,
+    "cost_usd": 0.315125,
+    "by_agent": {
+      "orchestrator": {
+        "calls": 2,
+        "input_tokens": 9415,
+        "cached_input_tokens": 0,
+        "output_tokens": 1673,
+        "cost_usd": 0.187155
+      },
+      "event_intelligence": {
+        "calls": 1,
+        "input_tokens": 4105,
+        "cached_input_tokens": 0,
+        "output_tokens": 3341,
+        "cost_usd": 0.043671
+      },
+      "fundraising_events": {
+        "calls": 2,
+        "input_tokens": 10479,
+        "cached_input_tokens": 1062,
+        "output_tokens": 3561,
+        "cost_usd": 0.059256
+      },
+      "financial_analysis": {
+        "calls": 2,
+        "input_tokens": 3658,
+        "cached_input_tokens": 0,
+        "output_tokens": 1561,
+        "cost_usd": 0.024751
+      },
+      "partnerships_outreach": {
+        "calls": 1,
+        "input_tokens": 966,
+        "cached_input_tokens": 0,
+        "output_tokens": 389,
+        "cost_usd": 0.000291
+      }
+    },
+    "by_model": {
+      "gpt-6-luna": {
+        "calls": 2,
+        "input_tokens": 1670,
+        "cached_input_tokens": 0,
+        "output_tokens": 499,
+        "cost_usd": 0.000416
+      },
+      "gpt-6.1-sol": {
+        "calls": 5,
+        "input_tokens": 18242,
+        "cached_input_tokens": 1062,
+        "output_tokens": 8463,
+        "cost_usd": 0.127679
+      },
+      "gpt-6-astra": {
+        "calls": 1,
+        "input_tokens": 8711,
+        "cached_input_tokens": 0,
+        "output_tokens": 1563,
+        "cost_usd": 0.18703
+      }
+    }
+  },
+  "verification": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "Every dollar figure traces to a calculation",
+        "passed": true,
+        "detail": "All figures match computed results."
+      },
+      {
+        "name": "No claims that anything was sent, booked, or paid",
+        "passed": true,
+        "detail": "None found."
+      },
+      {
+        "name": "Options come from the Events agent's research",
+        "passed": true,
+        "detail": "All options are real candidates."
+      },
+      {
+        "name": "All outreach drafts remain unsent",
+        "passed": true,
+        "detail": "1 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+      },
+      {
+        "name": "Every lesson cites real events or reflections",
+        "passed": true,
+        "detail": "9 lesson(s) checked against the database."
+      },
+      {
+        "name": "Sources are labeled by provenance",
+        "passed": true,
+        "detail": "10 internal, 4 synthetic"
+      },
+      {
+        "name": "Specialists finished",
+        "passed": true,
+        "detail": "All specialists completed."
+      }
+    ],
+    "unsupported_figures": []
+  },
+  "finance_visible": true,
+  "financial_model": {
+    "lines": [
+      {
+        "category": "Venue",
+        "amount_usd": 1800.0,
+        "basis": "Rental fee from the synthetic fixture"
+      },
+      {
+        "category": "Catering",
+        "amount_usd": 8700.0,
+        "basis": "150 guests \u00d7 $58.00"
+      },
+      {
+        "category": "Entertainment",
+        "amount_usd": 1500.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Marketing",
+        "amount_usd": 600.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Staffing",
+        "amount_usd": 900.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Insurance and permits",
+        "amount_usd": 500.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Miscellaneous",
+        "amount_usd": 0.0,
+        "basis": "Not estimated (contingency covers small items); enter known costs such as printing or permits"
+      }
+    ],
+    "subtotal_usd": 14000.0,
+    "contingency_pct": 0.22,
+    "contingency_usd": 3080.0,
+    "total_cost_usd": 17080.0,
+    "upfront_cash_usd": 4250.0,
+    "catering_minimum_applies": false,
+    "scenarios": {
+      "conservative": {
+        "attendance": 120,
+        "ticket_revenue_usd": 30000.0,
+        "sponsorship_revenue_usd": 0.0,
+        "donations_usd": 1737.0,
+        "other_revenue_usd": 0.0,
+        "total_revenue_usd": 31737.0,
+        "total_cost_usd": 17080.0,
+        "net_usd": 14657.0,
+        "vs_target_usd": -25343.0
+      },
+      "base": {
+        "attendance": 150,
+        "ticket_revenue_usd": 37500.0,
+        "sponsorship_revenue_usd": 5000.0,
+        "donations_usd": 4342.5,
+        "other_revenue_usd": 0.0,
+        "total_revenue_usd": 46842.5,
+        "total_cost_usd": 17080.0,
+        "net_usd": 29762.5,
+        "vs_target_usd": -10237.5
+      },
+      "optimistic": {
+        "attendance": 150,
+        "ticket_revenue_usd": 37500.0,
+        "sponsorship_revenue_usd": 7500.0,
+        "donations_usd": 5645.25,
+        "other_revenue_usd": 0.0,
+        "total_revenue_usd": 50645.25,
+        "total_cost_usd": 17080.0,
+        "net_usd": 33565.25,
+        "vs_target_usd": -6434.75
+      }
+    },
+    "break_even_attendance": 8,
+    "break_even_note": null,
+    "break_even_confirmed_only": 32,
+    "sponsorship_confirmed_usd": 0.0,
+    "sponsorship_unconfirmed_usd": 5000.0,
+    "missing_inputs": [],
+    "complete": true,
+    "checks": [
+      {
+        "name": "Within the maximum planning budget",
+        "passed": true,
+        "detail": "Projected cost $17,080 vs maximum $18,000.",
+        "kind": "over_budget_limit"
+      },
+      {
+        "name": "Base case covers its costs",
+        "passed": true,
+        "detail": "Base-case net $29,762.",
+        "kind": "negative_net"
+      },
+      {
+        "name": "Conservative case avoids a loss",
+        "passed": true,
+        "detail": "Conservative net $14,657.",
+        "kind": "conservative_loss"
+      },
+      {
+        "name": "Break-even below expected attendance",
+        "passed": true,
+        "detail": "Break-even at 8 guests vs 150 expected.",
+        "kind": "break_even_too_high"
+      },
+      {
+        "name": "Base case meets the fundraising target",
+        "passed": false,
+        "detail": "Base-case net $29,762 vs target $40,000.",
+        "kind": "below_target"
+      }
+    ],
+    "assumptions": {
+      "attendance": {
+        "value": 150,
+        "kind": "board",
+        "basis": "Entered in Event Studio"
+      },
+      "ticket_price_usd": {
+        "value": 250.0,
+        "kind": "board",
+        "basis": "Entered in Event Studio"
+      },
+      "venue_rental_usd": {
+        "value": 1800.0,
+        "kind": "published",
+        "basis": "Rental fee from the synthetic fixture"
+      },
+      "catering_per_guest_usd": {
+        "value": 58.0,
+        "kind": "published",
+        "basis": "Per-guest catering from the synthetic fixture"
+      },
+      "catering_minimum_usd": {
+        "value": null,
+        "kind": "missing",
+        "basis": "No published minimum (confirm with the venue)"
+      },
+      "entertainment_usd": {
+        "value": 1500.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "marketing_usd": {
+        "value": 600.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "staffing_usd": {
+        "value": 900.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "insurance_usd": {
+        "value": 500.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "misc_usd": {
+        "value": 0.0,
+        "kind": "placeholder",
+        "basis": "Not estimated (contingency covers small items); enter known costs such as printing or permits"
+      },
+      "contingency_pct": {
+        "value": 0.22,
+        "kind": "lesson",
+        "basis": "Recommended by Event Intelligence from past cost overruns"
+      },
+      "sponsorship_usd": {
+        "value": 5000.0,
+        "kind": "history",
+        "basis": "Average sponsorship at comparable past events: Butterfly Benefit Dinner (sample)"
+      },
+      "sponsorship_confirmed_usd": {
+        "value": 0.0,
+        "kind": "board",
+        "basis": "No sponsorship confirmed yet; pledges are not counted as guaranteed"
+      },
+      "other_revenue_usd": {
+        "value": 0.0,
+        "kind": "board",
+        "basis": "No other documented revenue; enter only documented amounts (e.g. a confirmed auction donation)"
+      },
+      "donations_per_attendee_usd": {
+        "value": 28.95,
+        "kind": "history",
+        "basis": "Past guest giving per attendee (Butterfly Benefit Dinner (sample), $278.95) minus the ticket price"
+      },
+      "deposit_pct": {
+        "value": 0.3,
+        "kind": "published",
+        "basis": "Deposit terms from the synthetic fixture"
+      }
+    },
+    "attendance": 150,
+    "max_budget_usd": 18000.0,
+    "target_usd": 40000.0,
+    "scenario_definitions": {
+      "conservative": "attendance 80%, confirmed sponsorship only, donations 50%",
+      "base": "attendance 100%, sponsorship 100% of expected, donations 100%",
+      "optimistic": "attendance 100%, sponsorship 150% of expected, donations 130%"
+    },
+    "catering_minimum_risk": null
+  },
+  "affordability": {
+    "verdict": "affordable_with_conditions",
+    "checks": [
+      {
+        "name": "Within the maximum planning budget",
+        "passed": true,
+        "detail": "Projected cost $17,080 vs maximum $18,000.",
+        "kind": "over_budget_limit"
+      },
+      {
+        "name": "Base case covers its costs",
+        "passed": true,
+        "detail": "Base-case net $29,762.",
+        "kind": "negative_net"
+      },
+      {
+        "name": "Conservative case avoids a loss",
+        "passed": true,
+        "detail": "Conservative net $14,657.",
+        "kind": "conservative_loss"
+      },
+      {
+        "name": "Break-even below expected attendance",
+        "passed": true,
+        "detail": "Break-even at 8 guests vs 150 expected.",
+        "kind": "break_even_too_high"
+      },
+      {
+        "name": "Base case meets the fundraising target",
+        "passed": false,
+        "detail": "Base-case net $29,762 vs target $40,000.",
+        "kind": "below_target"
+      },
+      {
+        "name": "Upfront cash fits the available planning budget",
+        "passed": true,
+        "detail": "Deposits and prepaid costs $4,250 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "kind": "upfront_cash_exceeds_available"
+      },
+      {
+        "name": "Contingency meets the lesson from past events",
+        "passed": true,
+        "detail": "Contingency 22% vs 22% recommended from history.",
+        "kind": "contingency_below_lesson"
+      }
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Base-case net $29,762 vs target $40,000."
+    ],
+    "cash_note": "Recorded income is not treated as cash on hand, restricted gifts are never counted as spendable, and pledged sponsorship is not guaranteed. Only unrestricted money above the board's reserve floor is counted as available for deposits. Financial feasibility is not board authorization."
+  },
+  "position": {
+    "months_of_data": 5,
+    "period_start": "2026-05",
+    "period_end": "2026-09",
+    "total_income_usd": 17400.0,
+    "total_expense_usd": 19270.0,
+    "net_usd": -1870.0,
+    "average_monthly_expense_usd": 3854.0,
+    "reserve_usd": 21500.0,
+    "reserve_guideline_months": 3.0,
+    "available_planning_budget_usd": 9938.0,
+    "available_planning_budget_basis": "Reserve $21,500 minus a 3-month floor ($11,562 = 3 \u00d7 $3,854 average monthly expense).",
+    "restricted_income_usd": 5000.0,
+    "cash": {
+      "as_of": "2026-09",
+      "cash_usd": 26500.0,
+      "restricted_usd": 5000.0,
+      "unrestricted_usd": 21500.0,
+      "basis": "no restricted balance recorded, so all restricted gifts on record are assumed unspent"
+    },
+    "reserve_floor_usd": 11562.0
+  }
+}

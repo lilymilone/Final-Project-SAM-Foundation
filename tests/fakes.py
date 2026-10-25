@@ -89,11 +89,11 @@ def finance(p: dict, kw: dict) -> dict:
 
 
 def ack(p: dict, kw: dict) -> dict:
-    return {"summary": f"{p['aggregate']['unacknowledged_gifts']} gifts need thank-you notes.",
+    return {"summary": f"Template for {', '.join(p['gift_types'])} gifts.",
             "subject": "Thank you, {{donor_name}}",
-            "body": "Dear {{donor_name}},\nThank you for your gift of {{amount}} on {{date}}.\n[Board member name]",
-            "review_items": [{"issue": "Large gifts without acknowledgment", "why_professional_review": "Receipt rules vary.",
-                              "related_flag": "250_plus"}]}
+            "body": "Dear {{donor_name}},\nThank you for your gift of {{gift}} on {{date}}. Be somebody who makes everybody feel like somebody.\n"
+                    "[Board member name]",
+            "review_items": []}
 
 
 def research_plan(p: dict, kw: dict) -> dict:
@@ -103,6 +103,21 @@ def research_plan(p: dict, kw: dict) -> dict:
 
 def _lvl(level: str, why: str) -> dict:
     return {"level": level, "explanation": why}
+
+
+def donation_review(p: dict, kw: dict) -> dict:
+    refs = [r["id"] for r in p["references"]]
+    return {"summary": f"{p['aggregate']['gifts_needing_attention']} gift records need attention.",
+            "incomplete_records": [f"{n} gifts flagged {code}" for code, n in p["aggregate"]["flag_counts"].items()],
+            "campaign_notes": [f"{c['name']}: received {c['received_usd']}" for c in p["aggregate"]["by_campaign"]],
+            "reporting_questions": [
+                {"question": "Which acknowledgments are still owed for gifts of $250 or more?", "why": "Donors need them.",
+                 "ref_ids": ["irs-written-ack"], "kind": "verified_requirement", "professional": "none"},
+                {"question": "Must we register to solicit in New York?", "why": "Events are in New York.",
+                 "ref_ids": ["ny-charities-registration"], "kind": "general_guidance", "professional": "attorney"},
+                {"question": "How should pledges be booked?", "why": "Accounting treatment.", "ref_ids": ["made-up-source"],
+                 "kind": "verified_requirement", "professional": "none"},
+            ] if "irs-written-ack" in refs else []}
 
 
 def mission(p: dict, kw: dict) -> dict:
@@ -153,6 +168,39 @@ def drafts(p: dict, kw: dict) -> dict:
     return {"summary": f"{len(p['targets'])} drafts.", "drafts": out}
 
 
+def extracted(p: dict, kw: dict) -> dict:
+    """Reads each page like the real model: one figure per line that ends in an amount."""
+    import re as _re
+    figures = []
+    for page in p["pages"]:
+        body = page["text"].split("\n", 2)[-1]
+        for line in body.splitlines():
+            m = _re.match(r"^(.*?)\s+(\(?\$?[\d,]+(?:\.\d+)?\)?)$", line.strip())
+            if not m:
+                continue
+            label, amount = m.group(1), m.group(2)
+            low = label.lower()
+            if "year ended" in low or "december" in low:  # a date, not an amount
+                continue
+            kind = "cash" if "cash" in low else "expense" if any(w in low for w in ("program", "expense", "operat", "fundrais")) else "income"
+            figures.append({"label": label, "original_amount": amount, "page": page["page"], "kind": kind, "category": label,
+                            "restriction": "temporarily_restricted" if "restrict" in low else None,
+                            "purpose": "program" if "program" in low else None, "is_total": low.startswith("total"), "period_end": None})
+    return {"summary": f"{len(figures)} figures.", "document_type": "income_statement",
+            "reporting_period_label": "Year ended December 31, 2025", "period_end": "2025-12", "period_months": 12,
+            "currency": "USD", "figures": figures, "unclear": []}
+
+
+def review(p: dict, kw: dict) -> dict:
+    m = {x["label"]: x["display"] for x in p["metrics"]}
+    return {"summary": f"Revenue {m.get('Total recorded revenue')} and expenses {m.get('Total recorded expenses')}.",
+            "performance": f"Revenue was {m.get('Total recorded revenue')}.", "significant_categories": ["Programs are the largest expense."],
+            "variance_explanations": ["Operations ran over budget; the records don't say why."],
+            "restricted_funds_note": "Restricted gifts are not available for events. Revenue is not cash.",
+            "capacity_explanation": "Capacity is unrestricted money above the floor.", "scenario_comparison": "Estimates only.",
+            "uncertainties": ["Small sample."], "questions_for_board": ["Should we tag event spending?"]}
+
+
 def recommendation(p: dict, kw: dict) -> dict:
     figs = p.get("figures", {})
     total = figs.get("top_option_total_usd")
@@ -166,7 +214,8 @@ def recommendation(p: dict, kw: dict) -> dict:
 DEFAULT_HANDLERS: dict[str, Callable[[dict, dict], Any]] = {
     "RequestAnalysis": analysis, "LessonsOutput": lessons, "EventStrategyOutput": strategy, "FinanceNarrative": finance,
     "AcknowledgmentTemplate": ack, "MissionAnalysis": mission, "ResearchPlan": research_plan, "DraftsOutput": drafts,
-    "BoardRecommendation": recommendation,
+    "BoardRecommendation": recommendation, "ExtractedFigures": extracted, "FinancialReview": review,
+    "DonationReview": donation_review,
 }
 
 

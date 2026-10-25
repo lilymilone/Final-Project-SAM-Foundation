@@ -69,6 +69,14 @@ def pick(first: str, revision_rule: str = "cheapest_fitting"):
 def test_affordable_event_needs_no_revision(client):
     pid = make_plan(client, name="Spring reception", event_type="reception", event_format="reception", expected_attendance=100,
                     ticket_price_usd=150, fundraising_goal_usd=3000, budget_limit_usd=25000)
+    # Pledged sponsorship is never guaranteed: without any confirmed sponsorship the conservative case loses money.
+    run0, _, _ = run_plan(client, pid, script=ScriptedClient({"EventStrategyOutput": pick("chelsea")}))
+    m0 = run0.result["finance"]["model"]
+    assert run0.result["finance"]["verdict"] == "affordable_with_conditions"
+    assert m0["scenarios"]["conservative"]["sponsorship_revenue_usd"] == 0 and m0["scenarios"]["conservative"]["net_usd"] < 0
+    assert m0["sponsorship_confirmed_usd"] == 0 and m0["break_even_confirmed_only"] >= m0["break_even_attendance"]
+    # Once the board records $3,000 of signed sponsorship, the conservative case covers its costs.
+    assert client.put(f"/api/events/{pid}/assumptions", json={"assumptions": {"sponsorship_confirmed_usd": 3000}}).status_code == 200
     run, steps, _ = run_plan(client, pid, script=ScriptedClient({"EventStrategyOutput": pick("chelsea")}))
     keys = [s.step_key for s in steps]
     assert run.status == "completed", run.error
@@ -125,7 +133,7 @@ def test_incomplete_financial_information_is_reported_not_guessed(client):
     pid = make_plan(client, name="Unpriced reception", event_type="reception", event_format="reception", ticket_price_usd=None,
                     budget_limit_usd=100000)
     with client.app.state.db.transaction() as s:
-        s.execute(delete(FinancialRecord).where(FinancialRecord.kind == "reserve"))
+        s.execute(delete(FinancialRecord).where(FinancialRecord.kind.in_(("reserve", "cash"))))  # no balance of any kind
     run, steps, _ = run_plan(client, pid, script=ScriptedClient({"EventStrategyOutput": pick("chelsea")}))
     fin = run.result["finance"]
     assert fin["verdict"] == "insufficient_data"

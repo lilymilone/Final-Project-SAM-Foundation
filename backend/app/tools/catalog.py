@@ -17,8 +17,11 @@ from ..agents.contracts import SourceRecord, ToolResult
 from ..core.permissions import Permission
 from ..db.models import (
     BoardReflection,
+    Campaign,
     Donation,
     EventPlan,
+    ExtractedFigure,
+    FinancialDocument,
     FinancialRecord,
     HistoricalEvent,
     HistoricalLesson,
@@ -31,8 +34,9 @@ from ..research import fixtures
 from ..safety.policy import sanitize_untrusted, scrub_outbound_query
 from ..services import opportunities as opp
 from ..services import calculators as calc
+from ..services import documents as docs
+from ..services.finance_dashboard import build_dashboard
 from ..services import event_model as em
-from ..services.finance import donation_flags
 from . import web
 from .registry import ToolKind, ToolRegistry, ToolSpec
 
@@ -240,11 +244,63 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
     def read_financial_records() -> ToolResult:
         with db.session() as s:
             rows = s.scalars(select(FinancialRecord).where(FinancialRecord.organization_id == org)).all()
-        data = [{"period": r.period, "kind": r.kind, "category": r.category, "amount_usd": r.amount_usd, "is_demo": r.is_demo} for r in rows]
+        data = [{"period": r.period, "kind": r.kind, "category": r.category, "amount_usd": r.amount_usd, "is_demo": r.is_demo,
+                 "restriction": r.restriction, "purpose": r.purpose} for r in rows]
         demo = any(r["is_demo"] for r in data)
         return ToolResult(tool="read_financial_records", ok=True, summary=f"{len(data)} ledger rows | contents redacted", data=data,
                           sources=[SourceRecord(id="ledger", title="Financial records (synthetic demo books)" if demo else "Financial records",
                                                 verification="internal")])
+
+    def compute_financial_analysis() -> ToolResult:
+        """The full dashboard analysis (totals, restrictions, cash, ratios, variance, warnings), computed in code."""
+        with db.session() as s:
+            rows = s.scalars(select(FinancialRecord).where(FinancialRecord.organization_id == org)).all()
+            records = [{c.name: getattr(r, c.name) for c in FinancialRecord.__table__.columns} for r in rows]
+            past = [{c.name: getattr(e, c.name) for c in HistoricalEvent.__table__.columns}
+                    for e in s.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == org))]
+            plans = [{"name": p.name, "budget_limit_usd": p.budget_limit_usd, "status": p.status}
+                     for p in s.scalars(select(EventPlan).where(EventPlan.organization_id == org))]
+            pending = len(s.scalars(select(ExtractedFigure.id).where(ExtractedFigure.organization_id == org,
+                                                                      ExtractedFigure.status == "pending")).all())
+        for e in past:
+            e["event_date"] = e["event_date"].isoformat() if e.get("event_date") else None
+        data = build_dashboard(records, plans, past, None, pending_review=pending)
+        return ToolResult(tool="compute_financial_analysis", ok=True, data=data, summary=f"{len(data['metrics'])} metrics | contents redacted")
+
+    def read_document_text(document_id: int) -> ToolResult:
+        """Page text of an uploaded PDF, screened for instructions aimed at AI. The file itself is never executed."""
+        with db.session() as s:
+            d = s.get(FinancialDocument, int(document_id))
+            if d is None or d.organization_id != org:
+                return ToolResult(tool="read_document_text", ok=False, error="Document not found.")
+            meta = {"id": d.id, "filename": d.filename, "doc_type": d.doc_type, "file_type": d.file_type, "is_demo": d.is_demo}
+            path = ctx.settings.database_path.parent / "uploads" / "finance" / str(org) / d.stored_name
+        if meta["file_type"] != "pdf":
+            return ToolResult(tool="read_document_text", ok=False, error="Only PDFs are read this way; CSV files are parsed in code.")
+        parsed = docs.read_pdf(path.read_bytes())
+        pages, flags = [], []
+        for text in parsed["pages"]:
+            clean, found = sanitize_untrusted(text)
+            pages.append(clean)
+            flags += found
+        return ToolResult(tool="read_document_text", ok=True, summary=f"{len(pages)} page(s), status {parsed['status']} | text not logged",
+                          data={**meta, "pages": pages, "status": parsed["status"], "notes": parsed["notes"], "injection_flags": flags},
+                          sources=[SourceRecord(id=f"document:{meta['id']}", title=meta["filename"], verification="internal",
+                                                note="uploaded financial document")])
+
+    def save_extracted_figures(document_id: int, figures: list, period_label: str | None, status: str) -> ToolResult:
+        """Stage figures for board review. They do not count anywhere until a person approves them."""
+        with db.transaction() as s:
+            d = s.get(FinancialDocument, int(document_id))
+            if d is None or d.organization_id != org:
+                return ToolResult(tool="save_extracted_figures", ok=False, error="Document not found.")
+            for old in s.scalars(select(ExtractedFigure).where(ExtractedFigure.document_id == d.id, ExtractedFigure.status == "pending")):
+                s.delete(old)  # a re-extraction replaces figures nobody has reviewed yet
+            for f in figures:
+                s.add(ExtractedFigure(organization_id=org, document_id=d.id, run_id=ctx.run_id, **f))
+            d.status, d.period_label, d.run_id = status, period_label, ctx.run_id
+            return ToolResult(tool="save_extracted_figures", ok=True, data={"saved": len(figures)},
+                              summary=f"{len(figures)} figure(s) staged for board review")
 
     def compute_financial_position(records: list) -> ToolResult:
         pos = calc.financial_position(records)
@@ -269,47 +325,156 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
 
     # ── Donations & Compliance ──────────────────────────────────────────────────────
 
-    def read_donations() -> ToolResult:
+    def _donation_items() -> tuple[list[dict], list[dict]]:
+        from ..services import donations as dsvc
+        from ..db.models import Campaign, Donor
         with db.session() as s:
+            donors = {x.id: x.donor_code for x in s.scalars(select(Donor).where(Donor.organization_id == org))}
+            camps = {c.id: c for c in s.scalars(select(Campaign).where(Campaign.organization_id == org))}
             rows = s.scalars(select(Donation).where(Donation.organization_id == org).order_by(Donation.received_on)).all()
-        data = [{"id": d.id, "donor_name": d.donor_name, "has_email": bool(d.donor_email), "amount_usd": d.amount_usd,
-                 "received_on": d.received_on.isoformat(), "method": d.method, "designation": d.designation,
-                 "acknowledged": d.acknowledged, "is_demo": d.is_demo} for d in rows]
-        return ToolResult(tool="read_donations", ok=True, summary=f"{len(data)} gifts | contents redacted", data=data)
+            items = [{"id": d.id, "donation_id": dsvc.donation_code(d.id), "donor_id": donors.get(d.donor_id), "donor_name": d.donor_name,
+                      "has_email": bool(d.donor_email), "amount_usd": d.amount_usd, "received_on": d.received_on.isoformat(),
+                      "method": d.method, "designation": d.designation, "acknowledged": d.acknowledged,
+                      "ack_status": d.ack_status or ("completed" if d.acknowledged else "not_started"),
+                      "contribution_type": d.contribution_type or "monetary", "restriction": d.restriction,
+                      "payment_status": d.payment_status or "received", "campaign_id": d.campaign_id,
+                      "campaign": camps[d.campaign_id].name if d.campaign_id in camps else None,
+                      "in_kind_description": d.in_kind_description, "goods_services_value_usd": d.goods_services_value_usd,
+                      "is_demo": d.is_demo} for d in rows]
+            campaigns = [{"id": c.id, "name": c.name, "kind": c.kind, "goal_usd": c.goal_usd} for c in camps.values()]
+        dupes = dsvc.duplicate_index(items)
+        for it in items:
+            it["flags"] = dsvc.flags_for(it, dupes, date.today())
+        return items, campaigns
+
+    def read_donations() -> ToolResult:
+        items, campaigns = _donation_items()
+        return ToolResult(tool="read_donations", ok=True, summary=f"{len(items)} gifts | contents redacted",
+                          data={"donations": items, "campaigns": campaigns})
 
     def flag_donation_issues(donations: list) -> ToolResult:
-        with db.session() as s:
-            rows = {d.id: d for d in s.scalars(select(Donation).where(Donation.organization_id == org))}
-        flagged = []
-        for d in donations:
-            flags = donation_flags(rows[d["id"]]) if d["id"] in rows else []
-            flagged.append({"id": d["id"], "flags": flags, "acknowledged": d["acknowledged"], "amount_band": "250_plus" if d["amount_usd"] >= 250 else "under_250"})
+        """Counts by flag and campaign, with no names or per-donor amounts (this is what a model may see)."""
+        from ..services import donations as dsvc
+        items, campaigns = _donation_items()
+        wanted = {d["id"] for d in donations}
+        items = [d for d in items if d["id"] in wanted]
         counts: dict[str, int] = {}
-        for f in flagged:
-            for flag in f["flags"]:
-                key = re.sub(r"\d+ days", "N days", flag)
-                counts[key] = counts.get(key, 0) + 1
-        return ToolResult(tool="flag_donation_issues", ok=True, data={"per_gift": flagged, "flag_counts": counts},
-                          summary=f"{sum(1 for f in flagged if f['flags'])} gifts need attention")
+        for d in items:
+            for f in d["flags"]:
+                counts[f["code"]] = counts.get(f["code"], 0) + 1
+        ledger = [{"period": r.period, "kind": r.kind, "category": r.category, "amount_usd": r.amount_usd, "period_months": r.period_months}
+                  for r in _ledger_rows()]
+        summary = dsvc.summarize(items, campaigns, ledger)
+        aggregate = {"gifts_recorded": len(items), "gifts_needing_attention": sum(1 for d in items if any(f["severity"] != "low" for f in d["flags"])),
+                     "flag_counts": counts, "ack_status": summary["ack_status"], "pledges": summary["pledges"],
+                     "in_kind_gifts": summary["in_kind_gifts"], "duplicates_excluded": summary["duplicates_excluded"],
+                     "by_campaign": [{k: c[k] for k in ("name", "kind", "goal_usd", "received_usd", "pledged_usd", "gifts")} for c in summary["by_campaign"]],
+                     "received_total_usd": summary["received_usd"], "reconciliation_months": len(summary["reconciliation"])}
+        per_gift = [{"id": d["id"], "flags": [f["code"] for f in d["flags"]], "acknowledged": d["acknowledged"], "ack_status": d["ack_status"],
+                     "amount_band": "250_plus" if d["amount_usd"] >= 250 else "under_250", "payment_status": d["payment_status"],
+                     "contribution_type": d["contribution_type"]} for d in items]
+        return ToolResult(tool="flag_donation_issues", ok=True, data={"per_gift": per_gift, "flag_counts": counts, "aggregate": aggregate},
+                          summary=f"{aggregate['gifts_needing_attention']} gifts need attention")
+
+    def read_compliance_items() -> ToolResult:
+        from ..services import donations as dsvc
+        from ..compliance import public_references
+        items, _ = _donation_items()
+        with db.session() as s:
+            places = [p.city for p in s.scalars(select(EventPlan).where(EventPlan.organization_id == org))] + \
+                     [e.location for e in s.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == org))]
+        ledger = [{"period": r.period, "kind": r.kind, "category": r.category, "amount_usd": r.amount_usd, "period_months": r.period_months}
+                  for r in _ledger_rows()]
+        found = dsvc.compliance_items(items, ledger, [x for x in map(dsvc.state_of, places) if x])
+        refs = [{k: r[k] for k in ("id", "title", "authority", "jurisdiction", "kind", "url", "checked_on", "stale", "points")}
+                for r in public_references()]
+        return ToolResult(tool="read_compliance_items", ok=True, summary=f"{len(found)} compliance items",
+                          data={"items": [{k: i[k] for k in ("key", "title", "detail", "kind", "professional")} | {"ref_ids": [r["id"] for r in i["references"]],
+                                           "count": len(i["donation_ids"])} for i in found], "references": refs})
+
+    def _ledger_rows():
+        with db.session() as s:
+            return s.scalars(select(FinancialRecord).where(FinancialRecord.organization_id == org)).all()
+
+    def _gift_text(d: Donation) -> str:
+        """The gift itself, as recorded: an amount, or a description for in-kind gifts (never a value we assign)."""
+        if (d.contribution_type or "monetary") == "in_kind":
+            text = d.in_kind_description or "in-kind support"
+            return text[:1].lower() + text[1:] if not text[:2].isupper() else text
+        return f"${d.amount_usd:,.2f}"
 
     def create_acknowledgment_drafts(subject: str, body: str, donation_ids: list) -> ToolResult:
-        made = 0
+        """Merge the template locally with verified record fields. Drafts are never sent, and records are not changed."""
+        made, ids = 0, []
         with db.transaction() as s:
+            camps = {c.id: c.name for c in s.scalars(select(Campaign).where(Campaign.organization_id == org))}
             for d in s.scalars(select(Donation).where(Donation.organization_id == org, Donation.id.in_(donation_ids))):
-                fill = {"{{donor_name}}": d.donor_name, "{{amount}}": f"${d.amount_usd:,.2f}",
-                        "{{date}}": f"{d.received_on:%B} {d.received_on.day}, {d.received_on.year}", "{{designation}}": d.designation}
+                fill = {"{{donor_name}}": d.donor_name, "{{gift}}": _gift_text(d), "{{amount}}": _gift_text(d),
+                        "{{date}}": f"{d.received_on:%B} {d.received_on.day}, {d.received_on.year}", "{{designation}}": d.designation or "",
+                        "{{campaign}}": camps.get(d.campaign_id, "the foundation's work")}
                 text_body, text_subject = body, subject
                 for k, v in fill.items():
                     text_body, text_subject = text_body.replace(k, v), text_subject.replace(k, v)
-                s.add(OutreachDraft(organization_id=org, run_id=ctx.run_id, agent="donations_compliance",
-                                    draft_type="donor_acknowledgment", recipient_name=d.donor_name, recipient_org="",
-                                    subject=text_subject[:300], body=text_body, status="draft", created_by=ctx.user_id,
-                                    personalization_basis="Merged locally from the donation record; the AI saw only a template.",
-                                    is_synthetic_target=d.is_demo))
+                text_body = re.sub(r"\b(your (gift|donation|contribution) of )\1", r"\1", text_body, flags=re.IGNORECASE)
+                notes = ["General thank-you letter, not a tax acknowledgment. SAM SPACE does not decide whether a gift is deductible."]
+                if d.amount_usd >= 250 and (d.contribution_type or "monetary") != "in_kind":
+                    notes.append("This gift is $250 or more: the donor also needs a written contribution acknowledgment (see the "
+                                 "separate draft for accountant review).")
+                draft = OutreachDraft(organization_id=org, run_id=ctx.run_id, agent="donations_compliance", draft_type="donor_thank_you",
+                                      recipient_name=d.donor_name, recipient_org="", subject=text_subject[:300], body=text_body, status="draft",
+                                      created_by=ctx.user_id, donation_id=d.id, review_notes=notes,
+                                      personalization_basis="Merged locally from the donation record; the AI saw only a template.",
+                                      is_synthetic_target=d.is_demo)
+                s.add(draft)
+                s.flush()
+                ids.append(draft.id)
                 made += 1
-        return ToolResult(tool="create_acknowledgment_drafts", ok=True, data={"drafts_created": made}, summary=f"{made} acknowledgment drafts")
+        return ToolResult(tool="create_acknowledgment_drafts", ok=True, data={"drafts_created": made, "draft_ids": ids},
+                          summary=f"{made} thank-you drafts")
+
+    def create_contribution_acknowledgments(donation_ids: list) -> ToolResult:
+        """Deterministic drafts of the elements a written contribution acknowledgment needs (IRS, US federal), marked for
+        accountant review. No model writes these, and nothing is sent."""
+        from ..compliance import reference
+        ref, qpq = reference("irs-written-ack"), reference("irs-quid-pro-quo")
+        made, ids = 0, []
+        with db.transaction() as s:
+            for d in s.scalars(select(Donation).where(Donation.organization_id == org, Donation.id.in_(donation_ids))):
+                in_kind = (d.contribution_type or "monetary") == "in_kind"
+                lines = ["[DRAFT FOR ACCOUNTANT REVIEW. Not sent. Not a final acknowledgment until a qualified person reviews it.]", "",
+                         "Sabrina Audrey Milone Foundation", "Contribution acknowledgment", "",
+                         f"Donor: {d.donor_name}", f"Date received: {d.received_on:%B} {d.received_on.day}, {d.received_on.year}",
+                         (f"Contribution: {d.in_kind_description or '[describe the item]'} (description only; the foundation does not state a value)"
+                          if in_kind else f"Contribution: ${d.amount_usd:,.2f}")]
+                if d.goods_services_value_usd:
+                    lines += [f"Goods or services provided in return: [describe, e.g. dinner at the event]. Good-faith estimate of their value: "
+                              f"${d.goods_services_value_usd:,.2f} [confirm with accountant].",
+                              "The amount deductible for federal income tax purposes is limited to the excess of the payment over the value "
+                              "of the goods or services provided. [Confirm wording with accountant.]"]
+                else:
+                    lines.append("[Confirm before use] No goods or services were provided in exchange for this contribution.")
+                lines += ["", f"Source: {ref['authority']}, “{ref['title']}” ({ref['jurisdiction']}), {ref['url']}, checked {ref['checked_on']}."]
+                if d.goods_services_value_usd:
+                    lines.append(f"Source: {qpq['authority']}, “{qpq['title']}” ({qpq['jurisdiction']}), {qpq['url']}, checked {qpq['checked_on']}.")
+                draft = OutreachDraft(organization_id=org, run_id=ctx.run_id, agent="donations_compliance", draft_type="contribution_acknowledgment",
+                                      recipient_name=d.donor_name, recipient_org="", subject="Contribution acknowledgment (draft for accountant review)",
+                                      body="\n".join(lines), status="draft", created_by=ctx.user_id, donation_id=d.id, is_synthetic_target=d.is_demo,
+                                      review_notes=["Contains only fields from the donation record. Review with an accountant before anyone sends it."],
+                                      personalization_basis="Built in code from the donation record (no AI).",
+                                      sources=[{"title": ref["title"], "url": ref["url"], "verification": "verified"}] +
+                                              ([{"title": qpq["title"], "url": qpq["url"], "verification": "verified"}] if d.goods_services_value_usd else []))
+                s.add(draft)
+                s.flush()
+                ids.append(draft.id)
+                made += 1
+        return ToolResult(tool="create_contribution_acknowledgments", ok=True, data={"drafts_created": made, "draft_ids": ids},
+                          summary=f"{made} contribution acknowledgment drafts (for accountant review)")
 
     add("read_donations", "Read contribution records.", ToolKind.READ, read_donations, Permission.VIEW_DONOR_DATA, sensitive=True)
+    add("read_compliance_items", "Deterministic compliance checklist with cited sources.", ToolKind.COMPUTE, read_compliance_items,
+        Permission.VIEW_DONOR_DATA)
+    add("create_contribution_acknowledgments", "Draft contribution acknowledgments for accountant review (code, unsent).", ToolKind.DRAFT,
+        create_contribution_acknowledgments, Permission.MANAGE_DONATIONS, sensitive=True)
     add("flag_donation_issues", "Missing-information and acknowledgment flags.", ToolKind.COMPUTE, flag_donation_issues, Permission.VIEW_DONOR_DATA)
     add("create_acknowledgment_drafts", "Merge a template into unsent acknowledgment drafts.", ToolKind.DRAFT, create_acknowledgment_drafts,
         Permission.VIEW_DONOR_DATA, sensitive=True)
@@ -462,6 +627,12 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
     add("classify_mission_alignment", "Keyword cross-check of mission alignment.", ToolKind.COMPUTE, classify_mission_alignment)
     add("save_research_finding", "Save (or refresh) an opportunity with its sources and alignment.", ToolKind.SAVE, save_research_finding,
         Permission.RUN_AGENTS)
+    add("compute_financial_analysis", "Full financial analysis in code (totals, restrictions, cash, variance).", ToolKind.COMPUTE,
+        compute_financial_analysis, Permission.VIEW_FINANCIALS, sensitive=True)
+    add("read_document_text", "Read an uploaded PDF's text (screened, never executed).", ToolKind.READ, read_document_text,
+        Permission.VIEW_FINANCIALS, sensitive=True)
+    add("save_extracted_figures", "Stage extracted figures for board review.", ToolKind.SAVE, save_extracted_figures,
+        Permission.MANAGE_FINANCIALS, sensitive=True)
     add("read_saved_findings", "Read saved research findings.", ToolKind.READ, read_saved_findings, Permission.VIEW_DASHBOARD)
     add("read_opportunities", "Read Mission Discovery opportunities (no private notes).", ToolKind.READ, read_opportunities,
         Permission.VIEW_DASHBOARD)
