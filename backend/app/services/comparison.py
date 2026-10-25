@@ -39,7 +39,7 @@ def run_snapshot(db, run_id: int) -> dict:
                               .where(ModelUsage.run_id == run_id).group_by(ModelUsage.agent)).all()
     r = run.result or {}
     finance = r.get("finance") or {}
-    budget = finance.get("budget") or {}
+    budget = finance.get("model") or {}
     rec = r.get("recommendation") or {}
     history = r.get("revision_history") or []
     strategy = r.get("events_strategy") or {}
@@ -51,7 +51,7 @@ def run_snapshot(db, run_id: int) -> dict:
                   "by_agent": {a: {"calls": n, "cost_usd": round(float(c), 6)} for a, n, c in per_agent}},
         "steps": list(steps),
         "first_choice": {k: history[0].get(k) for k in ("venue", "event_format", "total_usd", "verdict")} if history else None,
-        "final_choice": {"venue": finance.get("venue"), "event_format": finance.get("event_format"), "total_usd": budget.get("total_usd"),
+        "final_choice": {"venue": finance.get("venue"), "event_format": finance.get("event_format"), "total_usd": budget.get("total_cost_usd"),
                          "upfront_cash_usd": budget.get("upfront_cash_usd"), "contingency_pct": budget.get("contingency_pct"),
                          "verdict": finance.get("verdict")},
         "revisions": max(0, len(history) - 1),

@@ -187,14 +187,20 @@ class SearchHits(BaseModel):
 
 class VenueHit(BaseModel):
     name: str
+    address: str | None
     neighborhood: str | None
-    url: str
+    website_url: str
+    source_url: str
     formats: list[EventFormat]
     capacity_seated: int | None
     capacity_reception: int | None
+    capacity_quote: str | None
     rental_usd: float | None
     fnb_per_guest_usd: float | None
+    fnb_minimum_usd: float | None
     pricing_quote: str | None
+    amenities: list[str]
+    restrictions: list[str]
     notes: str
 
 

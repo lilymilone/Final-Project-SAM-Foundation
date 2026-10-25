@@ -10,7 +10,7 @@ import { Card, DemoBadge, EmptyState, ErrorState, LoadingState } from "./ui";
 
 // ── Drafts (never sent) ─────────────────────────────────────────────────────────
 
-function DraftItem({ draft, onChange }: { draft: Draft; onChange: () => void }) {
+export function DraftItem({ draft, onChange }: { draft: Draft; onChange: () => void }) {
   const { can } = useAuth();
   const [editing, setEditing] = useState(false);
   const [subject, setSubject] = useState(draft.subject);

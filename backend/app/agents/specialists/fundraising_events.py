@@ -1,12 +1,17 @@
 """Agent 3: Fundraising & Events.
 
-Finds venues (labeled synthetic fixtures, or live web search with links
-verified by fetching them). Prices every venue-and-format option with the
-deterministic budget calculator, and pulls revenue scenarios from past
-events. The model then ranks the options and writes the fundraising strategy,
-but it can only choose option IDs the tools produced. On a revision it must
-respect the constraints the Orchestrator passes back from Finance and
-Event Intelligence.
+Venue research is bounded and honest:
+  * Live mode: one web search. Then each venue's website (and source page) is
+    fetched, and every reported price and capacity figure is checked against
+    the page text. Figures not found on a fetched page are dropped, so the
+    venue shows "Quote required" or "capacity unconfirmed".
+  * Synthetic mode: labeled fixtures (example.org), never presented as live.
+
+Every venue-and-format option is priced with the deterministic event model
+(services/event_model.py). The model ranks options and writes the strategy,
+but it can choose only option IDs the tools produced. On a revision, the
+venues already researched are reused (no new search), and a code guard
+enforces Finance's limits and the history constraints.
 """
 
 from __future__ import annotations
@@ -19,18 +24,61 @@ from ..runtime import RunContext, dedupe_sources
 
 INSTRUCTIONS = """Rank the venue options and write a fundraising strategy for the event.
 - Choose only option_id values that appear in "options". Rank 1 = your top recommendation. Shortlist 1 to 3 options.
-- Use the computed budgets as given; do not recompute or invent costs.
+- Use the computed figures as given; never recompute, adjust, or invent costs, prices, capacity, or availability.
+  If pricing_status is "quote_required", say the price must be quoted; the model's venue figure is a hypothetical estimate.
+- Respect the board's instructions and the venue restrictions.
 - Apply the lessons from past events and say which lesson each choice applies. Lessons are ADVISORY: they shape your
-  ranking, strategy, and questions, but they never override the computed costs, Finance's limits, or verified source data.
+  ranking, strategy, and questions, but they never override computed costs, Finance's limits, or verified source data.
   If a lesson conflicts with current numbers, say so in risks rather than ignoring the numbers.
 - If no lessons are provided, plan from the current data alone and do not invent historical claims.
-- If "constraints" are present (this is a revision), every shortlisted option must satisfy them; explain what changed in
-  changes_from_previous. If no option satisfies them, rank the closest one and say so plainly in risks.
+- If "constraints" are present (this is a revision), every shortlisted option must satisfy them; explain what changed and
+  why in changes_from_previous. If no option satisfies them, rank the closest one and say so plainly in risks.
 - fundraising_strategy: practical ideas (ticket tiers, sponsorship asks, paddle raise, in-kind support).
-- logistics_notes: timing, guest-count lock, accessibility, volunteers.
-- uncertainties: anything unconfirmed (availability, real quotes, synthetic data)."""
+- logistics_notes: timing, guest-count lock, accessibility, volunteers, questions to ask venues.
+- uncertainties: anything unconfirmed (availability, quotes, synthetic data)."""
 
-GALA_TYPES = {"gala", "dinner", "benefit"}
+GALA_TYPES = ("gala", "dinner", "benefit")
+ALL_FORMATS = ["seated_dinner", "reception"]
+
+
+def _verify_live_venue(agent: BaseAgent, ctx: RunContext, v: dict) -> list[SourceRecord]:
+    """Fetch the venue's pages and keep only figures that actually appear on them."""
+    reported = {
+        "rental_usd": v.get("reported_rental_usd"),
+        "fnb_per_guest_usd": v.get("reported_fnb_per_guest_usd"),
+        "fnb_minimum_usd": v.get("reported_fnb_minimum_usd"),
+        **{f"capacity_{f}": c for f, c in (v.get("capacity") or {}).items()},
+    }
+    check = [float(x) for x in reported.values() if x is not None]
+    found: dict[str, bool] = {}
+    sources: list[SourceRecord] = []
+    pages = [("website", v.get("website"))]
+    if v.get("source_url") and v.get("source_url") != v.get("website"):
+        pages.append(("source", v["source_url"]))
+    for label, url in pages:
+        if not url:
+            continue
+        res = agent.tool(ctx, "fetch_source", url=url, source_id=f"{v['source_id']}:{label}", check_values=check)
+        sources += res.sources
+        page = res.data or {}
+        if label == "website":
+            v["website_status"] = "verified" if res.ok else "unreachable"
+            v["verified_at"] = page.get("retrieved_at")
+        for key, ok in (page.get("figures_found") or {}).items():
+            found[key] = found.get(key, False) or ok
+    confirmed = {k: (val is not None and found.get(str(float(val)), False)) for k, val in reported.items()}
+    for k in ("rental_usd", "fnb_per_guest_usd", "fnb_minimum_usd"):
+        v[k] = v.get(f"reported_{k}") if confirmed[k] else None
+    unconfirmed = [k for k, val in reported.items() if val is not None and not confirmed[k]]
+    v["pricing_status"] = "published" if (v["rental_usd"] is not None or v["fnb_per_guest_usd"] is not None) else "quote_required"
+    caps_ok = [k for k in confirmed if k.startswith("capacity_") and confirmed[k]]
+    v["capacity_status"] = "published" if caps_ok else ("unconfirmed" if v.get("capacity") else "not_published")
+    v["verification"] = "verified" if v.get("website_status") == "verified" else "unverified"
+    if unconfirmed:
+        names = ", ".join(k.replace("_usd", "").replace("capacity_", "capacity (").replace("fnb", "catering").replace("_", " ")
+                          + (")" if k.startswith("capacity_") else "") for k in unconfirmed)
+        v["notes"] = (v.get("notes") or "") + f" Not confirmed on the fetched page, so not used as published: {names}."
+    return sources
 
 
 class FundraisingEventsAgent(BaseAgent):
@@ -42,12 +90,13 @@ class FundraisingEventsAgent(BaseAgent):
         city = event.get("city") or "Manhattan, New York, NY"
         event_type = (event.get("event_type") or "gala").lower()
         revision = task.kind == "revision"
-        # Hard spending limits are taken only from Financial Analysis; history is advisory.
-        constraint_map = {c.name: c for c in task.constraints if c.source_agent == AgentName.FINANCIAL_ANALYSIS}
         contingency = task.inputs.get("contingency_pct")
+        overrides = task.inputs.get("assumption_overrides") or {}
+        finance_limits = {c.name: c for c in task.constraints if c.source_agent == AgentName.FINANCIAL_ANALYSIS}
+        avoid_minimum = any(c.name == "avoid_catering_minimum_risk" for c in task.constraints)
 
         if revision:
-            formats = ["seated_dinner", "reception"]  # a revision may change the format to meet constraints
+            formats = ALL_FORMATS  # a revision may change the format to meet constraints
         elif event.get("event_format"):
             formats = [event["event_format"]]
         else:
@@ -57,44 +106,51 @@ class FundraisingEventsAgent(BaseAgent):
         if lessons is None:
             lessons = self.tool(ctx, "get_historical_lessons").data
 
-        found = self.tool(ctx, "search_venues", city=city, attendance=attendance, formats=formats)
-        venues = found.data or []
-        sources: list[SourceRecord] = list(found.sources)
-        warnings = list(found.warnings)
-        if not found.ok:
-            warnings.append(found.error or "Venue search failed.")
-
-        # Live results: verify each link by fetching it.
-        for v in venues:
-            if v.get("verification") == "unverified" and v.get("source_url"):
-                check = self.tool(ctx, "fetch_source", url=v["source_url"], source_id=v["source_id"])
-                if check.sources:
-                    sources = [s for s in sources if s.id != v["source_id"]] + check.sources
-                    v["verification"] = check.sources[0].verification
+        warnings: list[str] = []
+        sources: list[SourceRecord] = []
+        venues = task.inputs.get("candidates")
+        if venues is None:  # research once; revisions reuse these candidates
+            found = self.tool(ctx, "search_venues", city=city, attendance=attendance, formats=ALL_FORMATS)
+            venues = found.data or []
+            sources += found.sources
+            warnings += found.warnings
+            if not found.ok:
+                warnings.append(found.error or "Venue search failed.")
+            for v in venues:
+                if v.get("verification") == "unverified":
+                    sources += _verify_live_venue(self, ctx, v)
+        else:
+            sources += [SourceRecord(id=f"{v['source_id']}:website", title=v["name"], url=v.get("website"),
+                                     verification=v.get("verification") or "unverified", retrieved_at=v.get("verified_at"))
+                        for v in venues if v.get("website")]
 
         options = []
         for v in venues:
-            for fmt in v["formats"]:
-                budget = self.tool(ctx, "compute_event_budget", venue=v, event_format=fmt, attendance=attendance,
-                                   contingency_pct=contingency).data
-                options.append({"option_id": f"{v['venue_key']}:{fmt}", "venue": v, "event_format": fmt, "budget": budget})
+            for fmt in [f for f in v.get("formats", []) if f in formats]:
+                model = self.tool(ctx, "compute_event_model", venue=v, event_format=fmt, event=event,
+                                  contingency_pct=contingency, overrides=overrides).data
+                options.append({"option_id": f"{v['venue_key']}:{fmt}", "venue": v, "event_format": fmt, "model": model})
         if not options:
             return self.result(task, "completed", f"No venues found in {city} for {attendance} guests ({', '.join(formats)}).",
                                sources=dedupe_sources(sources), warnings=warnings,
-                               next_steps=["Try live web research or a different format, city, or guest count."],
-                               data={"options": [], "shortlist": [], "top_choice": None})
+                               next_steps=["Try a different format, city, or guest count, or switch research mode."],
+                               data={"venues": venues, "options": [], "shortlist": [], "top_choice": None, "research_mode": ctx.research_mode})
 
-        revenue = self.tool(ctx, "compute_revenue_scenarios", attendance=attendance, event_type=event_type)
         prompt_options = [{
             "option_id": o["option_id"], "venue": o["venue"]["name"], "neighborhood": o["venue"].get("neighborhood"),
-            "format": o["event_format"], "capacity": o["venue"].get("capacity"), "notes": o["venue"].get("notes"),
-            "catering_terms": o["venue"].get("catering"),
-            "source": o["venue"].get("verification"), "total_usd": o["budget"]["total_usd"],
-            "upfront_cash_usd": o["budget"]["upfront_cash_usd"], "cost_per_guest_usd": o["budget"]["cost_per_guest_usd"],
-            "assumptions": o["budget"]["assumptions"],
+            "format": o["event_format"], "capacity": o["venue"].get("capacity"), "capacity_status": o["venue"].get("capacity_status"),
+            "pricing_status": o["venue"].get("pricing_status"), "amenities": o["venue"].get("amenities"),
+            "restrictions": o["venue"].get("restrictions"), "catering_terms": o["venue"].get("catering"),
+            "total_cost_usd": o["model"]["total_cost_usd"], "total_usd": o["model"]["total_cost_usd"],
+            "upfront_cash_usd": o["model"]["upfront_cash_usd"], "base_net_usd": o["model"]["scenarios"]["base"]["net_usd"],
+            "conservative_net_usd": o["model"]["scenarios"]["conservative"]["net_usd"],
+            "catering_minimum_risk": o["model"].get("catering_minimum_risk"), "missing_inputs": o["model"]["missing_inputs"],
+            "assumption_kinds": {k: a["kind"] for k, a in o["model"]["assumptions"].items()},
         } for o in options]
         out = self.think(ctx, VENUE_STRATEGY, INSTRUCTIONS, {
-            "event": event, "options": prompt_options, "revenue_scenarios": revenue.data, "lessons": lessons,
+            "event": {k: event.get(k) for k in ("name", "event_type", "city", "attendance", "target_date", "date_end", "ticket_price_usd",
+                                                "fundraising_goal_usd", "budget_limit_usd", "instructions")},
+            "options": prompt_options, "lessons": lessons,
             "constraints": [c.model_dump(mode="json") for c in task.constraints],
             "previous_shortlist": task.inputs.get("previous_shortlist"),
         }, EventStrategyOutput)
@@ -105,58 +161,59 @@ class FundraisingEventsAgent(BaseAgent):
             if choice.option_id not in by_id:
                 warnings.append(f"Ignored an option the model invented: {choice.option_id}")
                 continue
-            o = by_id[choice.option_id]
-            shortlist.append({**o, "rank": choice.rank, "rationale": choice.rationale, "lessons_applied": choice.lessons_applied})
-        if not shortlist:  # model chose nothing valid: fall back to the cheapest option, and say so
-            cheapest = min(options, key=lambda o: o["budget"]["total_usd"])
-            shortlist = [{**cheapest, "rank": 1, "rationale": "Fallback: lowest projected total (the model's choices were invalid).",
-                          "lessons_applied": []}]
+            shortlist.append({**by_id[choice.option_id], "rank": choice.rank, "rationale": choice.rationale,
+                              "lessons_applied": choice.lessons_applied})
+        if not shortlist:
+            cheapest = min(options, key=lambda o: o["model"]["total_cost_usd"])
+            shortlist = [{**cheapest, "rank": 1, "rationale": "Fallback: lowest projected cost (the model's choices were invalid).", "lessons_applied": []}]
             warnings.append("The model's shortlist was invalid; fell back to the lowest-cost option.")
 
-        # Deterministic guard on a revision: if the model's top pick still breaks
-        # Finance's hard limits but another option meets them, re-rank in code.
-        if revision:
-            max_total = constraint_map.get("max_total_usd")
-            max_upfront = constraint_map.get("max_upfront_usd")
+        if revision:  # code guard: the top option must meet Finance's limits and the history constraints if any option can
+            max_total = finance_limits.get("max_total_usd")
+            max_upfront = finance_limits.get("max_upfront_usd")
 
             def fits(o: dict) -> bool:
-                return ((not max_total or o["budget"]["total_usd"] <= float(max_total.value)) and
-                        (not max_upfront or o["budget"]["upfront_cash_usd"] <= float(max_upfront.value)))
+                m = o["model"]
+                return ((not max_total or m["total_cost_usd"] <= float(max_total.value)) and
+                        (not max_upfront or m["upfront_cash_usd"] <= float(max_upfront.value)) and
+                        (not avoid_minimum or not m.get("catering_minimum_risk")))
 
             if not fits(shortlist[0]):
-                fitting = [s for s in shortlist if fits(s)] or sorted((o for o in options if fits(o)), key=lambda o: o["budget"]["total_usd"])
+                fitting = [s for s in shortlist if fits(s)] or sorted((o for o in options if fits(o)), key=lambda o: o["model"]["total_cost_usd"])
                 if fitting:
-                    best = fitting[0]
-                    best = best if "rank" in best else {**best, "rationale": "Lowest-cost option that meets Finance's limits.",
-                                                        "lessons_applied": []}
+                    best = fitting[0] if "rank" in fitting[0] else {**fitting[0], "rationale": "Lowest-cost option that meets Finance's limits and the history constraints.", "lessons_applied": []}
                     shortlist = [best] + [s for s in shortlist if s["option_id"] != best["option_id"]]
                     for i, s in enumerate(shortlist, start=1):
                         s["rank"] = i
-                    warnings.append(f"Re-ranked by code: the model's top choice broke Finance's limits; "
-                                    f"{best['venue']['name']} ({best['event_format'].replace('_', ' ')}) meets them.")
+                    warnings.append(f"Re-ranked by code: the model's top choice broke a constraint; {best['venue']['name']} "
+                                    f"({best['event_format'].replace('_', ' ')}) meets them.")
                 else:
-                    warnings.append("No researched option meets Finance's limits; the closest option is shown for the board.")
+                    warnings.append("No researched option meets every constraint; the closest option is shown for the board.")
         top = shortlist[0]
 
         plan_id = task.inputs.get("event_plan_id")
         if plan_id:
             for item in shortlist:
-                self.tool(ctx, "save_venue_candidate", event_plan_id=plan_id, venue=item["venue"],
-                          event_format=item["event_format"], budget_total_usd=item["budget"]["total_usd"])
+                self.tool(ctx, "save_venue_candidate", event_plan_id=plan_id, venue=item["venue"], event_format=item["event_format"],
+                          budget_total_usd=item["model"]["total_cost_usd"])
 
-        findings = [Finding(claim=f"#{s['rank']} {s['venue']['name']} ({s['event_format'].replace('_', ' ')}): "
-                                  f"projected ${s['budget']['total_usd']:,.0f}. {s['rationale']}",
-                            kind="recommendation", source_ids=[s["venue"]["source_id"]]) for s in shortlist]
-        assumptions = sorted({a for s in shortlist for a in s["budget"]["assumptions"]})
-        if revenue.data and revenue.data.get("assumptions"):
-            assumptions += revenue.data["assumptions"]
+        findings = []
+        for s in shortlist:
+            price = "published pricing" if s["venue"].get("pricing_status") == "published" else "Quote required (hypothetical estimate used)"
+            findings.append(Finding(claim=f"#{s['rank']} {s['venue']['name']} ({s['event_format'].replace('_', ' ')}): projected "
+                                          f"${s['model']['total_cost_usd']:,.0f}; {price}. {s['rationale']}",
+                                    kind="recommendation", source_ids=[f"{s['venue']['source_id']}:website"]))
+        assumptions = sorted({f"{a['basis']}" for s in shortlist for k, a in s["model"]["assumptions"].items()
+                              if a["kind"] in ("placeholder", "hypothetical")})
         return self.result(
-            task, "completed", out.summary, findings=findings, sources=dedupe_sources(sources + revenue.sources),
-            assumptions=assumptions, warnings=warnings + out.uncertainties + out.risks,
-            next_steps=["Finance checks affordability of the top option."] if not revision else ["Finance re-checks the revised option."],
-            data={"options": [{"option_id": o["option_id"], "venue": o["venue"]["name"], "event_format": o["event_format"],
-                               "total_usd": o["budget"]["total_usd"], "upfront_cash_usd": o["budget"]["upfront_cash_usd"]} for o in options],
-                  "shortlist": shortlist, "top_choice": top, "revenue": revenue.data,
+            task, "completed", out.summary, findings=findings, sources=dedupe_sources(sources), assumptions=assumptions,
+            warnings=warnings + out.uncertainties + out.risks,
+            next_steps=["Finance re-checks the revised option."] if revision else ["Finance checks affordability of the top option."],
+            data={"venues": venues,
+                  "options": [{"option_id": o["option_id"], "venue": o["venue"]["name"], "event_format": o["event_format"],
+                               "total_usd": o["model"]["total_cost_usd"], "upfront_cash_usd": o["model"]["upfront_cash_usd"],
+                               "pricing_status": o["venue"].get("pricing_status")} for o in options],
+                  "shortlist": shortlist, "top_choice": top,
                   "fundraising_strategy": out.fundraising_strategy, "logistics_notes": out.logistics_notes,
                   "changes_from_previous": out.changes_from_previous, "research_mode": ctx.research_mode},
         )

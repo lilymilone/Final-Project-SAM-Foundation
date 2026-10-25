@@ -33,6 +33,7 @@ class RunIn(BaseModel):
     event_plan_id: int | None = None
     historical_event_id: int | None = None
     use_history: bool = True
+    interpret: bool = False  # Event Studio: the model interprets the request details even though the workflow is fixed
 
     @field_validator("request")
     @classmethod
@@ -74,7 +75,7 @@ def start_run(
         plan = db.get(EventPlan, body.event_plan_id)
         if plan is None or plan.organization_id != cu.organization_id:
             raise HTTPException(404, "Event plan not found.")
-    options = {"use_history": body.use_history}
+    options = {"use_history": body.use_history, "interpret": body.interpret}
     if body.historical_event_id is not None:
         past = db.get(HistoricalEvent, body.historical_event_id)
         if past is None or past.organization_id != cu.organization_id:

@@ -146,8 +146,8 @@ def test_gala_collaboration_and_revision(client):
     run, steps, _ = run_sync(client)
     assert run.status == "completed", run.error
     keys = [s.step_key for s in steps]
-    assert keys == ["intake", "lessons", "venues", "finance", "venues_revision_1", "finance_revision_1", "outreach",
-                    "recommendation", "verification"]
+    assert keys == ["intake", "lessons", "venues", "finance", "evaluate", "venues_revision_1", "finance_revision_1",
+                    "evaluate_revision_1", "outreach", "recommendation", "verification"]
 
     first_finance = steps[keys.index("finance")]
     assert first_finance.status == "needs_revision"
@@ -163,22 +163,27 @@ def test_gala_collaboration_and_revision(client):
     assert "history:lock_guest_count" in constraints
 
     second = steps[keys.index("finance_revision_1")]
-    assert second.status == "completed" and second.result["data"]["verdict"] == "affordable"
+    assert second.status == "completed" and second.result["data"]["conflicts"] == []
+    assert second.result["data"]["verdict"] == "affordable_with_conditions"  # below the $40,000 target: a warning, not a conflict
     assert second.result["data"]["option_id"] == "chelsea-atelier:reception"
+    assert steps[keys.index("evaluate")].status == "needs_revision" and steps[keys.index("evaluate_revision_1")].status == "completed"
 
     history = run.result["revision_history"]
-    assert [h["verdict"] for h in history] == ["not_affordable_as_planned", "affordable"]
+    assert [h["verdict"] for h in history] == ["not_affordable_as_planned", "affordable_with_conditions"]
+    assert run.result["original_plan"]["venue"] != run.result["revised_plan"]["venue"]
+    assert {r["source"] for r in run.result["revision_reasons"]} >= {"finance"}
     assert run.result["verification"]["passed"] is True
     assert any("synthetic" in c.lower() for c in run.result["recommendation"]["caveats"])
 
 
 def test_finance_numbers_are_deterministic(client):
     run, steps, _ = run_sync(client)
-    budget = run.result["finance"]["budget"]
-    assert budget["total_usd"] == 15525.0  # (1,800 + 150×58 + 3,000) × 1.15
-    assert budget["upfront_cash_usd"] == 6150.0  # 0.3 × (1,800 + 8,700) + 3,000
+    model = run.result["finance"]["model"]
+    assert model["total_cost_usd"] == 16100.0  # (1,800 + 150×58 + 1,500 + 600 + 900 + 500) × 1.15
+    assert model["upfront_cash_usd"] == 4250.0  # 0.3 × (1,800 + 8,700) + 600 marketing + 500 insurance
     assert run.result["finance"]["position"]["available_planning_budget_usd"] == 9938.0
-    assert run.result["finance"]["break_even"]["break_even_attendance"] == 21
+    assert model["break_even_attendance"] == 6
+    assert model["scenarios"]["base"]["net_usd"] == 30742.5
 
 
 def test_outputs_saved_lessons_with_evidence_and_unsent_drafts(client):
@@ -246,9 +251,9 @@ def test_agent_cannot_use_another_agents_tool(client):
 
 def test_member_workflow_skips_finance_by_permission(client):
     run, steps, _ = run_sync(client, role="member")
-    finance = next(s for s in steps if s.step_key == "finance")
-    assert finance.status == "refused" and "view_financials" in finance.error
-    assert not any(s.kind == "revision" and s.to_agent == "fundraising_events" for s in steps)
+    finance_steps = [s for s in steps if s.to_agent == "financial_analysis"]
+    assert finance_steps and all(s.status == "refused" and "view_financials" in s.error for s in finance_steps)
+    assert run.result["finance"] is None  # no ledger figures reach a member's result
     assert any("Skipped for your role" in c for c in run.result["recommendation"]["caveats"])
 
 

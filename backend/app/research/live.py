@@ -13,7 +13,7 @@ fetch_source confirms the page loads.
 
 from __future__ import annotations
 
-from ..agents.contracts import SourceRecord, ToolResult
+from ..agents.contracts import ToolResult
 from ..agents.outputs import SearchHits, VenueHits
 from ..agents.registry import MISSION_SEARCH, PARTNER_SEARCH, VENUE_SEARCH
 from ..ai.router import TaskProfile
@@ -70,11 +70,13 @@ def live_venue_search(ctx, city: str, attendance: int, formats: list) -> ToolRes
     found: VenueHits = _search(
         ctx, "fundraising_events", VENUE_SEARCH, query,
         f"Find up to 5 real event venues in {city} that can host about {attendance} guests as a {fmt_text}. "
-        "Include capacity and prices only if a source states them; otherwise null. "
-        "formats lists which of seated_dinner / reception the venue supports.",
+        "website_url = the venue's official site; source_url = the page where you found the details (may be the same). "
+        "Report capacity, rental price, per-guest catering, and food-and-beverage minimums ONLY if a source states them, "
+        "with the exact wording in capacity_quote / pricing_quote; otherwise null. Never estimate. "
+        "amenities and restrictions: only what sources state. formats: which of seated_dinner / reception it supports.",
         VenueHits,
     )
-    out, sources = [], []
+    out = []
     for i, v in enumerate(found.venues[:5]):
         caps = {}
         if v.capacity_seated:
@@ -84,15 +86,16 @@ def live_venue_search(ctx, city: str, attendance: int, formats: list) -> ToolRes
         usable = [f for f in v.formats if f in formats and (caps.get(f) is None or caps[f] >= attendance)]
         if not usable:
             continue
-        src_id = f"web:venue:{i + 1}"
         out.append({
-            "venue_key": f"live-{i + 1}", "name": v.name, "neighborhood": v.neighborhood, "formats": usable,
-            "capacity": caps, "rental_usd": v.rental_usd, "fnb_per_guest_usd": v.fnb_per_guest_usd, "deposit_pct": None,
-            "notes": (v.notes + (f" Pricing per source: {v.pricing_quote}" if v.pricing_quote else ""))[:600],
-            "source_id": src_id, "source_url": v.url, "verification": "unverified",
+            "venue_key": f"live-{i + 1}", "name": v.name, "address": v.address, "neighborhood": v.neighborhood,
+            "website": v.website_url, "source_url": v.source_url, "formats": usable, "capacity": caps,
+            "capacity_quote": v.capacity_quote, "reported_rental_usd": v.rental_usd, "reported_fnb_per_guest_usd": v.fnb_per_guest_usd,
+            "reported_fnb_minimum_usd": v.fnb_minimum_usd, "pricing_quote": v.pricing_quote,
+            "rental_usd": None, "fnb_per_guest_usd": None, "fnb_minimum_usd": None, "deposit_pct": None,
+            "pricing_status": "unchecked", "capacity_status": "unchecked",
+            "amenities": v.amenities[:8], "restrictions": v.restrictions[:8], "notes": v.notes[:400],
+            "source_id": f"web:venue:{i + 1}", "verification": "unverified",
         })
-        sources.append(SourceRecord(id=src_id, title=v.name, url=v.url, verification="unverified",
-                                    note="From live web search; capacity and prices need confirmation with the venue."))
-    return ToolResult(tool="search_venues", ok=True, data=out, sources=sources,
-                      summary=f"{len(out)} live venue candidates (links checked next)",
-                      warnings=["Live search results: confirm capacity, availability, and pricing directly with each venue."])
+    return ToolResult(tool="search_venues", ok=True, data=out,
+                      summary=f"{len(out)} live venue candidates (websites and figures checked next)",
+                      warnings=["Live search results. Prices and capacity count as published only if the figures appear on a page fetched just now."])

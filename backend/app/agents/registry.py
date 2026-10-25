@@ -49,7 +49,7 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     AgentSpec(
         A.ORCHESTRATOR, "Orchestrator",
         "Reads the board's request, picks the specialists, manages dependencies and revisions, and writes the board-ready recommendation.",
-        ("read_event_plan", "create_event_plan", "verify_final_result"),
+        ("read_event_plan", "create_event_plan", "evaluate_constraints", "verify_final_result"),
         (CLASSIFY, BOARD_RECOMMENDATION, SUMMARY_REPORT),
     ),
     AgentSpec(
@@ -61,15 +61,13 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     AgentSpec(
         A.FUNDRAISING_EVENTS, "Fundraising & Events",
         "Researches venues (Manhattan first), builds fundraising strategy, and prices every option with the budget calculator.",
-        ("search_venues", "fetch_source", "save_venue_candidate", "compute_event_budget", "compute_revenue_scenarios",
-         "get_historical_lessons", "read_event_plan"),
+        ("search_venues", "fetch_source", "save_venue_candidate", "compute_event_model", "get_historical_lessons", "read_event_plan"),
         (VENUE_SEARCH, VENUE_STRATEGY),
     ),
     AgentSpec(
         A.FINANCIAL_ANALYSIS, "Financial Analysis",
         "Analyzes recorded financial data and checks event affordability. All arithmetic is deterministic Python.",
-        ("read_financial_records", "compute_financial_position", "compute_break_even", "compute_sensitivity",
-         "check_event_affordability"),
+        ("read_financial_records", "compute_financial_position", "recompute_event_model", "check_event_affordability"),
         (FINANCE_NARRATIVE,),
     ),
     AgentSpec(

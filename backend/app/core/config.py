@@ -54,7 +54,7 @@ class Settings:
     daily_budget_usd: float = 5.00
     max_model_calls_per_workflow: int = 20
     max_agent_iterations: int = 8
-    max_handoffs_per_run: int = 12
+    max_handoffs_per_run: int = 16
     max_revisions: int = 1
     max_web_searches_per_run: int = 4
     max_page_fetches_per_run: int = 10
@@ -103,7 +103,7 @@ def settings_from_env(load_files: bool = True) -> Settings:
         daily_budget_usd=_float("DAILY_BUDGET_USD", 5.00),
         max_model_calls_per_workflow=_int("MAX_MODEL_CALLS_PER_WORKFLOW", 20),
         max_agent_iterations=_int("MAX_AGENT_ITERATIONS", 8),
-        max_handoffs_per_run=min(_int("MAX_HANDOFFS_PER_RUN", 12), 20),
+        max_handoffs_per_run=min(_int("MAX_HANDOFFS_PER_RUN", 16), 20),
         max_revisions=max(0, min(_int("MAX_REVISIONS", 1), 2)),  # hard cap: never more than 2 rounds
         max_web_searches_per_run=min(_int("MAX_WEB_SEARCHES_PER_RUN", 4), 10),
         max_page_fetches_per_run=min(_int("MAX_PAGE_FETCHES_PER_RUN", 10), 25),

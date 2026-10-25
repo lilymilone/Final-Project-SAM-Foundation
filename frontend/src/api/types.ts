@@ -26,6 +26,11 @@ export type EventPlan = {
   notes: string;
   is_demo: boolean;
   created_at: string;
+  date_end: string | null;
+  ticket_price_usd: number | null;
+  event_format: string | null;
+  instructions: string | null;
+  assumptions: Record<string, number> | null;
 };
 
 export type Flag = { severity: "high" | "medium" | "low"; title: string; detail: string };
@@ -392,4 +397,49 @@ export type Experiment = {
   id: number; kind: string; request: string; research_mode: string; run_a_id: number | null; run_b_id: number | null;
   status: "queued" | "running" | "completed" | "failed"; error: string | null; created_at: string; finished_at: string | null;
   comparison: ExperimentComparison | null;
+};
+
+// ── Event Studio ────────────────────────────────────────────────────────────────
+
+export type Assumption = { value: number | null; kind: "published" | "board" | "history" | "lesson" | "placeholder" | "hypothetical" | "missing"; basis: string };
+export type Scenario = { attendance: number; ticket_revenue_usd: number | null; sponsorship_revenue_usd: number | null; donations_usd: number | null; total_revenue_usd: number | null; total_cost_usd: number; net_usd: number | null; vs_target_usd: number | null };
+export type ModelCheck = { name: string; passed: boolean | null; detail: string; kind: string };
+export type EventModel = {
+  lines: { category: string; amount_usd: number; basis: string }[];
+  subtotal_usd: number; contingency_pct: number; contingency_usd: number; total_cost_usd: number; upfront_cash_usd: number;
+  catering_minimum_applies: boolean; scenarios: Record<"conservative" | "base" | "optimistic", Scenario>;
+  break_even_attendance: number | null; break_even_note: string | null; missing_inputs: string[]; complete: boolean;
+  checks: ModelCheck[]; assumptions: Record<string, Assumption>; attendance: number; max_budget_usd: number | null; target_usd: number | null;
+  scenario_definitions: Record<string, string>; catering_minimum_risk?: { minimum_usd: number; guests: number; overpay_usd: number } | null;
+};
+export type Affordability = { verdict: string; checks: ModelCheck[]; conflicts: { type: string; detail: string; source: string }[]; warnings: string[]; cash_note: string };
+export type PlanSnapshot = {
+  round: number; option_id?: string; venue: string; event_format: string; pricing_status?: string; total_usd?: number; upfront_cash_usd?: number;
+  base_net_usd?: number | null; contingency_pct?: number; verdict?: string | null; finance_status?: string; conflicts?: string[];
+  conflict_sources?: string[]; changes_from_previous?: string | null; rationale?: string | null;
+};
+export type PacketVenue = {
+  name: string; location: string | null; website: string | null; website_status: string | null; verified_at: string | null; source_url: string | null;
+  verification: string | null; capacity: Record<string, number>; capacity_status: string | null; capacity_quote: string | null;
+  pricing_status: string | null; pricing: string | null; amenities: string[]; restrictions: string[]; notes: string | null; shortlist_rank: number | null;
+};
+export type StrategyPacket = {
+  run: { id: number; status: string; research_mode: string | null; strategy: string; started_at: string; duration_ms: number | null; event_plan_id: number | null; options: { use_history?: boolean } | null; error: string | null };
+  overview: { event: Record<string, string | number | null> | null; request: string; interpreted: Record<string, unknown> | null; routing: string | null };
+  recommendation: BoardRecommendation | null;
+  venues: PacketVenue[];
+  shortlist: { option_id: string; venue: string; event_format: string; rank: number; total_usd: number; upfront_cash_usd: number; pricing_status: string; rationale: string; lessons_applied: string[]; verification: string; website: string | null; source_url: string | null }[];
+  sources: { title: string; url: string | null; verification: string; http_status: number | null; retrieved_at: string | null; note: string | null }[];
+  lessons: { kind: string; theme?: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string; events: { id: number; name: string }[] }[];
+  history_checks: { name: string; passed: boolean; detail: string; events: { id: number; name: string }[]; reflection_ids: number[] }[];
+  revision: { original: PlanSnapshot | null; revised: PlanSnapshot | null; reasons: { type: string; detail: string; source: string }[]; history: PlanSnapshot[] };
+  budget_warnings: { level: "conflict" | "warning" | "unknown"; text: string }[];
+  drafts: { id: number; recipient: string; subject: string; body: string; status: "draft" | "reviewed" | "archived"; draft_type: string; is_synthetic_target: boolean | null }[];
+  trace: { n: number; step_key: string; from_agent: string; to_agent: string; kind: string | null; revision_round: number | null; status: string; objective: string; duration_ms: number | null; summary: string | null; models: string[]; input_tokens: number; output_tokens: number; cost_usd: number }[];
+  usage: { model_calls: number; input_tokens: number; cached_input_tokens: number; output_tokens: number; web_search_calls: number; cost_usd: number;
+    by_agent: Record<string, { calls: number; input_tokens: number; cached_input_tokens: number; output_tokens: number; cost_usd: number }>;
+    by_model: Record<string, { calls: number; input_tokens: number; cached_input_tokens: number; output_tokens: number; cost_usd: number }> };
+  verification: { passed: boolean; checks: Check[] } | null;
+  finance_visible: boolean;
+  financial_model?: EventModel; affordability?: Affordability; position?: Record<string, number | string | null>;
 };

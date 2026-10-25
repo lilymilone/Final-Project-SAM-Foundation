@@ -6,7 +6,7 @@ from datetime import date
 from typing import Literal
 
 from fastapi import APIRouter, Depends, status
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -38,6 +38,8 @@ def plan_out(p: EventPlan) -> dict:
         "target_date": p.target_date.isoformat() if p.target_date else None,
         "expected_attendance": p.expected_attendance, "fundraising_goal_usd": p.fundraising_goal_usd,
         "budget_limit_usd": p.budget_limit_usd, "status": p.status, "notes": p.notes, "is_demo": p.is_demo,
+        "date_end": p.date_end.isoformat() if p.date_end else None, "ticket_price_usd": p.ticket_price_usd,
+        "event_format": p.event_format, "instructions": p.instructions, "assumptions": p.assumptions,
         "created_at": p.created_at.isoformat(),
     }
 
@@ -106,13 +108,23 @@ class EventPlanIn(BaseModel):
     expected_attendance: int | None = Field(default=None, ge=0, le=100_000)
     fundraising_goal_usd: float | None = Field(default=None, ge=0, le=100_000_000)
     budget_limit_usd: float | None = Field(default=None, ge=0, le=100_000_000)
-    status: Literal["idea", "planning"] = "idea"
+    date_end: date | None = None
+    ticket_price_usd: float | None = Field(default=None, ge=0, le=100_000)
+    event_format: Literal["seated_dinner", "reception"] | None = None
+    instructions: str | None = Field(default=None, max_length=2000)
+    status: Literal["idea", "planning", "board_review"] = "idea"
     notes: str = Field(default="", max_length=4000)
 
     @field_validator("name", "city", "event_type", "notes")
     @classmethod
     def strip(cls, v: str) -> str:
         return v.strip()
+
+    @model_validator(mode="after")
+    def _dates(self) -> "EventPlanIn":
+        if self.date_end and self.target_date and self.date_end < self.target_date:
+            raise ValueError("The end of the date range must be on or after the start date.")
+        return self
 
 
 @router.get("/events")

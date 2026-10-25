@@ -222,7 +222,7 @@ def test_without_history_skips_event_intelligence(client):
         r = s.get(AgentRun, rid)
     assert r.status == "completed"
     assert "lessons" not in [s for s in run_snapshot(app.state.db, rid)["steps"]]
-    assert r.result["history_constraints"] == [] and r.result["finance"]["budget"]["contingency_pct"] == 0.10
+    assert r.result["history_constraints"] == [] and r.result["finance"]["model"]["contingency_pct"] == 0.10
 
 
 def test_history_cannot_override_finance(client):
@@ -240,7 +240,7 @@ def test_history_cannot_override_finance(client):
     limits = [c for c in rev.payload["constraints"] if c["name"] == "max_total_usd"]
     assert [c["value"] for c in limits] == [18000] and limits[0]["source_agent"] == "financial_analysis"
     assert any(c["name"] == "history:max_total_usd" for c in rev.payload["constraints"])  # history kept, but namespaced
-    assert run.result["finance"]["budget"]["total_usd"] <= 18000
+    assert run.result["finance"]["model"]["total_cost_usd"] <= 18000
     assert run.result["finance"]["position"]["available_planning_budget_usd"] == 9938.0
 
 

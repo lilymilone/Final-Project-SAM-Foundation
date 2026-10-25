@@ -74,6 +74,8 @@ def seed_demo_workspace(db: Session) -> Organization:
             expected_attendance=150,
             fundraising_goal_usd=40000,
             budget_limit_usd=18000,
+            ticket_price_usd=250,
+            instructions="A warm, personal evening honoring Sabrina, with a short talk from a recovery speaker.",
             status="planning",
             notes="Sample plan for the demo. Venue not chosen. Board wants a warm, personal evening.",
             is_demo=True,
@@ -183,6 +185,11 @@ def upgrade_demo_history(db: Session) -> int:
     demo rows and add demo reflections that are missing. Never touches
     non-demo (real) records or any text that is already set."""
     changes = 0
+    plan = db.scalar(select(EventPlan).where(EventPlan.is_demo.is_(True), EventPlan.name.like("Manhattan Spring Gala%")))
+    if plan is not None and plan.ticket_price_usd is None:
+        plan.ticket_price_usd = 250
+        plan.instructions = plan.instructions or "A warm, personal evening honoring Sabrina, with a short talk from a recovery speaker."
+        changes += 1
     for data in DEMO_HISTORY:
         event = db.scalar(select(HistoricalEvent).where(HistoricalEvent.name == data["name"], HistoricalEvent.is_demo.is_(True)))
         if event is None:

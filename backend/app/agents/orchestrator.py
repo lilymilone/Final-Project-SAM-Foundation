@@ -21,6 +21,7 @@ import re
 from typing import Any
 
 from ..ai.llm import StructuredOutputError
+from ..ai.router import BudgetExceededError
 from .base import BaseAgent
 from .contracts import AgentName, AgentResult, AgentTask, Constraint, Finding
 from .outputs import BoardRecommendation, RequestAnalysis
@@ -135,6 +136,8 @@ class _OrchestratorSelf(BaseAgent):
             return self._intake(task, ctx)
         if task.step_key.startswith("recommendation"):
             return self._recommend(task, ctx)
+        if task.step_key.startswith("evaluate"):
+            return self._evaluate(task, ctx)
         if task.step_key == "verification":
             report = task.inputs["report"]
             self.tool(ctx, "verify_final_result", report=report)
@@ -151,7 +154,7 @@ class _OrchestratorSelf(BaseAgent):
         hint = task.inputs.get("intent_hint")
         keywords = keyword_analysis(request)
         warnings: list[str] = []
-        if hint:
+        if hint and not task.inputs.get("interpret"):
             analysis = keywords.model_copy(update={"intent": hint, "rationale": "Intent chosen by the board member."})
             routing = "board"
         else:
@@ -168,12 +171,33 @@ class _OrchestratorSelf(BaseAgent):
             except StructuredOutputError as exc:
                 analysis, routing = keywords, "keyword"
                 warnings.append(f"Model classification failed validation; used keyword routing. ({exc})")
+            except (BudgetExceededError, RunStopped):
+                raise
+            except Exception as exc:  # network or provider outage: interpreting the request has a safe fallback
+                analysis, routing = keywords, "keyword"
+                warnings.append(f"The model could not be reached ({type(exc).__name__}); used keyword routing.")
+            if hint:  # Event Studio fixes the workflow; the model only interprets the details
+                analysis = analysis.model_copy(update={"intent": hint})
+                routing = f"{routing}, workflow set by Event Studio"
         agents = INTENT_AGENTS[analysis.intent]
         return self.result(task, "completed",
                            f"Intent: {analysis.intent.replace('_', ' ')} ({routing} routing). "
                            f"Specialists: {', '.join(a.value.replace('_', ' ') for a in agents) or 'none'}.",
                            warnings=warnings, data={"analysis": analysis.model_dump(), "routing": routing,
                                                     "agents": [a.value for a in agents]})
+
+    def _evaluate(self, task: AgentTask, ctx: RunContext) -> AgentResult:
+        """Step 5: combine Finance's conflicts with checks on neglected history lessons (deterministic)."""
+        res = self.tool(ctx, "evaluate_constraints", finance_conflicts=task.inputs["finance_conflicts"],
+                        lessons=task.inputs["lessons"], assumptions=task.inputs["assumptions"], venue_name=task.inputs["venue_name"])
+        conflicts, checks = res.data["conflicts"], res.data["history_checks"]
+        findings = [Finding(claim=f"{c['source'].upper()} CONFLICT: {c['detail']}", kind="computed") for c in conflicts]
+        findings += [Finding(claim=f"{'PASS' if h['passed'] else 'FAIL'}: {h['name']}. {h['detail']}", kind="computed",
+                             source_ids=[f"event:{i}" for i in h["event_ids"]] + [f"reflection:{i}" for i in h["reflection_ids"]])
+                     for h in checks]
+        summary = ("No conflicts: the plan fits the budget and respects the lessons checked." if not conflicts else
+                   f"{len(conflicts)} conflict(s) to resolve: " + "; ".join(sorted({c['source'] for c in conflicts})) + ".")
+        return self.result(task, "needs_revision" if conflicts else "completed", summary, findings=findings, data=res.data)
 
     def _recommend(self, task: AgentTask, ctx: RunContext) -> AgentResult:
         profile = BOARD_RECOMMENDATION if task.inputs["intent"] == "plan_event" else SUMMARY_REPORT
@@ -224,7 +248,8 @@ class Orchestrator:
         options = options or {}
         use_history = options.get("use_history", True)
         intake = self.dispatch(ctx, self._task(ctx, "intake", A.ORCHESTRATOR, "Understand the request and choose specialists",
-                                               inputs={"request": request, "intent_hint": intent_hint}), from_agent="board")
+                                               inputs={"request": request, "intent_hint": intent_hint,
+                                                       "interpret": bool(options.get("interpret"))}), from_agent="board")
         if intake.status != "completed":
             raise RuntimeError(intake.summary)
         analysis = RequestAnalysis.model_validate(intake.data["analysis"])
@@ -297,12 +322,20 @@ class Orchestrator:
             "unresolved_conflicts": extra.get("unresolved_conflicts", []),
             "event_plan_id": extra.get("event_plan_id"),
             "specialists": {k: {"agent": r.agent.value, "status": r.status, "summary": r.summary} for k, r in results.items()},
-            "finance": {k: results["finance"].data.get(k) for k in ("verdict", "affordability", "budget", "position", "break_even", "sensitivity", "venue", "event_format")}
+            "finance": {k: results["finance"].data.get(k) for k in ("verdict", "affordability", "model", "position", "venue", "event_format", "option_id")}
             if "finance" in results and results["finance"].status in ("completed", "needs_revision") else None,
-            "shortlist": [{"option_id": s["option_id"], "venue": s["venue"]["name"], "event_format": s["event_format"],
-                           "total_usd": s["budget"]["total_usd"], "upfront_cash_usd": s["budget"]["upfront_cash_usd"],
-                           "rationale": s["rationale"], "verification": s["venue"].get("verification"), "source_url": s["venue"].get("source_url")}
-                          for s in (results["venues"].data.get("shortlist") or [])] if "venues" in results else [],
+            "event": extra.get("event"),
+            "venues": extra.get("venues", []),
+            "shortlist": [{"option_id": s["option_id"], "venue": s["venue"]["name"], "event_format": s["event_format"], "rank": s["rank"],
+                           "total_usd": s["model"]["total_cost_usd"], "upfront_cash_usd": s["model"]["upfront_cash_usd"],
+                           "pricing_status": s["venue"].get("pricing_status"), "rationale": s["rationale"],
+                           "lessons_applied": s.get("lessons_applied", []), "verification": s["venue"].get("verification"),
+                           "website": s["venue"].get("website"), "source_url": s["venue"].get("source_url")}
+                          for s in (results["venues"].data.get("shortlist") or [])] if "venues" in results and results["venues"].status == "completed" else [],
+            "original_plan": extra["revision_history"][0] if extra["revision_history"] else None,
+            "revised_plan": extra["revision_history"][-1] if len(extra["revision_history"]) > 1 else None,
+            "revision_reasons": extra.get("revision_reasons", []),
+            "evaluation": extra.get("evaluation"),
             "drafts": (results["outreach"].data.get("drafts") if "outreach" in results else []) or [],
             "lessons": results["lessons"].data.get("lessons") if "lessons" in results else [],
             "disagreements": results["lessons"].data.get("disagreements") if "lessons" in results else [],
@@ -316,15 +349,23 @@ class Orchestrator:
         if event_plan_id:
             got = self.me.tool(ctx, "read_event_plan", event_plan_id=event_plan_id)
             plan = got.data or {}
+
+        def pick(plan_key: str, analysis_value, default=None):
+            return plan.get(plan_key) if plan.get(plan_key) not in (None, "") else (analysis_value if analysis_value not in (None, "") else default)
+
         event = {
             "name": plan.get("name") or "Fundraising event",
-            "city": analysis.city or plan.get("city") or "Manhattan, New York, NY",
-            "attendance": analysis.attendance or plan.get("attendance") or 100,
-            "event_type": canonical_event_type(analysis.event_type or plan.get("event_type")) or "gala",
-            "event_format": analysis.event_format,
-            "budget_limit_usd": analysis.budget_limit_usd or plan.get("budget_limit_usd"),
-            "target_date": plan.get("target_date"),
+            "city": pick("city", analysis.city, "Manhattan, New York, NY"),
+            "attendance": int(pick("attendance", analysis.attendance, 100)),
+            "event_type": canonical_event_type(pick("event_type", analysis.event_type, "gala")) or "gala",
+            "event_format": pick("event_format", analysis.event_format),
+            "budget_limit_usd": pick("budget_limit_usd", analysis.budget_limit_usd),
+            "fundraising_goal_usd": plan.get("fundraising_goal_usd"),
+            "ticket_price_usd": plan.get("ticket_price_usd"),
+            "target_date": plan.get("target_date"), "date_end": plan.get("date_end"),
+            "instructions": plan.get("instructions"),
         }
+        overrides = plan.get("assumptions") or {}
         if not event_plan_id:
             try:
                 made = self.me.tool(ctx, "create_event_plan", name=f"{event['attendance']}-guest {event['event_type']} in {event['city']}",
@@ -334,10 +375,11 @@ class Orchestrator:
             except PermissionError:
                 event_plan_id = None  # the plan still runs; venue candidates just aren't saved
         extra["event_plan_id"] = event_plan_id
+        extra["event"] = event
         focus = f"{event['attendance']}-guest {event['event_type']} in {event['city']}"
 
         contingency, lesson_constraints, lesson_list = None, [], []
-        if use_history:  # the Orchestrator asks Event Intelligence for relevant lessons first
+        if use_history:  # step 2: Event Intelligence retrieves relevant lessons
             lessons = self.dispatch(ctx, self._task(ctx, "lessons", A.EVENT_INTELLIGENCE, f"Retrieve lessons from past events for a {focus}",
                                                     inputs={"focus": focus, "mode": "planning"}))
             results["lessons"] = lessons
@@ -347,76 +389,97 @@ class Orchestrator:
                 lesson_list = lessons.data.get("lessons", [])
         extra["history_constraints"] = [c.model_dump(mode="json") for c in lesson_constraints]
 
-        # An empty list (not None) tells the Events agent that no lessons were provided.
-        base_inputs = {"event": event, "event_plan_id": event_plan_id, "contingency_pct": contingency, "lessons": lesson_list}
+        # Step 3: Events researches venues. An empty lesson list (not None) means "no lessons provided".
+        base_inputs = {"event": event, "event_plan_id": event_plan_id, "contingency_pct": contingency, "lessons": lesson_list,
+                       "assumption_overrides": overrides}
         venues = self.dispatch(ctx, self._task(ctx, "venues", A.FUNDRAISING_EVENTS, f"Research venues and a fundraising strategy for a {focus}",
                                                inputs=base_inputs, constraints=lesson_constraints,
                                                depends_on=["lessons"] if use_history else []))
         results["venues"] = venues
+        extra["venues"] = venues.data.get("venues", []) if venues.status == "completed" else []
         top = venues.data.get("top_choice") if venues.status == "completed" else None
         if top is None:
-            extra["unresolved_conflicts"] = [{"type": "no_venue", "detail": venues.summary}]
+            extra["unresolved_conflicts"] = [{"type": "no_venue", "detail": venues.summary, "source": "events"}]
             return
 
-        finance_inputs = {"budget_limit_usd": event["budget_limit_usd"], "min_contingency_pct": contingency}
-        finance = self.dispatch(ctx, self._task(ctx, "finance", A.FINANCIAL_ANALYSIS, f"Check whether we can afford {top['venue']['name']}",
-                                                inputs={**finance_inputs, "top_choice": top, "revenue": venues.data.get("revenue")},
-                                                depends_on=["venues"]))
-        results["finance"] = finance
-        extra["revision_history"].append(self._history_entry(0, top, finance))
-
+        finance_inputs = {"budget_limit_usd": event["budget_limit_usd"], "fundraising_goal_usd": event["fundraising_goal_usd"],
+                          "min_contingency_pct": contingency}
         round_no = 0
-        while finance.status == "needs_revision" and finance.data.get("conflicts") and round_no < ctx.settings.max_revisions:
+        while True:
+            suffix = "" if round_no == 0 else f"_revision_{round_no}"
+            # Step 4: Finance assesses affordability (it recomputes the model itself).
+            finance = self.dispatch(ctx, self._task(
+                ctx, f"finance{suffix}", A.FINANCIAL_ANALYSIS,
+                f"{'Re-check' if round_no else 'Check'} whether we can afford {top['venue']['name']} ({top['event_format'].replace('_', ' ')})",
+                kind="revision" if round_no else "task", revision_round=round_no, inputs={**finance_inputs, "top_choice": top},
+                depends_on=[venues.step_key]))
+            results["finance"] = finance
+            # Step 5: the Orchestrator evaluates budget and history constraints together (in code).
+            evaluation = self.dispatch(ctx, self._task(
+                ctx, f"evaluate{suffix}", A.ORCHESTRATOR, "Evaluate cost, history, and plan constraints",
+                kind="revision" if round_no else "task", revision_round=round_no,
+                inputs={"finance_conflicts": finance.data.get("conflicts", []) if finance.status in ("completed", "needs_revision") else [],
+                        "lessons": lesson_list, "assumptions": top["model"]["assumptions"], "venue_name": top["venue"]["name"]},
+                depends_on=[finance.step_key]))
+            conflicts = evaluation.data.get("conflicts", [])
+            extra["evaluation"] = evaluation.data
+            extra["revision_history"].append(self._history_entry(round_no, top, finance, conflicts, venues))
+            if round_no == 0 and conflicts:
+                extra["revision_reasons"] = conflicts
+            if not conflicts or round_no >= ctx.settings.max_revisions:
+                break
+            # Step 6: request a revised, lower-cost or lesson-compliant strategy from the Events agent.
             round_no += 1
-            constraints = self._revision_constraints(finance, lesson_constraints, contingency)
-            previous = [{"option_id": s["option_id"], "venue": s["venue"]["name"], "total_usd": s["budget"]["total_usd"]}
+            constraints = self._revision_constraints(conflicts, lesson_constraints, contingency)
+            previous = [{"option_id": s["option_id"], "venue": s["venue"]["name"], "total_usd": s["model"]["total_cost_usd"]}
                         for s in venues.data.get("shortlist", [])]
             venues = self.dispatch(ctx, self._task(
                 ctx, f"venues_revision_{round_no}", A.FUNDRAISING_EVENTS,
-                "Revise the venue plan to resolve Finance's conflicts: " + "; ".join(c["detail"] for c in finance.data["conflicts"]),
-                kind="revision", revision_round=round_no, inputs={**base_inputs, "previous_shortlist": previous},
-                constraints=constraints, depends_on=["finance"]))
+                "Revise the plan to resolve: " + "; ".join(c["detail"] for c in conflicts),
+                kind="revision", revision_round=round_no,
+                inputs={**base_inputs, "previous_shortlist": previous, "candidates": extra["venues"]},
+                constraints=constraints, depends_on=[evaluation.step_key]))
             results["venues"] = venues
             top = venues.data.get("top_choice") if venues.status == "completed" else None
             if top is None:
                 break
-            finance = self.dispatch(ctx, self._task(
-                ctx, f"finance_revision_{round_no}", A.FINANCIAL_ANALYSIS, f"Re-check affordability of the revised plan ({top['venue']['name']})",
-                kind="revision", revision_round=round_no, inputs={**finance_inputs, "top_choice": top, "revenue": venues.data.get("revenue")},
-                depends_on=[f"venues_revision_{round_no}"]))
-            results["finance"] = finance
-            extra["revision_history"].append(self._history_entry(round_no, top, finance))
 
-        if finance.status == "needs_revision":
-            extra["unresolved_conflicts"] = finance.data.get("conflicts", [])
+        if conflicts:
+            extra["unresolved_conflicts"] = conflicts
             if round_no >= ctx.settings.max_revisions:
                 extra["revision_limit_reached"] = True
 
-        if venues.status == "completed" and venues.data.get("shortlist"):
+        if venues.status == "completed" and venues.data.get("shortlist"):  # step 7: unsent venue inquiries
             results["outreach"] = self.dispatch(ctx, self._task(
-                ctx, "outreach", A.PARTNERSHIPS_OUTREACH, "Prepare unsent venue and sponsor inquiry drafts",
-                inputs={"event": event, "shortlist": venues.data["shortlist"], "find_partners": True,
-                        "topic": f"Local sponsors for a mental-health fundraising {event['event_type']} in {event['city']}"},
-                depends_on=[venues.step_key]))
+                ctx, "outreach", A.PARTNERSHIPS_OUTREACH, "Prepare unsent inquiry drafts for the shortlisted venues",
+                inputs={"event": event, "shortlist": venues.data["shortlist"][:3], "find_partners": False}, depends_on=[venues.step_key]))
 
     @staticmethod
-    def _history_entry(round_no: int, top: dict, finance: AgentResult) -> dict:
+    def _history_entry(round_no: int, top: dict, finance: AgentResult, conflicts: list[dict], venues: AgentResult) -> dict:
+        m = top["model"]
         return {"round": round_no, "option_id": top["option_id"], "venue": top["venue"]["name"], "event_format": top["event_format"],
-                "total_usd": top["budget"]["total_usd"], "upfront_cash_usd": top["budget"]["upfront_cash_usd"],
+                "pricing_status": top["venue"].get("pricing_status"), "total_usd": m["total_cost_usd"], "upfront_cash_usd": m["upfront_cash_usd"],
+                "base_net_usd": m["scenarios"]["base"]["net_usd"], "contingency_pct": m["contingency_pct"],
                 "finance_status": finance.status, "verdict": finance.data.get("verdict"),
-                "conflicts": [c["detail"] for c in finance.data.get("conflicts", [])]}
+                "conflicts": [c["detail"] for c in conflicts], "conflict_sources": sorted({c["source"] for c in conflicts}),
+                "changes_from_previous": venues.data.get("changes_from_previous") if round_no else None,
+                "rationale": top.get("rationale")}
 
     @staticmethod
-    def _revision_constraints(finance: AgentResult, lesson_constraints: list[Constraint], contingency: float | None) -> list[Constraint]:
-        out = [Constraint(name="allow_format_change", detail="You may switch between seated dinner and reception to meet the budget.",
+    def _revision_constraints(conflicts: list[dict], lesson_constraints: list[Constraint], contingency: float | None) -> list[Constraint]:
+        out = [Constraint(name="allow_format_change", detail="You may switch between seated dinner and reception to meet the constraints.",
                           source_agent=A.ORCHESTRATOR)]
-        for c in finance.data.get("conflicts", []):
+        for c in conflicts:
             if c["type"] == "over_budget_limit":
                 out.append(Constraint(name="max_total_usd", value=c["max_total_usd"], detail=c["detail"], source_agent=A.FINANCIAL_ANALYSIS))
             elif c["type"] == "upfront_cash_exceeds_available":
                 out.append(Constraint(name="max_upfront_usd", value=c["max_upfront_usd"], detail=c["detail"], source_agent=A.FINANCIAL_ANALYSIS))
+            elif c["type"] == "history_catering_minimum":
+                out.append(Constraint(name="avoid_catering_minimum_risk", value=c.get("conservative_share"), detail=c["detail"],
+                                      source_agent=A.ORCHESTRATOR))
             else:
-                out.append(Constraint(name=c["type"], detail=c["detail"], source_agent=A.FINANCIAL_ANALYSIS))
+                out.append(Constraint(name=c["type"], detail=c["detail"],
+                                      source_agent=A.FINANCIAL_ANALYSIS if c.get("source") == "finance" else A.ORCHESTRATOR))
         out += [c for c in lesson_constraints if c.name != "min_contingency_pct"]
         if contingency is not None:
             out.append(Constraint(name="min_contingency_pct", value=contingency, detail=f"Keep at least {contingency:.0%} contingency (past overruns).",
@@ -433,22 +496,24 @@ class Orchestrator:
                       "reserve_floor_usd", "available_planning_budget_usd"):
                 if pos.get(k) is not None:
                     f[k] = pos[k]
-            b = fin.data.get("budget") or {}
-            for k in ("total_usd", "upfront_cash_usd", "cost_per_guest_usd", "contingency_usd", "subtotal_usd"):
-                if b.get(k) is not None:
-                    f[f"top_option_{k}"] = b[k]
-            be = fin.data.get("break_even") or {}
-            if be.get("break_even_revenue_per_attendee_usd") is not None:
-                f["break_even_revenue_per_attendee_usd"] = be["break_even_revenue_per_attendee_usd"]
+            m = fin.data.get("model") or {}
+            for k in ("total_cost_usd", "upfront_cash_usd", "contingency_usd", "subtotal_usd", "max_budget_usd", "target_usd"):
+                if m.get(k) is not None:
+                    f[f"top_option_{k}"] = m[k]
+            for line in m.get("lines", []):
+                f[f"cost_{line['category'].lower()}_usd"] = line["amount_usd"]
+            for name, sc in (m.get("scenarios") or {}).items():
+                for k in ("ticket_revenue_usd", "sponsorship_revenue_usd", "donations_usd", "total_revenue_usd", "net_usd", "vs_target_usd"):
+                    if sc.get(k) is not None:
+                        f[f"{name}_{k}"] = sc[k]
+            for k, a in (m.get("assumptions") or {}).items():
+                if isinstance(a.get("value"), (int, float)) and not isinstance(a.get("value"), bool):
+                    f[f"assumption_{k}"] = a["value"]
         ven = results.get("venues")
         if ven and ven.status == "completed":
             for o in ven.data.get("options", []):
                 f[f"{o['option_id']}_total_usd"] = o["total_usd"]
                 f[f"{o['option_id']}_upfront_usd"] = o["upfront_cash_usd"]
-            rev = ven.data.get("revenue") or {}
-            for k in ("low", "base", "high", "per_attendee_usd"):
-                if rev.get(k) is not None:
-                    f[f"revenue_{k}_usd" if k != "per_attendee_usd" else "revenue_per_attendee_usd"] = rev[k]
         return f
 
     @staticmethod
@@ -466,12 +531,17 @@ class Orchestrator:
             if key == "finance":
                 item["verdict"] = r.data.get("verdict")
                 item["checks"] = (r.data.get("affordability") or {}).get("checks")
+                model = r.data.get("model") or {}
+                item["scenarios"] = model.get("scenarios")
+                item["break_even_attendance"] = model.get("break_even_attendance")
+                item["missing_inputs"] = model.get("missing_inputs")
             if key == "lessons":
                 item["lessons"] = r.data.get("lessons")
                 item["disagreements"] = r.data.get("disagreements")
             specialists[key] = item
         return {"request": request, "intent": intent, "research_mode": ctx.research_mode, "specialists": specialists,
                 "revision_history": extra.get("revision_history"), "unresolved_conflicts": extra.get("unresolved_conflicts", []),
+                "revision_reasons": extra.get("revision_reasons", []), "event": extra.get("event"),
                 "figures": figures, "option_ids": sorted(option_ids)}
 
     @staticmethod

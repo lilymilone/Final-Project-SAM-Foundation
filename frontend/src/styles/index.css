@@ -233,3 +233,14 @@
     transition: none;
   }
 }
+
+/* ── Print: the Event Strategy Packet prints cleanly ─────────────────────── */
+@media print {
+  aside, .no-print, [aria-label="Open menu"], .butterfly-layer { display: none !important; }
+  .lg\:pl-72 { padding-left: 0 !important; }
+  .app-backdrop { background: #fff !important; }
+  .card { box-shadow: none !important; backdrop-filter: none !important; border-color: #ddd !important; }
+  .print-break-inside-avoid { break-inside: avoid; }
+  details { display: block; }
+  a { color: inherit !important; }
+}

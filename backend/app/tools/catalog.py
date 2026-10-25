@@ -28,6 +28,7 @@ from ..db.models import (
 )
 from ..research import fixtures
 from ..services import calculators as calc
+from ..services import event_model as em
 from ..services.finance import donation_flags
 from . import web
 from .registry import ToolKind, ToolRegistry, ToolSpec
@@ -38,6 +39,7 @@ MISSION_TERMS = {
     "community": ("community", "peer support", "families", "campus", "student", "volunteer", "walk", "awareness"),
 }
 NYC_ALIASES = ("manhattan", "new york", "nyc")
+FOOD_LESSON = re.compile(r"food|cater|f&b|menu|meal|minimum", re.IGNORECASE)
 
 
 def _norm_city(city: str | None) -> str:
@@ -62,6 +64,7 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             "id": e.id, "name": e.name, "event_date": e.event_date.isoformat() if e.event_date else None,
             "location": e.location, "event_type": e.event_type, "attendance": e.attendance,
             "funds_raised_usd": e.funds_raised_usd, "total_cost_usd": e.total_cost_usd, "summary": e.summary,
+            "venue": e.venue, "fundraising_goal_usd": e.fundraising_goal_usd, "sponsorship_usd": e.sponsorship_usd,
             "is_demo": e.is_demo,
         } for e in rows]
         sources = [SourceRecord(id=f"event:{e['id']}", title=e["name"], verification="internal",
@@ -136,8 +139,10 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             return ToolResult(tool="read_event_plan", ok=False, error="Event plan not found.")
         data = {"id": p.id, "name": p.name, "event_type": p.event_type, "city": p.city,
                 "target_date": p.target_date.isoformat() if p.target_date else None,
+                "date_end": p.date_end.isoformat() if p.date_end else None,
                 "attendance": p.expected_attendance, "fundraising_goal_usd": p.fundraising_goal_usd,
-                "budget_limit_usd": p.budget_limit_usd, "notes": p.notes, "is_demo": p.is_demo}
+                "budget_limit_usd": p.budget_limit_usd, "ticket_price_usd": p.ticket_price_usd, "event_format": p.event_format,
+                "instructions": p.instructions, "assumptions": p.assumptions, "notes": p.notes, "is_demo": p.is_demo}
         return ToolResult(tool="read_event_plan", ok=True, summary=p.name, data=data,
                           sources=[SourceRecord(id=f"event_plan:{p.id}", title=p.name, verification="internal")])
 
@@ -161,13 +166,17 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                 if not fits:
                     continue
                 src_id = f"synthetic:venue:{v['key']}"
-                out.append({"venue_key": v["key"], "name": v["name"], "neighborhood": v["neighborhood"], "formats": list(fits),
-                            "capacity": v["capacity"], "rental_usd": v["rental_usd"], "fnb_per_guest_usd": v["fnb_per_guest_usd"],
-                            "deposit_pct": v["deposit_pct"], "fnb_minimum_usd": v.get("fnb_minimum_usd"), "catering": v.get("catering"),
-                            "notes": v["notes"], "source_id": src_id,
-                            "source_url": fixtures.fixture_url("venues", v["key"]), "verification": "synthetic"})
-                sources.append(SourceRecord(id=src_id, title=v["name"], url=fixtures.fixture_url("venues", v["key"]),
-                                            verification="synthetic", note=fixtures.SYNTHETIC_NOTE))
+                url = fixtures.fixture_url("venues", v["key"])
+                out.append({
+                    "venue_key": v["key"], "name": v["name"], "address": v["address"], "neighborhood": v["neighborhood"],
+                    "website": url, "website_status": "synthetic", "source_url": url, "verified_at": None,
+                    "formats": list(fits), "capacity": v["capacity"], "capacity_quote": v["capacity_quote"], "capacity_status": "published",
+                    "pricing_status": v["pricing_status"], "pricing_quote": v["pricing_quote"], "rental_usd": v["rental_usd"],
+                    "fnb_per_guest_usd": v["fnb_per_guest_usd"], "fnb_minimum_usd": v["fnb_minimum_usd"], "deposit_pct": v["deposit_pct"],
+                    "catering": v["catering"], "amenities": v["amenities"], "restrictions": v["restrictions"], "notes": v["notes"],
+                    "source_id": src_id, "verification": "synthetic",
+                })
+                sources.append(SourceRecord(id=src_id, title=v["name"], url=url, verification="synthetic", note=fixtures.SYNTHETIC_NOTE))
             return ToolResult(tool="search_venues", ok=True, data=out, sources=sources,
                               summary=f"{len(out)} synthetic venues fit {attendance} guests ({', '.join(formats)})",
                               warnings=["Synthetic venue fixtures, not live web research."])
@@ -191,43 +200,33 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             row.formats = venue.get("formats")
             row.verification = venue.get("verification")
             row.is_synthetic = venue.get("verification") == "synthetic"
+            row.website = venue.get("website")
+            row.pricing_status = venue.get("pricing_status")
+            row.amenities = venue.get("amenities")
+            row.restrictions = venue.get("restrictions")
+            row.verified_at = venue.get("verified_at")
             row.source_url = venue.get("source_url")
             row.notes = (venue.get("notes") or "")[:1000]
             s.add(row)
             s.flush()
             return ToolResult(tool="save_venue_candidate", ok=True, summary=f"venue candidate #{row.id}", data={"id": row.id})
 
-    def compute_event_budget(venue: dict, event_format: str, attendance: int, contingency_pct: float | None) -> ToolResult:
-        fnb = venue.get("fnb_per_guest_usd")
-        fnb_value = fnb.get(event_format) if isinstance(fnb, dict) else fnb
-        label = "synthetic fixture" if venue.get("verification") == "synthetic" else "published by the venue (per search result)"
-        budget = calc.event_budget(
-            venue_key=venue["venue_key"], venue_name=venue["name"], event_format=event_format, attendance=attendance,
-            rental_usd=venue.get("rental_usd"), fnb_per_guest_usd=fnb_value, deposit_pct=venue.get("deposit_pct"),
-            contingency_pct=contingency_pct, source_label=label, fnb_minimum_usd=venue.get("fnb_minimum_usd"),
-        )
-        return ToolResult(tool="compute_event_budget", ok=True, data=budget.as_dict(),
-                          summary=f"{venue['name']} {event_format}: total ${budget.total_usd:,.0f}, upfront ${budget.upfront_cash_usd:,.0f}")
-
-    def compute_revenue_scenarios(attendance: int, event_type: str) -> ToolResult:
-        events = read_historical_events().data
-        per = calc.revenue_per_attendee_from_history(events, (event_type or "").lower())
-        if per["per_attendee_usd"] is None:
-            return ToolResult(tool="compute_revenue_scenarios", ok=True, data={"per_attendee_usd": None, "basis": per["basis"]},
-                              summary="no revenue history", warnings=[per["basis"]])
-        scen = calc.revenue_scenarios(attendance, per["per_attendee_usd"])
-        scen["basis"] = per["basis"]
-        scen["event_ids"] = per["event_ids"]
-        return ToolResult(tool="compute_revenue_scenarios", ok=True, data=scen,
-                          summary=f"base ${scen['base']:,.0f} from ${scen['per_attendee_usd']:,.2f}/attendee",
-                          sources=[SourceRecord(id=f"event:{i}", title=f"Past event #{i}", verification="internal") for i in per["event_ids"]])
+    def compute_event_model(venue: dict, event_format: str, event: dict, contingency_pct: float | None, overrides: dict | None) -> ToolResult:
+        history = em.history_basis(read_historical_events().data, event.get("event_type") or "")
+        assumptions = em.build_assumptions(venue=venue, event_format=event_format, event=event, history=history,
+                                           contingency_pct=contingency_pct, overrides=overrides)
+        model = em.compute(assumptions, max_budget_usd=event.get("budget_limit_usd"), target_usd=event.get("fundraising_goal_usd"))
+        model["catering_minimum_risk"] = em.catering_minimum_risk(assumptions)
+        model["history_basis"] = history
+        return ToolResult(tool="compute_event_model", ok=True, data=model,
+                          summary=f"{venue['name']} {event_format}: cost ${model['total_cost_usd']:,.0f}, upfront ${model['upfront_cash_usd']:,.0f}")
 
     add("read_event_plan", "Read one event plan.", ToolKind.READ, read_event_plan, Permission.VIEW_DASHBOARD)
     add("create_event_plan", "Create an event plan from a request.", ToolKind.SAVE, create_event_plan, Permission.MANAGE_EVENTS)
     add("search_venues", "Find venues (live web search, or labeled synthetic fixtures).", ToolKind.RESEARCH, search_venues)
     add("save_venue_candidate", "Save a venue candidate to an event plan.", ToolKind.SAVE, save_venue_candidate, Permission.MANAGE_EVENTS)
-    add("compute_event_budget", "Deterministic event budget with labeled assumptions.", ToolKind.COMPUTE, compute_event_budget)
-    add("compute_revenue_scenarios", "Low/base/high revenue from past events.", ToolKind.COMPUTE, compute_revenue_scenarios, Permission.VIEW_DASHBOARD)
+    add("compute_event_model", "Deterministic cost/revenue model with labeled assumptions and three scenarios.", ToolKind.COMPUTE,
+        compute_event_model, Permission.VIEW_DASHBOARD)
 
     # ── Financial Analysis ─────────────────────────────────────────────────────────
 
@@ -246,24 +245,19 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                           summary=f"{pos['months_of_data']} months; available planning budget: "
                                   f"{'$' + format(pos['available_planning_budget_usd'], ',.0f') if pos['available_planning_budget_usd'] is not None else 'not supported'}")
 
-    def compute_break_even(budget: dict, per_attendee_usd: float | None) -> ToolResult:
-        be = calc.break_even(budget, per_attendee_usd)
-        return ToolResult(tool="compute_break_even", ok=True, data=be, summary=f"break-even attendance: {be['break_even_attendance']}")
+    def recompute_event_model(assumptions: dict, max_budget_usd: float | None, target_usd: float | None) -> ToolResult:
+        model = em.compute(assumptions, max_budget_usd=max_budget_usd, target_usd=target_usd)
+        model["catering_minimum_risk"] = em.catering_minimum_risk(assumptions)
+        return ToolResult(tool="recompute_event_model", ok=True, data=model, summary=f"recomputed: cost ${model['total_cost_usd']:,.0f}")
 
-    def compute_sensitivity(budget: dict, per_attendee_usd: float | None) -> ToolResult:
-        rows = calc.sensitivity(budget, per_attendee_usd)
-        return ToolResult(tool="compute_sensitivity", ok=True, data=rows, summary=f"{len(rows)} scenarios")
-
-    def check_event_affordability(budget: dict, position: dict, budget_limit_usd: float | None, break_even_result: dict,
-                                  revenue: dict | None, min_contingency_pct: float | None) -> ToolResult:
-        aff = calc.affordability(budget, position, budget_limit_usd, break_even_result, revenue, min_contingency_pct)
+    def check_event_affordability(model: dict, position: dict, min_contingency_pct: float | None) -> ToolResult:
+        aff = em.affordability(model, position, min_contingency_pct)
         return ToolResult(tool="check_event_affordability", ok=True, data=aff,
                           summary=f"verdict {aff['verdict']}; {len(aff['conflicts'])} conflict(s)")
 
     add("read_financial_records", "Read the ledger.", ToolKind.READ, read_financial_records, Permission.VIEW_FINANCIALS, sensitive=True)
     add("compute_financial_position", "Revenue, expenses, reserve, planning budget.", ToolKind.COMPUTE, compute_financial_position, Permission.VIEW_FINANCIALS)
-    add("compute_break_even", "Break-even attendance and revenue per attendee.", ToolKind.COMPUTE, compute_break_even)
-    add("compute_sensitivity", "Net result under attendance, giving, and cost changes.", ToolKind.COMPUTE, compute_sensitivity)
+    add("recompute_event_model", "Recompute the event model from the given assumptions.", ToolKind.COMPUTE, recompute_event_model)
     add("check_event_affordability", "Pass/fail affordability checks and conflicts.", ToolKind.COMPUTE, check_event_affordability, Permission.VIEW_FINANCIALS)
 
     # ── Donations & Compliance ──────────────────────────────────────────────────────
@@ -326,7 +320,7 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         from ..research.live import live_web_search
         return live_web_search(ctx, query, purpose)
 
-    def fetch_source(url: str, source_id: str) -> ToolResult:
+    def fetch_source(url: str, source_id: str, check_values: list | None = None) -> ToolResult:
         if url.startswith("https://example.org/synthetic/"):
             src = SourceRecord(id=source_id, title=url.rsplit("/", 1)[-1], url=url, verification="synthetic", note=fixtures.SYNTHETIC_NOTE)
             return ToolResult(tool="fetch_source", ok=True, data={"verified": False, "synthetic": True}, sources=[src],
@@ -336,6 +330,7 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                               sources=[SourceRecord(id=source_id, title=url, url=url, verification="unverified", note="not fetched: limit")])
         ctx.counters["page_fetches"] += 1
         page = web.fetch_page(url)
+        page["figures_found"] = web.figures_on_page(page.pop("text", ""), [float(x) for x in (check_values or [])])
         src = SourceRecord(id=source_id, title=page.get("title") or url, url=url, published=page.get("published"),
                            retrieved_at=page.get("retrieved_at"), verification="verified" if page["ok"] else "unverified",
                            http_status=page.get("http_status"), note=None if page["ok"] else page.get("error"))
@@ -395,6 +390,29 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                           summary=f"{len(report.get('checks', [])) - len(failed)}/{len(report.get('checks', []))} checks passed")
 
     add("verify_final_result", "Record the deterministic verification report.", ToolKind.COMPUTE, verify_final_result)
+
+    def evaluate_constraints(finance_conflicts: list, lessons: list, assumptions: dict, venue_name: str) -> ToolResult:
+        """Budget conflicts from Finance plus history checks the plan may have neglected."""
+        conflicts = [dict(c) for c in finance_conflicts]
+        history_checks = []
+        food = [l for l in lessons if FOOD_LESSON.search(f"{l.get('theme') or ''} {l.get('text') or ''}")]
+        risk = em.catering_minimum_risk(assumptions)
+        if food:
+            ok = risk is None
+            detail = (f"{venue_name}'s ${risk['minimum_usd']:,.0f} catering minimum would still be charged if only {risk['guests']} guests "
+                      f"come (${risk['overpay_usd']:,.0f} above per-head cost), the food-cost exposure past events warned about."
+                      if risk else "No binding catering minimum at conservative attendance.")
+            history_checks.append({"name": "Food-cost lesson respected (no binding catering minimum)", "passed": ok, "detail": detail,
+                                   "lessons": [l.get("text") for l in food][:3],
+                                   "event_ids": sorted({i for l in food for i in l.get("event_ids", [])}),
+                                   "reflection_ids": sorted({i for l in food for i in l.get("reflection_ids", [])})})
+            if not ok:
+                conflicts.append({"type": "history_catering_minimum", "source": "history", "detail": detail,
+                                  "conservative_share": em.SCENARIOS["conservative"]["attendance"]})
+        return ToolResult(tool="evaluate_constraints", ok=True, data={"conflicts": conflicts, "history_checks": history_checks},
+                          summary=f"{len(conflicts)} conflict(s): " + ", ".join(sorted({c['source'] for c in conflicts})) if conflicts else "no conflicts")
+
+    add("evaluate_constraints", "Combine Finance conflicts with history checks.", ToolKind.COMPUTE, evaluate_constraints)
 
     return reg
 

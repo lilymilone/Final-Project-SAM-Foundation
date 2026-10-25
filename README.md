@@ -84,7 +84,7 @@ When both keys are present, `AI_PROVIDER=auto` (the default) uses OpenAI. Set `A
 python run.py --port 8001     # if port 8000 is busy
 python run.py --reset-db      # delete the local database and re-create the demo workspace
 python run.py --open          # open the browser automatically
-python -m pytest              # run the automated tests (132 tests, no API key or network needed)
+python -m pytest              # run the automated tests (148 tests, no API key or network needed)
 ```
 
 ---
@@ -141,6 +141,8 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
 | Same analysis again (2,867 input tokens cached) | 2 | 4,838 / 2,733 | $0.0215 | 36 s |
 | Gala plan without history (A/B run A) | 6 | 10,326 / 4,848 | $0.1375 | 90 s |
 | Gala plan with history (A/B run B) | 7 | 16,718 / 7,828 | $0.2115 | 134 s |
+| Event Studio default case, **live** venue research (#10) | 9 (+2 web searches) | 44,690 / 9,450 | $0.2722 | 153 s |
+| Event Studio controlled demo from the UI (#12) | 8 | 21,141 / 8,047 | $0.2322 | 173 s |
 
 **Safeguards** (all tested):
 
@@ -159,6 +161,33 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
   - Finance and donor details are redacted in the run log for roles without access.
 - **Web fetching:** blocks private and loopback addresses and follows at most 3 redirects. Pages are capped at 600 KB with an 8-second timeout.
 - **Logging:** activity logs show objectives, results, tools, tokens, and cost, never prompts or keys.
+
+## Event Studio (the flagship workflow)
+
+Open **Event Studio**, press **Load the default test case**, then **Generate Event Strategy**. The full walkthrough, with screenshots, measured runs, and the five test scenarios, is in **[docs/event_studio_workflow.md](docs/event_studio_workflow.md)**.
+
+- **Inputs:**
+  - name, type, location, and date or date range
+  - attendees, ticket price, fundraising target, maximum planning budget
+  - additional instructions
+- **Two research modes:**
+  - **Live web research:** real venues, with every website fetched. A price or capacity counts as published only if it appears on the page; otherwise the venue shows **"Quote required."**
+  - **Controlled demo:** labeled synthetic venues that reliably show a revision.
+- **Nine visible steps:** interpret, lessons, venues, finance, evaluate constraints, revise (for a budget conflict or a neglected lesson), unsent venue inquiries, verification, and the board-ready plan.
+- **Deterministic financial model:**
+  - **Costs:** venue, catering (including minimums), entertainment, marketing, staffing, insurance, contingency
+  - **Revenue:** tickets, sponsorship, donations
+  - **Results:** net proceeds and break-even
+  - **Scenarios:** conservative, base, and optimistic
+  - **Assumptions:** every one is labeled by source. The board can edit and recalculate them with no AI involved, and save them for the next run.
+  - **Cash:** recorded income is never treated as cash.
+- **Event Strategy Packet:**
+  - overview, recommendation, original vs. revised (with reasons)
+  - venue research, financial model, budget warnings
+  - lessons linked to past events, editable unsent drafts, sources
+  - agent trace, and token usage and cost
+  - downloadable as Markdown or printable to PDF
+- **Evidence:** packets and structured traces of real runs #10 (live) and #12 (controlled demo) are in `docs/evidence/event_studio/`.
 
 ## Our Legacy (institutional memory)
 

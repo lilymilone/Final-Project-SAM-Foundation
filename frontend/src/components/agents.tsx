@@ -92,4 +92,5 @@ export function ModeBadge({ mode }: { mode: string | null | undefined }) {
 }
 
 export const money = (n: number | null | undefined, digits = 0) =>
-  n === null || n === undefined ? "—" : `$${n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
+  n === null || n === undefined ? "—"
+    : `${n < 0 ? "−" : ""}$${Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;

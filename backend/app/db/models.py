@@ -228,7 +228,12 @@ class EventPlan(Base):
     target_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     expected_attendance: Mapped[int | None] = mapped_column(Integer, nullable=True)
     fundraising_goal_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
-    budget_limit_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    budget_limit_usd: Mapped[float | None] = mapped_column(Float, nullable=True)  # maximum planning budget
+    date_end: Mapped[date | None] = mapped_column(Date, nullable=True)
+    ticket_price_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    event_format: Mapped[str | None] = mapped_column(String(20), nullable=True)  # seated_dinner | reception
+    instructions: Mapped[str | None] = mapped_column(Text, nullable=True)
+    assumptions: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)  # board-edited model assumptions
     status: Mapped[str] = mapped_column(String(30), default="idea")  # idea|planning|board_review|completed|cancelled
     notes: Mapped[str] = mapped_column(Text, default="")
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -251,6 +256,11 @@ class VenueCandidate(Base):
     formats: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
     verification: Mapped[str | None] = mapped_column(String(20), nullable=True)  # verified|unverified|synthetic
     is_synthetic: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    website: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    pricing_status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # published | quote_required
+    amenities: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    restrictions: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    verified_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
     source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     notes: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = _created()

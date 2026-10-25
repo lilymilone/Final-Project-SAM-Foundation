@@ -1,0 +1,1267 @@
+{
+  "run": {
+    "id": 10,
+    "status": "completed",
+    "research_mode": "live",
+    "strategy": "auto",
+    "started_at": "2026-10-25T01:44:19.812331",
+    "duration_ms": 152761,
+    "event_plan_id": 2,
+    "options": {
+      "use_history": true,
+      "interpret": true
+    },
+    "error": null
+  },
+  "overview": {
+    "event": {
+      "name": "Smile Like Sab Spring Gala",
+      "city": "Manhattan, New York, NY",
+      "attendance": 150,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": 18000.0,
+      "fundraising_goal_usd": 40000.0,
+      "ticket_price_usd": 250.0,
+      "target_date": "2027-04-17",
+      "date_end": "2027-04-24",
+      "instructions": "A warm, personal evening honoring Sabrina, with a short talk from a recovery speaker. Wheelchair accessible."
+    },
+    "request": "Plan a 150-person fundraising gala in Manhattan, New York, NY between 2027-04-17 and 2027-04-24 for the Sabrina Audrey Milone Foundation, called \"Smile Like Sab Spring Gala\". Ticket price $250, fundraising target $40000, maximum planning budget $18000. Use lessons from previous fundraisers and check whether we can afford it. A warm, personal evening honoring Sabrina, with a short talk from a recovery speaker. Wheelchair accessible.",
+    "interpreted": {
+      "intent": "plan_event",
+      "city": "Manhattan, New York, NY",
+      "attendance": 150,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": 18000.0,
+      "research_topic": null,
+      "rationale": "The request is to plan a fundraising gala and check its affordability using lessons from previous fundraisers. Per the instructions, this is classified as plan_event. The ticket price and fundraising target are stated, but they are not fields in this classification."
+    },
+    "routing": "model, workflow set by Event Studio"
+  },
+  "recommendation": {
+    "headline": "Revise before committing: the Smile Like Sab Spring Gala is not affordable as currently planned.",
+    "recommendation": "Continue planning the 150-person Manhattan gala for April 17\u201324, 2027, but do not proceed to venue commitment on the current figures. Retain Bueno \u2014 Full Restaurant Buyout\u2019s seated dinner as the closest option for further review, not a budget-compliant selection. Its projected $18,700 cost exceeds the $18,000 cap, and wheelchair accessibility and availability remain unconfirmed. Preserve the warm, personal tribute to Sabrina and short recovery talk while obtaining firm costs and clarifying whether the $40,000 goal means gross revenue or net proceeds.",
+    "rationale": [
+      "No supplied venue option meets the cost cap. The latest revision produced no confirmed savings, and switching Bueno to a reception leaves the projected total unchanged at $18,700.",
+      "At the $250 ticket baseline, the supplied base model projects $37,500 in ticket revenue and $46,842.50 in total revenue, including assumed sponsorship and donations. Net proceeds are $28,142.50. The gross goal is reached only in the modeled base case; a net goal is not.",
+      "Conservative net proceeds are $15,537, and optimistic net proceeds are $31,945.25. Positive modeled proceeds do not resolve the budget failure or meet a $40,000 net target.",
+      "Modeled upfront cash of $7,850 fits within the $9,938 available above the $11,562 reserve floor. This supports deposit capacity only\u2014not overall affordability\u2014and depends on confirming the reserve balance and payment timing.",
+      "Bueno\u2019s published seated capacity of 250 accommodates the planned attendance in principle. A suitable wheelchair-accessible layout, speaker facilities, and sound arrangements still require confirmation."
+    ],
+    "options": [
+      {
+        "title": "Revise Bueno\u2019s seated dinner \u2014 preferred research path",
+        "option_id": "live-4:seated_dinner",
+        "summary": "Retain the dinner experience while seeking written catering terms and a revised costed plan. Current projected cost is $18,700; there are no confirmed savings. Return to the board only after Finance reassesses costs, fundraising assumptions, accessibility, and availability."
+      },
+      {
+        "title": "Bueno reception \u2014 format alternative, not a saving",
+        "option_id": "live-4:reception",
+        "summary": "Consider only if the board prefers a reception experience. The supplied total remains $18,700, so this change does not solve the affordability problem."
+      },
+      {
+        "title": "Reopen the venue and format search",
+        "option_id": null,
+        "summary": "If the cap is firm and Bueno cannot meet it, seek a newly quoted plan that preserves the mission-centered program and wheelchair access. No compliant alternative is currently established."
+      }
+    ],
+    "risks": [
+      "Availability within the requested date window and wheelchair accessibility are unknown; both are prerequisites to selection.",
+      "Catering minimums, guest-count changes, volunteer meals, and other contract terms could change the cost.",
+      "Ticket sales, sponsorship, and donations are projections, not secured funds, and are unavailable for the modeled upfront payments.",
+      "Recorded operating expenses exceed income. Protecting the reserve floor remains important even though the event model projects a surplus.",
+      "Cutting the meal could affect the intended guest experience, but there is no evidence that a plated dinner produces higher giving."
+    ],
+    "decisions_for_board": [
+      "Define whether the gala primarily serves fundraising, awareness, or both, and whether the $40,000 target is gross or net.",
+      "Confirm whether the $18,000 cost cap and fundraising target are firm or should be explicitly reconsidered.",
+      "Choose whether to prioritize revising Bueno\u2019s seated dinner or reopen the venue and format search.",
+      "Set spending priorities between the dinner experience and other elements; decide whether supporter and sponsored-access ticket tiers should be developed."
+    ],
+    "next_steps": [
+      "Have a board-designated person review and personalize the existing unsent Bueno inquiry, then send it if appropriate. Request availability across the date range, written accessibility details, layout, speaker facilities, sound arrangements, and complete catering terms.",
+      "Replace entertainment, marketing, staffing, and insurance allowances with quotes. Confirm payment timing, the reserve balance, and written sponsorship commitments before Finance reruns the affordability checks.",
+      "Draft a program under an hour with a personal tribute to Sabrina, a short recovery talk, and a brief optional paddle raise. Keep the speaker\u2019s recovery story separate from any expectation to solicit gifts.",
+      "Use dedicated volunteer check-in roles; establish a guest-count lock two weeks out and seating, printing, and delivery deadlines. Test registration and sound before the event.",
+      "If an auction is included, prepare table-payment collection rather than relying on later pledge follow-up. Seek in-kind support without counting prospective contributions as savings.",
+      "Return the revised plan to the board with verified access, available dates, written costs, and Finance\u2019s updated verdict."
+    ],
+    "lessons_applied": [
+      "Dinner fundraiser: retain the recovery speaker, described as the heart of the evening, while applying the reviewed proposal for a program under an hour.",
+      "Walk fundraiser and dinner fundraiser: reuse the successful volunteer structure and dedicated check-in approach; address registration and late seating changes through deadlines and testing.",
+      "Dinner fundraiser and walk fundraiser: obtain written food pricing and guest-count terms while protecting adequate service. The dinner reflections disagree about spending priorities, so eliminating the plated meal is not treated as an agreed lesson.",
+      "Dinner fundraiser: collect auction payments during the event to reduce reliance on follow-up for uncollected pledges.",
+      "Resource fair/panel and dinner reflections: apply the adopted lesson to agree on fundraising versus awareness priorities before selecting the format and spending."
+    ],
+    "caveats": [
+      "Past events, books, and donations are the synthetic demo dataset.",
+      "Stopped after 1 revision round(s) (loop limit). Remaining conflicts need a board decision.",
+      "The historical lessons and financial ledger are synthetic demo data, not validated operating evidence or Manhattan benchmarks. Formal past-event names were not supplied; descriptive event labels are used above.",
+      "Venue and catering pricing are marked published in the supplied results, but no source links were supplied for independent verification. Requested live research does not establish current availability or a binding quote.",
+      "The contingency and deposit assumptions are defaults, and several operating costs remain placeholders. Historical catering overruns do not validate a whole-event contingency rate.",
+      "Supporting evidence for history-based sponsorship and donation assumptions is not supplied. Finance remains at needs_revision.",
+      "Speaker participation and permission to use personal stories or tribute materials are not established in the supplied data.",
+      "The outreach inquiry is an unsent draft. This recommendation does not send, book, reserve, pay, or approve anything."
+    ]
+  },
+  "venues": [
+    {
+      "name": "Rainbow Room",
+      "location": "30 Rockefeller Plaza, 65th Floor, New York, NY",
+      "website": "https://www.rockefellercenter.com/",
+      "website_status": "verified",
+      "verified_at": "2026-10-25T01:45:06+00:00",
+      "source_url": "https://www.rockefellercenter.com/documents/RC_PrivateEventsGuide.pdf",
+      "verification": "verified",
+      "capacity": {
+        "seated_dinner": 300,
+        "reception": 450
+      },
+      "capacity_status": "unconfirmed",
+      "capacity_quote": "Capacity \u2022 Reception: 450 \u2022 Theater: 350 \u2022 Seated: 300 \u2022 Classroom: 225",
+      "pricing_status": "quote_required",
+      "pricing": "Quote required",
+      "amenities": [
+        "World-class culinary offerings",
+        "Tables, chairs, linens, flatware, & votives",
+        "Green room space available"
+      ],
+      "restrictions": [],
+      "notes": "The venue capacity exceeds 150 guests; the official guide lists seated and reception configurations. Search reported capacity seated dinner, capacity reception but the figure was not found on the fetched page, so it is not used.",
+      "shortlist_rank": null
+    },
+    {
+      "name": "Glasshouse Chelsea",
+      "location": "The Chelsea Arts Tower, New York, NY",
+      "website": "https://www.ghchelsea.com/",
+      "website_status": "verified",
+      "verified_at": "2026-10-25T01:45:07+00:00",
+      "source_url": "https://www.ghchelsea.com/",
+      "verification": "verified",
+      "capacity": {
+        "seated_dinner": 150,
+        "reception": 175
+      },
+      "capacity_status": "published",
+      "capacity_quote": "14th Floor: Cocktail reception: up to 175 guests; Seated dinner: 20-150 guests",
+      "pricing_status": "quote_required",
+      "pricing": "Quote required",
+      "amenities": [
+        "Panoramic vistas of Manhattan and the Hudson River",
+        "State-of-the-art technology on every floor",
+        "Outdoor Terrace on the 21st floor",
+        "Ballroom on each floor"
+      ],
+      "restrictions": [],
+      "notes": "The 14th floor is listed for seated dinners up to 150; the 21st floor is listed for receptions up to 150.",
+      "shortlist_rank": null
+    },
+    {
+      "name": "David Rubenstein Atrium at Lincoln Center",
+      "location": "61 West 62nd Street, New York, NY 10023",
+      "website": "https://yourevent.lincolncenter.org/",
+      "website_status": "verified",
+      "verified_at": "2026-10-25T01:45:07+00:00",
+      "source_url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+      "verification": "verified",
+      "capacity": {
+        "seated_dinner": 150,
+        "reception": 250
+      },
+      "capacity_status": "published",
+      "capacity_quote": "250 Reception | 150 Dinner",
+      "pricing_status": "quote_required",
+      "pricing": "Quote required",
+      "amenities": [
+        "Two 21-foot vertical gardens",
+        "26-foot high ceilings",
+        "42-foot wide dynamic media wall",
+        "In-house theatrical lighting, sound, and projection systems",
+        "Portable staging and flexible seating",
+        "In-house backline inventory"
+      ],
+      "restrictions": [],
+      "notes": "The official venue page lists galas and awards among supported event types.",
+      "shortlist_rank": null
+    },
+    {
+      "name": "Bueno \u2014 Full Restaurant Buyout",
+      "location": "25 Broad Street, New York, NY",
+      "website": "https://www.buenonyc.com/",
+      "website_status": "verified",
+      "verified_at": "2026-10-25T01:45:08+00:00",
+      "source_url": "https://www.buenonyc.com/private-dining",
+      "verification": "verified",
+      "capacity": {
+        "seated_dinner": 250,
+        "reception": 300
+      },
+      "capacity_status": "published",
+      "capacity_quote": "250 seated \u00b7 300 cocktail reception \u00b7 From $6,000",
+      "pricing_status": "published",
+      "pricing": "Full Restaurant Buyout: From $6,000; Cocktail Reception, Passed Appetizers: Starting at $50 per guest",
+      "amenities": [
+        "Historic bank vault, lounge and dining room included in the full restaurant buyout",
+        "Menus customizable to accommodate dietary needs, preferences and budget"
+      ],
+      "restrictions": [],
+      "notes": "The venue lists the buyout starting price and a passed-appetizer package starting price. Its page does not specify whether the package price includes beverages, tax, or service fees.",
+      "shortlist_rank": 1
+    },
+    {
+      "name": "Manhatta \u2014 Whitman Ballroom",
+      "location": "28 Liberty Street, 60th Floor, New York, NY 10005",
+      "website": "https://www.manhattarestaurant.com/",
+      "website_status": "verified",
+      "verified_at": "2026-10-25T01:45:10+00:00",
+      "source_url": "https://www.manhattarestaurant.com/private-event-spaces-nyc/",
+      "verification": "verified",
+      "capacity": {
+        "seated_dinner": 200,
+        "reception": 250
+      },
+      "capacity_status": "published",
+      "capacity_quote": "200 seated; 250 standing",
+      "pricing_status": "quote_required",
+      "pricing": "Quote required",
+      "amenities": [
+        "Northern, western, and southern exposures with views of the island, the Hudson River, and the Bay"
+      ],
+      "restrictions": [],
+      "notes": "Listed dinner food-and-beverage minimum varies by season; the source does not state a currency in the quoted text.",
+      "shortlist_rank": null
+    }
+  ],
+  "shortlist": [
+    {
+      "option_id": "live-4:seated_dinner",
+      "venue": "Bueno \u2014 Full Restaurant Buyout",
+      "event_format": "seated_dinner",
+      "rank": 1,
+      "total_usd": 18700.0,
+      "upfront_cash_usd": 7850.0,
+      "pricing_status": "published",
+      "rationale": "Bueno \u2014 Full Restaurant Buyout in Manhattan\u2019s Financial District is tied with its reception for the lowest supplied total, $18,700. Retaining dinner respects the lesson that cost control need not mean eliminating a plated format. Published seated capacity is 250 for the planned 150 attendees. Supplied upfront cash is $7,850; base net is $28,142.50 and conservative net is $15,537. Venue and catering pricing are marked published, but other cost inputs remain placeholders. This is the closest option, not a compliant selection; wheelchair accessibility and availability remain unconfirmed.",
+      "lessons_applied": [
+        "Mission-centered programming and program length: retain the recovery speaker within a proposed program under an hour, with a warm, personal tribute to Sabrina.",
+        "Food budget exposure and catering commitments: obtain written per-head prices, minimums, inclusions, and guest-count change terms before any selection; budget volunteer food separately.",
+        "Guest-count and seating deadlines: lock attendance two weeks before the gala and establish a seating-review checkpoint.",
+        "Event purpose: agree whether fundraising, awareness, or both should guide format and spending; the dinner lesson does not override Finance\u2019s maximum."
+      ],
+      "verification": "verified",
+      "website": "https://www.buenonyc.com/",
+      "source_url": "https://www.buenonyc.com/private-dining"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Rockefeller Center | NYC's Famous Cultural Landmark & Observation Deck",
+      "url": "https://www.rockefellercenter.com/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:06+00:00",
+      "note": null
+    },
+    {
+      "title": "https://www.rockefellercenter.com/documents/RC_PrivateEventsGuide.pdf",
+      "url": "https://www.rockefellercenter.com/documents/RC_PrivateEventsGuide.pdf",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:06+00:00",
+      "note": null
+    },
+    {
+      "title": "Glasshouse Chelsea | Exclusive Venue | Manhattan Views",
+      "url": "https://www.ghchelsea.com/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:07+00:00",
+      "note": null
+    },
+    {
+      "title": "Lincoln Center Private Event Rentals | Concerts, Galas, & More",
+      "url": "https://yourevent.lincolncenter.org/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:07+00:00",
+      "note": null
+    },
+    {
+      "title": "Rent the David Rubenstein Atrium at Lincoln Center | Venues",
+      "url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:08+00:00",
+      "note": null
+    },
+    {
+      "title": "Bueno | Latin American Restaurant & Bar in FiDi",
+      "url": "https://www.buenonyc.com/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:08+00:00",
+      "note": null
+    },
+    {
+      "title": "Private Dining & Events Financial District NYC | Bueno",
+      "url": "https://www.buenonyc.com/private-dining",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:09+00:00",
+      "note": null
+    },
+    {
+      "title": "Manhatta | New American Restaurant in New York, NY",
+      "url": "https://www.manhattarestaurant.com/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:10+00:00",
+      "note": null
+    },
+    {
+      "title": "Private Event Spaces NYC | Manhatta",
+      "url": "https://www.manhattarestaurant.com/private-event-spaces-nyc/",
+      "verification": "verified",
+      "http_status": 200,
+      "retrieved_at": "2026-10-25T01:45:10+00:00",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "kind": "what_worked",
+      "theme": "Mission-centered programming",
+      "text": "Retain a personal recovery speaker as a candidate centerpiece: the dinner reflection calls the speaker the heart of the night. Resource-fair and panel feedback also supports programming that creates meaningful engagement.",
+      "event_ids": [
+        1,
+        2,
+        3
+      ],
+      "reflection_ids": [
+        1,
+        3,
+        5
+      ],
+      "confidence": "medium",
+      "id": 39,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "what_worked",
+      "theme": "Volunteer structure",
+      "text": "Reuse the volunteer team structure and dedicated check-in approach praised in the walk and dinner reflections.",
+      "event_ids": [
+        1,
+        2
+      ],
+      "reflection_ids": [
+        4,
+        6
+      ],
+      "confidence": "medium",
+      "id": 40,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recurring_problem",
+      "theme": "Food budget exposure",
+      "text": "Food spending repeatedly exceeded expectations or involved overlooked terms; food availability also failed at the walk. Budget control and adequate service both need attention.",
+      "event_ids": [
+        1,
+        2,
+        3
+      ],
+      "reflection_ids": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "confidence": "high",
+      "id": 41,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recurring_problem",
+      "theme": "Late operational changes",
+      "text": "Late inputs and insufficient checks led to rush printing, rush delivery, registration problems, and seating changes.",
+      "event_ids": [
+        1,
+        2
+      ],
+      "reflection_ids": [
+        2,
+        4,
+        7
+      ],
+      "confidence": "high",
+      "id": 42,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Catering commitments",
+      "text": "For the Manhattan gala, compare written catering terms and minimums before selecting a venue, obtain written per-head pricing, and establish a guest-count lock two weeks out. Do not assume cost control requires eliminating the plated dinner; that choice remains contested.",
+      "event_ids": [
+        1,
+        2
+      ],
+      "reflection_ids": [
+        3,
+        6,
+        7
+      ],
+      "confidence": "high",
+      "id": 43,
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Pledge collection",
+      "text": "Plan to collect auction payments at the table rather than relying on post-event follow-up, responding to the dinner's uncollected pledges.",
+      "event_ids": [
+        2
+      ],
+      "reflection_ids": [
+        4
+      ],
+      "confidence": "medium",
+      "id": 44,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Event purpose",
+      "text": "Apply the board's already-adopted lesson: agree whether the gala primarily serves fundraising, awareness, or both, and use that purpose to evaluate format and spending.",
+      "event_ids": [
+        2,
+        3
+      ],
+      "reflection_ids": [
+        5
+      ],
+      "confidence": "medium",
+      "id": 45,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    },
+    {
+      "kind": "recommendation",
+      "theme": "Program length",
+      "text": "Carry forward the already-reviewed proposal for a program under an hour while retaining the recovery speaker. This addresses reported length concerns without removing a praised element.",
+      "event_ids": [
+        2
+      ],
+      "reflection_ids": [
+        3,
+        4
+      ],
+      "confidence": "medium",
+      "id": 46,
+      "events": [
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        }
+      ]
+    }
+  ],
+  "history_checks": [
+    {
+      "name": "Food-cost lesson respected (no binding catering minimum)",
+      "passed": true,
+      "detail": "No binding catering minimum at conservative attendance.",
+      "lessons": [
+        "Food spending repeatedly exceeded expectations or involved overlooked terms; food availability also failed at the walk. Budget control and adequate service both need attention.",
+        "For the Manhattan gala, compare written catering terms and minimums before selecting a venue, obtain written per-head pricing, and establish a guest-count lock two weeks out. Do not assume cost control requires eliminating the plated dinner; that choice remains contested."
+      ],
+      "event_ids": [
+        1,
+        2,
+        3
+      ],
+      "reflection_ids": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ],
+      "events": [
+        {
+          "id": 1,
+          "name": "Spring Awareness Walk (sample)"
+        },
+        {
+          "id": 2,
+          "name": "Butterfly Benefit Dinner (sample)"
+        },
+        {
+          "id": 3,
+          "name": "Campus Wellness Panel (sample)"
+        }
+      ]
+    }
+  ],
+  "revision": {
+    "original": {
+      "round": 0,
+      "option_id": "live-4:seated_dinner",
+      "venue": "Bueno \u2014 Full Restaurant Buyout",
+      "event_format": "seated_dinner",
+      "pricing_status": "published",
+      "total_usd": 18700.0,
+      "upfront_cash_usd": 7850.0,
+      "base_net_usd": 28142.5,
+      "contingency_pct": 0.1,
+      "finance_status": "needs_revision",
+      "verdict": "not_affordable_as_planned",
+      "conflicts": [
+        "Projected cost $18,700 vs maximum $18,000."
+      ],
+      "conflict_sources": [
+        "finance"
+      ],
+      "changes_from_previous": null,
+      "rationale": "Closest available option, not a compliant final selection. Bueno has published pricing and published seated capacity of 250 for the planned 150 guests. Its customizable menus offer a basis for discussing dietary needs and budget. Computed figures are total cost $18,700, upfront cash $7,850, base net $28,142.5, and conservative net $15,537. It exceeds the $18,000 budget limit; all other options have computed totals of $35,200. Written food terms and accessibility must be verified before further selection."
+    },
+    "revised": {
+      "round": 1,
+      "option_id": "live-4:seated_dinner",
+      "venue": "Bueno \u2014 Full Restaurant Buyout",
+      "event_format": "seated_dinner",
+      "pricing_status": "published",
+      "total_usd": 18700.0,
+      "upfront_cash_usd": 7850.0,
+      "base_net_usd": 28142.5,
+      "contingency_pct": 0.1,
+      "finance_status": "needs_revision",
+      "verdict": "not_affordable_as_planned",
+      "conflicts": [
+        "Projected cost $18,700 vs maximum $18,000."
+      ],
+      "conflict_sources": [
+        "finance"
+      ],
+      "changes_from_previous": "The previous shortlist contained Bueno\u2019s seated dinner at $18,700. It remains only as the permitted closest-option fallback because no supplied option satisfies the $18,000 maximum. Bueno\u2019s reception also totals $18,700, so a format switch does not solve the budget issue. The revision makes the budget failure explicit and adds the required written food commitments, guest-count and seating deadlines, table-payment readiness, pre-event testing, delivery deadlines, and purpose/program review. No revised cost or savings have been assumed.",
+      "rationale": "Bueno \u2014 Full Restaurant Buyout in Manhattan\u2019s Financial District is tied with its reception for the lowest supplied total, $18,700. Retaining dinner respects the lesson that cost control need not mean eliminating a plated format. Published seated capacity is 250 for the planned 150 attendees. Supplied upfront cash is $7,850; base net is $28,142.50 and conservative net is $15,537. Venue and catering pricing are marked published, but other cost inputs remain placeholders. This is the closest option, not a compliant selection; wheelchair accessibility and availability remain unconfirmed."
+    },
+    "reasons": [
+      {
+        "type": "over_budget_limit",
+        "detail": "Projected cost $18,700 vs maximum $18,000.",
+        "source": "finance",
+        "max_total_usd": 18000.0
+      }
+    ],
+    "history": [
+      {
+        "round": 0,
+        "option_id": "live-4:seated_dinner",
+        "venue": "Bueno \u2014 Full Restaurant Buyout",
+        "event_format": "seated_dinner",
+        "pricing_status": "published",
+        "total_usd": 18700.0,
+        "upfront_cash_usd": 7850.0,
+        "base_net_usd": 28142.5,
+        "contingency_pct": 0.1,
+        "finance_status": "needs_revision",
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $18,700 vs maximum $18,000."
+        ],
+        "conflict_sources": [
+          "finance"
+        ],
+        "changes_from_previous": null,
+        "rationale": "Closest available option, not a compliant final selection. Bueno has published pricing and published seated capacity of 250 for the planned 150 guests. Its customizable menus offer a basis for discussing dietary needs and budget. Computed figures are total cost $18,700, upfront cash $7,850, base net $28,142.5, and conservative net $15,537. It exceeds the $18,000 budget limit; all other options have computed totals of $35,200. Written food terms and accessibility must be verified before further selection."
+      },
+      {
+        "round": 1,
+        "option_id": "live-4:seated_dinner",
+        "venue": "Bueno \u2014 Full Restaurant Buyout",
+        "event_format": "seated_dinner",
+        "pricing_status": "published",
+        "total_usd": 18700.0,
+        "upfront_cash_usd": 7850.0,
+        "base_net_usd": 28142.5,
+        "contingency_pct": 0.1,
+        "finance_status": "needs_revision",
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $18,700 vs maximum $18,000."
+        ],
+        "conflict_sources": [
+          "finance"
+        ],
+        "changes_from_previous": "The previous shortlist contained Bueno\u2019s seated dinner at $18,700. It remains only as the permitted closest-option fallback because no supplied option satisfies the $18,000 maximum. Bueno\u2019s reception also totals $18,700, so a format switch does not solve the budget issue. The revision makes the budget failure explicit and adds the required written food commitments, guest-count and seating deadlines, table-payment readiness, pre-event testing, delivery deadlines, and purpose/program review. No revised cost or savings have been assumed.",
+        "rationale": "Bueno \u2014 Full Restaurant Buyout in Manhattan\u2019s Financial District is tied with its reception for the lowest supplied total, $18,700. Retaining dinner respects the lesson that cost control need not mean eliminating a plated format. Published seated capacity is 250 for the planned 150 attendees. Supplied upfront cash is $7,850; base net is $28,142.50 and conservative net is $15,537. Venue and catering pricing are marked published, but other cost inputs remain placeholders. This is the closest option, not a compliant selection; wheelchair accessibility and availability remain unconfirmed."
+      }
+    ]
+  },
+  "budget_warnings": [
+    {
+      "level": "conflict",
+      "text": "Within the maximum planning budget: Projected cost $18,700 vs maximum $18,000."
+    },
+    {
+      "level": "warning",
+      "text": "Base case meets the fundraising target: Base-case net $28,142 vs target $40,000."
+    },
+    {
+      "level": "conflict",
+      "text": "Unresolved after the revision limit: Projected cost $18,700 vs maximum $18,000."
+    },
+    {
+      "level": "warning",
+      "text": "Rainbow Room: Quote required. Any venue figure in the model is a hypothetical estimate."
+    },
+    {
+      "level": "warning",
+      "text": "Glasshouse Chelsea: Quote required. Any venue figure in the model is a hypothetical estimate."
+    },
+    {
+      "level": "warning",
+      "text": "David Rubenstein Atrium at Lincoln Center: Quote required. Any venue figure in the model is a hypothetical estimate."
+    },
+    {
+      "level": "warning",
+      "text": "Manhatta \u2014 Whitman Ballroom: Quote required. Any venue figure in the model is a hypothetical estimate."
+    }
+  ],
+  "drafts": [
+    {
+      "id": 17,
+      "recipient": "Bueno \u2014 Full Restaurant Buyout",
+      "subject": "Inquiry: Smile Like Sab Spring Gala, April 2027",
+      "body": "Hello Bueno team,\n\nI\u2019m reaching out on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab) to ask about hosting our Smile Like Sab Spring Gala at Bueno. We\u2019re planning a warm, personal evening honoring Sabrina, including a short talk from a recovery speaker, for approximately 150 guests.\n\nWe\u2019re considering dates between April 17 and April 24, 2027. Could you let us know whether the restaurant is available for a full buyout on any date in that range? We\u2019re interested in a seated dinner and would appreciate details on:\n\n- Seated capacity for a full buyout\n- The current starting price for the buyout and the passed-appetizer package\n- Whether the package price includes beverages, tax, or service fees\n- Any deposit requirements\n- Accessibility, including wheelchair access\n\nThank you for any information you can share. We look forward to learning whether Bueno may be a fit for the gala.\n\nWarmly,\n[Board member name]\nSabrina Audrey Milone Foundation (Smile Like Sab)\n[Phone]",
+      "status": "draft",
+      "draft_type": "venue_inquiry",
+      "is_synthetic_target": false
+    }
+  ],
+  "trace": [
+    {
+      "n": 1,
+      "step_key": "intake",
+      "from_agent": "board",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Understand the request and choose specialists",
+      "duration_ms": 2913,
+      "summary": "Intent: plan event (model, workflow set by Event Studio routing). Specialists: event intelligence, fundraising events, financial analysis, partnerships outreach.",
+      "models": [
+        "gpt-6-luna"
+      ],
+      "input_tokens": 745,
+      "output_tokens": 105,
+      "cost_usd": 0.000127
+    },
+    {
+      "n": 2,
+      "step_key": "lessons",
+      "from_agent": "orchestrator",
+      "to_agent": "event_intelligence",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Retrieve lessons from past events for a 150-guest gala in Manhattan, New York, NY",
+      "duration_ms": 26359,
+      "summary": "The sample records suggest retaining a strong mission-centered program and volunteer team while tightening catering contracts, guest-count deadlines, and pledge collection for the proposed 150-guest Manhattan gala. Food spending is a repeated risk, but board members differ on how to balance cost control with the donor experience. These are demo records, not validated Manhattan benchmarks.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 3199,
+      "output_tokens": 1964,
+      "cost_usd": 0.027636
+    },
+    {
+      "n": 3,
+      "step_key": "venues",
+      "from_agent": "orchestrator",
+      "to_agent": "fundraising_events",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Research venues and a fundraising strategy for a 150-guest gala in Manhattan, New York, NY",
+      "duration_ms": 44241,
+      "summary": "Bueno \u2014 Full Restaurant Buyout is the closest option, but no venue is ready for selection. Its computed total of $18,700 exceeds the $18,000 budget limit, and written catering commitments and wheelchair accessibility remain unconfirmed. Recommend pursuing clarification only, not commitment, while the board confirms whether fundraising, awareness, or both is the primary purpose.",
+      "models": [
+        "gpt-6-luna",
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 25201,
+      "output_tokens": 2637,
+      "cost_usd": 0.043775
+    },
+    {
+      "n": 4,
+      "step_key": "finance",
+      "from_agent": "orchestrator",
+      "to_agent": "financial_analysis",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "needs_revision",
+      "objective": "Check whether we can afford Bueno \u2014 Full Restaurant Buyout (seated dinner)",
+      "duration_ms": 11064,
+      "summary": "Bueno \u2014 Full Restaurant Buyout is not affordable as planned under the computed checks. The projected cost of $18,700 exceeds the $18,000 maximum planning budget, and the base-case net of $28,142.50 falls below the $40,000 fundraising target. Upfront cash passes the reserve-based affordability check, but that does not resolve the budget and fundraising shortfalls.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 1613,
+      "output_tokens": 780,
+      "cost_usd": 0.011831
+    },
+    {
+      "n": 5,
+      "step_key": "evaluate",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "needs_revision",
+      "objective": "Evaluate cost, history, and plan constraints",
+      "duration_ms": 2,
+      "summary": "1 conflict(s) to resolve: finance.",
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "n": 6,
+      "step_key": "venues_revision_1",
+      "from_agent": "orchestrator",
+      "to_agent": "fundraising_events",
+      "kind": "revision",
+      "revision_round": 1,
+      "status": "completed",
+      "objective": "Revise the plan to resolve: Projected cost $18,700 vs maximum $18,000.",
+      "duration_ms": 22706,
+      "summary": "No supplied option meets Finance\u2019s $18,000 maximum. Retain Bueno\u2019s seated dinner only as the closest option for further review\u2014not as a budget-compliant recommendation. Its supplied total is $18,700, and switching to its reception does not reduce that figure. Confirm the gala\u2019s fundraising and awareness priorities before further spending decisions.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 5196,
+      "output_tokens": 1264,
+      "cost_usd": 0.025628
+    },
+    {
+      "n": 7,
+      "step_key": "finance_revision_1",
+      "from_agent": "orchestrator",
+      "to_agent": "financial_analysis",
+      "kind": "revision",
+      "revision_round": 1,
+      "status": "needs_revision",
+      "objective": "Re-check whether we can afford Bueno \u2014 Full Restaurant Buyout (seated dinner)",
+      "duration_ms": 12588,
+      "summary": "Bueno \u2014 Full Restaurant Buyout is not affordable as planned under the computed checks. The projected cost of $18,700 exceeds the $18,000 maximum, and the base-case net proceeds of $28,142.50 fall short of the $40,000 fundraising target. Upfront cash fits within the available planning budget, and all modeled scenarios produce a positive net, but those strengths do not resolve the failed checks.",
+      "models": [
+        "gpt-6.1-sol"
+      ],
+      "input_tokens": 1613,
+      "output_tokens": 824,
+      "cost_usd": 0.008407
+    },
+    {
+      "n": 8,
+      "step_key": "evaluate_revision_1",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "revision",
+      "revision_round": 1,
+      "status": "needs_revision",
+      "objective": "Evaluate cost, history, and plan constraints",
+      "duration_ms": 3,
+      "summary": "1 conflict(s) to resolve: finance.",
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "n": 9,
+      "step_key": "outreach",
+      "from_agent": "orchestrator",
+      "to_agent": "partnerships_outreach",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Prepare unsent inquiry drafts for the shortlisted venues",
+      "duration_ms": 4588,
+      "summary": "One unsent venue inquiry draft for the Smile Like Sab Spring Gala. The event date is provided as a range, so the draft asks about availability across that range.",
+      "models": [
+        "gpt-6-luna"
+      ],
+      "input_tokens": 730,
+      "output_tokens": 384,
+      "cost_usd": 0.000265
+    },
+    {
+      "n": 10,
+      "step_key": "recommendation",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Write the board-ready recommendation",
+      "duration_ms": 28270,
+      "summary": "Revise before committing: the Smile Like Sab Spring Gala is not affordable as currently planned.",
+      "models": [
+        "gpt-6-astra"
+      ],
+      "input_tokens": 6393,
+      "output_tokens": 1492,
+      "cost_usd": 0.154505
+    },
+    {
+      "n": 11,
+      "step_key": "verification",
+      "from_agent": "orchestrator",
+      "to_agent": "orchestrator",
+      "kind": "task",
+      "revision_round": 0,
+      "status": "completed",
+      "objective": "Verify the final result in code",
+      "duration_ms": 2,
+      "summary": "All checks passed.",
+      "models": [],
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    }
+  ],
+  "usage": {
+    "model_calls": 9,
+    "input_tokens": 44690,
+    "cached_input_tokens": 1610,
+    "output_tokens": 9450,
+    "web_search_calls": 2,
+    "cost_usd": 0.272174,
+    "by_agent": {
+      "orchestrator": {
+        "calls": 2,
+        "input_tokens": 7138,
+        "cached_input_tokens": 0,
+        "output_tokens": 1597,
+        "cost_usd": 0.154632
+      },
+      "event_intelligence": {
+        "calls": 1,
+        "input_tokens": 3199,
+        "cached_input_tokens": 0,
+        "output_tokens": 1964,
+        "cost_usd": 0.027636
+      },
+      "fundraising_events": {
+        "calls": 3,
+        "input_tokens": 30397,
+        "cached_input_tokens": 0,
+        "output_tokens": 3901,
+        "cost_usd": 0.069404
+      },
+      "financial_analysis": {
+        "calls": 2,
+        "input_tokens": 3226,
+        "cached_input_tokens": 1610,
+        "output_tokens": 1604,
+        "cost_usd": 0.020238
+      },
+      "partnerships_outreach": {
+        "calls": 1,
+        "input_tokens": 730,
+        "cached_input_tokens": 0,
+        "output_tokens": 384,
+        "cost_usd": 0.000265
+      }
+    },
+    "by_model": {
+      "gpt-6-luna": {
+        "calls": 3,
+        "input_tokens": 23219,
+        "cached_input_tokens": 0,
+        "output_tokens": 1914,
+        "cost_usd": 0.023406
+      },
+      "gpt-6.1-sol": {
+        "calls": 5,
+        "input_tokens": 15078,
+        "cached_input_tokens": 1610,
+        "output_tokens": 6044,
+        "cost_usd": 0.094264
+      },
+      "gpt-6-astra": {
+        "calls": 1,
+        "input_tokens": 6393,
+        "cached_input_tokens": 0,
+        "output_tokens": 1492,
+        "cost_usd": 0.154505
+      }
+    }
+  },
+  "verification": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "Every dollar figure traces to a calculation",
+        "passed": true,
+        "detail": "All figures match computed results."
+      },
+      {
+        "name": "No claims that anything was sent, booked, or paid",
+        "passed": true,
+        "detail": "None found."
+      },
+      {
+        "name": "Options come from the Events agent's research",
+        "passed": true,
+        "detail": "All options are real candidates."
+      },
+      {
+        "name": "All outreach drafts remain unsent",
+        "passed": true,
+        "detail": "1 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+      },
+      {
+        "name": "Every lesson cites real events or reflections",
+        "passed": true,
+        "detail": "8 lesson(s) checked against the database."
+      },
+      {
+        "name": "Sources are labeled by provenance",
+        "passed": true,
+        "detail": "11 internal, 5 verified"
+      },
+      {
+        "name": "Specialists finished",
+        "passed": true,
+        "detail": "All specialists completed."
+      }
+    ],
+    "unsupported_figures": []
+  },
+  "finance_visible": true,
+  "financial_model": {
+    "lines": [
+      {
+        "category": "Venue",
+        "amount_usd": 6000.0,
+        "basis": "Rental fee from the venue's published information (page verified)"
+      },
+      {
+        "category": "Catering",
+        "amount_usd": 7500.0,
+        "basis": "150 guests \u00d7 $50.00"
+      },
+      {
+        "category": "Entertainment",
+        "amount_usd": 1500.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Marketing",
+        "amount_usd": 600.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Staffing",
+        "amount_usd": 900.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      {
+        "category": "Insurance",
+        "amount_usd": 500.0,
+        "basis": "Placeholder planning figure; replace with quotes"
+      }
+    ],
+    "subtotal_usd": 17000.0,
+    "contingency_pct": 0.1,
+    "contingency_usd": 1700.0,
+    "total_cost_usd": 18700.0,
+    "upfront_cash_usd": 7850.0,
+    "catering_minimum_applies": false,
+    "scenarios": {
+      "conservative": {
+        "attendance": 120,
+        "ticket_revenue_usd": 30000.0,
+        "sponsorship_revenue_usd": 2500.0,
+        "donations_usd": 1737.0,
+        "total_revenue_usd": 34237.0,
+        "total_cost_usd": 18700.0,
+        "net_usd": 15537.0,
+        "vs_target_usd": -24463.0
+      },
+      "base": {
+        "attendance": 150,
+        "ticket_revenue_usd": 37500.0,
+        "sponsorship_revenue_usd": 5000.0,
+        "donations_usd": 4342.5,
+        "total_revenue_usd": 46842.5,
+        "total_cost_usd": 18700.0,
+        "net_usd": 28142.5,
+        "vs_target_usd": -11857.5
+      },
+      "optimistic": {
+        "attendance": 150,
+        "ticket_revenue_usd": 37500.0,
+        "sponsorship_revenue_usd": 7500.0,
+        "donations_usd": 5645.25,
+        "total_revenue_usd": 50645.25,
+        "total_cost_usd": 18700.0,
+        "net_usd": 31945.25,
+        "vs_target_usd": -8054.75
+      }
+    },
+    "break_even_attendance": 25,
+    "break_even_note": null,
+    "missing_inputs": [],
+    "complete": true,
+    "checks": [
+      {
+        "name": "Within the maximum planning budget",
+        "passed": false,
+        "detail": "Projected cost $18,700 vs maximum $18,000.",
+        "kind": "over_budget_limit"
+      },
+      {
+        "name": "Base case covers its costs",
+        "passed": true,
+        "detail": "Base-case net $28,142.",
+        "kind": "negative_net"
+      },
+      {
+        "name": "Conservative case avoids a loss",
+        "passed": true,
+        "detail": "Conservative net $15,537.",
+        "kind": "conservative_loss"
+      },
+      {
+        "name": "Break-even below expected attendance",
+        "passed": true,
+        "detail": "Break-even at 25 guests vs 150 expected.",
+        "kind": "break_even_too_high"
+      },
+      {
+        "name": "Base case meets the fundraising target",
+        "passed": false,
+        "detail": "Base-case net $28,142 vs target $40,000.",
+        "kind": "below_target"
+      }
+    ],
+    "assumptions": {
+      "attendance": {
+        "value": 150,
+        "kind": "board",
+        "basis": "Entered in Event Studio"
+      },
+      "ticket_price_usd": {
+        "value": 250.0,
+        "kind": "board",
+        "basis": "Entered in Event Studio"
+      },
+      "venue_rental_usd": {
+        "value": 6000.0,
+        "kind": "published",
+        "basis": "Rental fee from the venue's published information (page verified)"
+      },
+      "catering_per_guest_usd": {
+        "value": 50.0,
+        "kind": "published",
+        "basis": "Per-guest catering from the venue's published information (page verified)"
+      },
+      "catering_minimum_usd": {
+        "value": null,
+        "kind": "missing",
+        "basis": "No published minimum (confirm with the venue)"
+      },
+      "entertainment_usd": {
+        "value": 1500.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "marketing_usd": {
+        "value": 600.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "staffing_usd": {
+        "value": 900.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "insurance_usd": {
+        "value": 500.0,
+        "kind": "placeholder",
+        "basis": "Placeholder planning figure; replace with quotes"
+      },
+      "contingency_pct": {
+        "value": 0.1,
+        "kind": "placeholder",
+        "basis": "Default planning contingency"
+      },
+      "sponsorship_usd": {
+        "value": 5000.0,
+        "kind": "history",
+        "basis": "Average sponsorship at comparable past events: Butterfly Benefit Dinner (sample)"
+      },
+      "donations_per_attendee_usd": {
+        "value": 28.95,
+        "kind": "history",
+        "basis": "Past guest giving per attendee (Butterfly Benefit Dinner (sample), $278.95) minus the ticket price"
+      },
+      "deposit_pct": {
+        "value": 0.5,
+        "kind": "placeholder",
+        "basis": "Placeholder deposit assumption"
+      }
+    },
+    "attendance": 150,
+    "max_budget_usd": 18000.0,
+    "target_usd": 40000.0,
+    "scenario_definitions": {
+      "conservative": "attendance 80%, sponsorship 50%, donations 50%",
+      "base": "attendance 100%, sponsorship 100%, donations 100%",
+      "optimistic": "attendance 100%, sponsorship 150%, donations 130%"
+    },
+    "catering_minimum_risk": null
+  },
+  "affordability": {
+    "verdict": "not_affordable_as_planned",
+    "checks": [
+      {
+        "name": "Within the maximum planning budget",
+        "passed": false,
+        "detail": "Projected cost $18,700 vs maximum $18,000.",
+        "kind": "over_budget_limit"
+      },
+      {
+        "name": "Base case covers its costs",
+        "passed": true,
+        "detail": "Base-case net $28,142.",
+        "kind": "negative_net"
+      },
+      {
+        "name": "Conservative case avoids a loss",
+        "passed": true,
+        "detail": "Conservative net $15,537.",
+        "kind": "conservative_loss"
+      },
+      {
+        "name": "Break-even below expected attendance",
+        "passed": true,
+        "detail": "Break-even at 25 guests vs 150 expected.",
+        "kind": "break_even_too_high"
+      },
+      {
+        "name": "Base case meets the fundraising target",
+        "passed": false,
+        "detail": "Base-case net $28,142 vs target $40,000.",
+        "kind": "below_target"
+      },
+      {
+        "name": "Upfront cash fits the available planning budget",
+        "passed": true,
+        "detail": "Deposits and prepaid costs $7,850 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "kind": "upfront_cash_exceeds_available"
+      }
+    ],
+    "conflicts": [
+      {
+        "type": "over_budget_limit",
+        "detail": "Projected cost $18,700 vs maximum $18,000.",
+        "source": "finance",
+        "max_total_usd": 18000.0
+      }
+    ],
+    "warnings": [
+      "Base-case net $28,142 vs target $40,000."
+    ],
+    "cash_note": "Recorded income is not treated as cash on hand. Only the recorded reserve balance above the board's reserve floor is counted as available for deposits."
+  },
+  "position": {
+    "months_of_data": 5,
+    "period_start": "2026-05",
+    "period_end": "2026-09",
+    "total_income_usd": 17400.0,
+    "total_expense_usd": 19270.0,
+    "net_usd": -1870.0,
+    "average_monthly_expense_usd": 3854.0,
+    "reserve_usd": 21500.0,
+    "reserve_guideline_months": 3.0,
+    "available_planning_budget_usd": 9938.0,
+    "available_planning_budget_basis": "Reserve $21,500 minus a 3-month floor ($11,562 = 3 \u00d7 $3,854 average monthly expense).",
+    "reserve_floor_usd": 11562.0
+  }
+}
