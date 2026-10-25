@@ -292,7 +292,7 @@ The walkthrough, with the threat model, test results, and screenshots, is in **[
 
   Every refusal is written to a redacted security log.
 - **Nothing leaves in the foundation's name.** No send, contact, schedule, publish, book, or pay tool exists, and the registry refuses those names. Drafts have no "sent" status.
-- **Limits the chair controls:** spend per workflow and per day, model calls, handoffs, tool calls, retries, output tokens, duration, revisions, searches, and page fetches.
+- **Limits the chair controls:** spend per workflow and per day, model calls, handoffs, tool calls, retries, output tokens, duration, revisions, searches, page fetches, and contact pages per outreach draft.
   - Each is clamped to a hard cap that only a code change can move.
   - A run that hits a limit stops and keeps its finished steps, labeled partial. It never shows a fake success, and no butterflies play.
 - **Course key:** `PORTKEY_API_KEY` only ever reaches `gpt-6-luna`. The router and the provider wrapper each enforce this.
@@ -307,6 +307,32 @@ The walkthrough, with the threat model, test results, and screenshots, is in **[
   - `python -m backend.scripts.run_safety_suite`: the adversarial suite, scripted model, free
   - `python -m backend.scripts.run_live_safety`: real models, about $1
   - `python -m backend.scripts.export_safety_evidence`: writes the evidence files
+
+## The Boss Agent and proactive outreach drafts
+
+The walkthrough is in **[docs/boss_outreach_workflow.md](docs/boss_outreach_workflow.md)**.
+
+- **The Orchestrator acts as the AI Chief of Staff.** It delegates to the specialists, and each one returns a structured **AgentReport** covering:
+  - findings, sources, assumptions, and risks
+  - financial considerations
+  - whether outreach is appropriate, which other agents should contribute, and whether board or professional review is needed
+
+  The Orchestrator reads these reports and decides, in a logged `outreach_decision` step, which venues, charities, research initiatives, or sponsors deserve a draft.
+- **Drafts are prepared automatically.** Nobody has to ask for an email each time.
+  - The Partnerships & Outreach agent looks up **public inquiry details on each organization's own website**. An email is used only if it is listed there; otherwise the draft says *"Contact email not verified — use official contact page."*
+  - It never guesses addresses, never names people, and never adds phone numbers. Code rejects any draft that does.
+- **Drafts for Board Review** (Partnerships & Outreach) shows, for every draft:
+  - the contact and where it came from
+  - why the Orchestrator recommended it, and which agent found it
+  - financial considerations and sources
+  - the model that wrote it, and the review status (AI Draft, Needs Review, Reviewed, Archived)
+
+  Board members can edit, copy the email, subject, or message, mark reviewed, and archive. **Nothing can be sent, and no money can be committed.**
+- **Live runs** (evidence in [docs/evidence/boss_outreach/](docs/evidence/boss_outreach/)):
+  - **Venue inquiry, run #40 ($0.21):** one draft, with an events email published on the venue's own page.
+  - **Charity introductions, run #43 ($0.10):** three drafts; contact pages only, no emails invented.
+  - **Sponsor search, run #44 ($0.07):** found no business sponsor and drafted introductions to other charities' galas instead. This is a known gap, described in the walkthrough.
+- **Microsoft Outlook** is a planned future integration, read-only and with no send permission. It is not implemented: see [docs/roadmap.md](docs/roadmap.md).
 
 ## Impact & Evaluation (real-user pilot)
 

@@ -153,3 +153,36 @@ FIXTURE_PAGES = {f"{kind}/{o['key']}": o for kind, pool in (("organizations", OR
 
 def fixture_url(kind: str, key: str) -> str:
     return f"https://example.org/synthetic/{kind}/{key}"
+
+
+# Synthetic contact details for the labeled demo fixtures. Every address is on example.org (reserved for documentation),
+# so none can reach a real organization. Some fixtures list only a contact page, to show the "not verified" path.
+_CONTACTS = {
+    "venues/lavender-loft": {"email": "events@lavender-loft.example.org", "department": "Events team"},
+    "venues/hudson-garden-room": {"email": None},
+    "venues/chelsea-atelier": {"email": "privateevents@chelsea-atelier.example.org", "department": "Private events"},
+    "venues/gramercy-hall": {"email": None},
+    "venues/harbor-salon": {"email": "events@harbor-salon.example.org", "department": "Events team"},
+    "organizations/harbor-minds": {"email": "partnerships@harbor-minds.example.org", "department": "Partnerships"},
+    "organizations/nourish-research": {"email": None},
+    "organizations/belonging-walk": {"email": "info@belonging-walk.example.org"},
+    "organizations/campus-minds": {"email": "hello@campus-minds.example.org"},
+    "organizations/body-image-fund": {"email": None},
+    "sponsors/lilac-florists": {"email": "community@lilac-florists.example.org", "department": "Community giving"},
+    "sponsors/hudson-wellness": {"email": None},
+}
+for _kind, _pool, _key in (("venues", VENUES, "key"), ("organizations", ORGANIZATIONS, "key"), ("sponsors", SPONSORS, "key")):
+    for _o in _pool:
+        _c = _CONTACTS.get(f"{_kind}/{_o[_key]}")
+        if _c is not None:
+            _o["contact"] = {**_c, "contact_page": fixture_url(_kind, _o[_key]) + "/contact"}
+
+
+def fixture_by_url(url: str | None) -> dict | None:
+    """The fixture behind an example.org/synthetic URL (venues, organizations, or sponsors)."""
+    if not url or "/synthetic/" not in url:
+        return None
+    path = url.split("/synthetic/", 1)[1].split("/contact")[0]
+    kind, _, key = path.partition("/")
+    pool = {"venues": VENUES, "organizations": ORGANIZATIONS, "sponsors": SPONSORS}.get(kind, [])
+    return next((o for o in pool if o["key"] == key), None)

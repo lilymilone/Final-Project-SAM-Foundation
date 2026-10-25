@@ -36,7 +36,7 @@ DATA_SCOPES: dict[str, frozenset[str]] = {
     "fundraising_events": frozenset({"general", "public_web", "event_plan", "board_lessons"}),
     "financial_analysis": frozenset({"general", "financial_records", "event_plan"}),
     "donations_compliance": frozenset({"general", "donor_records"}),
-    "partnerships_outreach": frozenset({"general", "research_findings", "drafts"}),
+    "partnerships_outreach": frozenset({"general", "research_findings", "drafts", "public_web"}),  # public_web: official contact pages only
     "event_intelligence": frozenset({"general", "board_records", "board_lessons"}),
 }
 

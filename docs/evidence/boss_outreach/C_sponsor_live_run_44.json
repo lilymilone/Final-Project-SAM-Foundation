@@ -1,0 +1,226 @@
+{
+  "workflow": "C_sponsor_live",
+  "run_id": 44,
+  "status": "completed",
+  "error": null,
+  "cost_usd": 0.074185,
+  "model_calls": 5,
+  "route": [
+    [
+      "board",
+      "orchestrator",
+      "intake"
+    ],
+    [
+      "orchestrator",
+      "mission_discovery",
+      "research"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "outreach_decision"
+    ],
+    [
+      "orchestrator",
+      "partnerships_outreach",
+      "outreach"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "recommendation"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "verification"
+    ]
+  ],
+  "reports": {
+    "research": {
+      "outreach": {
+        "appropriate": true,
+        "reason": "3 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+        "candidates": [
+          "WithAll\u2019s Keys in Bloom Gala",
+          "National Eating Disorders Association Gala 2026",
+          "Project Blackbird Gala"
+        ]
+      },
+      "additional_agents": [
+        {
+          "agent": "partnerships_outreach",
+          "reason": "Draft introductory messages to the promising opportunities."
+        },
+        {
+          "agent": "financial_analysis",
+          "reason": "State what the foundation could responsibly consider supporting, if the board's role allows financial access."
+        }
+      ],
+      "approval": {
+        "board_review": false,
+        "professional_review": false,
+        "reasons": []
+      },
+      "financial_considerations": [
+        "National Eating Disorders Association Gala 2026: known costs T, h, e,  , p, a, g, e,  , l, i, s, t, s,  , \", P, r, i, c, e,  , $, 1, ,, 5, 0, 0,  , -,  , $, 5, 0, ,, 0, 0, 0, \",  , w, i, t, h, o, u, t,  , e, x, p, l, a, i, n, i, n, g,  , t, h, e,  , t, i, e, r, s, ."
+      ]
+    },
+    "outreach": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "Drafts prepared; nothing is sent. A person reviews and sends them outside SAM SPACE.",
+        "candidates": [
+          "WithAll\u2019s Keys in Bloom Gala",
+          "National Eating Disorders Association Gala 2026",
+          "Project Blackbird Gala"
+        ]
+      },
+      "additional_agents": [],
+      "approval": {
+        "board_review": true,
+        "professional_review": false,
+        "reasons": [
+          "Every draft needs a person's review before anyone contacts the organization."
+        ]
+      },
+      "financial_considerations": []
+    }
+  },
+  "decision": {
+    "trigger": "3 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+    "selected": [
+      "finding:25",
+      "finding:26",
+      "finding:27"
+    ],
+    "skipped": [
+      {
+        "name": "NEDA Annual Gala",
+        "reason": "Needs research, source unverified"
+      }
+    ],
+    "provenance": {
+      "finding:25": {
+        "found_by": "mission_discovery",
+        "reason": "Mission Discovery rated it: Possible fit. Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+        "related_findings": [
+          "A fundraising event supporting WithAll and its eating-disorder recovery and prevention work.",
+          "WithAll shows strong alignment with eating-disorder support and prevention. However, its Minnesota gala does not meet the current request for Manhattan business sponsors.",
+          "Set this source aside unless the board expands the search beyond Manhattan."
+        ],
+        "financial_considerations": [],
+        "category": "partner"
+      },
+      "finding:26": {
+        "found_by": "mission_discovery",
+        "reason": "Mission Discovery rated it: Possible fit. Aligned, but alignment is partial.",
+        "related_findings": [
+          "A gala presented by the National Eating Disorders Association.",
+          "This is the most relevant source for discovering potential Manhattan sponsor leads, but it is not itself a business sponsor. The snippet\u2019s business names are useful research leads only, not confirmed prospects or evidence of willingness to support the foundation.",
+          "Verify the six business names against the official gala sponsor materials before building an outreach shortlist."
+        ],
+        "financial_considerations": [
+          "Published costs: T; h; e; ; p; a; g; e; ; l; i; s; t; s; ; \"; P; r; i; c; e; ; $; 1; ,; 5; 0; 0; ; -; ; $; 5; 0; ,; 0; 0; 0; \"; ; w; i; t; h; o; u; t; ; e; x; p; l; a; i; n; i; n; g; ; t; h; e; ; t; i; e; r; s; ."
+        ],
+        "category": "partner"
+      },
+      "finding:27": {
+        "found_by": "mission_discovery",
+        "reason": "Mission Discovery rated it: Possible fit. Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+        "related_findings": [
+          "A mental-health gala associated with Project Blackbird\u2019s aim to de-stigmatize eating-disorder and mental-health conversation within underrepresented communities.",
+          "Project Blackbird\u2019s stated anti-stigma mission aligns strongly with the foundation\u2019s mental-health and eating-disorder purposes. Its Washington, D.C. gala does not supply verified Manhattan business sponsor prospects.",
+          "Set this source aside for the current local sponsor search."
+        ],
+        "financial_considerations": [],
+        "category": "partner"
+      }
+    }
+  },
+  "drafts": [
+    {
+      "id": 62,
+      "recipient_org": "Project Blackbird Gala",
+      "category": "partner",
+      "draft_type": "community_program",
+      "status_label": "AI Draft",
+      "subject": "Learning about Project Blackbird\u2019s anti-stigma work",
+      "contact": {
+        "organization": "Project Blackbird Gala",
+        "department": "Partnerships",
+        "email": "partnerships@projectblackbirdinc.org",
+        "contact_page_url": null,
+        "source_url": "https://www.projectblackbirdinc.org/gala/",
+        "verified_at": "2026-10-25T23:03:58+00:00",
+        "status": "verified_email",
+        "confidence": "high",
+        "display": "partnerships@projectblackbirdinc.org",
+        "notes": [
+          "Stopped after 2 page(s): page-fetch limit for this run reached. Other contact pages were not checked."
+        ]
+      },
+      "found_by_agent": "mission_discovery",
+      "recommendation_reason": "Mission Discovery rated it: Possible fit. Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+      "financial_considerations": [],
+      "model_used": "gpt-6.1-sol",
+      "body": "Dear Project Blackbird team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus includes mental health awareness, eating disorder research and support, and community-building initiatives.\n\nProject Blackbird\u2019s aim to de-stigmatize eating-disorder and mental-health conversation within underrepresented communities resonates with those purposes. We learned about your gala at the International Spy Museum in Washington, D.C., and would appreciate learning more about your programs and their impact.\n\nOur current sponsor search is focused on Manhattan, so your gala falls outside that scope. Should our board consider broader collaboration, we would want to understand the available pathways first. We also encountered references to gala sponsorship and program-book advertising, but have not confirmed whether those options are available.\n\nWould you be willing to share a brief program overview and clarify whether there are opportunities for another foundation to explore collaboration? We are seeking information only and are not committing to funding or participation.\n\nThank you for your consideration.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
+    },
+    {
+      "id": 61,
+      "recipient_org": "National Eating Disorders Association Gala 2026",
+      "category": "partner",
+      "draft_type": "community_program",
+      "status_label": "AI Draft",
+      "subject": "Inquiry about public NEDA Gala sponsor materials",
+      "contact": {
+        "organization": "National Eating Disorders Association Gala 2026",
+        "department": null,
+        "email": null,
+        "contact_page_url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+        "source_url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+        "verified_at": "2026-10-25T23:03:54+00:00",
+        "status": "website_only",
+        "confidence": "low",
+        "display": "Contact email not verified \u2014 use official contact page.",
+        "notes": [
+          "robots.txt asks automated tools not to read /, so it was not read.",
+          "No contact page or public email was found; the official website is listed instead."
+        ]
+      },
+      "found_by_agent": "mission_discovery",
+      "recommendation_reason": "Mission Discovery rated it: Possible fit. Aligned, but alignment is partial.",
+      "financial_considerations": [
+        "Published costs: T; h; e; ; p; a; g; e; ; l; i; s; t; s; ; \"; P; r; i; c; e; ; $; 1; ,; 5; 0; 0; ; -; ; $; 5; 0; ,; 0; 0; 0; \"; ; w; i; t; h; o; u; t; ; e; x; p; l; a; i; n; i; n; g; ; t; h; e; ; t; i; e; r; s; ."
+      ],
+      "model_used": "gpt-6.1-sol",
+      "body": "Dear National Eating Disorders Association team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus includes mental health awareness, eating disorder research and support, and community-building initiatives.\n\nWe found the listing for your 2026 Gala at Guastavino\u2019s in New York. As our board researches potential Manhattan business partners, we would like to rely on official public materials rather than unverified sponsor references.\n\nWe would also welcome information about NEDA\u2019s programs, their impact, and how another foundation might explore mission-aligned support or collaboration. This is an introductory information request, not a funding or participation commitment.\n\nCould you point us to an official public gala sponsor list and an overview of your programs or collaboration opportunities? We would treat any listed businesses only as research leads, without assuming their interest in supporting our foundation.\n\nThank you for helping us approach this research thoughtfully.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
+    },
+    {
+      "id": 60,
+      "recipient_org": "WithAll\u2019s Keys in Bloom Gala",
+      "category": "partner",
+      "draft_type": "community_program",
+      "status_label": "AI Draft",
+      "subject": "Learning about WithAll\u2019s recovery and prevention work",
+      "contact": {
+        "organization": "WithAll\u2019s Keys in Bloom Gala",
+        "department": null,
+        "email": "hello@withall.org",
+        "contact_page_url": "https://withall.org/contact-us/",
+        "source_url": "https://withall.org/spring-event/",
+        "verified_at": "2026-10-25T23:03:46+00:00",
+        "status": "verified_email",
+        "confidence": "medium",
+        "display": "hello@withall.org",
+        "notes": []
+      },
+      "found_by_agent": "mission_discovery",
+      "recommendation_reason": "Mission Discovery rated it: Possible fit. Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+      "financial_considerations": [],
+      "model_used": "gpt-6.1-sol",
+      "body": "Dear WithAll team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus includes mental health awareness, eating disorder research and support, and community-building initiatives.\n\nWithAll\u2019s eating-disorder recovery and prevention work aligns with those purposes. We learned about your Keys in Bloom Gala in Golden Valley, Minnesota, and would welcome a better understanding of the programs it supports and their impact.\n\nOur current sponsor research is focused on Manhattan, so the gala is outside that geographic scope. If our board considers broader opportunities, information about your stated event sponsorship options and any cross-organization collaboration pathways would help us assess relevance. We are seeking information only, without a commitment to participation or funding.\n\nWould you be willing to share a brief overview of your programs and available ways for another foundation to learn more or explore collaboration?\n\nThank you for your time and consideration.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
+    }
+  ]
+}

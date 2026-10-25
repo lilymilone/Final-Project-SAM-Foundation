@@ -25,6 +25,13 @@ PROHIBITED_ACTIONS: dict[str, str] = {
     "schedule_outreach": "Schedule outreach",
     "publish_message": "Publish messages",
     "make_commitment": "Make commitments on the foundation's behalf",
+    "reply_email": "Reply to an email",
+    "forward_message": "Forward a message",
+    "submit_contact_form": "Submit a website contact form",
+    "schedule_outbound_communication": "Schedule an outbound communication",
+    "transfer_funds": "Transfer money",
+    "allocate_funds": "Allocate or commit charitable funds",
+    "sign_contract": "Enter a contract",
 }
 
 ALLOWED_CAPABILITIES: tuple[str, ...] = (

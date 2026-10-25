@@ -167,6 +167,7 @@ def run_detail(run_id: int, cu: CurrentUser = Depends(current_user), db: Session
             "duration_ms": h.duration_ms, "error": h.error, "redacted": redacted,
             "constraints": (h.payload or {}).get("constraints", []),
             "result": None if redacted or h.result is None else h.result,
+            "report": None if redacted else h.report,
             "tool_calls": [{"id": t.id, "tool": t.tool_name, "allowed": t.allowed, "ok": t.ok, "duration_ms": t.duration_ms,
                             "summary": None if redacted else t.result_summary, "denial": t.denial_reason, "error": t.error}
                            for t in tools if t.handoff_id == h.id],

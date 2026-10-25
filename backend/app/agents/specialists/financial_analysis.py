@@ -196,6 +196,16 @@ class FinancialAnalysisAgent(BaseAgent):
         if any(r.get("is_demo") for r in records.data):
             assumptions.append("Figures come from the synthetic demo ledger.")
 
+        if task.inputs.get("mode") == "support_capacity":  # context for possible charitable support: code only, no model
+            avail = position.get("available_planning_budget_usd")
+            considerations = [
+                f"Available unrestricted planning budget above the reserve floor: ${avail:,.0f}. A starting point for board discussion, "
+                "not approval to give or spend." if avail is not None else "The available planning budget cannot be computed from the records.",
+                "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+                "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."]
+            return self.result(task, "completed", considerations[0], assumptions=assumptions, sources=sources,
+                               findings=[Finding(claim=c, kind="computed", source_ids=["ledger"]) for c in considerations[:2]],
+                               data={"position": position, "considerations": considerations})
         choice = task.inputs.get("top_choice")
         if not choice:  # a financial review without an event
             return self._review(task, ctx, position, sources, assumptions)

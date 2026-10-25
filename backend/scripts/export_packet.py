@@ -35,7 +35,9 @@ def trace(db: Database, run_id: int) -> dict:
         "handoffs": [{"id": h.id, "step_key": h.step_key, "kind": h.kind, "revision_round": h.revision_round, "from": h.from_agent,
                       "to": h.to_agent, "objective": h.objective, "status": h.status, "duration_ms": h.duration_ms,
                       "constraints": (h.payload or {}).get("constraints", []), "summary": (h.result or {}).get("summary"),
-                      "warnings": (h.result or {}).get("warnings", [])} for h in steps],
+                      "warnings": (h.result or {}).get("warnings", []),
+                      # the structured AgentReport to the Orchestrator; donor-facing steps stay out of exported evidence
+                      "report": "[redacted: donor data]" if h.report and h.to_agent == "donations_compliance" else h.report} for h in steps],
         "tool_calls": [{"handoff_id": t.handoff_id, "agent": t.agent, "tool": t.tool_name, "allowed": t.allowed, "ok": t.ok,
                         "duration_ms": t.duration_ms, "summary": t.result_summary, "denial": t.denial_reason, "error": t.error} for t in tools],
         "model_calls": [{"handoff_id": c.handoff_id, "agent": c.agent, "task": c.task, "tier": c.requested_tier, "selected_model": c.selected_model,

@@ -18,15 +18,17 @@ model-call cap, and the spending budget guard against runaway loops.
 from __future__ import annotations
 
 import re
+from datetime import date, datetime, timezone
 from typing import Any
 
 from ..ai.llm import StructuredOutputError
 from ..ai.router import BudgetExceededError
+from ..core.permissions import Permission
 from .base import BaseAgent
 from .contracts import AgentName, AgentResult, AgentTask, Constraint, Finding
 from .outputs import BoardRecommendation, RequestAnalysis
 from .registry import BOARD_RECOMMENDATION, CLASSIFY, PARTNERSHIP_STRATEGY, SUMMARY_REPORT
-from .runtime import RunContext, RunStopped, close_handoff, open_handoff
+from .runtime import RunContext, RunStopped, close_handoff, open_handoff, save_report
 from .specialists.donations_compliance import DonationsComplianceAgent
 from .specialists.event_intelligence import EventIntelligenceAgent
 from .specialists.financial_analysis import FinancialAnalysisAgent
@@ -36,6 +38,7 @@ from .specialists.partnerships_outreach import PartnershipsOutreachAgent
 from .verification import collect_amounts, collect_numbers, verify_workflow
 from ..mission import mission_instructions
 from ..services.opportunities import requested_count
+from ..tools.web import dates_in_text
 
 A = AgentName
 
@@ -118,6 +121,31 @@ PARTNERSHIP_INSTRUCTIONS = """Write a board-ready partnership opportunity packet
 CANONICAL_TYPES = ("gala", "dinner", "walk", "panel", "concert", "auction", "brunch", "reception", "run")
 
 
+def _past_date(dates_text: str | None, today: date) -> str | None:
+    """The latest date written in the text, if every date in it is before today (a recurring "every Monday" has none)."""
+    found = dates_in_text(dates_text or "")
+    if not found or max(found) >= today.isoformat():
+        return None
+    d = date.fromisoformat(max(found))
+    return f"{d:%B} {d.day}, {d.year}"
+
+
+def _requested_categories(research: AgentResult | None) -> set[str] | None:
+    """When the board asked only for sponsors, only sponsor findings may get a draft."""
+    types = set(((research.data.get("plan") or {}) if research else {}).get("opportunity_types") or [])
+    return {"sponsor"} if types == {"sponsor"} else None
+
+
+def _clip_sentences(text: str, limit: int) -> str:
+    """Whole sentences up to the limit (never cut mid-word); a single long sentence is cut at a word boundary with an ellipsis."""
+    text = " ".join(text.split())
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    end = max(cut.rfind(". "), cut.rfind("; "))
+    return cut[:end + 1] if end > limit // 3 else cut.rsplit(" ", 1)[0] + "…"
+
+
 def canonical_event_type(value: str | None) -> str | None:
     """'fundraising gala' -> 'gala'. Keeps unknown types as given."""
     if not value:
@@ -166,6 +194,8 @@ class _OrchestratorSelf(BaseAgent):
             return self._evaluate(task, ctx)
         if task.step_key == "select":
             return self._select(task, ctx)
+        if task.step_key.startswith("outreach_decision"):
+            return self._outreach_decision(task, ctx)
         if task.step_key == "verification":
             report = task.inputs["report"]
             self.tool(ctx, "verify_final_result", report=report)
@@ -240,6 +270,29 @@ class _OrchestratorSelf(BaseAgent):
                    f"(requested {picked['count_requested']}).")
         return self.result(task, "completed", summary, findings=findings, warnings=picked["warnings"], data=picked)
 
+    def _outreach_decision(self, task: AgentTask, ctx: RunContext) -> AgentResult:
+        """The Boss Agent reads the specialists' structured reports and decides, in code, which opportunities deserve an
+        unsent draft, recording why. Nothing is contacted: the result only tells Outreach what to draft for board review."""
+        cands = task.inputs["candidates"]
+        limit = int(task.inputs.get("limit") or 3)
+        selected, skipped = [], []
+        for c in cands:
+            if c["eligible"] and len(selected) < limit:
+                selected.append(c)
+            else:
+                skipped.append({**c, "skip_reason": c.get("skip_reason") or ("limit of " + str(limit) + " drafts per run" if c["eligible"]
+                                                                            else "not promising enough yet")})
+        findings = [Finding(claim=f"OUTREACH RECOMMENDED: {c['name']}. {c['reason']}", kind="recommendation") for c in selected]
+        findings += [Finding(claim=f"NO DRAFT: {c['name']}: {c['skip_reason']}.", kind="computed") for c in skipped]
+        summary = (f"Delegating {len(selected)} unsent draft(s) to Partnerships & Outreach: " + ", ".join(c["name"] for c in selected) + "."
+                   if selected else "No opportunity qualifies for an outreach draft; the reason for each is recorded.")
+        return self.result(task, "completed", summary, findings=findings,
+                           assumptions=["Drafts are for board review only. Nothing is sent, and no money or commitment is offered."],
+                           data={"trigger": task.inputs.get("trigger"), "selected": [c["target_id"] for c in selected],
+                                 "skipped": [{"name": c["name"], "reason": c["skip_reason"]} for c in skipped],
+                                 "provenance": {c["target_id"]: {k: c.get(k) for k in ("found_by", "reason", "related_findings",
+                                                                                       "financial_considerations", "category")} for c in selected}})
+
     def _recommend(self, task: AgentTask, ctx: RunContext) -> AgentResult:
         intent = task.inputs["intent"]
         profile = {"plan_event": BOARD_RECOMMENDATION, "partnership_outreach": PARTNERSHIP_STRATEGY}.get(intent, SUMMARY_REPORT)
@@ -258,6 +311,8 @@ class _OrchestratorSelf(BaseAgent):
 class Orchestrator:
     def __init__(self) -> None:
         self.completed: list[dict] = []  # every finished handoff, kept so a stopped run still shows what was verified
+        self.reports: dict = {}  # step_key -> AgentReport: what each specialist reported to the Boss Agent
+        self.decisions: list[dict] = []  # what the Boss Agent decided after reading the reports, and why
         self.me = _OrchestratorSelf()
         self.agents: dict[AgentName, BaseAgent] = {
             A.ORCHESTRATOR: self.me,
@@ -285,6 +340,8 @@ class Orchestrator:
         finally:
             ctx.current_handoff_id = None
         close_handoff(ctx, handoff_id, result)
+        if task.agent != A.ORCHESTRATOR:  # every specialist reports to the Boss Agent in the same structured form
+            self.reports[task.step_key] = save_report(ctx, task, result, handoff_id)
         self.completed.append({"step_key": task.step_key, "agent": task.agent.value, "status": result.status, "summary": result.summary,
                                "warnings": result.warnings[:5], "findings": [f.claim for f in result.findings][:8]})
         if result.status == "stopped":
@@ -334,6 +391,7 @@ class Orchestrator:
                          if follow_up else "Research mission-aligned opportunities and explain their fit")
             results["research"] = self.dispatch(ctx, self._task(ctx, "research", A.MISSION_DISCOVERY, objective[:400],
                                                                 inputs={"topic": analysis.research_topic or request, "follow_up": follow_up}))
+            self._proactive_outreach(ctx, results, extra, request)
         elif intent == "partnership_outreach":
             self._partnership(ctx, analysis, request, options, results, extra)
         elif intent == "financial_review":
@@ -395,6 +453,8 @@ class Orchestrator:
             "options": {"use_history": use_history, "historical_event_id": options.get("historical_event_id")},
             "history_constraints": extra.get("history_constraints", []),
             "events_consulted": extra.get("events_consulted", []),
+            "boss_decisions": self.decisions,
+            "outreach_drafts": results["outreach"].data.get("drafts", []) if "outreach" in results else [],
             "quantitative_observations": results["lessons"].data.get("quantitative_observations", [])
             if "lessons" in results and results["lessons"].status == "completed" else [],
             "events_strategy": {k: results["venues"].data.get(k) for k in ("fundraising_strategy", "logistics_notes", "changes_from_previous")}
@@ -552,10 +612,20 @@ class Orchestrator:
         extra["proposal_comparison"] = self._compare_proposals(extra["revision_history"])
         extra["authorized_budget_usd"] = event["budget_limit_usd"]
 
-        if venues.status == "completed" and venues.data.get("shortlist"):  # step 7: unsent venue inquiries
-            results["outreach"] = self.dispatch(ctx, self._task(
-                ctx, "outreach", A.PARTNERSHIPS_OUTREACH, "Prepare unsent inquiry drafts for the shortlisted venues",
-                inputs={"event": event, "shortlist": venues.data["shortlist"][:3], "find_partners": False}, depends_on=[venues.step_key]))
+        if venues.status == "completed" and venues.data.get("shortlist"):  # step 7: the Boss Agent decides; Outreach drafts
+            report = self.reports.get(venues.step_key)
+            candidates = self._venue_candidates(venues, results.get("finance"), event, report)
+            decision = self.dispatch(ctx, self._task(
+                ctx, "outreach_decision", A.ORCHESTRATOR, "Decide which shortlisted venues deserve an inquiry draft",
+                inputs={"candidates": candidates, "trigger": report.outreach.reason if report else None}, depends_on=[venues.step_key]))
+            self.decisions.append({"step": "outreach_decision", **decision.data})
+            chosen = [x for x in venues.data["shortlist"] if f"venue:{x['venue']['venue_key']}" in decision.data["selected"]]
+            if chosen:
+                results["outreach"] = self.dispatch(ctx, self._task(
+                    ctx, "outreach", A.PARTNERSHIPS_OUTREACH, "Research public inquiry details and prepare unsent inquiry drafts for the "
+                    "venues the Orchestrator selected", inputs={"event": event, "shortlist": chosen, "find_partners": False,
+                                                              "provenance": decision.data["provenance"]},
+                    depends_on=["outreach_decision"]))
 
     def _extract_document(self, ctx: RunContext, intake: AgentResult, analysis: RequestAnalysis, options: dict) -> dict:
         """Upload -> Financial Analysis organizes figures -> code verifies nothing entered the records unreviewed."""
@@ -581,6 +651,36 @@ class Orchestrator:
                 "extraction": {k: res.data.get(k) for k in ("status", "summary", "reporting_period_label")} | {"count": len(figures)},
                 "specialists": {"extract": {"agent": res.agent.value, "status": res.status, "summary": res.summary}},
                 "message": res.summary}
+
+    def _proactive_outreach(self, ctx: RunContext, results: dict, extra: dict, request: str) -> None:
+        """When Mission Discovery reports promising, sourced opportunities, the Boss Agent decides whether drafts would help
+        and delegates them, without the board having to ask. Drafts only: nothing is sent, and no support is promised."""
+        research = results.get("research")
+        report = self.reports.get("research")
+        if not research or research.status != "completed" or not report or not report.outreach.appropriate:
+            self.decisions.append({"step": "outreach_decision", "selected": [], "skipped": [],
+                                   "trigger": report.outreach.reason if report else "No research report."})
+            return
+        found = research.data.get("findings") or []
+        for f in found:
+            f.setdefault("sources", [{"source_id": f"finding:{f['id']}", "title": f.get("name"), "url": f.get("website"),
+                                      "verification": f.get("verification"), "retrieved_at": f.get("last_checked")}])
+        wanted = _requested_categories(research)
+        money = self._support_capacity(ctx, results, [f for f in found if not wanted or f.get("category") in wanted])
+        candidates = self._opportunity_candidates(found, "mission_discovery", money, "Mission Discovery rated it", wanted=wanted)
+        decision = self.dispatch(ctx, self._task(ctx, "outreach_decision", A.ORCHESTRATOR, "Decide whether introductory drafts would "
+                                                 "help with the opportunities Mission Discovery found", inputs={"candidates": candidates,
+                                                 "trigger": report.outreach.reason}, depends_on=["research"]))
+        self.decisions.append({"step": "outreach_decision", **decision.data})
+        chosen = [f for f in found if f"finding:{f['id']}" in decision.data["selected"]]
+        if chosen:
+            results["outreach"] = self.dispatch(ctx, self._task(
+                ctx, "outreach", A.PARTNERSHIPS_OUTREACH, f"Research public inquiry details and draft unsent introductions to the "
+                f"{len(chosen)} opportunities the Orchestrator selected", inputs={"opportunities": chosen, "request": request,
+                                                                                  "provenance": decision.data["provenance"]},
+                constraints=[Constraint(name="drafts_only", detail="Generate and save unsent drafts only. Never send, schedule, or "
+                                        "commit, and never promise a donation.", source_agent=A.ORCHESTRATOR)],
+                depends_on=["outreach_decision"]))
 
     def _legacy_import(self, ctx: RunContext, intake: AgentResult, analysis: RequestAnalysis, options: dict) -> dict:
         """Our Legacy import -> Event Intelligence extracts a candidate -> code verifies nothing was saved without approval."""
@@ -656,10 +756,89 @@ class Orchestrator:
             if unknown:
                 carry.append(Constraint(name=f"confirm:{o['id']}", detail=f"{o['name']}: " + "; ".join(u.strip().rstrip(".") for u in unknown[:3])[:400] + ".",
                                         source_agent=A.MISSION_DISCOVERY))
+        wanted = _requested_categories(results.get("research")) if source == "research" else None
+        money = self._support_capacity(ctx, results, [o for o in chosen if not wanted or o.get("category") in wanted])
+        candidates = self._opportunity_candidates(chosen, "mission_discovery" if source == "research" else "board",
+                                                  money, "Selected by the mission-fit rubric", wanted=wanted)
+        decision = self.dispatch(ctx, self._task(ctx, "outreach_decision", A.ORCHESTRATOR, "Decide which selected opportunities "
+                                                 "deserve an introductory draft", inputs={"candidates": candidates, "limit": count},
+                                                 depends_on=["select"]))
+        self.decisions.append({"step": "outreach_decision", **decision.data})
+        chosen = [o for o in chosen if f"finding:{o['id']}" in decision.data["selected"]]
+        if not chosen:
+            return
         results["outreach"] = self.dispatch(ctx, self._task(
-            ctx, "outreach", A.PARTNERSHIPS_OUTREACH, f"Draft unsent outreach to the {len(chosen)} selected opportunities",
-            inputs={"opportunities": chosen, "draft_type": options.get("draft_type"), "request": request},
-            constraints=carry, depends_on=["select"]))
+            ctx, "outreach", A.PARTNERSHIPS_OUTREACH, f"Research public inquiry details and draft unsent outreach to the {len(chosen)} "
+            "selected opportunities", inputs={"opportunities": chosen, "draft_type": options.get("draft_type"), "request": request,
+                                              "provenance": decision.data["provenance"]},
+            constraints=carry, depends_on=["outreach_decision"]))
+
+    # -- the Boss Agent's helpers: candidates for outreach, built from the specialists' reports ------------------------
+
+    def _venue_candidates(self, venues: AgentResult, finance: AgentResult | None, event: dict, report) -> list[dict]:
+        out = []
+        budget = event.get("budget_limit_usd")
+        fin_option = (finance.data.get("option_id") if finance and finance.status in ("completed", "needs_revision") else None)
+        for x in venues.data.get("shortlist", [])[:5]:
+            v, m = x["venue"], x.get("model") or {}
+            total = m.get("total_cost_usd")
+            money = []
+            if total is not None and budget:
+                money.append(f"Projected total ${total:,.0f} vs the ${budget:,.0f} maximum ({'within' if total <= budget else 'over'} budget); "
+                             f"upfront cash ${m.get('upfront_cash_usd') or 0:,.0f}.")
+            money.append("Published pricing (checked on the venue's page)." if v.get("pricing_status") == "published"
+                         else "Pricing not published: the inquiry asks for a quote.")
+            if fin_option and x.get("option_id") == fin_option:
+                money.append(f"Financial Analysis verdict: {finance.data.get('verdict', '').replace('_', ' ')}.")
+            elif fin_option:
+                money.append("Financial Analysis fully checked only the top option; this one would need the same review.")
+            out.append({"target_id": f"venue:{v['venue_key']}", "name": v["name"], "category": "venue", "found_by": "fundraising_events",
+                        "eligible": bool(report and report.outreach.appropriate),
+                        "reason": (f"Events shortlisted it for a {x['event_format'].replace('_', ' ')} for {event['attendance']} guests. "
+                                   + _clip_sentences(x.get("rationale") or "", 320) + " An inquiry can confirm availability, capacity, "
+                                   "pricing, catering, and nonprofit terms.").strip(),
+                        "related_findings": [_clip_sentences(venues.summary, 300)] + list(x.get("lessons_applied") or [])[:3],
+                        "financial_considerations": money})
+        return out
+
+    def _opportunity_candidates(self, found: list[dict], found_by: str, money: list[str], basis: str, *,
+                                wanted: set[str] | None = None, today: date | None = None) -> list[dict]:
+        kinds = {"research": "research", "sponsor": "sponsor", "organization": "charity", "event": "partner", "partnership": "partner"}
+        today = today or datetime.now(timezone.utc).date()
+        out = []
+        for f in found:
+            category = kinds.get(f.get("category") or "", "partner")
+            notes = list(money)
+            if category == "sponsor":
+                notes.append("Any sponsorship would be prospective income: it is never counted until confirmed in writing.")
+            if f.get("known_costs"):
+                notes.append("Published costs: " + _clip_sentences(str(f["known_costs"]), 300))  # one quoted string, not a list
+            eligible = f.get("verification") in ("verified", "synthetic") and f.get("fit") in ("Strong fit", "Possible fit")
+            skip = None if eligible else f"{f.get('fit') or 'unrated'}, source {f.get('verification')}"
+            past = _past_date(f.get("dates_text"), today)
+            if eligible and wanted and (f.get("category") or "") not in wanted:  # on-mission is not enough: it must be what was asked
+                listed = f.get("category") or "unlabeled"
+                eligible, skip = False, f"not a sponsor (listed as {'an' if listed[0] in 'aeiou' else 'a'} {listed}); the board asked for sponsors"
+            elif eligible and past:
+                eligible, skip = False, f"its date ({past}) has already passed"
+            out.append({"target_id": f"finding:{f['id']}", "name": f.get("name") or f.get("title"), "category": category, "found_by": found_by,
+                        "eligible": eligible, "skip_reason": skip,
+                        "reason": f"{basis}: {f.get('fit')}. {_clip_sentences(f.get('fit_reason') or f.get('alignment_summary') or '', 320)}".strip(),
+                        "related_findings": [x for x in [f.get("purpose"), f.get("alignment_summary"), f.get("next_step")] if x][:3],
+                        "financial_considerations": notes})
+        return out
+
+    def _support_capacity(self, ctx: RunContext, results: dict, found: list[dict]) -> list[str]:
+        """Finance states the available planning budget, only where the board member's role allows financial access, and
+        only for charitable or research opportunities. No amount is proposed or committed."""
+        if not any((f.get("category") or "") in ("organization", "research") for f in found):
+            return []
+        if Permission.VIEW_FINANCIALS not in ctx.user_permissions:
+            return ["Finance was not consulted: your board role has no financial access. No support amount is proposed."]
+        fin = self.dispatch(ctx, self._task(ctx, "finance", A.FINANCIAL_ANALYSIS, "State the available planning budget relevant to "
+                                            "possible charitable support (no amount is proposed)", inputs={"mode": "support_capacity"}))
+        results["finance"] = fin
+        return list(fin.data.get("considerations") or [])
 
     @staticmethod
     def _finance_feedback(finance: AgentResult, top: dict, conflicts: list[dict]) -> dict:
@@ -792,6 +971,9 @@ class Orchestrator:
                                                               "alignment_summary", "known_costs", "dates_text", "date_status",
                                                               "missing_info", "warnings", "contribution_ways")}
                                          for f in r.data.get("findings", [])]
+            if key == "outreach":
+                item["drafts"] = [{"recipient": d.get("recipient"), "subject": d.get("subject"), "contact": d.get("contact_status")}
+                                  for d in r.data.get("drafts") or []]
             if key == "select":
                 item["selected"] = [{"name": o["name"], "fit": o.get("fit"), "reason": o.get("selection_reason"),
                                      "alignment_summary": o.get("alignment_summary"), "missing_info": o.get("missing_info"),

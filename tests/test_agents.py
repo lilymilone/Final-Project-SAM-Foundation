@@ -147,7 +147,7 @@ def test_gala_collaboration_and_revision(client):
     assert run.status == "completed", run.error
     keys = [s.step_key for s in steps]
     assert keys == ["intake", "lessons", "venues", "finance", "evaluate", "venues_revision_1", "finance_revision_1",
-                    "evaluate_revision_1", "outreach", "recommendation", "verification"]
+                    "evaluate_revision_1", "outreach_decision", "outreach", "recommendation", "verification"]
 
     first_finance = steps[keys.index("finance")]
     assert first_finance.status == "needs_revision"

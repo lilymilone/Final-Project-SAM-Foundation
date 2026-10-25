@@ -254,7 +254,17 @@ export type AgentResultData = {
   duration_ms: number;
 };
 
+export type AgentReport = {
+  task_id: number; workflow_id: number; step_key: string; agent: string; objective: string; status: string; work_completed: string;
+  key_findings: { claim: string; kind: string }[]; sources: { id: string; title: string; url: string | null; verification: string }[];
+  assumptions: string[]; risks_uncertainties: string[]; financial_considerations: string[]; recommended_next_actions: string[];
+  outreach: { appropriate: boolean; reason: string; candidates: string[] }; additional_agents: { agent: string; reason: string }[];
+  approval: { board_review: boolean; professional_review: boolean; reasons: string[] };
+  tool_calls: { tool: string; allowed: boolean; ok: boolean | null }[]; model_usage: { model_calls: number; cost_usd: number; models: string[] };
+};
+
 export type RunStep = {
+  report?: AgentReport | null;
   id: number;
   step_key: string;
   kind: "task" | "revision" | null;
@@ -331,11 +341,16 @@ export type DraftSource = { title: string | null; url: string | null; verificati
 
 export type Draft = {
   id: number; run_id: number | null; agent: string | null; draft_type: string; recipient_name: string; recipient_org: string;
-  subject: string; body: string; status: "draft" | "reviewed" | "archived"; personalization_basis: string | null;
+  subject: string; body: string; status: "draft" | "needs_review" | "reviewed" | "archived"; personalization_basis: string | null;
   is_synthetic_target: boolean | null; created_at: string; updated_at?: string | null;
   purpose?: string | null; opportunity?: string | null; next_step?: string | null; foundation_background?: string | null;
   sources?: DraftSource[]; finding_id?: number | null; review_notes?: string[];
+  category?: string | null; contact?: DraftContact | null; found_by_agent?: string | null; recommendation_reason?: string | null;
+  related_findings?: string[]; financial_considerations?: string[]; model_used?: string | null; handoff_id?: number | null;
+  edited_at?: string | null; reviewed_at?: string | null; status_label?: string; notice?: string;
 };
+export type DraftContact = { organization: string; department: string | null; email: string | null; contact_page_url: string | null;
+  source_url: string | null; verified_at: string | null; status: string; confidence: string; display: string; notes: string[] };
 
 export type AlignmentLevel = { level: "strong" | "partial" | "unclear" | "none"; explanation: string };
 export type AlignmentDetail = {

@@ -48,7 +48,7 @@ class RunContext:
     tools: ToolRegistry | None = None
     cancel: threading.Event = field(default_factory=threading.Event)
     current_handoff_id: int | None = None
-    counters: dict[str, int] = field(default_factory=lambda: {"handoffs": 0, "web_searches": 0, "page_fetches": 0})
+    counters: dict[str, int] = field(default_factory=lambda: {"handoffs": 0, "web_searches": 0, "page_fetches": 0, "contact_pages": 0})
     safety: Any = None  # SafetyManager (safety/manager.py)
     fixtures: dict | None = None  # research_mode "fixture": server-side test fixtures (venues and page HTML); never set from the API
 
@@ -65,6 +65,11 @@ class RunContext:
     @property
     def max_page_fetches(self) -> int:
         return self.safety.limits.max_page_fetches if self.safety else self.settings.max_page_fetches_per_run
+
+    @property
+    def max_contact_pages(self) -> int:
+        """Pages contact research may read per outreach draft; counted apart from research page fetches."""
+        return self.safety.limits.max_contact_pages if self.safety else 2
 
     @property
     def max_revisions(self) -> int:
@@ -158,3 +163,16 @@ def compact(value: Any, limit: int = 60) -> Any:
     if isinstance(value, str) and len(value) > 1500:
         return value[:1500] + "…"
     return value
+
+
+def save_report(ctx: RunContext, task, result, handoff_id: int):
+    """Build the specialist's structured AgentReport from its result and the run's own logs, and store it on the handoff."""
+    from ..db.models import AgentToolCall
+    from .reports import build_report
+    with ctx.db.session() as s:
+        calls = [{"tool": c.tool_name, "allowed": c.allowed, "ok": c.ok, "summary": (c.result_summary or "")[:200]}
+                 for c in s.scalars(select(AgentToolCall).where(AgentToolCall.handoff_id == handoff_id).order_by(AgentToolCall.id))]
+    report = build_report(task, result, handoff_id, calls)
+    with ctx.db.transaction() as s:
+        s.get(HandoffRow, handoff_id).report = report.model_dump(mode="json")
+    return report

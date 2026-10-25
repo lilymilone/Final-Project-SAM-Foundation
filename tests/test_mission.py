@@ -178,6 +178,8 @@ def test_mission_discovery_hands_verified_findings_to_outreach(client):
     assert run.result["intent"] == "partnership_outreach"
     assert [(s.from_agent, s.to_agent, s.step_key) for s in steps] == [
         ("board", "orchestrator", "intake"), ("orchestrator", "mission_discovery", "research"), ("orchestrator", "orchestrator", "select"),
+        # Prompt 10: Finance states the available budget (the chair has financial access), then the Boss Agent decides on drafts.
+        ("orchestrator", "financial_analysis", "finance"), ("orchestrator", "orchestrator", "outreach_decision"),
         ("orchestrator", "partnerships_outreach", "outreach"), ("orchestrator", "orchestrator", "recommendation"),
         ("orchestrator", "orchestrator", "verification")]
     select_step = next(s for s in steps if s.step_key == "select")
@@ -232,7 +234,9 @@ def test_drafts_are_saved_editable_and_never_sent(client):
         assert name in PROHIBITED_ACTIONS
         with pytest.raises(ProhibitedActionError):
             ToolRegistry(client.app.state.db).register(ToolSpec(name, "x", ToolKind.DRAFT, lambda: None))
-    assert set(AGENTS_BY_NAME[AgentName.PARTNERSHIPS_OUTREACH].allowed_tools) == {"read_saved_findings", "create_outreach_draft"}
+    # Drafts only. lookup_inquiry_details only READS official pages for a public inquiry address; it cannot send anything.
+    assert set(AGENTS_BY_NAME[AgentName.PARTNERSHIPS_OUTREACH].allowed_tools) == {"read_saved_findings", "lookup_inquiry_details",
+                                                                                 "create_outreach_draft"}
     code = "\n".join(p.read_text() for p in BACKEND.rglob("*.py"))
     for lib in ("smtplib", "sendgrid", "mailgun", "postmark", "twilio", "boto3", "email.mime", "slack_sdk"):
         assert f"import {lib}" not in code and f"from {lib}" not in code

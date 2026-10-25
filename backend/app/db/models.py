@@ -119,6 +119,7 @@ class AgentHandoff(Base):
     objective: Mapped[str] = mapped_column(Text)
     payload: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     result: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    report: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)  # the specialist's structured AgentReport
     status: Mapped[str] = mapped_column(String(20), default="requested")
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -460,6 +461,19 @@ class OutreachDraft(Base):
     finding_id: Mapped[int | None] = mapped_column(ForeignKey("research_findings.id", ondelete="SET NULL"), nullable=True)
     donation_id: Mapped[int | None] = mapped_column(ForeignKey("donations.id", ondelete="SET NULL"), nullable=True)
     review_notes: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # uncertainty carried over from research
+    # Board review and traceability (Prompt 10). Statuses: draft (AI draft) | needs_review | reviewed | archived. Never "sent".
+    category: Mapped[str | None] = mapped_column(String(40), nullable=True)  # venue | charity | sponsor | research | partner
+    contact: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # public contact record with its source and verification
+    found_by_agent: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    recommendation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)  # why the Orchestrator recommended outreach
+    related_findings: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    financial_considerations: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    model_used: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    handoff_id: Mapped[int | None] = mapped_column(ForeignKey("agent_handoffs.id", ondelete="SET NULL"), nullable=True)
+    edited_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    edited_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = _created()
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

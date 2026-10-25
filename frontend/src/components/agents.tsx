@@ -27,6 +27,7 @@ export const INTENT_LABELS: Record<string, string> = {
 export const STEP_LABELS: Record<string, string> = {
   intake: "Understand the request",
   extract: "Extract details for board review",
+  outreach_decision: "Decide which opportunities deserve a draft",
   lessons: "Lessons from past events",
   venues: "Venue research & strategy",
   finance: "Affordability check",

@@ -1,0 +1,1318 @@
+{
+  "run": {
+    "id": 44,
+    "status": "completed",
+    "research_mode": "live",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Find possible local business sponsors in Manhattan for our spring gala.",
+    "started_at": "2026-10-25T23:02:23.638812",
+    "duration_ms": 132873,
+    "spent_usd": 0.07418505,
+    "model_calls": 5,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 291,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 1,
+      "constraints": [],
+      "summary": "Intent: mission discovery (board routing). Specialists: mission discovery.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 292,
+      "step_key": "research",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "mission_discovery",
+      "objective": "Research mission-aligned opportunities and explain their fit",
+      "status": "completed",
+      "duration_ms": 82350,
+      "constraints": [],
+      "summary": "The supplied sources do not verify any Manhattan business as a prospective sponsor for the foundation\u2019s spring gala. The most useful lead is the Manhattan NEDA gala: its search snippet names business sponsors, but the checked excerpt does not confirm those names. Two other sources describe mission-aligned galas outside Manhattan, and one page was unreachable.",
+      "warnings": [
+        "Sources identify gala sponsorship opportunities and/or business sponsors related to eating-disorder or mental-health causes. The NEDA 2026 gala date is in the past as of October 25, 2026; no upcoming date or deadline is stated on the other relevant pages."
+      ],
+      "report": {
+        "task_id": 292,
+        "workflow_id": 44,
+        "step_key": "research",
+        "agent": "mission_discovery",
+        "objective": "Research mission-aligned opportunities and explain their fit",
+        "status": "completed",
+        "work_completed": "The supplied sources do not verify any Manhattan business as a prospective sponsor for the foundation\u2019s spring gala. The most useful lead is the Manhattan NEDA gala: its search snippet names business sponsors, but the checked excerpt does not confirm those names. Two other sources describe mission-aligned galas outside Manhattan, and one page was unreachable.",
+        "key_findings": [
+          {
+            "claim": "WithAll\u2019s Keys in Bloom Gala: Possible fit. WithAll shows strong alignment with eating-disorder support and prevention. However, its Minnesota gala does not meet the current request for Manhattan business sponsors.",
+            "kind": "verified_fact",
+            "confidence": "medium",
+            "source_ids": [
+              "web:1"
+            ]
+          },
+          {
+            "claim": "National Eating Disorders Association Gala 2026: Possible fit. This is the most relevant source for discovering potential Manhattan sponsor leads, but it is not itself a business sponsor. The snippet\u2019s business names are useful research leads only, not confirmed prospects or evidence of willingness to support the foundation.",
+            "kind": "verified_fact",
+            "confidence": "medium",
+            "source_ids": [
+              "web:2"
+            ]
+          },
+          {
+            "claim": "Project Blackbird Gala: Possible fit. Project Blackbird\u2019s stated anti-stigma mission aligns strongly with the foundation\u2019s mental-health and eating-disorder purposes. Its Washington, D.C. gala does not supply verified Manhattan business sponsor prospects.",
+            "kind": "verified_fact",
+            "confidence": "medium",
+            "source_ids": [
+              "web:3"
+            ]
+          },
+          {
+            "claim": "NEDA Annual Gala: Needs research. This is an unverified research lead rather than an actionable sponsorship opportunity. It may help locate historical business supporters, but the supplied material is insufficient to assess mission fit or local relevance.",
+            "kind": "estimate",
+            "confidence": "medium",
+            "source_ids": [
+              "web:4"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "web:1",
+            "title": "Keys in Bloom Gala WithAll Spring Fundraising Event",
+            "url": "https://withall.org/spring-event/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:2",
+            "title": "National Eating Disorders Association Gala 2026",
+            "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:3",
+            "title": "Gala | Project Blackbird",
+            "url": "https://www.projectblackbirdinc.org/gala/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:4",
+            "title": "NEDA Annual Gala",
+            "url": "https://nedadisorders.ndic.com/ways-to-give/annual-benefit-dinner",
+            "verification": "unverified"
+          }
+        ],
+        "assumptions": [
+          "3 of 4 sources verified by fetching the page just now."
+        ],
+        "risks_uncertainties": [
+          "Sources identify gala sponsorship opportunities and/or business sponsors related to eating-disorder or mental-health causes. The NEDA 2026 gala date is in the past as of October 25, 2026; no upcoming date or deadline is stated on the other relevant pages."
+        ],
+        "financial_considerations": [
+          "National Eating Disorders Association Gala 2026: known costs T, h, e,  , p, a, g, e,  , l, i, s, t, s,  , \", P, r, i, c, e,  , $, 1, ,, 5, 0, 0,  , -,  , $, 5, 0, ,, 0, 0, 0, \",  , w, i, t, h, o, u, t,  , e, x, p, l, a, i, n, i, n, g,  , t, h, e,  , t, i, e, r, s, ."
+        ],
+        "recommended_next_actions": [
+          "No checked excerpt confirms a Manhattan business sponsor.",
+          "The six business names appear only in a search snippet; their sponsorship history, local presence, and current interest need verification.",
+          "The sources primarily describe organizations seeking sponsorship for their own events, not businesses offering sponsorship to the foundation.",
+          "The foundation\u2019s spring gala year, date, venue, sponsorship package, and outreach timeline are not provided.",
+          "No source provides verified business sponsorship contacts, application requirements, or decision deadlines."
+        ],
+        "outreach": {
+          "appropriate": true,
+          "reason": "3 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+          "candidates": [
+            "WithAll\u2019s Keys in Bloom Gala",
+            "National Eating Disorders Association Gala 2026",
+            "Project Blackbird Gala"
+          ]
+        },
+        "additional_agents": [
+          {
+            "agent": "partnerships_outreach",
+            "reason": "Draft introductory messages to the promising opportunities."
+          },
+          {
+            "agent": "financial_analysis",
+            "reason": "State what the foundation could responsibly consider supporting, if the board's role allows financial access."
+          }
+        ],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "tool_calls": [
+          {
+            "tool": "search_web",
+            "allowed": true,
+            "ok": true,
+            "summary": "4 live results (links not yet verified)"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Keys in Bloom Gala WithAll Spring Fundraising Event"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 National Eating Disorders Association Gala 2026"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Gala | Project Blackbird"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": false,
+            "summary": "HTTP 401 401 Unauthorized"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #25"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #26"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #27"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #28"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 3,
+          "input_tokens": 17158,
+          "cached_input_tokens": 1681,
+          "output_tokens": 4418,
+          "web_search_calls": 1,
+          "cost_usd": 0.053269,
+          "models": [
+            "gpt-6-luna",
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 293,
+      "step_key": "outreach_decision",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Decide whether introductory drafts would help with the opportunities Mission Discovery found",
+      "status": "completed",
+      "duration_ms": 0,
+      "constraints": [],
+      "summary": "Delegating 3 unsent draft(s) to Partnerships & Outreach: WithAll\u2019s Keys in Bloom Gala, National Eating Disorders Association Gala 2026, Project Blackbird Gala.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 294,
+      "step_key": "outreach",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "partnerships_outreach",
+      "objective": "Research public inquiry details and draft unsent introductions to the 3 opportunities the Orchestrator selected",
+      "status": "completed",
+      "duration_ms": 40189,
+      "constraints": [
+        {
+          "name": "drafts_only",
+          "detail": "Generate and save unsent drafts only. Never send, schedule, or commit, and never promise a donation.",
+          "value": null,
+          "source_agent": "orchestrator"
+        }
+      ],
+      "summary": "Three unsent first-contact drafts for board review. WithAll and Project Blackbird are outside the current Manhattan sponsor-search scope and should be held unless the board broadens its search. The NEDA draft requests verified public sponsor information without treating any business as a confirmed prospect.",
+      "warnings": [],
+      "report": {
+        "task_id": 294,
+        "workflow_id": 44,
+        "step_key": "outreach",
+        "agent": "partnerships_outreach",
+        "objective": "Research public inquiry details and draft unsent introductions to the 3 opportunities the Orchestrator selected",
+        "status": "completed",
+        "work_completed": "Three unsent first-contact drafts for board review. WithAll and Project Blackbird are outside the current Manhattan sponsor-search scope and should be held unless the board broadens its search. The NEDA draft requests verified public sponsor information without treating any business as a confirmed prospect.",
+        "key_findings": [
+          {
+            "claim": "Unsent community program draft to WithAll\u2019s Keys in Bloom Gala: \u201cLearning about WithAll\u2019s recovery and prevention work\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:1"
+            ]
+          },
+          {
+            "claim": "Unsent community program draft to National Eating Disorders Association Gala 2026: \u201cInquiry about public NEDA Gala sponsor materials\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:2"
+            ]
+          },
+          {
+            "claim": "Unsent community program draft to Project Blackbird Gala: \u201cLearning about Project Blackbird\u2019s anti-stigma work\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:3"
+            ]
+          }
+        ],
+        "sources": [],
+        "assumptions": [
+          "Nothing was sent. SAM SPACE has no tool that can send, schedule, or publish a message."
+        ],
+        "risks_uncertainties": [],
+        "financial_considerations": [],
+        "recommended_next_actions": [
+          "Unsent community program draft to WithAll\u2019s Keys in Bloom Gala: \u201cLearning about WithAll\u2019s recovery and prevention work\u201d",
+          "Unsent community program draft to National Eating Disorders Association Gala 2026: \u201cInquiry about public NEDA Gala sponsor materials\u201d",
+          "Unsent community program draft to Project Blackbird Gala: \u201cLearning about Project Blackbird\u2019s anti-stigma work\u201d",
+          "Review and edit each draft in Partnerships & Outreach. If the board agrees, a person sends it outside SAM SPACE."
+        ],
+        "outreach": {
+          "appropriate": false,
+          "reason": "Drafts prepared; nothing is sent. A person reviews and sends them outside SAM SPACE.",
+          "candidates": [
+            "WithAll\u2019s Keys in Bloom Gala",
+            "National Eating Disorders Association Gala 2026",
+            "Project Blackbird Gala"
+          ]
+        },
+        "additional_agents": [],
+        "approval": {
+          "board_review": true,
+          "professional_review": false,
+          "reasons": [
+            "Every draft needs a person's review before anyone contacts the organization."
+          ]
+        },
+        "tool_calls": [
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "WithAll\u2019s Keys in Bloom Gala: verified email (hello@withall.org)"
+          },
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "National Eating Disorders Association Gala 2026: website only"
+          },
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "Project Blackbird Gala: verified email (partnerships@projectblackbirdinc.org)"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #60 (unsent)"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #61 (unsent)"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #62 (unsent)"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 2247,
+          "cached_input_tokens": 0,
+          "output_tokens": 1445,
+          "web_search_calls": 0,
+          "cost_usd": 0.020066,
+          "models": [
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 295,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 10306,
+      "constraints": [],
+      "summary": "Recommendation: verify leads before approaching Manhattan businesses",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 296,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": [],
+      "report": null
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "search_web",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 8987,
+      "summary": "4 live results (links not yet verified)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 5911,
+      "summary": "HTTP 200 Keys in Bloom Gala WithAll Spring Fundraising Event",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 5118,
+      "summary": "HTTP 200 National Eating Disorders Association Gala 2026",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2884,
+      "summary": "HTTP 200 Gala | Project Blackbird",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": false,
+      "duration_ms": 2070,
+      "summary": "HTTP 401 401 Unauthorized",
+      "denial": null,
+      "error": "HTTP 401"
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3,
+      "summary": "new opportunity #25",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "new opportunity #26",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #27",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #28",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 5985,
+      "summary": "WithAll\u2019s Keys in Bloom Gala: verified email (hello@withall.org)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 4729,
+      "summary": "National Eating Disorders Association Gala 2026: website only",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 7009,
+      "summary": "Project Blackbird Gala: verified email (partnerships@projectblackbirdinc.org)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3,
+      "summary": "draft #60 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "draft #61 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "draft #62 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 296,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "8/8 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "task": "Understand the research request (extraction)",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0031 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 490,
+      "cached_input_tokens": 0,
+      "output_tokens": 68,
+      "web_search_calls": 0,
+      "cost_usd": 8.3e-05,
+      "latency_ms": 1875,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "task": "Web search: mission-aligned opportunities",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0016 fits the remaining budget of $0.4999.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 13055,
+      "cached_input_tokens": 0,
+      "output_tokens": 709,
+      "web_search_calls": 1,
+      "cost_usd": 0.01177903,
+      "latency_ms": 8981,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 292,
+      "agent": "mission_discovery",
+      "task": "Compare sources and synthesize mission alignment",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=low) under Auto \u2192 Sol (intermediate) tier. Estimated $0.1320 fits the remaining budget of $0.4881.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 3613,
+      "cached_input_tokens": 1681,
+      "output_tokens": 3641,
+      "web_search_calls": 0,
+      "cost_usd": 0.0414066,
+      "latency_ms": 55465,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 294,
+      "agent": "partnerships_outreach",
+      "task": "Personalized partnership drafts from research",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=medium) under Auto \u2192 Sol (intermediate) tier. Estimated $0.1000 fits the remaining budget of $0.4467.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 2247,
+      "cached_input_tokens": 0,
+      "output_tokens": 1445,
+      "web_search_calls": 0,
+      "cost_usd": 0.020066,
+      "latency_ms": 22449,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 295,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0025 fits the remaining budget of $0.4267.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 2940,
+      "cached_input_tokens": 0,
+      "output_tokens": 966,
+      "web_search_calls": 0,
+      "cost_usd": 0.00085042,
+      "latency_ms": 10299,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "mission_discovery",
+    "routing": "board",
+    "analysis": {
+      "intent": "mission_discovery",
+      "city": "Manhattan, New York, NY",
+      "attendance": null,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": "Find possible local business sponsors in Manhattan for our spring gala.",
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "live",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [],
+    "events_consulted": [],
+    "boss_decisions": [
+      {
+        "step": "outreach_decision",
+        "trigger": "3 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+        "selected": [
+          "finding:25",
+          "finding:26",
+          "finding:27"
+        ],
+        "skipped": [
+          {
+            "name": "NEDA Annual Gala",
+            "reason": "Needs research, source unverified"
+          }
+        ],
+        "provenance": {
+          "finding:25": {
+            "found_by": "mission_discovery",
+            "reason": "Mission Discovery rated it: Possible fit. Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+            "related_findings": [
+              "A fundraising event supporting WithAll and its eating-disorder recovery and prevention work.",
+              "WithAll shows strong alignment with eating-disorder support and prevention. However, its Minnesota gala does not meet the current request for Manhattan business sponsors.",
+              "Set this source aside unless the board expands the search beyond Manhattan."
+            ],
+            "financial_considerations": [],
+            "category": "partner"
+          },
+          "finding:26": {
+            "found_by": "mission_discovery",
+            "reason": "Mission Discovery rated it: Possible fit. Aligned, but alignment is partial.",
+            "related_findings": [
+              "A gala presented by the National Eating Disorders Association.",
+              "This is the most relevant source for discovering potential Manhattan sponsor leads, but it is not itself a business sponsor. The snippet\u2019s business names are useful research leads only, not confirmed prospects or evidence of willingness to support the foundation.",
+              "Verify the six business names against the official gala sponsor materials before building an outreach shortlist."
+            ],
+            "financial_considerations": [
+              "Published costs: T; h; e; ; p; a; g; e; ; l; i; s; t; s; ; \"; P; r; i; c; e; ; $; 1; ,; 5; 0; 0; ; -; ; $; 5; 0; ,; 0; 0; 0; \"; ; w; i; t; h; o; u; t; ; e; x; p; l; a; i; n; i; n; g; ; t; h; e; ; t; i; e; r; s; ."
+            ],
+            "category": "partner"
+          },
+          "finding:27": {
+            "found_by": "mission_discovery",
+            "reason": "Mission Discovery rated it: Possible fit. Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+            "related_findings": [
+              "A mental-health gala associated with Project Blackbird\u2019s aim to de-stigmatize eating-disorder and mental-health conversation within underrepresented communities.",
+              "Project Blackbird\u2019s stated anti-stigma mission aligns strongly with the foundation\u2019s mental-health and eating-disorder purposes. Its Washington, D.C. gala does not supply verified Manhattan business sponsor prospects.",
+              "Set this source aside for the current local sponsor search."
+            ],
+            "financial_considerations": [],
+            "category": "partner"
+          }
+        }
+      }
+    ],
+    "outreach_drafts": [
+      {
+        "id": 60,
+        "recipient": "WithAll\u2019s Keys in Bloom Gala",
+        "subject": "Learning about WithAll\u2019s recovery and prevention work",
+        "draft_type": "community_program",
+        "contact_status": "verified_email",
+        "contact_email": "hello@withall.org",
+        "finding_id": 25,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "To learn about WithAll\u2019s eating-disorder programs and whether future collaboration could be relevant if the board broadens its geographic scope.",
+        "next_step": "Ask WithAll to share a brief program overview and information about potential collaboration pathways.",
+        "sources": [
+          {
+            "title": "Keys in Bloom Gala WithAll Spring Fundraising Event",
+            "url": "https://withall.org/spring-event/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:34+00:00"
+          }
+        ],
+        "review_notes": [
+          "Names of any Manhattan business supporters",
+          "Sponsorship terms and contact details",
+          "Whether WithAll offers any relevant sponsor introductions or cross-organization collaboration",
+          "Costs or giving levels are not stated on the source.",
+          "Unconfirmed: The search snippet promises business recognition and visibility, but those benefits are not confirmed in the excerpt."
+        ]
+      },
+      {
+        "id": 61,
+        "recipient": "National Eating Disorders Association Gala 2026",
+        "subject": "Inquiry about public NEDA Gala sponsor materials",
+        "draft_type": "community_program",
+        "contact_status": "website_only",
+        "contact_email": null,
+        "finding_id": 26,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "To request verified public gala sponsor materials and learn about NEDA\u2019s programs and potential collaboration pathways.",
+        "next_step": "Request links to official public gala sponsor materials and a program or collaboration overview.",
+        "sources": [
+          {
+            "title": "National Eating Disorders Association Gala 2026",
+            "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:40+00:00"
+          }
+        ],
+        "review_notes": [
+          "A confirmed sponsor list from the official event materials",
+          "Relevant Manhattan offices and sponsorship contacts",
+          "Each business\u2019s giving priorities and application requirements",
+          "The foundation\u2019s gala date, sponsorship package, and outreach timeline",
+          "Unconfirmed: The search snippet identifies CBRE, Greenberg Traurig, Kirkland & Ellis, Skadden, Weil, and Equip Health as sponsors; none is confirmed in the supplied page excerpt; The named businesses\u2019 Manhattan presence and interest in sponsoring the foundation are not established.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      },
+      {
+        "id": 62,
+        "recipient": "Project Blackbird Gala",
+        "subject": "Learning about Project Blackbird\u2019s anti-stigma work",
+        "draft_type": "community_program",
+        "contact_status": "verified_email",
+        "contact_email": "partnerships@projectblackbirdinc.org",
+        "finding_id": 27,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "To learn about Project Blackbird\u2019s programs and possible mission-aligned collaboration if the board expands beyond its current geographic focus.",
+        "next_step": "Ask for a brief program overview and clarification of available collaboration opportunities.",
+        "sources": [
+          {
+            "title": "Gala | Project Blackbird",
+            "url": "https://www.projectblackbirdinc.org/gala/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:45+00:00"
+          }
+        ],
+        "review_notes": [
+          "Any Manhattan business sponsors",
+          "Confirmed sponsorship and advertising options",
+          "Details of the Free Therapy Initiative and use of gala proceeds",
+          "Whether any relevant collaboration with the foundation is available",
+          "Costs or giving levels are not stated on the source.",
+          "Unconfirmed: Business sponsorship and program-book advertising are mentioned only in the search snippet; The snippet\u2019s claim that proceeds support youth initiatives and free therapy is not confirmed in the excerpt."
+        ]
+      }
+    ],
+    "quantitative_observations": [],
+    "events_strategy": null,
+    "themes": [],
+    "comparison": null,
+    "recommendation": {
+      "headline": "Recommendation: verify leads before approaching Manhattan businesses",
+      "recommendation": "Do not treat any business as a confirmed sponsor prospect yet. The supplied research does not verify a Manhattan business sponsor for the foundation\u2019s spring gala. The board may authorize a limited next step: request official public sponsor materials from NEDA, then verify any named businesses\u2019 Manhattan presence, sponsorship history, and contact routes before considering outreach. No outreach has been sent.",
+      "rationale": [
+        "The National Eating Disorders Association Gala 2026 is the most relevant lead because it was held in Manhattan and a search snippet names six businesses. However, the checked excerpt does not confirm those names as sponsors, and their interest in supporting the foundation is unknown.",
+        "WithAll\u2019s Keys in Bloom Gala and Project Blackbird Gala have mission relevance but are outside Manhattan and do not establish local business prospects.",
+        "The NEDA Annual Gala is an unverified lead: the source was inaccessible, and the available material does not establish its identity, location, or sponsor list.",
+        "The foundation\u2019s spring gala year, date, venue, sponsorship package, and outreach timeline are not provided, limiting the ability to assess whether any prospect is a fit."
+      ],
+      "options": [
+        {
+          "title": "Request official NEDA sponsor materials, then verify possible leads",
+          "option_id": null,
+          "summary": "Review the unsent NEDA inquiry draft and, if the board agrees, have a person request official public sponsor materials. Treat the six names in the search snippet only as research leads until independently verified."
+        },
+        {
+          "title": "Broaden the search beyond Manhattan",
+          "option_id": null,
+          "summary": "Consider mission-aligned organizations outside Manhattan as research or collaboration leads, while recognizing they do not answer the current request for local business sponsors."
+        },
+        {
+          "title": "Pause outreach until gala details and prospect evidence are clearer",
+          "option_id": null,
+          "summary": "First establish the foundation gala\u2019s year, date, venue, sponsorship package, and outreach timeline, then resume prospect research."
+        }
+      ],
+      "risks": [
+        "The businesses named in the NEDA search snippet are not confirmed sponsors in the supplied excerpt; presenting them as established prospects could mislead the board or potential contacts.",
+        "A past event\u2019s sponsor list, even if later verified, would not establish current interest, Manhattan presence, or fit with the foundation\u2019s gala.",
+        "The available research chiefly concerns organizations seeking sponsorship for their own events, not businesses offering sponsorship to the foundation."
+      ],
+      "decisions_for_board": [
+        "Whether to authorize a person to review and, if appropriate, send the unsent NEDA inquiry requesting official public sponsor materials.",
+        "Whether to keep the search limited to Manhattan or broaden it to mission-aligned organizations outside the area.",
+        "Whether to pause sponsor prospecting until the foundation\u2019s gala details and sponsorship package are established."
+      ],
+      "next_steps": [
+        "Review the unsent NEDA inquiry draft; it requests official public gala sponsor materials and program or collaboration information.",
+        "If the board authorizes follow-up, verify any names against official materials and establish local presence, relevant contacts, and current giving requirements before treating them as prospects.",
+        "Clarify the foundation\u2019s gala year, date, venue, sponsorship package, and outreach timeline.",
+        "Hold the WithAll and Project Blackbird drafts unless the board broadens the geographic scope; neither has been sent."
+      ],
+      "lessons_applied": [],
+      "caveats": [
+        "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+        "Research results are based on the supplied summaries and excerpts; the six business names appear only in a search snippet and are unconfirmed by the checked excerpt.",
+        "The NEDA Annual Gala source was inaccessible (HTTP 401), so its details remain unverified.",
+        "No verified sponsor contact, application process, deadline, or current business interest is provided.",
+        "No outreach has been sent. Drafts are for review only.",
+        "No event spending or sponsorship amount can be assessed from the supplied data."
+      ],
+      "mission_impact_considerations": [
+        "Seeking sponsors for the foundation\u2019s spring gala could support its mental-health awareness, eating-disorder research, and community purposes, but no specific sponsor or contribution is verified.",
+        "Keeping prospect research focused on Manhattan respects the request; broadening the search could surface mission-aligned organizations but would divert effort from local business leads.",
+        "The board should weigh sponsor prospecting against other uses of volunteer time and resources once the gala\u2019s details and sponsorship needs are known."
+      ]
+    },
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No unconfirmed availability claims",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No links that are not in the sources",
+          "passed": true,
+          "detail": "Every link appears in the run's sources."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "3 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Every partnership draft carries the sources it was written from",
+          "passed": true,
+          "detail": "3 of 3 drafts link to their research sources."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "1 unverified, 3 verified"
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {},
+    "revision_history": [],
+    "unresolved_conflicts": [],
+    "event_plan_id": null,
+    "specialists": {
+      "research": {
+        "agent": "mission_discovery",
+        "status": "completed",
+        "summary": "The supplied sources do not verify any Manhattan business as a prospective sponsor for the foundation\u2019s spring gala. The most useful lead is the Manhattan NEDA gala: its search snippet names business sponsors, but the checked excerpt does not confirm those names. Two other sources describe mission-aligned galas outside Manhattan, and one page was unreachable."
+      },
+      "outreach": {
+        "agent": "partnerships_outreach",
+        "status": "completed",
+        "summary": "Three unsent first-contact drafts for board review. WithAll and Project Blackbird are outside the current Manhattan sponsor-search scope and should be held unless the board broadens its search. The NEDA draft requests verified public sponsor information without treating any business as a confirmed prospect."
+      }
+    },
+    "finance": null,
+    "event": null,
+    "venues": [],
+    "shortlist": [],
+    "original_plan": null,
+    "revised_plan": null,
+    "revision_reasons": [],
+    "evaluation": null,
+    "proposal_comparison": [],
+    "finance_feedback": [],
+    "authorized_budget_usd": null,
+    "drafts": [
+      {
+        "id": 60,
+        "recipient": "WithAll\u2019s Keys in Bloom Gala",
+        "subject": "Learning about WithAll\u2019s recovery and prevention work",
+        "draft_type": "community_program",
+        "contact_status": "verified_email",
+        "contact_email": "hello@withall.org",
+        "finding_id": 25,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "To learn about WithAll\u2019s eating-disorder programs and whether future collaboration could be relevant if the board broadens its geographic scope.",
+        "next_step": "Ask WithAll to share a brief program overview and information about potential collaboration pathways.",
+        "sources": [
+          {
+            "title": "Keys in Bloom Gala WithAll Spring Fundraising Event",
+            "url": "https://withall.org/spring-event/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:34+00:00"
+          }
+        ],
+        "review_notes": [
+          "Names of any Manhattan business supporters",
+          "Sponsorship terms and contact details",
+          "Whether WithAll offers any relevant sponsor introductions or cross-organization collaboration",
+          "Costs or giving levels are not stated on the source.",
+          "Unconfirmed: The search snippet promises business recognition and visibility, but those benefits are not confirmed in the excerpt."
+        ]
+      },
+      {
+        "id": 61,
+        "recipient": "National Eating Disorders Association Gala 2026",
+        "subject": "Inquiry about public NEDA Gala sponsor materials",
+        "draft_type": "community_program",
+        "contact_status": "website_only",
+        "contact_email": null,
+        "finding_id": 26,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "To request verified public gala sponsor materials and learn about NEDA\u2019s programs and potential collaboration pathways.",
+        "next_step": "Request links to official public gala sponsor materials and a program or collaboration overview.",
+        "sources": [
+          {
+            "title": "National Eating Disorders Association Gala 2026",
+            "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:40+00:00"
+          }
+        ],
+        "review_notes": [
+          "A confirmed sponsor list from the official event materials",
+          "Relevant Manhattan offices and sponsorship contacts",
+          "Each business\u2019s giving priorities and application requirements",
+          "The foundation\u2019s gala date, sponsorship package, and outreach timeline",
+          "Unconfirmed: The search snippet identifies CBRE, Greenberg Traurig, Kirkland & Ellis, Skadden, Weil, and Equip Health as sponsors; none is confirmed in the supplied page excerpt; The named businesses\u2019 Manhattan presence and interest in sponsoring the foundation are not established.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      },
+      {
+        "id": 62,
+        "recipient": "Project Blackbird Gala",
+        "subject": "Learning about Project Blackbird\u2019s anti-stigma work",
+        "draft_type": "community_program",
+        "contact_status": "verified_email",
+        "contact_email": "partnerships@projectblackbirdinc.org",
+        "finding_id": 27,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "To learn about Project Blackbird\u2019s programs and possible mission-aligned collaboration if the board expands beyond its current geographic focus.",
+        "next_step": "Ask for a brief program overview and clarification of available collaboration opportunities.",
+        "sources": [
+          {
+            "title": "Gala | Project Blackbird",
+            "url": "https://www.projectblackbirdinc.org/gala/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:45+00:00"
+          }
+        ],
+        "review_notes": [
+          "Any Manhattan business sponsors",
+          "Confirmed sponsorship and advertising options",
+          "Details of the Free Therapy Initiative and use of gala proceeds",
+          "Whether any relevant collaboration with the foundation is available",
+          "Costs or giving levels are not stated on the source.",
+          "Unconfirmed: Business sponsorship and program-book advertising are mentioned only in the search snippet; The snippet\u2019s claim that proceeds support youth initiatives and free therapy is not confirmed in the excerpt."
+        ]
+      }
+    ],
+    "lessons": [],
+    "disagreements": [],
+    "findings": [
+      {
+        "id": 25,
+        "refreshed": false,
+        "name": "WithAll\u2019s Keys in Bloom Gala",
+        "url": "https://withall.org/spring-event/",
+        "category": "event",
+        "fit": "Possible fit",
+        "fit_reason": "Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+        "verification": "verified",
+        "geography": "Golden Valley, MN",
+        "purpose": "A fundraising event supporting WithAll and its eating-disorder recovery and prevention work.",
+        "alignment_summary": "WithAll shows strong alignment with eating-disorder support and prevention. However, its Minnesota gala does not meet the current request for Manhattan business sponsors.",
+        "contribution_ways": [
+          "Explore the stated event sponsorship opportunities if the board broadens its geographic scope.",
+          "Create a fundraising campaign supporting recovery and prevention efforts."
+        ],
+        "partnership_types": [
+          "Event sponsorship",
+          "Fundraising"
+        ],
+        "known_costs": null,
+        "dates_text": "April 24, 2027",
+        "date_status": "none",
+        "missing_info": [
+          "Names of any Manhattan business supporters",
+          "Sponsorship terms and contact details",
+          "Whether WithAll offers any relevant sponsor introductions or cross-organization collaboration",
+          "Costs or giving levels are not stated on the source."
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet promises business recognition and visibility, but those benefits are not confirmed in the excerpt."
+        ],
+        "next_step": "Set this source aside unless the board expands the search beyond Manhattan.",
+        "injection_flagged": false,
+        "source_id": "web:1",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:1",
+            "title": "Keys in Bloom Gala WithAll Spring Fundraising Event",
+            "url": "https://withall.org/spring-event/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:34+00:00"
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "refreshed": false,
+        "name": "National Eating Disorders Association Gala 2026",
+        "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+        "category": "event",
+        "fit": "Possible fit",
+        "fit_reason": "Aligned, but alignment is partial.",
+        "verification": "verified",
+        "geography": "Guastavino\u2019s, 409 E 59th St, New York, NY 10022",
+        "purpose": "A gala presented by the National Eating Disorders Association.",
+        "alignment_summary": "This is the most relevant source for discovering potential Manhattan sponsor leads, but it is not itself a business sponsor. The snippet\u2019s business names are useful research leads only, not confirmed prospects or evidence of willingness to support the foundation.",
+        "contribution_ways": [
+          "Use the gala as a research lead for businesses with possible eating-disorder philanthropy interests, after verifying the sponsor list."
+        ],
+        "partnership_types": [],
+        "known_costs": "The page lists \"Price $1,500 - $50,000\" without explaining the tiers.",
+        "dates_text": "Monday, May 11, 2026, 6:00pm\u201310:00pm EDT",
+        "date_status": "none",
+        "missing_info": [
+          "A confirmed sponsor list from the official event materials",
+          "Relevant Manhattan offices and sponsorship contacts",
+          "Each business\u2019s giving priorities and application requirements",
+          "The foundation\u2019s gala date, sponsorship package, and outreach timeline"
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet identifies CBRE, Greenberg Traurig, Kirkland & Ellis, Skadden, Weil, and Equip Health as sponsors; none is confirmed in the supplied page excerpt; The named businesses\u2019 Manhattan presence and interest in sponsoring the foundation are not established."
+        ],
+        "next_step": "Verify the six business names against the official gala sponsor materials before building an outreach shortlist.",
+        "injection_flagged": false,
+        "source_id": "web:2",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:2",
+            "title": "National Eating Disorders Association Gala 2026",
+            "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:40+00:00"
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "refreshed": false,
+        "name": "Project Blackbird Gala",
+        "url": "https://www.projectblackbirdinc.org/gala/",
+        "category": "event",
+        "fit": "Possible fit",
+        "fit_reason": "Aligned, but feasibility issues: The listed event is outside the requested Manhattan geography..",
+        "verification": "verified",
+        "geography": "International Spy Museum, Washington, D.C.",
+        "purpose": "A mental-health gala associated with Project Blackbird\u2019s aim to de-stigmatize eating-disorder and mental-health conversation within underrepresented communities.",
+        "alignment_summary": "Project Blackbird\u2019s stated anti-stigma mission aligns strongly with the foundation\u2019s mental-health and eating-disorder purposes. Its Washington, D.C. gala does not supply verified Manhattan business sponsor prospects.",
+        "contribution_ways": [
+          "Explore gala participation if the board expands its geographic scope.",
+          "Ask about the sponsorship and program-book advertising opportunities mentioned in the search snippet before considering collaboration."
+        ],
+        "partnership_types": [],
+        "known_costs": null,
+        "dates_text": "Saturday, May 15, 2027, 5:30\u201310:00 PM",
+        "date_status": "none",
+        "missing_info": [
+          "Any Manhattan business sponsors",
+          "Confirmed sponsorship and advertising options",
+          "Details of the Free Therapy Initiative and use of gala proceeds",
+          "Whether any relevant collaboration with the foundation is available",
+          "Costs or giving levels are not stated on the source."
+        ],
+        "warnings": [
+          "Unconfirmed: Business sponsorship and program-book advertising are mentioned only in the search snippet; The snippet\u2019s claim that proceeds support youth initiatives and free therapy is not confirmed in the excerpt."
+        ],
+        "next_step": "Set this source aside for the current local sponsor search.",
+        "injection_flagged": false,
+        "source_id": "web:3",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:3",
+            "title": "Gala | Project Blackbird",
+            "url": "https://www.projectblackbirdinc.org/gala/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:02:45+00:00"
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "refreshed": false,
+        "name": "NEDA Annual Gala",
+        "url": "https://nedadisorders.ndic.com/ways-to-give/annual-benefit-dinner",
+        "category": "event",
+        "fit": "Needs research",
+        "fit_reason": "The source could not be reached or the organization's purpose is unclear.",
+        "verification": "unverified",
+        "geography": null,
+        "purpose": "An annual benefit event described in the search snippet as offering sponsorship opportunities.",
+        "alignment_summary": "This is an unverified research lead rather than an actionable sponsorship opportunity. It may help locate historical business supporters, but the supplied material is insufficient to assess mission fit or local relevance.",
+        "contribution_ways": [
+          "Use the search result as a lead to locate accessible official sponsor acknowledgments before considering any outreach."
+        ],
+        "partnership_types": [
+          "Sponsorship opportunities described in the search snippet only"
+        ],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "An accessible official source",
+          "Confirmed event identity, location, and date",
+          "Named business supporters and sponsorship contacts",
+          "Whether this duplicates the other NEDA gala source",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [
+          "The link could not be verified (HTTP 401).",
+          "Unconfirmed: The snippet describes a New York benefit dinner with sponsorship opportunities; The snippet says past supporters include businesses and law firms."
+        ],
+        "next_step": "Locate an accessible official NEDA sponsor acknowledgment page before using this lead.",
+        "injection_flagged": false,
+        "source_id": "web:4",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:4",
+            "title": "NEDA Annual Gala",
+            "url": "https://nedadisorders.ndic.com/ways-to-give/annual-benefit-dinner",
+            "verification": "unverified",
+            "retrieved_at": "2026-10-25T23:02:48+00:00"
+          }
+        ]
+      }
+    ],
+    "selection": null,
+    "mission_contribution": null,
+    "community_insights": [],
+    "donations": "[redacted]"
+  }
+}

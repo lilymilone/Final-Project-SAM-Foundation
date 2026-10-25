@@ -27,6 +27,7 @@ from ..db.models import (
     HistoricalLesson,
     LegacyDocument,
     LegacyImport,
+    ModelUsage,
     OutreachDraft,
     ResearchFinding,
     User,
@@ -62,7 +63,7 @@ TOOL_SCOPES = {
     **{t: "board_records" for t in ("read_import_sources", "stage_event_extraction")},
     "find_relevant_events": "event_summaries",
     "get_historical_lessons": "board_lessons",
-    **{t: "public_web" for t in ("search_web", "fetch_source", "search_venues")},
+    **{t: "public_web" for t in ("search_web", "fetch_source", "search_venues", "lookup_inquiry_details")},
     **{t: "research_findings" for t in ("save_research_finding", "read_saved_findings")},
     **{t: "opportunities" for t in ("read_opportunities", "select_opportunities")},
     **{t: "event_plan" for t in ("read_event_plan", "create_event_plan", "save_venue_candidate", "compute_event_model")},
@@ -77,6 +78,9 @@ REFLECTION_TEXT_KEYS = ("what_worked", "did_not_go_as_planned", "unexpected_cost
                         "accessibility_issues", "what_could_make_people_feel_more_welcome")
 IMPORT_TEXT_BUDGET = 40_000  # characters of source text per extraction call
 PER_SOURCE_CHARS = 15_000
+
+
+CONTACT_DRAFTS_PER_RUN = 3  # matches the Orchestrator's default of 3 outreach drafts per run
 
 
 def _norm_city(city: str | None) -> str:
@@ -741,17 +745,69 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         return ToolResult(tool="select_opportunities", ok=True, data=picked, warnings=picked["warnings"],
                           summary=f"selected {len(picked['selected'])} of {len(findings)} (requested {count})")
 
+    def lookup_inquiry_details(name: str, website: str | None, kind: str = "default") -> ToolResult:
+        """Official public contact details for an organization the agents identified: an email only if it appears on the
+        organization's own website, otherwise its official contact page. Never guessed."""
+        from ..services import contacts as ct
+        if website and "/synthetic/" in website:
+            rec = ct.synthetic_contact(name, fixtures.fixture_by_url(website))
+        elif ctx.research_mode == "fixture":
+            rec = ct.empty(name, "Safety-test fixture: contact research is not performed.")
+        elif website and private_details_in_url(website, private_terms()):
+            rec = ct.empty(name, "The link carries private details, so it was not followed.")
+        else:
+            # Contact research has its own small allowance (per draft, and at most CONTACT_DRAFTS_PER_RUN drafts' worth per run),
+            # so venue or mission research cannot use it up. Same SSRF-safe fetcher, robots.txt, and logging as all research.
+            left = {"pages": ctx.max_contact_pages}
+
+            def exhausted() -> bool:
+                return left["pages"] <= 0 or ctx.counters["contact_pages"] >= ctx.max_contact_pages * CONTACT_DRAFTS_PER_RUN
+
+            def fetch(url):
+                if exhausted():
+                    return {"url": url, "ok": False, "error": f"contact-page limit reached ({ctx.max_contact_pages} per draft)"}
+                left["pages"] -= 1
+                ctx.counters["contact_pages"] += 1
+                page = web.fetch_page(url)
+                if page.get("blocked") and getattr(ctx, "safety", None) is not None:
+                    ctx.safety.record("url_blocked", f"Did not fetch {url[:120]}: {page.get('error')}", severity="medium",
+                                      defense="Safe web retrieval (SSRF guard, content types)")
+                return page
+
+            def robots_ok(url):
+                if exhausted():
+                    return True  # fetch() then refuses; no extra request is made
+                return web.robots_allowed(url)
+
+            rec = ct.find_contact_live(name, website, kind, fetch=fetch, robots_ok=robots_ok, max_pages=max(ctx.max_contact_pages, 1))
+        src = []
+        if rec.get("source_url"):
+            src = [SourceRecord(id=f"contact:{name[:40]}", title=f"{name}: contact information", url=rec["source_url"],
+                                verification="synthetic" if rec["status"].startswith("synthetic") else "verified",
+                                retrieved_at=rec.get("verified_at"), note=rec["status"])]
+        return ToolResult(tool="lookup_inquiry_details", ok=True, data=rec, sources=src,
+                          summary=f"{name}: {rec['status'].replace('_', ' ')}" + (f" ({rec['email']})" if rec.get("email") else ""))
+
     def create_outreach_draft(draft_type: str, recipient_org: str, subject: str, body: str, personalization_basis: str,
                               is_synthetic_target: bool, purpose: str | None = None, opportunity: str | None = None,
                               next_step: str | None = None, foundation_background: str | None = None, sources: list | None = None,
-                              finding_id: int | None = None, review_notes: list | None = None) -> ToolResult:
-        """Save an UNSENT draft. There is no 'sent' status and no tool anywhere that sends it."""
+                              finding_id: int | None = None, review_notes: list | None = None, category: str | None = None,
+                              contact: dict | None = None, found_by_agent: str | None = None, recommendation_reason: str | None = None,
+                              related_findings: list | None = None, financial_considerations: list | None = None) -> ToolResult:
+        """Save an UNSENT draft with its traceability: who found the opportunity, why the Orchestrator recommended it, where the
+        contact came from, and which model wrote it. There is no 'sent' status and no tool anywhere that sends it."""
         with db.transaction() as s:
+            model = s.scalar(select(ModelUsage.selected_model).where(ModelUsage.handoff_id == ctx.current_handoff_id,
+                                                                     ModelUsage.status == "ok").order_by(ModelUsage.id.desc()).limit(1)) \
+                if ctx.current_handoff_id else None
             row = OutreachDraft(organization_id=org, run_id=ctx.run_id, agent="partnerships_outreach", draft_type=draft_type,
                                 recipient_org=recipient_org[:200], subject=subject[:300], body=body[:6000], status="draft",
                                 personalization_basis=personalization_basis[:1000], is_synthetic_target=is_synthetic_target,
                                 purpose=purpose, opportunity=opportunity, next_step=next_step, foundation_background=foundation_background,
-                                sources=sources or [], finding_id=finding_id, review_notes=review_notes or [], created_by=ctx.user_id)
+                                sources=sources or [], finding_id=finding_id, review_notes=review_notes or [], created_by=ctx.user_id,
+                                category=category, contact=contact, found_by_agent=found_by_agent,
+                                recommendation_reason=(recommendation_reason or "")[:2000] or None, related_findings=(related_findings or [])[:10],
+                                financial_considerations=(financial_considerations or [])[:8], model_used=model, handoff_id=ctx.current_handoff_id)
             s.add(row)
             s.flush()
             return ToolResult(tool="create_outreach_draft", ok=True, summary=f"draft #{row.id} (unsent)", data={"id": row.id})
@@ -771,6 +827,8 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
     add("read_opportunities", "Read Mission Discovery opportunities (no private notes).", ToolKind.READ, read_opportunities,
         Permission.VIEW_DASHBOARD)
     add("select_opportunities", "Deterministically pick outreach candidates by the fit rubric.", ToolKind.COMPUTE, select_opportunities)
+    add("lookup_inquiry_details", "Official public contact details (email only if listed on the organization's own site).", ToolKind.READ,
+        lookup_inquiry_details, Permission.RUN_AGENTS)
     add("create_outreach_draft", "Save an unsent outreach draft.", ToolKind.DRAFT, create_outreach_draft, Permission.RUN_AGENTS)
 
     # ── Orchestrator ─────────────────────────────────────────────────────────────

@@ -1,0 +1,4327 @@
+{
+  "run": {
+    "id": 40,
+    "status": "completed",
+    "research_mode": "live",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Plan a 150-person Manhattan fundraising gala and check whether we can afford it.",
+    "started_at": "2026-10-25T22:35:18.903201",
+    "duration_ms": 229034,
+    "spent_usd": 0.21116269,
+    "model_calls": 8,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 268,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 4,
+      "constraints": [],
+      "summary": "Intent: plan event (board routing). Specialists: event intelligence, fundraising events, financial analysis, partnerships outreach.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 269,
+      "step_key": "lessons",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "event_intelligence",
+      "objective": "Retrieve lessons from past events for a 150-guest gala in New York, NY",
+      "status": "completed",
+      "duration_ms": 55532,
+      "constraints": [],
+      "summary": "For the proposed 150-guest New York gala, the size-comparable panel, walk and raffle offer lessons on event purpose, food planning, volunteer roles and welcome. The Butterfly Benefit Dinner provides the closest format-specific evidence: retain the valued recovery speaker, control catering commitments, collect auction payments promptly and address entrance accessibility. All records are samples or synthetic examples, not a reliable forecast of a New York gala. The board's adopted event-purpose lesson should guide planning; its shorter-program recommendation has been reviewed, not adopted.",
+      "warnings": [
+        "Every event is marked as demo data; findings illustrate planning considerations rather than establish real-world performance.",
+        "There is no recorded New York City gala or venue quote, and the records do not establish how costs or attendance would scale.",
+        "Most events lack planned budgets. The dinner's reported catering overrun is not an overall event-budget overrun.",
+        "Reflections report overruns, but no record establishes a suitable overall contingency rate; a recommended percentage is therefore left unspecified.",
+        "The amount of uncollected dinner pledges is unknown, as is whether recorded funds raised include those pledges.",
+        "Board impressions and reported attendee comments are not representative attendee surveys or verified measures of belonging.",
+        "Volunteer meal shortages are documented, but the records do not establish how appreciated volunteers felt.",
+        "The competing views on plated-meal spending remain unresolved. The shorter-program lesson was reviewed, while the event-purpose lesson was adopted."
+      ],
+      "report": {
+        "task_id": 269,
+        "workflow_id": 40,
+        "step_key": "lessons",
+        "agent": "event_intelligence",
+        "objective": "Retrieve lessons from past events for a 150-guest gala in New York, NY",
+        "status": "completed",
+        "work_completed": "For the proposed 150-guest New York gala, the size-comparable panel, walk and raffle offer lessons on event purpose, food planning, volunteer roles and welcome. The Butterfly Benefit Dinner provides the closest format-specific evidence: retain the valued recovery speaker, control catering commitments, collect auction payments promptly and address entrance accessibility. All records are samples or synthetic examples, not a reliable forecast of a New York gala. The board's adopted event-purpose lesson should guide planning; its shorter-program recommendation has been reviewed, not adopted.",
+        "key_findings": [
+          {
+            "claim": "From Campus Wellness Panel: agree whether the gala primarily serves fundraising, awareness or both before evaluating spending and format. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+            "kind": "recommendation",
+            "confidence": "high",
+            "source_ids": [
+              "event:3",
+              "event:2",
+              "reflection:5"
+            ]
+          },
+          {
+            "claim": "Spring Awareness Walk and Butterfly Benefit Dinner both encountered unexpected food commitments and inadequate volunteer food. Campus Wellness Panel also identified food as a substantial cost. Treat food quantities, volunteer meals and vendor minimums as separate planning items.",
+            "kind": "opinion",
+            "confidence": "high",
+            "source_ids": [
+              "event:1",
+              "event:2",
+              "event:3",
+              "reflection:1",
+              "reflection:3",
+              "reflection:5",
+              "reflection:6",
+              "reflection:7"
+            ]
+          },
+          {
+            "claim": "At Butterfly Spring Raffle, the welcome table gave first-time guests someone to talk to. Consider carrying this practice into gala arrival and check-in.",
+            "kind": "opinion",
+            "confidence": "medium",
+            "source_ids": [
+              "event:4",
+              "reflection:8"
+            ]
+          },
+          {
+            "claim": "From Butterfly Spring Raffle, brief volunteers before the event, assign a lead per station and lock the volunteer list three weeks out. Preserve the clear check-in responsibilities praised at Butterfly Benefit Dinner.",
+            "kind": "recommendation",
+            "confidence": "medium",
+            "source_ids": [
+              "event:4",
+              "event:2",
+              "reflection:8",
+              "reflection:4"
+            ]
+          },
+          {
+            "claim": "Spring Awareness Walk's resource fair drew families into conversations with mental-health groups, while Campus Wellness Panel generated a recorded request from its co-host to repeat the event. Consider a mission-centered conversation opportunity at the gala, without assuming these formats will transfer unchanged.",
+            "kind": "opinion",
+            "confidence": "medium",
+            "source_ids": [
+              "event:1",
+              "event:3",
+              "reflection:1",
+              "reflection:5"
+            ]
+          },
+          {
+            "claim": "From Butterfly Benefit Dinner and Spring Awareness Walk: compare food-and-beverage minimums before selecting a venue, obtain written pricing and minimum guarantees, and establish a guest-count deadline. The dinner reflection specifically recommends locking the count two weeks out.",
+            "kind": "recommendation",
+            "confidence": "high",
+            "source_ids": [
+              "event:2",
+              "event:1",
+              "reflection:3",
+              "reflection:6"
+            ]
+          },
+          {
+            "claim": "From Butterfly Benefit Dinner: retain the recovery speaker while drafting a program under an hour. This is an already-reviewed recommendation, not an adopted rule. The raffle's extended draw reinforces the need to time fundraising segments.",
+            "kind": "recommendation",
+            "confidence": "medium",
+            "source_ids": [
+              "event:2",
+              "event:4",
+              "reflection:3",
+              "reflection:4",
+              "reflection:9"
+            ]
+          },
+          {
+            "claim": "From Butterfly Benefit Dinner: arrange payment collection at the table rather than relying on post-event follow-up. Strong auction pledges did not ensure collection.",
+            "kind": "recommendation",
+            "confidence": "medium",
+            "source_ids": [
+              "event:2",
+              "reflection:3",
+              "reflection:4"
+            ]
+          },
+          {
+            "claim": "From Butterfly Benefit Dinner, Campus Wellness Panel and Butterfly Spring Raffle: check step-free entrance access, consider a quiet conversation area and plan a welcoming arrival experience. Discuss how to address the reported price-related discomfort without treating the plated-meal preference as settled.",
+            "kind": "recommendation",
+            "confidence": "medium",
+            "source_ids": [
+              "event:2",
+              "event:3",
+              "event:4",
+              "reflection:3",
+              "reflection:5",
+              "reflection:7",
+              "reflection:8"
+            ]
+          },
+          {
+            "claim": "From Spring Awareness Walk: retain business sponsorship opportunities and lock sponsor logos a month before printing. Butterfly Spring Raffle's last-minute printing costs reinforce the need for an artwork deadline.",
+            "kind": "recommendation",
+            "confidence": "medium",
+            "source_ids": [
+              "event:1",
+              "event:4",
+              "reflection:2",
+              "reflection:9"
+            ]
+          },
+          {
+            "claim": "From Hartford trivia night: assess room noise and microphone provision before committing to a speaker setup, and provide enough name tags. These are transferable checks, not evidence of conditions at a New York venue.",
+            "kind": "recommendation",
+            "confidence": "medium",
+            "source_ids": [
+              "event:5",
+              "reflection:10"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "event:5",
+            "title": "Hartford trivia night (synthetic sample)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "event:4",
+            "title": "Butterfly Spring Raffle (synthetic sample)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "event:1",
+            "title": "Spring Awareness Walk (sample)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "event:2",
+            "title": "Butterfly Benefit Dinner (sample)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "event:3",
+            "title": "Campus Wellness Panel (sample)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:1",
+            "title": "Reflection on Spring Awareness Walk (sample) (Demo board member A)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:2",
+            "title": "Reflection on Spring Awareness Walk (sample) (Demo board member B)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:3",
+            "title": "Reflection on Butterfly Benefit Dinner (sample) (Demo board member A)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:4",
+            "title": "Reflection on Butterfly Benefit Dinner (sample) (Demo board member C)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:5",
+            "title": "Reflection on Campus Wellness Panel (sample) (Demo board member B)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:6",
+            "title": "Reflection on Spring Awareness Walk (sample) (Demo board member C)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:7",
+            "title": "Reflection on Butterfly Benefit Dinner (sample) (Demo board member D)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:8",
+            "title": "Reflection on Butterfly Spring Raffle (synthetic sample) (Avery Brooks)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:9",
+            "title": "Reflection on Butterfly Spring Raffle (synthetic sample) (Sam Rivera)",
+            "url": null,
+            "verification": "internal"
+          },
+          {
+            "id": "reflection:10",
+            "title": "Reflection on Hartford trivia night (synthetic sample) (Jordan Lee (sample board member, shared by phone))",
+            "url": null,
+            "verification": "internal"
+          }
+        ],
+        "assumptions": [
+          "Lessons are based on synthetic demo records."
+        ],
+        "risks_uncertainties": [
+          "Every event is marked as demo data; findings illustrate planning considerations rather than establish real-world performance.",
+          "There is no recorded New York City gala or venue quote, and the records do not establish how costs or attendance would scale.",
+          "Most events lack planned budgets. The dinner's reported catering overrun is not an overall event-budget overrun.",
+          "Reflections report overruns, but no record establishes a suitable overall contingency rate; a recommended percentage is therefore left unspecified.",
+          "The amount of uncollected dinner pledges is unknown, as is whether recorded funds raised include those pledges.",
+          "Board impressions and reported attendee comments are not representative attendee surveys or verified measures of belonging.",
+          "Volunteer meal shortages are documented, but the records do not establish how appreciated volunteers felt.",
+          "The competing views on plated-meal spending remain unresolved. The shorter-program lesson was reviewed, while the event-purpose lesson was adopted."
+        ],
+        "financial_considerations": [],
+        "recommended_next_actions": [
+          "From Campus Wellness Panel: agree whether the gala primarily serves fundraising, awareness or both before evaluating spending and format. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+          "From Butterfly Spring Raffle, brief volunteers before the event, assign a lead per station and lock the volunteer list three weeks out. Preserve the clear check-in responsibilities praised at Butterfly Benefit Dinner.",
+          "From Butterfly Benefit Dinner and Spring Awareness Walk: compare food-and-beverage minimums before selecting a venue, obtain written pricing and minimum guarantees, and establish a guest-count deadline. The dinner reflection specifically recommends locking the count two weeks out.",
+          "From Butterfly Benefit Dinner: retain the recovery speaker while drafting a program under an hour. This is an already-reviewed recommendation, not an adopted rule. The raffle's extended draw reinforces the need to time fundraising segments.",
+          "From Butterfly Benefit Dinner: arrange payment collection at the table rather than relying on post-event follow-up. Strong auction pledges did not ensure collection.",
+          "Review the lessons in Our Legacy: mark them reviewed, adopted, or dismissed.",
+          "Share these lessons with the Events agent."
+        ],
+        "outreach": {
+          "appropriate": false,
+          "reason": "This report does not identify an outreach opportunity.",
+          "candidates": []
+        },
+        "additional_agents": [
+          {
+            "agent": "fundraising_events",
+            "reason": "Apply the evidence-backed lessons to the plan."
+          }
+        ],
+        "approval": {
+          "board_review": true,
+          "professional_review": false,
+          "reasons": [
+            "Lessons become planning guidance once the board reviews or adopts them."
+          ]
+        },
+        "tool_calls": [
+          {
+            "tool": "read_historical_events",
+            "allowed": true,
+            "ok": true,
+            "summary": "5 past events"
+          },
+          {
+            "tool": "read_board_reflections",
+            "allowed": true,
+            "ok": true,
+            "summary": "10 reflections"
+          },
+          {
+            "tool": "compare_event_outcomes",
+            "allowed": true,
+            "ok": true,
+            "summary": "compared 5 events (sufficient data); 6 computed observation(s)"
+          },
+          {
+            "tool": "get_historical_lessons",
+            "allowed": true,
+            "ok": true,
+            "summary": "2 saved lessons"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #213 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #214 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #215 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #216 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #217 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #218 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #219 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #220 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #221 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #222 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #223 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #224 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #225 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #226 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #227 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #228 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #229 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #230 saved"
+          },
+          {
+            "tool": "save_historical_lesson",
+            "allowed": true,
+            "ok": true,
+            "summary": "lesson #231 saved"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 6966,
+          "cached_input_tokens": 0,
+          "output_tokens": 3599,
+          "web_search_calls": 0,
+          "cost_usd": 0.053403,
+          "models": [
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 270,
+      "step_key": "venues",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "fundraising_events",
+      "objective": "Research venues and a fundraising strategy for a 150-guest gala in New York, NY",
+      "status": "completed",
+      "duration_ms": 64821,
+      "constraints": [
+        {
+          "name": "history:Written catering commitments",
+          "detail": "Compare venue food-and-beverage minimums and obtain written per-head pricing and vendor guarantees before commitment; establish the dinner guest-count deadline two weeks out.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Protected volunteer meals",
+          "detail": "Budget volunteer food separately and plan service so volunteers do not miss meals while serving guests.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Advance volunteer assignments",
+          "detail": "Lock the volunteer list three weeks out, brief volunteers by phone the week before and assign a lead per station.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Access and quiet space",
+          "detail": "Check entrance accessibility before choosing the venue and include a quiet-space option in layout planning.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Payment process",
+          "detail": "Plan table-side auction payment collection rather than depending solely on later pledge follow-up.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Print and technical readiness",
+          "detail": "Lock sponsor logos a month before printing, test registration before launch and check speaker audibility and name-tag supplies.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        }
+      ],
+      "summary": "Recommend the David Rubenstein Atrium at Lincoln Center only as the closest candidate for further diligence, not for commitment. No option currently demonstrates compliance with all required catering, accessibility and quiet-space checks. All five options have identical modeled costs: $35,200 total, $15,350 upfront, $11,642.50 base net and -$3,463 conservative net. The total exceeds the $18,000 budget limit. Pricing must be quoted; each modeled venue rental figure is hypothetical.",
+      "warnings": [
+        "Live search results. Prices and capacity count as published only if the figures appear on a page fetched just now.",
+        "Availability, actual rental prices, catering terms, minimums and deposit schedules are unconfirmed for every option. Prices must be quoted; modeled venue rental figures are hypothetical estimates.",
+        "The provided calculator outputs are used unchanged. Placeholder operating assumptions and history-based sponsorship and donation assumptions require validation.",
+        "Step-free access, accessible restrooms, seating accommodations, dietary provision and quiet-space availability are not stated in the venue data.",
+        "Recovery-speaker availability, technical requirements and any associated costs are unknown.",
+        "Past-event evidence includes sample and synthetic records, board observations and reported feedback; these are planning signals, not verified predictions of this gala's outcomes.",
+        "No Finance feedback or previous shortlist was provided.",
+        "No option currently satisfies all verification constraints, and none fits the $18,000 budget limit at the supplied $35,200 total. The sole ranking is a diligence priority, not a recommendation to commit.",
+        "The -$3,463 conservative net indicates loss exposure. Mission benefits and historical lessons do not override that financial result.",
+        "The $11,642.50 base net does not establish achievement of the $40,000 fundraising goal; the goal's gross-versus-net definition is unknown.",
+        "All listed seated capacities match the planned 150 attendance, so a usable event layout must be confirmed rather than assuming space remains for program and welcome activities.",
+        "Food minimums and volunteer meals could introduce commitments not adequately represented by placeholder inputs. Historical food lessons reinforce this risk rather than justify assuming savings.",
+        "Sponsored access, in-kind support and additional giving are proposals, not secured revenue or verified cost reductions."
+      ],
+      "report": {
+        "task_id": 270,
+        "workflow_id": 40,
+        "step_key": "venues",
+        "agent": "fundraising_events",
+        "objective": "Research venues and a fundraising strategy for a 150-guest gala in New York, NY",
+        "status": "completed",
+        "work_completed": "Recommend the David Rubenstein Atrium at Lincoln Center only as the closest candidate for further diligence, not for commitment. No option currently demonstrates compliance with all required catering, accessibility and quiet-space checks. All five options have identical modeled costs: $35,200 total, $15,350 upfront, $11,642.50 base net and -$3,463 conservative net. The total exceeds the $18,000 budget limit. Pricing must be quoted; each modeled venue rental figure is hypothetical.",
+        "key_findings": [
+          {
+            "claim": "#1 David Rubenstein Atrium at Lincoln Center (seated dinner): projected $35,200; Quote required (hypothetical estimate used). The Atrium's published seated capacity of 150 matches attendance, while portable staging, flexible seating and in-house sound and projection support the recovery speaker and a personal tribute to Sabrina. These features make it the strongest candidate to investigate, not a financially approved choice. Accessibility, quiet-space feasibility and written catering commitments remain unconfirmed. Glasshouse Chelsea and the Ballroom on 74th also offer technical amenities but no modeled financial advantage; The Fulton's final layout capacity requires confirmation and it requires in-house catering with no DJ; Rosie O\u2019Grady\u2019s has no stated speaker technical provision.",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:venue:1:website"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "web:venue:1:website",
+            "title": "Rent the David Rubenstein Atrium at Lincoln Center | Venues",
+            "url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:2:website",
+            "title": "Glasshouse Chelsea | Exclusive Venue | Manhattan Views",
+            "url": "https://www.ghchelsea.com/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:2:source",
+            "title": "The Venue | Glasshouse Chelsea",
+            "url": "https://www.ghchelsea.com/the-venue",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:3:website",
+            "title": "The Fulton | Jean-Georges' Seafood Restaurant in NYC",
+            "url": "https://www.thefulton.nyc",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:3:source",
+            "title": "The Fulton Venue - The Seaport",
+            "url": "https://theseaport.nyc/the-fulton-venue/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:4:website",
+            "title": "Rosie O'Grady's",
+            "url": "https://rosieogradys.com/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:4:source",
+            "title": "Main Hall \u2013 Rosie O'Grady's",
+            "url": "https://rosieogradys.com/rooms/main-hall/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:5:website",
+            "title": "Amali NYC | Mediterranean Restaurant & Private Dining in Midtown Manhattan",
+            "url": "https://www.amalinyc.com/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:5:source",
+            "title": "Private Events | Amali in New York, NY",
+            "url": "https://www.amalinyc.com/private-events/",
+            "verification": "verified"
+          }
+        ],
+        "assumptions": [
+          "Default planning contingency",
+          "Not estimated (contingency covers small items); enter known costs such as printing or permits",
+          "Placeholder deposit assumption",
+          "Placeholder planning figure; replace with quotes",
+          "Placeholder planning figure; request a catering quote",
+          "Quote required: the venue publishes no rental price. Hypothetical planning estimate, not a quote."
+        ],
+        "risks_uncertainties": [
+          "Live search results. Prices and capacity count as published only if the figures appear on a page fetched just now.",
+          "Availability, actual rental prices, catering terms, minimums and deposit schedules are unconfirmed for every option. Prices must be quoted; modeled venue rental figures are hypothetical estimates.",
+          "The provided calculator outputs are used unchanged. Placeholder operating assumptions and history-based sponsorship and donation assumptions require validation.",
+          "Step-free access, accessible restrooms, seating accommodations, dietary provision and quiet-space availability are not stated in the venue data.",
+          "Recovery-speaker availability, technical requirements and any associated costs are unknown.",
+          "Past-event evidence includes sample and synthetic records, board observations and reported feedback; these are planning signals, not verified predictions of this gala's outcomes.",
+          "No Finance feedback or previous shortlist was provided.",
+          "No option currently satisfies all verification constraints, and none fits the $18,000 budget limit at the supplied $35,200 total. The sole ranking is a diligence priority, not a recommendation to commit.",
+          "The -$3,463 conservative net indicates loss exposure. Mission benefits and historical lessons do not override that financial result.",
+          "The $11,642.50 base net does not establish achievement of the $40,000 fundraising goal; the goal's gross-versus-net definition is unknown."
+        ],
+        "financial_considerations": [
+          "David Rubenstein Atrium at Lincoln Center (seated dinner): projected $35,200, upfront $15,350"
+        ],
+        "recommended_next_actions": [
+          "#1 David Rubenstein Atrium at Lincoln Center (seated dinner): projected $35,200; Quote required (hypothetical estimate used). The Atrium's published seated capacity of 150 matches attendance, while portable staging, flexible seating and in-house sound and projection support the recovery speaker and a personal tribute to Sabrina. These features make it the strongest candidate to investigate, not a financially approved choice. Accessibility, quiet-space feasibility and written catering commitments remain unconfirmed. Glasshouse Chelsea and the Ballroom on 74th also offer technical amenities but no modeled financial advantage; The Fulton's final layout capacity requires confirmation and it requires in-house catering with no DJ; Rosie O\u2019Grady\u2019s has no stated speaker technical provision.",
+          "Finance checks affordability of the top option."
+        ],
+        "outreach": {
+          "appropriate": true,
+          "reason": "1 venue(s) fit the guest count; an inquiry can confirm availability, pricing, catering, and nonprofit terms.",
+          "candidates": [
+            "David Rubenstein Atrium at Lincoln Center"
+          ]
+        },
+        "additional_agents": [
+          {
+            "agent": "financial_analysis",
+            "reason": "Check the shortlisted costs against the budget and cash position."
+          },
+          {
+            "agent": "partnerships_outreach",
+            "reason": "Prepare unsent inquiries to the shortlisted venues."
+          }
+        ],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "tool_calls": [
+          {
+            "tool": "search_venues",
+            "allowed": true,
+            "ok": true,
+            "summary": "5 live venue candidates (websites and figures checked next)"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Rent the David Rubenstein Atrium at Lincoln Center | Venues"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Glasshouse Chelsea | Exclusive Venue | Manhattan Views"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 The Venue | Glasshouse Chelsea"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 The Fulton | Jean-Georges' Seafood Restaurant in NYC"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 The Fulton Venue - The Seaport"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Rosie O'Grady's"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Main Hall \u2013 Rosie O'Grady's"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Amali NYC | Mediterranean Restaurant & Private Dining in Midtown Manhattan"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Private Events | Amali in New York, NY"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "David Rubenstein Atrium at Lincoln Center seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "Glasshouse Chelsea \u2014 14th Floor seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "The Fulton seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "Rosie O\u2019Grady\u2019s \u2014 Main Hall seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "The Ballroom on 74th (Amali) seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "save_venue_candidate",
+            "allowed": true,
+            "ok": true,
+            "summary": "venue candidate #11"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 2,
+          "input_tokens": 27443,
+          "cached_input_tokens": 0,
+          "output_tokens": 3192,
+          "web_search_calls": 2,
+          "cost_usd": 0.055768,
+          "models": [
+            "gpt-6-luna",
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 271,
+      "step_key": "finance",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "financial_analysis",
+      "objective": "Check whether we can afford David Rubenstein Atrium at Lincoln Center (seated dinner)",
+      "status": "needs_revision",
+      "duration_ms": 14894,
+      "constraints": [],
+      "summary": "The seated dinner at the David Rubenstein Atrium at Lincoln Center is not affordable as planned. The projected cost of $35,200 exceeds the $18,000 planning limit, and upfront payments of $15,350 exceed the $9,938 available above the reserve floor. A positive base-case result does not resolve these budget and cash-timing conflicts.",
+      "warnings": [
+        "The conservative scenario loses money, while even the optimistic scenario falls short of the fundraising target.",
+        "Unquoted venue pricing and placeholder costs may change the projected total; miscellaneous costs have not been separately estimated.",
+        "Expected sponsorship and donations are uncertain, and pledged sponsorship is not guaranteed.",
+        "The restricted cash amount assumes all recorded restricted gifts remain unspent because no restricted balance was recorded. It is excluded from spendable funds.",
+        "The reported break-even attendance is a computed model result, not assurance that deposits can be funded or that the fundraising target will be achieved.",
+        "Conservative net $-3,463.",
+        "Base-case net $11,642 vs target $40,000."
+      ],
+      "report": {
+        "task_id": 271,
+        "workflow_id": 40,
+        "step_key": "finance",
+        "agent": "financial_analysis",
+        "objective": "Check whether we can afford David Rubenstein Atrium at Lincoln Center (seated dinner)",
+        "status": "needs_revision",
+        "work_completed": "The seated dinner at the David Rubenstein Atrium at Lincoln Center is not affordable as planned. The projected cost of $35,200 exceeds the $18,000 planning limit, and upfront payments of $15,350 exceed the $9,938 available above the reserve floor. A positive base-case result does not resolve these budget and cash-timing conflicts.",
+        "key_findings": [
+          {
+            "claim": "Recorded income $17,400 and expenses $19,270 (2026-05 to 2026-09). Recorded income is not cash on hand.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "Available planning budget $9,938. Reserve $21,500 minus a 3-month floor ($11,562 = 3 \u00d7 $3,854 average monthly expense).",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "David Rubenstein Atrium at Lincoln Center: projected cost $35,200, upfront cash $15,350.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "web:venue:1:website"
+            ]
+          },
+          {
+            "claim": "FAIL: Within the maximum planning budget. Projected cost $35,200 vs maximum $18,000.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "PASS: Base case covers its costs. Base-case net $11,642.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "FAIL: Conservative case avoids a loss. Conservative net $-3,463.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "PASS: Break-even below expected attendance. Break-even at 48 guests vs 150 expected.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "FAIL: Base case meets the fundraising target. Base-case net $11,642 vs target $40,000.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "FAIL: Upfront cash fits the available planning budget. Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "ledger",
+            "title": "Financial records (synthetic demo books)",
+            "url": null,
+            "verification": "internal"
+          }
+        ],
+        "assumptions": [
+          "Reserve guideline: keep 3 months of average expenses (board guideline).",
+          "Figures come from the synthetic demo ledger.",
+          "Default planning contingency",
+          "No published minimum (confirm with the venue)",
+          "Not estimated (contingency covers small items); enter known costs such as printing or permits",
+          "Placeholder deposit assumption",
+          "Placeholder planning figure; replace with quotes",
+          "Placeholder planning figure; request a catering quote",
+          "Quote required: the venue publishes no rental price. Hypothetical planning estimate, not a quote.",
+          "Recorded income is not treated as cash on hand, restricted gifts are never counted as spendable, and pledged sponsorship is not guaranteed. Only unrestricted money above the board's reserve floor is counted as available for deposits. Financial feasibility is not board authorization."
+        ],
+        "risks_uncertainties": [
+          "Task status: needs_revision. The seated dinner at the David Rubenstein Atrium at Lincoln Center is not affordable as planned. The projected cost of $35,200 exceeds the $18,000 planning limit, and upfront payments of $15,350 exceed the $9,938 available above the reserve floor. A positive base-case result does not resolve these budget and cash-timing conflicts.",
+          "The conservative scenario loses money, while even the optimistic scenario falls short of the fundraising target.",
+          "Unquoted venue pricing and placeholder costs may change the projected total; miscellaneous costs have not been separately estimated.",
+          "Expected sponsorship and donations are uncertain, and pledged sponsorship is not guaranteed.",
+          "The restricted cash amount assumes all recorded restricted gifts remain unspent because no restricted balance was recorded. It is excluded from spendable funds.",
+          "The reported break-even attendance is a computed model result, not assurance that deposits can be funded or that the fundraising target will be achieved.",
+          "Conservative net $-3,463.",
+          "Base-case net $11,642 vs target $40,000."
+        ],
+        "financial_considerations": [
+          "Affordability verdict: not affordable as planned.",
+          "Projected total $35,200; upfront cash $15,350.",
+          "Projected cost $35,200 vs maximum $18,000.",
+          "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+          "Available unrestricted planning budget above the reserve floor: $9,938 (a starting point for discussion, not approval to spend)."
+        ],
+        "recommended_next_actions": [
+          "Before proceeding, revise the plan to satisfy the $18,000 total-cost limit and the $9,938 upfront-cash limit, or have the board explicitly reconsider its governing limits and obtain a new affordability assessment.",
+          "Obtain a written venue quote and replace placeholder estimates with vendor quotes, including payment schedules, before making commitments.",
+          "Confirm that unrestricted funds needed for deposits will actually be received before payment deadlines. Do not treat pledged sponsorship or later ticket receipts as available cash.",
+          "No model inputs are flagged as missing, but actual vendor pricing and payment terms remain unknown. The board must provide these, along with confirmed sponsorship amounts and receipt timing, for an updated review.",
+          "Should the team redesign this dinner within the existing limits or explore a different event format or venue?"
+        ],
+        "outreach": {
+          "appropriate": false,
+          "reason": "Finance analyzes; it does not identify outreach targets.",
+          "candidates": []
+        },
+        "additional_agents": [
+          {
+            "agent": "fundraising_events",
+            "reason": "Revise the plan to resolve the financial conflicts."
+          }
+        ],
+        "approval": {
+          "board_review": true,
+          "professional_review": false,
+          "reasons": [
+            "Any spending decision belongs to the board."
+          ]
+        },
+        "tool_calls": [
+          {
+            "tool": "read_financial_records",
+            "allowed": true,
+            "ok": true,
+            "summary": "[sensitive: contents not logged] 22 ledger rows "
+          },
+          {
+            "tool": "compute_financial_position",
+            "allowed": true,
+            "ok": true,
+            "summary": "5 months; available planning budget: $9,938"
+          },
+          {
+            "tool": "recompute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "recomputed: cost $35,200"
+          },
+          {
+            "tool": "check_event_affordability",
+            "allowed": true,
+            "ok": true,
+            "summary": "verdict not_affordable_as_planned; 2 conflict(s)"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 1897,
+          "cached_input_tokens": 0,
+          "output_tokens": 756,
+          "web_search_calls": 0,
+          "cost_usd": 0.012301,
+          "models": [
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 272,
+      "step_key": "evaluate",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Evaluate cost, history, and plan constraints",
+      "status": "needs_revision",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "2 conflict(s) to resolve: finance.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 273,
+      "step_key": "venues_revision_1",
+      "kind": "revision",
+      "revision_round": 1,
+      "from": "orchestrator",
+      "to": "fundraising_events",
+      "objective": "Revise the plan to resolve: Projected cost $35,200 vs maximum $18,000.; Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+      "status": "completed",
+      "duration_ms": 42964,
+      "constraints": [
+        {
+          "name": "allow_format_change",
+          "detail": "You may switch between seated dinner and reception to meet the constraints.",
+          "value": null,
+          "source_agent": "orchestrator"
+        },
+        {
+          "name": "max_total_usd",
+          "detail": "Projected cost $35,200 vs maximum $18,000.",
+          "value": 18000.0,
+          "source_agent": "financial_analysis"
+        },
+        {
+          "name": "max_upfront_usd",
+          "detail": "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+          "value": 9938.0,
+          "source_agent": "financial_analysis"
+        },
+        {
+          "name": "history:Written catering commitments",
+          "detail": "Compare venue food-and-beverage minimums and obtain written per-head pricing and vendor guarantees before commitment; establish the dinner guest-count deadline two weeks out.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Protected volunteer meals",
+          "detail": "Budget volunteer food separately and plan service so volunteers do not miss meals while serving guests.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Advance volunteer assignments",
+          "detail": "Lock the volunteer list three weeks out, brief volunteers by phone the week before and assign a lead per station.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Access and quiet space",
+          "detail": "Check entrance accessibility before choosing the venue and include a quiet-space option in layout planning.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Payment process",
+          "detail": "Plan table-side auction payment collection rather than depending solely on later pledge follow-up.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        },
+        {
+          "name": "history:Print and technical readiness",
+          "detail": "Lock sponsor logos a month before printing, test registration before launch and check speaker audibility and name-tag supplies.",
+          "value": null,
+          "source_agent": "event_intelligence"
+        }
+      ],
+      "summary": "No supplied option meets both Finance limits. Rank the Atrium reception as the closest option for further quotation only\u2014not as an affordable or approved plan. It preserves the Manhattan location and recovery-speaker program while improving the supplied financial projections relative to dinner, but still exceeds the spending and upfront-cash limits.",
+      "warnings": [
+        "No researched option meets every constraint; the closest option is shown for the board.",
+        "Availability on the target date is unknown for every venue.",
+        "All venue prices require quotes; venue rental estimates are hypothetical, and numerous operating and deposit assumptions are placeholders.",
+        "Catering terms and minimums are unknown despite the empty missing-input lists; a null catering-minimum risk is not evidence that no minimum applies.",
+        "Atrium accessibility, quiet-space feasibility, actual program layout, equipment inclusions and final contractual capacity remain unconfirmed.",
+        "The fundraising goal's gross-versus-net definition and the amounts and timing of confirmed sponsorship are not provided.",
+        "The data labels this a sample plan and includes sample and synthetic historical feedback.",
+        "No supplied option is financially feasible under the current limits. Do not proceed on the basis of this ranking; obtain quotes and a new calculator assessment before seeking board approval.",
+        "Later event revenue cannot cover deposits under Finance's stated cash treatment. Unconfirmed sponsorship or hoped-for donations must not be used to bypass the reserve floor.",
+        "The reception base net of $22,367.50 and conservative net of $7,262 do not meet a $40,000 net fundraising goal, if that is the intended definition.",
+        "A plated-meal preference or desire for a gala atmosphere cannot override the current financial limits. A reception may also leave guests needing seating or expecting dinner underserved unless its format is clearly communicated.",
+        "Historical sponsorship and donation assumptions are not guarantees. Sample and synthetic community observations inform planning questions, not predictions of fundraising or belonging."
+      ],
+      "report": {
+        "task_id": 273,
+        "workflow_id": 40,
+        "step_key": "venues_revision_1",
+        "agent": "fundraising_events",
+        "objective": "Revise the plan to resolve: Projected cost $35,200 vs maximum $18,000.; Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "status": "completed",
+        "work_completed": "No supplied option meets both Finance limits. Rank the Atrium reception as the closest option for further quotation only\u2014not as an affordable or approved plan. It preserves the Manhattan location and recovery-speaker program while improving the supplied financial projections relative to dinner, but still exceeds the spending and upfront-cash limits.",
+        "key_findings": [
+          {
+            "claim": "#1 David Rubenstein Atrium at Lincoln Center (reception): projected $24,475; Quote required (hypothetical estimate used). The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied receptions have identical modeled finances; the Atrium leads on documented program equipment, not demonstrated savings. Computed total cost is $24,475, upfront cash is $10,475, base net is $22,367.50 and conservative net is $7,262. Price must be quoted; the model's venue figure is a hypothetical estimate. This option does not satisfy the $18,000 total-cost limit or the $9,938 upfront limit.",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:venue:1:website"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "web:venue:1:website",
+            "title": "David Rubenstein Atrium at Lincoln Center",
+            "url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:2:website",
+            "title": "Glasshouse Chelsea \u2014 14th Floor",
+            "url": "https://www.ghchelsea.com/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:3:website",
+            "title": "The Fulton",
+            "url": "https://www.thefulton.nyc",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:4:website",
+            "title": "Rosie O\u2019Grady\u2019s \u2014 Main Hall",
+            "url": "https://rosieogradys.com/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:venue:5:website",
+            "title": "The Ballroom on 74th (Amali)",
+            "url": "https://www.amalinyc.com/",
+            "verification": "verified"
+          }
+        ],
+        "assumptions": [
+          "Default planning contingency",
+          "Not estimated (contingency covers small items); enter known costs such as printing or permits",
+          "Placeholder deposit assumption",
+          "Placeholder planning figure; replace with quotes",
+          "Placeholder planning figure; request a catering quote",
+          "Quote required: the venue publishes no rental price. Hypothetical planning estimate, not a quote."
+        ],
+        "risks_uncertainties": [
+          "No researched option meets every constraint; the closest option is shown for the board.",
+          "Availability on the target date is unknown for every venue.",
+          "All venue prices require quotes; venue rental estimates are hypothetical, and numerous operating and deposit assumptions are placeholders.",
+          "Catering terms and minimums are unknown despite the empty missing-input lists; a null catering-minimum risk is not evidence that no minimum applies.",
+          "Atrium accessibility, quiet-space feasibility, actual program layout, equipment inclusions and final contractual capacity remain unconfirmed.",
+          "The fundraising goal's gross-versus-net definition and the amounts and timing of confirmed sponsorship are not provided.",
+          "The data labels this a sample plan and includes sample and synthetic historical feedback.",
+          "No supplied option is financially feasible under the current limits. Do not proceed on the basis of this ranking; obtain quotes and a new calculator assessment before seeking board approval.",
+          "Later event revenue cannot cover deposits under Finance's stated cash treatment. Unconfirmed sponsorship or hoped-for donations must not be used to bypass the reserve floor.",
+          "The reception base net of $22,367.50 and conservative net of $7,262 do not meet a $40,000 net fundraising goal, if that is the intended definition."
+        ],
+        "financial_considerations": [
+          "David Rubenstein Atrium at Lincoln Center (reception): projected $24,475, upfront $10,475"
+        ],
+        "recommended_next_actions": [
+          "#1 David Rubenstein Atrium at Lincoln Center (reception): projected $24,475; Quote required (hypothetical estimate used). The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied receptions have identical modeled finances; the Atrium leads on documented program equipment, not demonstrated savings. Computed total cost is $24,475, upfront cash is $10,475, base net is $22,367.50 and conservative net is $7,262. Price must be quoted; the model's venue figure is a hypothetical estimate. This option does not satisfy the $18,000 total-cost limit or the $9,938 upfront limit.",
+          "Finance re-checks the revised option."
+        ],
+        "outreach": {
+          "appropriate": true,
+          "reason": "1 venue(s) fit the guest count; an inquiry can confirm availability, pricing, catering, and nonprofit terms.",
+          "candidates": [
+            "David Rubenstein Atrium at Lincoln Center"
+          ]
+        },
+        "additional_agents": [
+          {
+            "agent": "financial_analysis",
+            "reason": "Check the shortlisted costs against the budget and cash position."
+          },
+          {
+            "agent": "partnerships_outreach",
+            "reason": "Prepare unsent inquiries to the shortlisted venues."
+          }
+        ],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "tool_calls": [
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "David Rubenstein Atrium at Lincoln Center seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "David Rubenstein Atrium at Lincoln Center reception: cost $24,475, upfront $10,475"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "Glasshouse Chelsea \u2014 14th Floor seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "Glasshouse Chelsea \u2014 14th Floor reception: cost $24,475, upfront $10,475"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "The Fulton seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "The Fulton reception: cost $24,475, upfront $10,475"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "Rosie O\u2019Grady\u2019s \u2014 Main Hall seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "Rosie O\u2019Grady\u2019s \u2014 Main Hall reception: cost $24,475, upfront $10,475"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "The Ballroom on 74th (Amali) seated_dinner: cost $35,200, upfront $15,350"
+          },
+          {
+            "tool": "compute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "The Ballroom on 74th (Amali) reception: cost $24,475, upfront $10,475"
+          },
+          {
+            "tool": "save_venue_candidate",
+            "allowed": true,
+            "ok": true,
+            "summary": "venue candidate #11"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 8358,
+          "cached_input_tokens": 1062,
+          "output_tokens": 1921,
+          "web_search_calls": 0,
+          "cost_usd": 0.037555,
+          "models": [
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 274,
+      "step_key": "finance_revision_1",
+      "kind": "revision",
+      "revision_round": 1,
+      "from": "orchestrator",
+      "to": "financial_analysis",
+      "objective": "Re-check whether we can afford David Rubenstein Atrium at Lincoln Center (reception)",
+      "status": "needs_revision",
+      "duration_ms": 11469,
+      "constraints": [],
+      "summary": "The computed verdict is not affordable as planned for a reception at the David Rubenstein Atrium at Lincoln Center. Although every modeled scenario produces a surplus, projected costs exceed the planning limit, upfront payments exceed available funds above the reserve floor, and the base case falls short of the fundraising target.",
+      "warnings": [
+        "The venue publishes no rental price, so actual pricing could materially change the model.",
+        "Sponsorship, donations, and attendance are modeled expectations rather than guaranteed receipts.",
+        "Using restricted gifts or funds needed to maintain the reserve floor would conflict with the model's funding safeguards.",
+        "No missing inputs are flagged by the model, but actual venue and supplier quotes and a verified restricted-fund balance remain necessary for a commitment-ready review.",
+        "A positive projected event surplus does not resolve the upfront cash constraint or the planning-budget breach.",
+        "Base-case net $22,368 vs target $40,000."
+      ],
+      "report": {
+        "task_id": 274,
+        "workflow_id": 40,
+        "step_key": "finance_revision_1",
+        "agent": "financial_analysis",
+        "objective": "Re-check whether we can afford David Rubenstein Atrium at Lincoln Center (reception)",
+        "status": "needs_revision",
+        "work_completed": "The computed verdict is not affordable as planned for a reception at the David Rubenstein Atrium at Lincoln Center. Although every modeled scenario produces a surplus, projected costs exceed the planning limit, upfront payments exceed available funds above the reserve floor, and the base case falls short of the fundraising target.",
+        "key_findings": [
+          {
+            "claim": "Recorded income $17,400 and expenses $19,270 (2026-05 to 2026-09). Recorded income is not cash on hand.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "Available planning budget $9,938. Reserve $21,500 minus a 3-month floor ($11,562 = 3 \u00d7 $3,854 average monthly expense).",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "David Rubenstein Atrium at Lincoln Center: projected cost $24,475, upfront cash $10,475.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "web:venue:1:website"
+            ]
+          },
+          {
+            "claim": "FAIL: Within the maximum planning budget. Projected cost $24,475 vs maximum $18,000.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "PASS: Base case covers its costs. Base-case net $22,368.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "PASS: Conservative case avoids a loss. Conservative net $7,262.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "PASS: Break-even below expected attendance. Break-even at 30 guests vs 150 expected.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "FAIL: Base case meets the fundraising target. Base-case net $22,368 vs target $40,000.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "FAIL: Upfront cash fits the available planning budget. Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "ledger",
+            "title": "Financial records (synthetic demo books)",
+            "url": null,
+            "verification": "internal"
+          }
+        ],
+        "assumptions": [
+          "Reserve guideline: keep 3 months of average expenses (board guideline).",
+          "Figures come from the synthetic demo ledger.",
+          "Default planning contingency",
+          "No published minimum (confirm with the venue)",
+          "Not estimated (contingency covers small items); enter known costs such as printing or permits",
+          "Placeholder deposit assumption",
+          "Placeholder planning figure; replace with quotes",
+          "Placeholder planning figure; request a catering quote",
+          "Quote required: the venue publishes no rental price. Hypothetical planning estimate, not a quote.",
+          "Recorded income is not treated as cash on hand, restricted gifts are never counted as spendable, and pledged sponsorship is not guaranteed. Only unrestricted money above the board's reserve floor is counted as available for deposits. Financial feasibility is not board authorization."
+        ],
+        "risks_uncertainties": [
+          "Task status: needs_revision. The computed verdict is not affordable as planned for a reception at the David Rubenstein Atrium at Lincoln Center. Although every modeled scenario produces a surplus, projected costs exceed the planning limit, upfront payments exceed available funds above the reserve floor, and the base case falls short of the fundraising target.",
+          "The venue publishes no rental price, so actual pricing could materially change the model.",
+          "Sponsorship, donations, and attendance are modeled expectations rather than guaranteed receipts.",
+          "Using restricted gifts or funds needed to maintain the reserve floor would conflict with the model's funding safeguards.",
+          "No missing inputs are flagged by the model, but actual venue and supplier quotes and a verified restricted-fund balance remain necessary for a commitment-ready review.",
+          "A positive projected event surplus does not resolve the upfront cash constraint or the planning-budget breach.",
+          "Base-case net $22,368 vs target $40,000."
+        ],
+        "financial_considerations": [
+          "Affordability verdict: not affordable as planned.",
+          "Projected total $24,475; upfront cash $10,475.",
+          "Projected cost $24,475 vs maximum $18,000.",
+          "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+          "Available unrestricted planning budget above the reserve floor: $9,938 (a starting point for discussion, not approval to spend)."
+        ],
+        "recommended_next_actions": [
+          "Bring the total projected cost within the $18,000 planning limit before proceeding under the current limits.",
+          "Reduce or reschedule upfront payments to fit the $9,938 available planning budget, or secure additional unrestricted funds received before deposits are due. Pledged sponsorship alone is not guaranteed funding.",
+          "Obtain a venue quote and replace placeholder cost figures with supplier quotes before making commitments.",
+          "Resolve the fundraising-target shortfall through a supported revision to the plan or an explicit board decision to change the target.",
+          "Verify the current unrestricted cash and restricted-gift balances before any commitment. Financial feasibility would not itself constitute board authorization."
+        ],
+        "outreach": {
+          "appropriate": false,
+          "reason": "Finance analyzes; it does not identify outreach targets.",
+          "candidates": []
+        },
+        "additional_agents": [
+          {
+            "agent": "fundraising_events",
+            "reason": "Revise the plan to resolve the financial conflicts."
+          }
+        ],
+        "approval": {
+          "board_review": true,
+          "professional_review": false,
+          "reasons": [
+            "Any spending decision belongs to the board."
+          ]
+        },
+        "tool_calls": [
+          {
+            "tool": "read_financial_records",
+            "allowed": true,
+            "ok": true,
+            "summary": "[sensitive: contents not logged] 22 ledger rows "
+          },
+          {
+            "tool": "compute_financial_position",
+            "allowed": true,
+            "ok": true,
+            "summary": "5 months; available planning budget: $9,938"
+          },
+          {
+            "tool": "recompute_event_model",
+            "allowed": true,
+            "ok": true,
+            "summary": "recomputed: cost $24,475"
+          },
+          {
+            "tool": "check_event_affordability",
+            "allowed": true,
+            "ok": true,
+            "summary": "verdict not_affordable_as_planned; 2 conflict(s)"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 1884,
+          "cached_input_tokens": 0,
+          "output_tokens": 769,
+          "web_search_calls": 0,
+          "cost_usd": 0.012398,
+          "models": [
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 275,
+      "step_key": "evaluate_revision_1",
+      "kind": "revision",
+      "revision_round": 1,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Evaluate cost, history, and plan constraints",
+      "status": "needs_revision",
+      "duration_ms": 1,
+      "constraints": [],
+      "summary": "2 conflict(s) to resolve: finance.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 276,
+      "step_key": "outreach_decision",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Decide which shortlisted venues deserve an inquiry draft",
+      "status": "completed",
+      "duration_ms": 0,
+      "constraints": [],
+      "summary": "Delegating 1 unsent draft(s) to Partnerships & Outreach: David Rubenstein Atrium at Lincoln Center.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 277,
+      "step_key": "outreach",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "partnerships_outreach",
+      "objective": "Research public inquiry details and prepare unsent inquiry drafts for the venues the Orchestrator selected",
+      "status": "completed",
+      "duration_ms": 6080,
+      "constraints": [],
+      "summary": "Prepared one unsent venue inquiry based on the provided event plan and verified venue details.",
+      "warnings": [],
+      "report": {
+        "task_id": 277,
+        "workflow_id": 40,
+        "step_key": "outreach",
+        "agent": "partnerships_outreach",
+        "objective": "Research public inquiry details and prepare unsent inquiry drafts for the venues the Orchestrator selected",
+        "status": "completed",
+        "work_completed": "Prepared one unsent venue inquiry based on the provided event plan and verified venue details.",
+        "key_findings": [
+          {
+            "claim": "Unsent venue inquiry draft to David Rubenstein Atrium at Lincoln Center: \u201cVenue inquiry: Manhattan Spring Gala \u2014 April 17, 2027\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": []
+          }
+        ],
+        "sources": [],
+        "assumptions": [
+          "Nothing was sent. SAM SPACE has no tool that can send, schedule, or publish a message."
+        ],
+        "risks_uncertainties": [],
+        "financial_considerations": [],
+        "recommended_next_actions": [
+          "Unsent venue inquiry draft to David Rubenstein Atrium at Lincoln Center: \u201cVenue inquiry: Manhattan Spring Gala \u2014 April 17, 2027\u201d",
+          "Review and edit each draft in Partnerships & Outreach. If the board agrees, a person sends it outside SAM SPACE."
+        ],
+        "outreach": {
+          "appropriate": false,
+          "reason": "Drafts prepared; nothing is sent. A person reviews and sends them outside SAM SPACE.",
+          "candidates": [
+            "David Rubenstein Atrium at Lincoln Center"
+          ]
+        },
+        "additional_agents": [],
+        "approval": {
+          "board_review": true,
+          "professional_review": false,
+          "reasons": [
+            "Every draft needs a person's review before anyone contacts the organization."
+          ]
+        },
+        "tool_calls": [
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "David Rubenstein Atrium at Lincoln Center: verified email (yourevent@lincolncenter.org)"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #56 (unsent)"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 1156,
+          "cached_input_tokens": 0,
+          "output_tokens": 414,
+          "web_search_calls": 0,
+          "cost_usd": 0.000351,
+          "models": [
+            "gpt-6-luna"
+          ]
+        }
+      }
+    },
+    {
+      "id": 278,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 33211,
+      "constraints": [],
+      "summary": "Do not commit to the gala as planned; pursue a lower-cost reception and a fresh affordability review.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 279,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": [],
+      "report": null
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": null,
+      "agent": "orchestrator",
+      "tool": "read_event_plan",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "Manhattan Spring Gala (sample plan)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": null,
+      "agent": "orchestrator",
+      "tool": "find_relevant_events",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5 relevant past event(s) of 5",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "read_historical_events",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "5 past events",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "read_board_reflections",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "10 reflections",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "compare_event_outcomes",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "compared 5 events (sufficient data); 6 computed observation(s)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "get_historical_lessons",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "2 saved lessons",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3,
+      "summary": "lesson #213 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #214 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #215 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #216 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #217 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #218 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #219 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #220 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #221 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #222 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #223 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #224 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #225 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #226 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #227 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #228 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #229 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #230 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "lesson #231 saved",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "search_venues",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 16489,
+      "summary": "5 live venue candidates (websites and figures checked next)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 348,
+      "summary": "HTTP 200 Rent the David Rubenstein Atrium at Lincoln Center | Venues",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 605,
+      "summary": "HTTP 200 Glasshouse Chelsea | Exclusive Venue | Manhattan Views",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 288,
+      "summary": "HTTP 200 The Venue | Glasshouse Chelsea",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 330,
+      "summary": "HTTP 200 The Fulton | Jean-Georges' Seafood Restaurant in NYC",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2458,
+      "summary": "HTTP 200 The Fulton Venue - The Seaport",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 757,
+      "summary": "HTTP 200 Rosie O'Grady's",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 416,
+      "summary": "HTTP 200 Main Hall \u2013 Rosie O'Grady's",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 414,
+      "summary": "HTTP 200 Amali NYC | Mediterranean Restaurant & Private Dining in Midtown Manhattan",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 215,
+      "summary": "HTTP 200 Private Events | Amali in New York, NY",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "David Rubenstein Atrium at Lincoln Center seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "Glasshouse Chelsea \u2014 14th Floor seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "The Fulton seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "Rosie O\u2019Grady\u2019s \u2014 Main Hall seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "The Ballroom on 74th (Amali) seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "tool": "save_venue_candidate",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 4,
+      "summary": "venue candidate #11",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 271,
+      "agent": "financial_analysis",
+      "tool": "read_financial_records",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "[sensitive: contents not logged] 22 ledger rows ",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 271,
+      "agent": "financial_analysis",
+      "tool": "compute_financial_position",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5 months; available planning budget: $9,938",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 271,
+      "agent": "financial_analysis",
+      "tool": "recompute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "recomputed: cost $35,200",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 271,
+      "agent": "financial_analysis",
+      "tool": "check_event_affordability",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "verdict not_affordable_as_planned; 2 conflict(s)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 272,
+      "agent": "orchestrator",
+      "tool": "evaluate_constraints",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "2 conflict(s): finance",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "David Rubenstein Atrium at Lincoln Center seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "David Rubenstein Atrium at Lincoln Center reception: cost $24,475, upfront $10,475",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "Glasshouse Chelsea \u2014 14th Floor seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "Glasshouse Chelsea \u2014 14th Floor reception: cost $24,475, upfront $10,475",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "The Fulton seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "The Fulton reception: cost $24,475, upfront $10,475",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "Rosie O\u2019Grady\u2019s \u2014 Main Hall seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "Rosie O\u2019Grady\u2019s \u2014 Main Hall reception: cost $24,475, upfront $10,475",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "The Ballroom on 74th (Amali) seated_dinner: cost $35,200, upfront $15,350",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "The Ballroom on 74th (Amali) reception: cost $24,475, upfront $10,475",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "tool": "save_venue_candidate",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "venue candidate #11",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 274,
+      "agent": "financial_analysis",
+      "tool": "read_financial_records",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "[sensitive: contents not logged] 22 ledger rows ",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 274,
+      "agent": "financial_analysis",
+      "tool": "compute_financial_position",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5 months; available planning budget: $9,938",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 274,
+      "agent": "financial_analysis",
+      "tool": "recompute_event_model",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "recomputed: cost $24,475",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 274,
+      "agent": "financial_analysis",
+      "tool": "check_event_affordability",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "verdict not_affordable_as_planned; 2 conflict(s)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 275,
+      "agent": "orchestrator",
+      "tool": "evaluate_constraints",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "2 conflict(s): finance",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 277,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1412,
+      "summary": "David Rubenstein Atrium at Lincoln Center: verified email (yourevent@lincolncenter.org)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 277,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3,
+      "summary": "draft #56 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 279,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "9/9 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 269,
+      "agent": "event_intelligence",
+      "task": "Synthesize lessons from events and reflections",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=low) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0759 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 6966,
+      "cached_input_tokens": 0,
+      "output_tokens": 3599,
+      "web_search_calls": 0,
+      "cost_usd": 0.0534035,
+      "latency_ms": 55512,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "task": "Web search: venue candidates",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0016 fits the remaining budget of $0.4466.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 21759,
+      "cached_input_tokens": 0,
+      "output_tokens": 1333,
+      "web_search_calls": 2,
+      "cost_usd": 0.02296907,
+      "latency_ms": 16485,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 270,
+      "agent": "fundraising_events",
+      "task": "Shortlist venues and fundraising strategy",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=medium) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0747 fits the remaining budget of $0.4236.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 5684,
+      "cached_input_tokens": 0,
+      "output_tokens": 1859,
+      "web_search_calls": 0,
+      "cost_usd": 0.0327985,
+      "latency_ms": 42465,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 271,
+      "agent": "financial_analysis",
+      "task": "Explain computed financial results",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=no, risk=high) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0680 fits the remaining budget of $0.3908.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 1897,
+      "cached_input_tokens": 0,
+      "output_tokens": 756,
+      "web_search_calls": 0,
+      "cost_usd": 0.012301,
+      "latency_ms": 14887,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 273,
+      "agent": "fundraising_events",
+      "task": "Shortlist venues and fundraising strategy",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=medium) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0807 fits the remaining budget of $0.3785.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 8358,
+      "cached_input_tokens": 1062,
+      "output_tokens": 1921,
+      "web_search_calls": 0,
+      "cost_usd": 0.0375547,
+      "latency_ms": 42941,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 274,
+      "agent": "financial_analysis",
+      "task": "Explain computed financial results",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=no, risk=high) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0680 fits the remaining budget of $0.3410.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 1884,
+      "cached_input_tokens": 0,
+      "output_tokens": 769,
+      "web_search_calls": 0,
+      "cost_usd": 0.0123985,
+      "latency_ms": 11465,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 277,
+      "agent": "partnerships_outreach",
+      "task": "Short venue-inquiry drafts",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0047 fits the remaining budget of $0.3286.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 1156,
+      "cached_input_tokens": 0,
+      "output_tokens": 414,
+      "web_search_calls": 0,
+      "cost_usd": 0.00035142,
+      "latency_ms": 4659,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 278,
+      "agent": "orchestrator",
+      "task": "Board-ready recommendation with trade-offs",
+      "tier": "advanced",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 4 (complexity=high, reasoning=yes, risk=high) under Auto \u2192 Astra (advanced) tier. Estimated $0.3328 for gpt-6-astra exceeds the remaining budget of $0.3282; stepped down to Sol (intermediate). Estimated $0.0666 fits the remaining budget of $0.3282.",
+      "substitution": "Budget limit: used gpt-6.1-sol instead of gpt-6-astra.",
+      "attempt": 1,
+      "input_tokens": 9479,
+      "cached_input_tokens": 0,
+      "output_tokens": 1569,
+      "web_search_calls": 0,
+      "cost_usd": 0.039386,
+      "latency_ms": 33204,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "plan_event",
+    "routing": "board",
+    "analysis": {
+      "intent": "plan_event",
+      "city": "Manhattan, New York, NY",
+      "attendance": 150,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": null,
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "live",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [
+      {
+        "name": "history:Written catering commitments",
+        "detail": "Compare venue food-and-beverage minimums and obtain written per-head pricing and vendor guarantees before commitment; establish the dinner guest-count deadline two weeks out.",
+        "value": null,
+        "source_agent": "event_intelligence"
+      },
+      {
+        "name": "history:Protected volunteer meals",
+        "detail": "Budget volunteer food separately and plan service so volunteers do not miss meals while serving guests.",
+        "value": null,
+        "source_agent": "event_intelligence"
+      },
+      {
+        "name": "history:Advance volunteer assignments",
+        "detail": "Lock the volunteer list three weeks out, brief volunteers by phone the week before and assign a lead per station.",
+        "value": null,
+        "source_agent": "event_intelligence"
+      },
+      {
+        "name": "history:Access and quiet space",
+        "detail": "Check entrance accessibility before choosing the venue and include a quiet-space option in layout planning.",
+        "value": null,
+        "source_agent": "event_intelligence"
+      },
+      {
+        "name": "history:Payment process",
+        "detail": "Plan table-side auction payment collection rather than depending solely on later pledge follow-up.",
+        "value": null,
+        "source_agent": "event_intelligence"
+      },
+      {
+        "name": "history:Print and technical readiness",
+        "detail": "Lock sponsor logos a month before printing, test registration before launch and check speaker audibility and name-tag supplies.",
+        "value": null,
+        "source_agent": "event_intelligence"
+      }
+    ],
+    "events_consulted": [
+      {
+        "id": 3,
+        "name": "Campus Wellness Panel (sample)",
+        "reasons": [
+          "similar size (120 guests)",
+          "recent (2026)"
+        ],
+        "score": 3
+      },
+      {
+        "id": 1,
+        "name": "Spring Awareness Walk (sample)",
+        "reasons": [
+          "similar size (210 guests)",
+          "recent (2025)"
+        ],
+        "score": 3
+      },
+      {
+        "id": 4,
+        "name": "Butterfly Spring Raffle (synthetic sample)",
+        "reasons": [
+          "similar size (120 guests)",
+          "recent (2025)"
+        ],
+        "score": 3
+      },
+      {
+        "id": 2,
+        "name": "Butterfly Benefit Dinner (sample)",
+        "reasons": [
+          "recent (2025)"
+        ],
+        "score": 1
+      },
+      {
+        "id": 5,
+        "name": "Hartford trivia night (synthetic sample)",
+        "reasons": [
+          "recent (2024)"
+        ],
+        "score": 1
+      }
+    ],
+    "boss_decisions": [
+      {
+        "step": "outreach_decision",
+        "trigger": "1 venue(s) fit the guest count; an inquiry can confirm availability, pricing, catering, and nonprofit terms.",
+        "selected": [
+          "venue:live-1"
+        ],
+        "skipped": [],
+        "provenance": {
+          "venue:live-1": {
+            "found_by": "fundraising_events",
+            "reason": "Events shortlisted it for a reception for 150 guests. The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied r An inquiry can confirm availability, capacity, pricing, catering, and nonprofit terms.",
+            "related_findings": [
+              "No supplied option meets both Finance limits. Rank the Atrium reception as the closest option for further quotation only\u2014not as an affordable or approved plan. It preserves the Manhattan location and recovery-speaker program while improving the supplied financial projections relative to dinner, but ",
+              "Butterfly Benefit Dinner: retain the recovery speaker and propose a program under an hour; verify seating and audibility rather than assuming a reception will support attentive listening.",
+              "Butterfly Benefit Dinner and Spring Awareness Walk: obtain written catering pricing, minimums and guarantees, with a guest-count deadline two weeks out and separately protected volunteer meals.",
+              "Butterfly Spring Raffle: provide a staffed welcome table, advance volunteer assignments and clear station leads."
+            ],
+            "financial_considerations": [
+              "Projected total $24,475 vs the $18,000 maximum (over budget); upfront cash $10,475.",
+              "Pricing not published: the inquiry asks for a quote.",
+              "Financial Analysis verdict: not affordable as planned."
+            ],
+            "category": "venue"
+          }
+        }
+      }
+    ],
+    "outreach_drafts": [
+      {
+        "id": 56,
+        "recipient": "David Rubenstein Atrium at Lincoln Center",
+        "subject": "Venue inquiry: Manhattan Spring Gala \u2014 April 17, 2027",
+        "draft_type": "venue_inquiry",
+        "contact_status": "verified_email",
+        "contact_email": "yourevent@lincolncenter.org",
+        "finding_id": null,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "We are exploring a venue for a 150-person gala in New York, NY, on April 17, 2027.",
+        "next_step": "Please share availability and information on capacity, pricing, deposits, catering, accessibility, and nonprofit accommodations for the proposed event.",
+        "sources": [
+          {
+            "title": "David Rubenstein Atrium at Lincoln Center",
+            "url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+            "verification": "verified"
+          }
+        ],
+        "review_notes": []
+      }
+    ],
+    "quantitative_observations": [
+      {
+        "area": "fundraising_approach",
+        "text": "Net proceeds by event type: dinner (1 event): average net $14,700; community walk (1 event): average net $11,100; raffle (1 event): average net $8,450; trivia night fundraiser (1 event): average net $1,800; panel (1 event): average net $1,700.",
+        "event_ids": [
+          5,
+          4,
+          1,
+          2,
+          3
+        ],
+        "basis": "computed",
+        "sample_note": "Based on 5 recorded event(s)."
+      },
+      {
+        "area": "fundraising_approach",
+        "event_ids": [
+          5,
+          4,
+          1,
+          2,
+          3
+        ],
+        "text": "Goal attainment: Hartford trivia night (synthetic sample) raised 122% of its $2,000 goal; Butterfly Spring Raffle (synthetic sample) raised 118% of its $10,000 goal; Spring Awareness Walk (sample) raised 118% of its $12,000 goal; Butterfly Benefit Dinner (sample) raised 105% of its $30,000 goal; Campus Wellness Panel (sample) raised 87% of its $3,000 goal.",
+        "basis": "computed",
+        "sample_note": "Based on 5 recorded event(s)."
+      },
+      {
+        "area": "costs",
+        "event_ids": [
+          4
+        ],
+        "text": "Cost overruns against the planned budget: Butterfly Spring Raffle (synthetic sample) spent $3,400 vs $3,000 planned (+13%).",
+        "basis": "computed",
+        "sample_note": "Based on 1 recorded event(s). Small sample: treat as a signal, not a trend."
+      },
+      {
+        "area": "costs",
+        "event_ids": [
+          2,
+          3
+        ],
+        "text": "Cost per guest ranged from $8 (Campus Wellness Panel (sample)) to $177 (Butterfly Benefit Dinner (sample)).",
+        "basis": "computed",
+        "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+      },
+      {
+        "area": "sponsorship",
+        "event_ids": [
+          1,
+          2
+        ],
+        "text": "Sponsorship share of revenue: Spring Awareness Walk (sample) 13% ($1,800); Butterfly Benefit Dinner (sample) 16% ($5,000).",
+        "basis": "computed",
+        "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+      },
+      {
+        "area": "community",
+        "event_ids": [
+          5,
+          4,
+          1,
+          2,
+          3
+        ],
+        "text": "Recorded community measures: Hartford trivia night (synthetic sample): 9 volunteers; Butterfly Spring Raffle (synthetic sample): 14 volunteers; Spring Awareness Walk (sample): 24 volunteers, 38 repeat participants, 2 partnerships formed; Butterfly Benefit Dinner (sample): 12 volunteers, 1 partnerships formed; Campus Wellness Panel (sample): 6 volunteers, 1 partnerships formed.",
+        "basis": "computed",
+        "sample_note": "Based on 5 recorded event(s)."
+      }
+    ],
+    "events_strategy": {
+      "fundraising_strategy": [
+        "Confirm how fundraising and awareness share priority, applying the Campus Wellness Panel lesson, and clarify whether the $40,000 goal means gross receipts or net proceeds. Neither supplied reception net projection reaches that goal.",
+        "Retain $250 as the current modeled ticket price. Ask the board to explore sponsor-funded community places and supporter ticket tiers without assigning new prices or assuming additional receipts; any changed ticket mix requires a new calculator run.",
+        "Seek business sponsorship for the recovery-speaker program, community places, volunteer meals and event production. Obtain written commitments and payment timing; prospective sponsorship and later ticket receipts must not be treated as cash available for deposits.",
+        "Include a brief, optional paddle raise tied to mental-health awareness, eating-disorder research and community work. Keep participation pressure low and avoid promising specific charitable uses that the board has not confirmed.",
+        "Arrange on-site pledge payment collection, including table-side collection if an auction is included, rather than relying on later follow-up. Test registration and payment processes before launch and assign a reconciliation lead.",
+        "Request permitted in-kind printing or production support, but do not count it as savings until confirmed and reflected in revised calculator figures. Lock sponsor logos a month before printing."
+      ],
+      "logistics_notes": [
+        "Request availability for 2027-04-17 and a written reception quote for 150, including rental, catering minimums, service, staffing, equipment, insurance requirements, deposits and cancellation terms. No commitment is recommended before financial and access checks are resolved.",
+        "Keep the evening warm and personal: welcome and introductions, a tribute honoring Sabrina, a short recovery talk, a timed fundraising appeal and optional conversation afterwards. Propose a formal program under an hour rather than treating that advisory lesson as an adopted rule.",
+        "Establish the guest-count deadline two weeks out, subject to written venue terms. Specify guest food quantities, vendor guarantees and volunteer meals separately, with relief coverage so volunteers can eat.",
+        "Lock the volunteer list three weeks out, brief volunteers by phone the week before and assign leads for welcome, registration, speaker support and payment collection. Prepare sufficient name tags.",
+        "Verify step-free entry, accessible restrooms and routes, seating during the talk, dietary accommodations and a quiet-space option. Flexible seating and sound equipment do not establish accessibility.",
+        "Test speaker audibility and registration before use. Confirm whether listed production equipment is included in the quote and whether the reception layout accommodates the program and quiet conversation.",
+        "Other venues are not presumed cheaper: all supplied reception projections match. The Fulton additionally requires in-house catering and prohibits a DJ; its final capacity depends on the event layout."
+      ],
+      "changes_from_previous": "Changed the previous Atrium seated dinner to the Atrium reception for further investigation because format changes are permitted. Finance found the dinner not affordable: $35,200 total against $18,000, over by $17,200; $15,350 upfront against $9,938 available, over by $5,412. Identified dinner cost drivers were catering at $22,500, venue at $6,000 and entertainment at $1,500, with conservative net of -$3,463. The supplied reception figures improve to $24,475 total, $10,475 upfront and $7,262 conservative net, but still fail both limits. No supplied option satisfies all constraints, so only the closest program-fit option is ranked. Written catering commitments, protected volunteer meals, access checks and the other operational constraints remain required planning gates, not completed checks."
+    },
+    "themes": [
+      {
+        "name": "Food costs and vendor minimums",
+        "polarity": "weakness",
+        "description": "Walk and dinner reflections describe unexpected food costs, minimum guarantees and insufficient volunteer food. A dinner board member nevertheless strongly supported retaining the plated meal.",
+        "event_ids": [
+          1,
+          2,
+          3
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "name": "Mission-centered connection",
+        "polarity": "strength",
+        "description": "Resource tables, peer panelists, a recovery speaker and mental-health trivia were associated with conversations or requests for further engagement.",
+        "event_ids": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          10
+        ]
+      },
+      {
+        "name": "Volunteer preparation and care",
+        "polarity": "mixed",
+        "description": "The walk's team structure and dinner check-in worked well, but raffle volunteers lacked advance roles and volunteers at both the walk and dinner lacked adequate food.",
+        "event_ids": [
+          1,
+          2,
+          4
+        ],
+        "reflection_ids": [
+          1,
+          4,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "name": "Welcome and access",
+        "polarity": "mixed",
+        "description": "The raffle welcome table and panel's peer format supported welcome in board reports. Other reflections describe price-related discomfort, entrance steps, insufficient shade and water, and requests for quieter conversation space.",
+        "event_ids": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          7,
+          8
+        ]
+      },
+      {
+        "name": "Program pacing and audibility",
+        "polarity": "weakness",
+        "description": "Dinner and raffle reflections describe overly long segments; the trivia speaker was difficult to hear.",
+        "event_ids": [
+          2,
+          4,
+          5
+        ],
+        "reflection_ids": [
+          4,
+          9,
+          10
+        ]
+      },
+      {
+        "name": "Sponsorship and donated support",
+        "polarity": "strength",
+        "description": "The walk recorded business support for water and shirts, the dinner recorded table sponsors, and the raffle received donated prizes. Late sponsor artwork also caused rush printing at the walk.",
+        "event_ids": [
+          1,
+          2,
+          4
+        ],
+        "reflection_ids": [
+          2,
+          9
+        ]
+      }
+    ],
+    "comparison": {
+      "rows": [
+        {
+          "event_id": 2,
+          "name": "Butterfly Benefit Dinner (sample)",
+          "event_type": "dinner",
+          "net_usd": 14700.0,
+          "raised_per_dollar_spent": 1.88,
+          "raised_per_attendee_usd": 331.58,
+          "cost_per_attendee_usd": 176.84,
+          "attendance": 95
+        },
+        {
+          "event_id": 1,
+          "name": "Spring Awareness Walk (sample)",
+          "event_type": "community walk",
+          "net_usd": 11100.0,
+          "raised_per_dollar_spent": 4.58,
+          "raised_per_attendee_usd": 67.62,
+          "cost_per_attendee_usd": 14.76,
+          "attendance": 210
+        },
+        {
+          "event_id": 4,
+          "name": "Butterfly Spring Raffle (synthetic sample)",
+          "event_type": "raffle",
+          "net_usd": 8450.0,
+          "raised_per_dollar_spent": 3.49,
+          "raised_per_attendee_usd": 98.75,
+          "cost_per_attendee_usd": 28.33,
+          "attendance": 120
+        },
+        {
+          "event_id": 5,
+          "name": "Hartford trivia night (synthetic sample)",
+          "event_type": "trivia night fundraiser",
+          "net_usd": 1800.0,
+          "raised_per_dollar_spent": 3.77,
+          "raised_per_attendee_usd": 40.83,
+          "cost_per_attendee_usd": 10.83,
+          "attendance": 60
+        },
+        {
+          "event_id": 3,
+          "name": "Campus Wellness Panel (sample)",
+          "event_type": "panel",
+          "net_usd": 1700.0,
+          "raised_per_dollar_spent": 2.89,
+          "raised_per_attendee_usd": 21.67,
+          "cost_per_attendee_usd": 7.5,
+          "attendance": 120
+        }
+      ],
+      "sufficient": true,
+      "quantitative_observations": [
+        {
+          "area": "fundraising_approach",
+          "text": "Net proceeds by event type: dinner (1 event): average net $14,700; community walk (1 event): average net $11,100; raffle (1 event): average net $8,450; trivia night fundraiser (1 event): average net $1,800; panel (1 event): average net $1,700.",
+          "event_ids": [
+            5,
+            4,
+            1,
+            2,
+            3
+          ],
+          "basis": "computed",
+          "sample_note": "Based on 5 recorded event(s)."
+        },
+        {
+          "area": "fundraising_approach",
+          "event_ids": [
+            5,
+            4,
+            1,
+            2,
+            3
+          ],
+          "text": "Goal attainment: Hartford trivia night (synthetic sample) raised 122% of its $2,000 goal; Butterfly Spring Raffle (synthetic sample) raised 118% of its $10,000 goal; Spring Awareness Walk (sample) raised 118% of its $12,000 goal; Butterfly Benefit Dinner (sample) raised 105% of its $30,000 goal; Campus Wellness Panel (sample) raised 87% of its $3,000 goal.",
+          "basis": "computed",
+          "sample_note": "Based on 5 recorded event(s)."
+        },
+        {
+          "area": "costs",
+          "event_ids": [
+            4
+          ],
+          "text": "Cost overruns against the planned budget: Butterfly Spring Raffle (synthetic sample) spent $3,400 vs $3,000 planned (+13%).",
+          "basis": "computed",
+          "sample_note": "Based on 1 recorded event(s). Small sample: treat as a signal, not a trend."
+        },
+        {
+          "area": "costs",
+          "event_ids": [
+            2,
+            3
+          ],
+          "text": "Cost per guest ranged from $8 (Campus Wellness Panel (sample)) to $177 (Butterfly Benefit Dinner (sample)).",
+          "basis": "computed",
+          "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+        },
+        {
+          "area": "sponsorship",
+          "event_ids": [
+            1,
+            2
+          ],
+          "text": "Sponsorship share of revenue: Spring Awareness Walk (sample) 13% ($1,800); Butterfly Benefit Dinner (sample) 16% ($5,000).",
+          "basis": "computed",
+          "sample_note": "Based on 2 recorded event(s). Small sample: treat as a signal, not a trend."
+        },
+        {
+          "area": "community",
+          "event_ids": [
+            5,
+            4,
+            1,
+            2,
+            3
+          ],
+          "text": "Recorded community measures: Hartford trivia night (synthetic sample): 9 volunteers; Butterfly Spring Raffle (synthetic sample): 14 volunteers; Spring Awareness Walk (sample): 24 volunteers, 38 repeat participants, 2 partnerships formed; Butterfly Benefit Dinner (sample): 12 volunteers, 1 partnerships formed; Campus Wellness Panel (sample): 6 volunteers, 1 partnerships formed.",
+          "basis": "computed",
+          "sample_note": "Based on 5 recorded event(s)."
+        }
+      ],
+      "note": null
+    },
+    "recommendation": {
+      "headline": "Do not commit to the gala as planned; pursue a lower-cost reception and a fresh affordability review.",
+      "recommendation": "The proposed 150-person Manhattan gala is not affordable under the current limits. Continue investigating a reception at the David Rubenstein Atrium at Lincoln Center, but only as a quotation candidate\u2014not an approved venue choice. Require a revised plan within the $18,000 total-cost limit and the $9,938 upfront-cash limit, supported by written quotes and verified unrestricted cash, before returning to the board for authorization. If those conditions cannot be met, defer the gala or reconsider its format.",
+      "rationale": [
+        "The reception model projects $24,475 in total costs and $10,475 in upfront payments. Both exceed the applicable limits.",
+        "Projected net proceeds are $22,367.50 in the base case and $7,262 in the conservative case. These surpluses do not resolve the spending-limit breach or the deposit funding constraint.",
+        "The model assesses a $40,000 net fundraising target, which the base case does not reach. The board must clarify whether its intended goal is gross receipts or net proceeds.",
+        "The Atrium is the strongest supplied program-fit candidate because its published capacity and listed staging, seating, sound and projection support a short recovery talk and tribute to Sabrina. It has no demonstrated price advantage over the other modeled receptions.",
+        "Changing from a seated dinner to a reception improves the supplied projections, but no supplied option passes every financial constraint. Financial feasibility would still not constitute board authorization."
+      ],
+      "options": [
+        {
+          "title": "Investigate the Atrium reception without committing",
+          "option_id": "live-1:reception",
+          "summary": "Obtain written venue and catering quotes for the proposed April 17, 2027 event. The current model is $24,475 total with $10,475 upfront; it remains unaffordable under current limits. Availability, accessibility and contractual terms are unknown."
+        },
+        {
+          "title": "Redesign a lower-cost Manhattan event",
+          "option_id": null,
+          "summary": "Seek lower-cost reception proposals while preserving the recovery speaker, welcome experience, accessible seating and volunteer meals. No compliant alternative has yet been established; revised quotes and a new calculator assessment are required."
+        },
+        {
+          "title": "Defer the gala",
+          "option_id": null,
+          "summary": "Avoid commitments if a financially compliant and accessible plan cannot be established. Consider whether another activity would better serve fundraising, awareness and community objectives."
+        }
+      ],
+      "risks": [
+        "Venue rental, catering, deposits and other operating costs are estimates or placeholders. Catering minimums and final guarantees are unknown.",
+        "Attendance, sponsorship and donations are modeled expectations, not guaranteed receipts. Pledged sponsorship and later ticket revenue are not available money for deposits.",
+        "The $9,938 planning capacity is model-derived, not independently verified unrestricted cash. Restricted funds and the protected reserve floor must remain unavailable for event spending.",
+        "A reception may reduce costs relative to dinner but needs adequate seating, clear guest expectations and verified access arrangements.",
+        "The modeled $250 ticket may create participation barriers. Sponsor-funded places could help, but funding, ticket mix and financial effects remain unresolved."
+      ],
+      "decisions_for_board": [
+        "Choose whether to continue quotation-only development, seek a different lower-cost format, or defer the gala.",
+        "Apply the already-adopted event-purpose lesson by confirming how fundraising and awareness should share priority.",
+        "Clarify whether the $40,000 goal is gross receipts or net proceeds, and whether to retain or revise it.",
+        "Decide whether to explore sponsor-funded community places and supporter ticket tiers, subject to recalculation rather than assumed additional revenue.",
+        "Determine acceptable recovery-speaker content, consent practices and recognition arrangements.",
+        "Authorize any eventual spending only after reviewing a compliant, quote-supported plan and verified funding."
+      ],
+      "next_steps": [
+        "Have a person review and, if the board agrees, send the existing unsent venue inquiry outside SAM SPACE. Request availability, itemized pricing, deposits, cancellation terms, catering minimums and nonprofit accommodations.",
+        "Confirm step-free routes, accessible restrooms, seating, quiet-space feasibility, dietary accommodations, room noise and equipment inclusions.",
+        "Build separate catering provisions for guests and volunteers; obtain written minimums and guest-count deadlines. Itemize known printing, permit and production costs rather than assuming contingency covers them.",
+        "Verify current unrestricted cash, restricted-gift balances and reserve protection. Count additional sponsorship toward deposit funding only when unrestricted funds have actually been received in time.",
+        "Replace placeholders with quotes and rerun Finance against total cost, upfront cash, conservative results and the clarified fundraising goal.",
+        "Return the revised plan to the board before any commitment."
+      ],
+      "lessons_applied": [
+        "Campus Wellness Panel: apply the adopted purpose-first lesson before choosing spending and format; explore a quieter post-program conversation area.",
+        "Butterfly Benefit Dinner: preserve the valued recovery speaker, consider a program under an hour, verify step-free entry, control catering guarantees and arrange on-site pledge collection. The shorter-program recommendation was reviewed, not adopted.",
+        "Butterfly Spring Raffle: use a staffed welcome table, brief volunteers, assign station leads and lock the volunteer list three weeks out.",
+        "Spring Awareness Walk: protect volunteer meals alongside named thanks, explore mission-resource conversations and lock sponsor logos a month before printing.",
+        "Hartford trivia night: check microphone provision and room noise, and provide sufficient name tags."
+      ],
+      "caveats": [
+        "Past events, books, and donations are the synthetic demo dataset.",
+        "Stopped after 1 revision round(s) (loop limit). Remaining conflicts need a board decision.",
+        "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+        "The ledger, event plan and historical records contain sample or synthetic data; they are not reliable forecasts of a Manhattan gala.",
+        "Live research mode does not establish current availability, quoted prices or contractual capacity. No source links are supplied here for independent verification.",
+        "An empty model missing-input list does not mean the plan is commitment-ready. Actual quotes, catering terms and verified restricted-fund balances remain missing.",
+        "Past community feedback consists largely of board observations or reported attendee comments, not representative surveys or verified belonging outcomes.",
+        "Speaker consent, permissions for named recognition and any specific charitable-use commitments remain unconfirmed.",
+        "Nothing has been sent, booked, reserved, paid or approved."
+      ],
+      "mission_impact_considerations": [
+        "A sensitively framed recovery talk and clear explanation of the foundation's mental-health awareness, eating-disorder research and community purposes could honor Sabrina while supporting charitable objectives. Personal disclosure and giving should remain optional.",
+        "Support inclusion and connection through welcoming introductions, optional post-talk conversation, accessible seating and exploration of funded community places. These measures complement\u2014not replace\u2014financial feasibility.",
+        "Recognize volunteers, sponsors and participants with appropriate consent, and pair thanks with practical volunteer care, including meals and service coverage.",
+        "The board should weigh event spending against alternative uses for awareness, research and community support. Mission alignment cannot override spending limits, reserve protection or restrictions on funds."
+      ]
+    },
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No unconfirmed availability claims",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No links that are not in the sources",
+          "passed": true,
+          "detail": "Every link appears in the run's sources."
+        },
+        {
+          "name": "Options come from the Events agent's research",
+          "passed": true,
+          "detail": "All options are real candidates."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "1 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Every lesson cites real events or reflections",
+          "passed": true,
+          "detail": "11 lesson(s) checked against the database."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "16 internal, 5 verified"
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {
+      "total_income_usd": 17400.0,
+      "total_expense_usd": 19270.0,
+      "net_usd": -1870.0,
+      "average_monthly_expense_usd": 3854.0,
+      "reserve_usd": 21500.0,
+      "reserve_floor_usd": 11562.0,
+      "available_planning_budget_usd": 9938.0,
+      "top_option_total_cost_usd": 24475.0,
+      "top_option_upfront_cash_usd": 10475.0,
+      "top_option_contingency_usd": 2225.0,
+      "top_option_subtotal_usd": 22250.0,
+      "top_option_max_budget_usd": 18000.0,
+      "top_option_target_usd": 40000.0,
+      "cost_venue_usd": 6000.0,
+      "cost_catering_usd": 12750.0,
+      "cost_entertainment_usd": 1500.0,
+      "cost_marketing_usd": 600.0,
+      "cost_staffing_usd": 900.0,
+      "cost_insurance and permits_usd": 500.0,
+      "cost_miscellaneous_usd": 0.0,
+      "conservative_ticket_revenue_usd": 30000.0,
+      "conservative_sponsorship_revenue_usd": 0.0,
+      "conservative_donations_usd": 1737.0,
+      "conservative_total_revenue_usd": 31737.0,
+      "conservative_net_usd": 7262.0,
+      "conservative_vs_target_usd": -32738.0,
+      "base_ticket_revenue_usd": 37500.0,
+      "base_sponsorship_revenue_usd": 5000.0,
+      "base_donations_usd": 4342.5,
+      "base_total_revenue_usd": 46842.5,
+      "base_net_usd": 22367.5,
+      "base_vs_target_usd": -17632.5,
+      "optimistic_ticket_revenue_usd": 37500.0,
+      "optimistic_sponsorship_revenue_usd": 7500.0,
+      "optimistic_donations_usd": 5645.25,
+      "optimistic_total_revenue_usd": 50645.25,
+      "optimistic_net_usd": 26170.25,
+      "optimistic_vs_target_usd": -13829.75,
+      "assumption_attendance": 150,
+      "assumption_ticket_price_usd": 250.0,
+      "assumption_venue_rental_usd": 6000.0,
+      "assumption_catering_per_guest_usd": 85.0,
+      "assumption_entertainment_usd": 1500.0,
+      "assumption_marketing_usd": 600.0,
+      "assumption_staffing_usd": 900.0,
+      "assumption_insurance_usd": 500.0,
+      "assumption_misc_usd": 0.0,
+      "assumption_contingency_pct": 0.1,
+      "assumption_sponsorship_usd": 5000.0,
+      "assumption_sponsorship_confirmed_usd": 0.0,
+      "assumption_other_revenue_usd": 0.0,
+      "assumption_donations_per_attendee_usd": 28.95,
+      "assumption_deposit_pct": 0.5,
+      "live-1:seated_dinner_total_usd": 35200.0,
+      "live-1:seated_dinner_upfront_usd": 15350.0,
+      "live-1:reception_total_usd": 24475.0,
+      "live-1:reception_upfront_usd": 10475.0,
+      "live-2:seated_dinner_total_usd": 35200.0,
+      "live-2:seated_dinner_upfront_usd": 15350.0,
+      "live-2:reception_total_usd": 24475.0,
+      "live-2:reception_upfront_usd": 10475.0,
+      "live-3:seated_dinner_total_usd": 35200.0,
+      "live-3:seated_dinner_upfront_usd": 15350.0,
+      "live-3:reception_total_usd": 24475.0,
+      "live-3:reception_upfront_usd": 10475.0,
+      "live-4:seated_dinner_total_usd": 35200.0,
+      "live-4:seated_dinner_upfront_usd": 15350.0,
+      "live-4:reception_total_usd": 24475.0,
+      "live-4:reception_upfront_usd": 10475.0,
+      "live-5:seated_dinner_total_usd": 35200.0,
+      "live-5:seated_dinner_upfront_usd": 15350.0,
+      "live-5:reception_total_usd": 24475.0,
+      "live-5:reception_upfront_usd": 10475.0
+    },
+    "revision_history": [
+      {
+        "round": 0,
+        "option_id": "live-1:seated_dinner",
+        "venue": "David Rubenstein Atrium at Lincoln Center",
+        "event_format": "seated_dinner",
+        "pricing_status": "quote_required",
+        "total_usd": 35200.0,
+        "upfront_cash_usd": 15350.0,
+        "base_net_usd": 11642.5,
+        "contingency_pct": 0.1,
+        "conservative_net_usd": -3463.0,
+        "finance_status": "needs_revision",
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $35,200 vs maximum $18,000.",
+          "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted)."
+        ],
+        "conflict_sources": [
+          "finance"
+        ],
+        "changes_from_previous": null,
+        "rationale": "The Atrium's published seated capacity of 150 matches attendance, while portable staging, flexible seating and in-house sound and projection support the recovery speaker and a personal tribute to Sabrina. These features make it the strongest candidate to investigate, not a financially approved choice. Accessibility, quiet-space feasibility and written catering commitments remain unconfirmed. Glasshouse Chelsea and the Ballroom on 74th also offer technical amenities but no modeled financial advantage; The Fulton's final layout capacity requires confirmation and it requires in-house catering with no DJ; Rosie O\u2019Grady\u2019s has no stated speaker technical provision."
+      },
+      {
+        "round": 1,
+        "option_id": "live-1:reception",
+        "venue": "David Rubenstein Atrium at Lincoln Center",
+        "event_format": "reception",
+        "pricing_status": "quote_required",
+        "total_usd": 24475.0,
+        "upfront_cash_usd": 10475.0,
+        "base_net_usd": 22367.5,
+        "contingency_pct": 0.1,
+        "conservative_net_usd": 7262.0,
+        "finance_status": "needs_revision",
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $24,475 vs maximum $18,000.",
+          "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted)."
+        ],
+        "conflict_sources": [
+          "finance"
+        ],
+        "changes_from_previous": "Changed the previous Atrium seated dinner to the Atrium reception for further investigation because format changes are permitted. Finance found the dinner not affordable: $35,200 total against $18,000, over by $17,200; $15,350 upfront against $9,938 available, over by $5,412. Identified dinner cost drivers were catering at $22,500, venue at $6,000 and entertainment at $1,500, with conservative net of -$3,463. The supplied reception figures improve to $24,475 total, $10,475 upfront and $7,262 conservative net, but still fail both limits. No supplied option satisfies all constraints, so only the closest program-fit option is ranked. Written catering commitments, protected volunteer meals, access checks and the other operational constraints remain required planning gates, not completed checks.",
+        "rationale": "The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied receptions have identical modeled finances; the Atrium leads on documented program equipment, not demonstrated savings. Computed total cost is $24,475, upfront cash is $10,475, base net is $22,367.50 and conservative net is $7,262. Price must be quoted; the model's venue figure is a hypothetical estimate. This option does not satisfy the $18,000 total-cost limit or the $9,938 upfront limit."
+      }
+    ],
+    "unresolved_conflicts": [
+      {
+        "type": "over_budget_limit",
+        "detail": "Projected cost $24,475 vs maximum $18,000.",
+        "source": "finance",
+        "max_total_usd": 18000.0
+      },
+      {
+        "type": "upfront_cash_exceeds_available",
+        "detail": "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "source": "finance",
+        "max_upfront_usd": 9938.0
+      }
+    ],
+    "event_plan_id": 1,
+    "specialists": {
+      "lessons": {
+        "agent": "event_intelligence",
+        "status": "completed",
+        "summary": "For the proposed 150-guest New York gala, the size-comparable panel, walk and raffle offer lessons on event purpose, food planning, volunteer roles and welcome. The Butterfly Benefit Dinner provides the closest format-specific evidence: retain the valued recovery speaker, control catering commitments, collect auction payments promptly and address entrance accessibility. All records are samples or synthetic examples, not a reliable forecast of a New York gala. The board's adopted event-purpose lesson should guide planning; its shorter-program recommendation has been reviewed, not adopted."
+      },
+      "venues": {
+        "agent": "fundraising_events",
+        "status": "completed",
+        "summary": "No supplied option meets both Finance limits. Rank the Atrium reception as the closest option for further quotation only\u2014not as an affordable or approved plan. It preserves the Manhattan location and recovery-speaker program while improving the supplied financial projections relative to dinner, but still exceeds the spending and upfront-cash limits."
+      },
+      "finance": {
+        "agent": "financial_analysis",
+        "status": "needs_revision",
+        "summary": "The computed verdict is not affordable as planned for a reception at the David Rubenstein Atrium at Lincoln Center. Although every modeled scenario produces a surplus, projected costs exceed the planning limit, upfront payments exceed available funds above the reserve floor, and the base case falls short of the fundraising target."
+      },
+      "outreach": {
+        "agent": "partnerships_outreach",
+        "status": "completed",
+        "summary": "Prepared one unsent venue inquiry based on the provided event plan and verified venue details."
+      }
+    },
+    "finance": {
+      "verdict": "not_affordable_as_planned",
+      "affordability": {
+        "verdict": "not_affordable_as_planned",
+        "checks": [
+          {
+            "name": "Within the maximum planning budget",
+            "passed": false,
+            "detail": "Projected cost $24,475 vs maximum $18,000.",
+            "kind": "over_budget_limit"
+          },
+          {
+            "name": "Base case covers its costs",
+            "passed": true,
+            "detail": "Base-case net $22,368.",
+            "kind": "negative_net"
+          },
+          {
+            "name": "Conservative case avoids a loss",
+            "passed": true,
+            "detail": "Conservative net $7,262.",
+            "kind": "conservative_loss"
+          },
+          {
+            "name": "Break-even below expected attendance",
+            "passed": true,
+            "detail": "Break-even at 30 guests vs 150 expected.",
+            "kind": "break_even_too_high"
+          },
+          {
+            "name": "Base case meets the fundraising target",
+            "passed": false,
+            "detail": "Base-case net $22,368 vs target $40,000.",
+            "kind": "below_target"
+          },
+          {
+            "name": "Upfront cash fits the available planning budget",
+            "passed": false,
+            "detail": "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+            "kind": "upfront_cash_exceeds_available"
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "over_budget_limit",
+            "detail": "Projected cost $24,475 vs maximum $18,000.",
+            "source": "finance",
+            "max_total_usd": 18000.0
+          },
+          {
+            "type": "upfront_cash_exceeds_available",
+            "detail": "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+            "source": "finance",
+            "max_upfront_usd": 9938.0
+          }
+        ],
+        "warnings": [
+          "Base-case net $22,368 vs target $40,000."
+        ],
+        "cash_note": "Recorded income is not treated as cash on hand, restricted gifts are never counted as spendable, and pledged sponsorship is not guaranteed. Only unrestricted money above the board's reserve floor is counted as available for deposits. Financial feasibility is not board authorization."
+      },
+      "model": {
+        "lines": [
+          {
+            "category": "Venue",
+            "amount_usd": 6000.0,
+            "basis": "Quote required: the venue publishes no rental price. Hypothetical planning estimate, not a quote."
+          },
+          {
+            "category": "Catering",
+            "amount_usd": 12750.0,
+            "basis": "150 guests \u00d7 $85.00"
+          },
+          {
+            "category": "Entertainment",
+            "amount_usd": 1500.0,
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          {
+            "category": "Marketing",
+            "amount_usd": 600.0,
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          {
+            "category": "Staffing",
+            "amount_usd": 900.0,
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          {
+            "category": "Insurance and permits",
+            "amount_usd": 500.0,
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          {
+            "category": "Miscellaneous",
+            "amount_usd": 0.0,
+            "basis": "Not estimated (contingency covers small items); enter known costs such as printing or permits"
+          }
+        ],
+        "subtotal_usd": 22250.0,
+        "contingency_pct": 0.1,
+        "contingency_usd": 2225.0,
+        "total_cost_usd": 24475.0,
+        "upfront_cash_usd": 10475.0,
+        "catering_minimum_applies": false,
+        "scenarios": {
+          "conservative": {
+            "attendance": 120,
+            "ticket_revenue_usd": 30000.0,
+            "sponsorship_revenue_usd": 0.0,
+            "donations_usd": 1737.0,
+            "other_revenue_usd": 0.0,
+            "total_revenue_usd": 31737.0,
+            "total_cost_usd": 24475.0,
+            "net_usd": 7262.0,
+            "vs_target_usd": -32738.0
+          },
+          "base": {
+            "attendance": 150,
+            "ticket_revenue_usd": 37500.0,
+            "sponsorship_revenue_usd": 5000.0,
+            "donations_usd": 4342.5,
+            "other_revenue_usd": 0.0,
+            "total_revenue_usd": 46842.5,
+            "total_cost_usd": 24475.0,
+            "net_usd": 22367.5,
+            "vs_target_usd": -17632.5
+          },
+          "optimistic": {
+            "attendance": 150,
+            "ticket_revenue_usd": 37500.0,
+            "sponsorship_revenue_usd": 7500.0,
+            "donations_usd": 5645.25,
+            "other_revenue_usd": 0.0,
+            "total_revenue_usd": 50645.25,
+            "total_cost_usd": 24475.0,
+            "net_usd": 26170.25,
+            "vs_target_usd": -13829.75
+          }
+        },
+        "break_even_attendance": 30,
+        "break_even_note": null,
+        "break_even_confirmed_only": 57,
+        "sponsorship_confirmed_usd": 0.0,
+        "sponsorship_unconfirmed_usd": 5000.0,
+        "missing_inputs": [],
+        "complete": true,
+        "checks": [
+          {
+            "name": "Within the maximum planning budget",
+            "passed": false,
+            "detail": "Projected cost $24,475 vs maximum $18,000.",
+            "kind": "over_budget_limit"
+          },
+          {
+            "name": "Base case covers its costs",
+            "passed": true,
+            "detail": "Base-case net $22,368.",
+            "kind": "negative_net"
+          },
+          {
+            "name": "Conservative case avoids a loss",
+            "passed": true,
+            "detail": "Conservative net $7,262.",
+            "kind": "conservative_loss"
+          },
+          {
+            "name": "Break-even below expected attendance",
+            "passed": true,
+            "detail": "Break-even at 30 guests vs 150 expected.",
+            "kind": "break_even_too_high"
+          },
+          {
+            "name": "Base case meets the fundraising target",
+            "passed": false,
+            "detail": "Base-case net $22,368 vs target $40,000.",
+            "kind": "below_target"
+          }
+        ],
+        "assumptions": {
+          "attendance": {
+            "value": 150,
+            "kind": "board",
+            "basis": "Entered in Event Studio"
+          },
+          "ticket_price_usd": {
+            "value": 250.0,
+            "kind": "board",
+            "basis": "Entered in Event Studio"
+          },
+          "venue_rental_usd": {
+            "value": 6000.0,
+            "kind": "hypothetical",
+            "basis": "Quote required: the venue publishes no rental price. Hypothetical planning estimate, not a quote."
+          },
+          "catering_per_guest_usd": {
+            "value": 85.0,
+            "kind": "placeholder",
+            "basis": "Placeholder planning figure; request a catering quote"
+          },
+          "catering_minimum_usd": {
+            "value": null,
+            "kind": "missing",
+            "basis": "No published minimum (confirm with the venue)"
+          },
+          "entertainment_usd": {
+            "value": 1500.0,
+            "kind": "placeholder",
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          "marketing_usd": {
+            "value": 600.0,
+            "kind": "placeholder",
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          "staffing_usd": {
+            "value": 900.0,
+            "kind": "placeholder",
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          "insurance_usd": {
+            "value": 500.0,
+            "kind": "placeholder",
+            "basis": "Placeholder planning figure; replace with quotes"
+          },
+          "misc_usd": {
+            "value": 0.0,
+            "kind": "placeholder",
+            "basis": "Not estimated (contingency covers small items); enter known costs such as printing or permits"
+          },
+          "contingency_pct": {
+            "value": 0.1,
+            "kind": "placeholder",
+            "basis": "Default planning contingency"
+          },
+          "sponsorship_usd": {
+            "value": 5000.0,
+            "kind": "history",
+            "basis": "Average sponsorship at comparable past events: Butterfly Benefit Dinner (sample)"
+          },
+          "sponsorship_confirmed_usd": {
+            "value": 0.0,
+            "kind": "board",
+            "basis": "No sponsorship confirmed yet; pledges are not counted as guaranteed"
+          },
+          "other_revenue_usd": {
+            "value": 0.0,
+            "kind": "board",
+            "basis": "No other documented revenue; enter only documented amounts (e.g. a confirmed auction donation)"
+          },
+          "donations_per_attendee_usd": {
+            "value": 28.95,
+            "kind": "history",
+            "basis": "Past guest giving per attendee (Butterfly Benefit Dinner (sample), $278.95) minus the ticket price"
+          },
+          "deposit_pct": {
+            "value": 0.5,
+            "kind": "placeholder",
+            "basis": "Placeholder deposit assumption"
+          }
+        },
+        "attendance": 150,
+        "max_budget_usd": 18000.0,
+        "target_usd": 40000.0,
+        "scenario_definitions": {
+          "conservative": "attendance 80%, confirmed sponsorship only, donations 50%",
+          "base": "attendance 100%, sponsorship 100% of expected, donations 100%",
+          "optimistic": "attendance 100%, sponsorship 150% of expected, donations 130%"
+        },
+        "catering_minimum_risk": null
+      },
+      "position": {
+        "months_of_data": 5,
+        "period_start": "2026-05",
+        "period_end": "2026-09",
+        "total_income_usd": 17400.0,
+        "total_expense_usd": 19270.0,
+        "net_usd": -1870.0,
+        "average_monthly_expense_usd": 3854.0,
+        "reserve_usd": 21500.0,
+        "reserve_guideline_months": 3.0,
+        "available_planning_budget_usd": 9938.0,
+        "available_planning_budget_basis": "Reserve $21,500 minus a 3-month floor ($11,562 = 3 \u00d7 $3,854 average monthly expense).",
+        "restricted_income_usd": 5000.0,
+        "cash": {
+          "as_of": "2026-09",
+          "cash_usd": 26500.0,
+          "restricted_usd": 5000.0,
+          "unrestricted_usd": 21500.0,
+          "basis": "no restricted balance recorded, so all restricted gifts on record are assumed unspent"
+        },
+        "reserve_floor_usd": 11562.0
+      },
+      "venue": "David Rubenstein Atrium at Lincoln Center",
+      "event_format": "reception",
+      "option_id": "live-1:reception"
+    },
+    "event": {
+      "name": "Manhattan Spring Gala (sample plan)",
+      "city": "New York, NY",
+      "attendance": 150,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": 18000.0,
+      "fundraising_goal_usd": 40000.0,
+      "ticket_price_usd": 250.0,
+      "target_date": "2027-04-17",
+      "date_end": null,
+      "instructions": "A warm, personal evening honoring Sabrina, with a short talk from a recovery speaker."
+    },
+    "venues": [
+      {
+        "venue_key": "live-1",
+        "name": "David Rubenstein Atrium at Lincoln Center",
+        "address": "61 West 62nd Street, New York, NY 10023",
+        "neighborhood": "Upper West Side",
+        "website": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+        "source_url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+        "formats": [
+          "seated_dinner",
+          "reception"
+        ],
+        "capacity": {
+          "seated_dinner": 150,
+          "reception": 250
+        },
+        "capacity_quote": "250 Reception | 150 Dinner",
+        "reported_rental_usd": null,
+        "reported_fnb_per_guest_usd": null,
+        "reported_fnb_minimum_usd": null,
+        "pricing_quote": null,
+        "rental_usd": null,
+        "fnb_per_guest_usd": null,
+        "fnb_minimum_usd": null,
+        "deposit_pct": null,
+        "pricing_status": "quote_required",
+        "capacity_status": "published",
+        "amenities": [
+          "Two 21-foot vertical gardens",
+          "26-foot high ceilings",
+          "42-foot wide dynamic media wall",
+          "16 color-changing LED oculi",
+          "In-house theatrical lighting, sound, and projection systems",
+          "LEED Gold Certified space",
+          "Portable staging and flexible seating",
+          "In-house backline inventory"
+        ],
+        "restrictions": [],
+        "notes": "The venue page lists galas and awards among its event types.",
+        "source_id": "web:venue:1",
+        "verification": "verified",
+        "website_status": "verified",
+        "verified_at": "2026-10-25T22:36:30+00:00",
+        "screened": true
+      },
+      {
+        "venue_key": "live-2",
+        "name": "Glasshouse Chelsea \u2014 14th Floor",
+        "address": "545 W 25th Street, New York, NY 10001",
+        "neighborhood": "Chelsea",
+        "website": "https://www.ghchelsea.com/",
+        "source_url": "https://www.ghchelsea.com/the-venue",
+        "formats": [
+          "seated_dinner",
+          "reception"
+        ],
+        "capacity": {
+          "seated_dinner": 150,
+          "reception": 175
+        },
+        "capacity_quote": "Cocktail reception: up to 175 guests; Seated dinner: 20-150 guests",
+        "reported_rental_usd": null,
+        "reported_fnb_per_guest_usd": null,
+        "reported_fnb_minimum_usd": null,
+        "pricing_quote": null,
+        "rental_usd": null,
+        "fnb_per_guest_usd": null,
+        "fnb_minimum_usd": null,
+        "deposit_pct": null,
+        "pricing_status": "quote_required",
+        "capacity_status": "published",
+        "amenities": [
+          "3,600 sq. ft.",
+          "Floor-to-ceiling windows",
+          "Panoramic views of South, East, and West Manhattan, as well as the Hudson River",
+          "Advanced lighting and sound capabilities"
+        ],
+        "restrictions": [],
+        "notes": "The venue page lists these capacities for the 14th floor. It says the venue partners with selected caterers and clients may discuss alternative catering arrangements.",
+        "source_id": "web:venue:2",
+        "verification": "verified",
+        "website_status": "verified",
+        "verified_at": "2026-10-25T22:36:31+00:00",
+        "screened": true
+      },
+      {
+        "venue_key": "live-3",
+        "name": "The Fulton",
+        "address": "89 South Street, New York, NY 10038",
+        "neighborhood": "South Street Seaport",
+        "website": "https://www.thefulton.nyc",
+        "source_url": "https://theseaport.nyc/the-fulton-venue/",
+        "formats": [
+          "seated_dinner",
+          "reception"
+        ],
+        "capacity": {
+          "seated_dinner": 150,
+          "reception": 200
+        },
+        "capacity_quote": "Capacity: 150 seated, 200 standing (winter, subject to change for summer)",
+        "reported_rental_usd": null,
+        "reported_fnb_per_guest_usd": null,
+        "reported_fnb_minimum_usd": null,
+        "pricing_quote": null,
+        "rental_usd": null,
+        "fnb_per_guest_usd": null,
+        "fnb_minimum_usd": null,
+        "deposit_pct": null,
+        "pricing_status": "quote_required",
+        "capacity_status": "published",
+        "amenities": [
+          "Waterfront setting",
+          "Patio seating",
+          "Semi customizable seating",
+          "A/V capabilities",
+          "2 separate entrances"
+        ],
+        "restrictions": [
+          "Catering: In-house only",
+          "NO DJ"
+        ],
+        "notes": "The source says listed capacities are estimates and final capacity is established per event based on individual event layouts.",
+        "source_id": "web:venue:3",
+        "verification": "verified",
+        "website_status": "verified",
+        "verified_at": "2026-10-25T22:36:32+00:00",
+        "screened": true
+      },
+      {
+        "venue_key": "live-4",
+        "name": "Rosie O\u2019Grady\u2019s \u2014 Main Hall",
+        "address": "148 W 51st Street, New York, NY 10019",
+        "neighborhood": "Theater District",
+        "website": "https://rosieogradys.com/",
+        "source_url": "https://rosieogradys.com/rooms/main-hall/",
+        "formats": [
+          "seated_dinner",
+          "reception"
+        ],
+        "capacity": {
+          "seated_dinner": 150,
+          "reception": 200
+        },
+        "capacity_quote": "200 Guests, cocktail reception; 150 Guests, seated dinner",
+        "reported_rental_usd": null,
+        "reported_fnb_per_guest_usd": null,
+        "reported_fnb_minimum_usd": null,
+        "pricing_quote": null,
+        "rental_usd": null,
+        "fnb_per_guest_usd": null,
+        "fnb_minimum_usd": null,
+        "deposit_pct": null,
+        "pricing_status": "quote_required",
+        "capacity_status": "published",
+        "amenities": [
+          "66'4\" x 38'9\" room",
+          "Platters from the bar menu, gastropub kitchen, buffets, and full drinks list"
+        ],
+        "restrictions": [],
+        "notes": "The events team builds the menu with you.",
+        "source_id": "web:venue:4",
+        "verification": "verified",
+        "website_status": "verified",
+        "verified_at": "2026-10-25T22:36:34+00:00",
+        "screened": true
+      },
+      {
+        "venue_key": "live-5",
+        "name": "The Ballroom on 74th (Amali)",
+        "address": "115 East 60th St, NY 10022",
+        "neighborhood": "Upper East Side",
+        "website": "https://www.amalinyc.com/",
+        "source_url": "https://www.amalinyc.com/private-events/",
+        "formats": [
+          "seated_dinner",
+          "reception"
+        ],
+        "capacity": {
+          "seated_dinner": 150,
+          "reception": 200
+        },
+        "capacity_quote": "Standing 200 | Seated 150",
+        "reported_rental_usd": null,
+        "reported_fnb_per_guest_usd": null,
+        "reported_fnb_minimum_usd": null,
+        "pricing_quote": null,
+        "rental_usd": null,
+        "fnb_per_guest_usd": null,
+        "fnb_minimum_usd": null,
+        "deposit_pct": null,
+        "pricing_status": "quote_required",
+        "capacity_status": "published",
+        "amenities": [
+          "Private bar",
+          "Kitchen",
+          "State-of-the-art AV with two 15-foot screens, a projector, and surround sound"
+        ],
+        "restrictions": [],
+        "notes": "Amali oversees food, beverage, and service.",
+        "source_id": "web:venue:5",
+        "verification": "verified",
+        "website_status": "verified",
+        "verified_at": "2026-10-25T22:36:36+00:00",
+        "screened": true
+      }
+    ],
+    "shortlist": [
+      {
+        "option_id": "live-1:reception",
+        "venue": "David Rubenstein Atrium at Lincoln Center",
+        "event_format": "reception",
+        "rank": 1,
+        "total_usd": 24475.0,
+        "upfront_cash_usd": 10475.0,
+        "pricing_status": "quote_required",
+        "rationale": "The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied receptions have identical modeled finances; the Atrium leads on documented program equipment, not demonstrated savings. Computed total cost is $24,475, upfront cash is $10,475, base net is $22,367.50 and conservative net is $7,262. Price must be quoted; the model's venue figure is a hypothetical estimate. This option does not satisfy the $18,000 total-cost limit or the $9,938 upfront limit.",
+        "lessons_applied": [
+          "Butterfly Benefit Dinner: retain the recovery speaker and propose a program under an hour; verify seating and audibility rather than assuming a reception will support attentive listening.",
+          "Butterfly Benefit Dinner and Spring Awareness Walk: obtain written catering pricing, minimums and guarantees, with a guest-count deadline two weeks out and separately protected volunteer meals.",
+          "Butterfly Spring Raffle: provide a staffed welcome table, advance volunteer assignments and clear station leads.",
+          "Hartford trivia night: test microphone provision and room noise; listed sound equipment does not establish actual speech intelligibility.",
+          "Butterfly Benefit Dinner and Campus Wellness Panel: verify entrance access and plan a quieter conversation area before venue selection."
+        ],
+        "verification": "verified",
+        "website": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+        "source_url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/"
+      }
+    ],
+    "original_plan": {
+      "round": 0,
+      "option_id": "live-1:seated_dinner",
+      "venue": "David Rubenstein Atrium at Lincoln Center",
+      "event_format": "seated_dinner",
+      "pricing_status": "quote_required",
+      "total_usd": 35200.0,
+      "upfront_cash_usd": 15350.0,
+      "base_net_usd": 11642.5,
+      "contingency_pct": 0.1,
+      "conservative_net_usd": -3463.0,
+      "finance_status": "needs_revision",
+      "verdict": "not_affordable_as_planned",
+      "conflicts": [
+        "Projected cost $35,200 vs maximum $18,000.",
+        "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted)."
+      ],
+      "conflict_sources": [
+        "finance"
+      ],
+      "changes_from_previous": null,
+      "rationale": "The Atrium's published seated capacity of 150 matches attendance, while portable staging, flexible seating and in-house sound and projection support the recovery speaker and a personal tribute to Sabrina. These features make it the strongest candidate to investigate, not a financially approved choice. Accessibility, quiet-space feasibility and written catering commitments remain unconfirmed. Glasshouse Chelsea and the Ballroom on 74th also offer technical amenities but no modeled financial advantage; The Fulton's final layout capacity requires confirmation and it requires in-house catering with no DJ; Rosie O\u2019Grady\u2019s has no stated speaker technical provision."
+    },
+    "revised_plan": {
+      "round": 1,
+      "option_id": "live-1:reception",
+      "venue": "David Rubenstein Atrium at Lincoln Center",
+      "event_format": "reception",
+      "pricing_status": "quote_required",
+      "total_usd": 24475.0,
+      "upfront_cash_usd": 10475.0,
+      "base_net_usd": 22367.5,
+      "contingency_pct": 0.1,
+      "conservative_net_usd": 7262.0,
+      "finance_status": "needs_revision",
+      "verdict": "not_affordable_as_planned",
+      "conflicts": [
+        "Projected cost $24,475 vs maximum $18,000.",
+        "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted)."
+      ],
+      "conflict_sources": [
+        "finance"
+      ],
+      "changes_from_previous": "Changed the previous Atrium seated dinner to the Atrium reception for further investigation because format changes are permitted. Finance found the dinner not affordable: $35,200 total against $18,000, over by $17,200; $15,350 upfront against $9,938 available, over by $5,412. Identified dinner cost drivers were catering at $22,500, venue at $6,000 and entertainment at $1,500, with conservative net of -$3,463. The supplied reception figures improve to $24,475 total, $10,475 upfront and $7,262 conservative net, but still fail both limits. No supplied option satisfies all constraints, so only the closest program-fit option is ranked. Written catering commitments, protected volunteer meals, access checks and the other operational constraints remain required planning gates, not completed checks.",
+      "rationale": "The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied receptions have identical modeled finances; the Atrium leads on documented program equipment, not demonstrated savings. Computed total cost is $24,475, upfront cash is $10,475, base net is $22,367.50 and conservative net is $7,262. Price must be quoted; the model's venue figure is a hypothetical estimate. This option does not satisfy the $18,000 total-cost limit or the $9,938 upfront limit."
+    },
+    "revision_reasons": [
+      {
+        "type": "over_budget_limit",
+        "detail": "Projected cost $35,200 vs maximum $18,000.",
+        "source": "finance",
+        "max_total_usd": 18000.0
+      },
+      {
+        "type": "upfront_cash_exceeds_available",
+        "detail": "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "source": "finance",
+        "max_upfront_usd": 9938.0
+      }
+    ],
+    "evaluation": {
+      "conflicts": [
+        {
+          "type": "over_budget_limit",
+          "detail": "Projected cost $24,475 vs maximum $18,000.",
+          "source": "finance",
+          "max_total_usd": 18000.0
+        },
+        {
+          "type": "upfront_cash_exceeds_available",
+          "detail": "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+          "source": "finance",
+          "max_upfront_usd": 9938.0
+        }
+      ],
+      "history_checks": [
+        {
+          "name": "Food-cost lesson respected (no binding catering minimum)",
+          "passed": true,
+          "detail": "No binding catering minimum at conservative attendance.",
+          "lessons": [
+            "Spring Awareness Walk and Butterfly Benefit Dinner both encountered unexpected food commitments and inadequate volunteer food. Campus Wellness Panel also identified food as a substantial cost. Treat food quantities, volunteer meals and vendor minimums as separate planning items.",
+            "From Butterfly Benefit Dinner and Spring Awareness Walk: compare food-and-beverage minimums before selecting a venue, obtain written pricing and minimum guarantees, and establish a guest-count deadline. The dinner reflection specifically recommends locking the count two weeks out.",
+            "From Butterfly Benefit Dinner, Campus Wellness Panel and Butterfly Spring Raffle: check step-free entrance access, consider a quiet conversation area and plan a welcoming arrival experience. Discuss how to address the reported price-related discomfort without treating the plated-meal preference as settled."
+          ],
+          "event_ids": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reflection_ids": [
+            1,
+            3,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      ]
+    },
+    "proposal_comparison": [
+      {
+        "round": 0,
+        "label": "Original proposal",
+        "venue": "David Rubenstein Atrium at Lincoln Center",
+        "event_format": "seated_dinner",
+        "total_usd": 35200.0,
+        "upfront_cash_usd": 15350.0,
+        "base_net_usd": 11642.5,
+        "conservative_net_usd": -3463.0,
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $35,200 vs maximum $18,000.",
+          "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted)."
+        ],
+        "change_in_total_usd": 0.0,
+        "change_in_upfront_usd": 0.0
+      },
+      {
+        "round": 1,
+        "label": "Revision 1",
+        "venue": "David Rubenstein Atrium at Lincoln Center",
+        "event_format": "reception",
+        "total_usd": 24475.0,
+        "upfront_cash_usd": 10475.0,
+        "base_net_usd": 22367.5,
+        "conservative_net_usd": 7262.0,
+        "verdict": "not_affordable_as_planned",
+        "conflicts": [
+          "Projected cost $24,475 vs maximum $18,000.",
+          "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted)."
+        ],
+        "change_in_total_usd": -10725.0,
+        "change_in_upfront_usd": -4875.0
+      }
+    ],
+    "finance_feedback": [
+      {
+        "option_id": "live-1:seated_dinner",
+        "venue": "David Rubenstein Atrium at Lincoln Center",
+        "event_format": "seated_dinner",
+        "total_cost_usd": 35200.0,
+        "upfront_cash_usd": 15350.0,
+        "verdict": "not_affordable_as_planned",
+        "cost_drivers": [
+          {
+            "line": "Catering",
+            "amount_usd": 22500.0,
+            "share_of_total": 0.64
+          },
+          {
+            "line": "Venue",
+            "amount_usd": 6000.0,
+            "share_of_total": 0.17
+          },
+          {
+            "line": "Entertainment",
+            "amount_usd": 1500.0,
+            "share_of_total": 0.04
+          }
+        ],
+        "conservative_net_usd": -3463.0,
+        "break_even_attendance": 48,
+        "issues": [
+          {
+            "type": "over_budget_limit",
+            "source": "finance",
+            "detail": "Projected cost $35,200 vs maximum $18,000.",
+            "limit_usd": 18000.0,
+            "over_by_usd": 17200.0
+          },
+          {
+            "type": "upfront_cash_exceeds_available",
+            "source": "finance",
+            "detail": "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+            "limit_usd": 9938.0,
+            "over_by_usd": 5412.0
+          }
+        ]
+      }
+    ],
+    "authorized_budget_usd": 18000.0,
+    "drafts": [
+      {
+        "id": 56,
+        "recipient": "David Rubenstein Atrium at Lincoln Center",
+        "subject": "Venue inquiry: Manhattan Spring Gala \u2014 April 17, 2027",
+        "draft_type": "venue_inquiry",
+        "contact_status": "verified_email",
+        "contact_email": "yourevent@lincolncenter.org",
+        "finding_id": null,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "We are exploring a venue for a 150-person gala in New York, NY, on April 17, 2027.",
+        "next_step": "Please share availability and information on capacity, pricing, deposits, catering, accessibility, and nonprofit accommodations for the proposed event.",
+        "sources": [
+          {
+            "title": "David Rubenstein Atrium at Lincoln Center",
+            "url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+            "verification": "verified"
+          }
+        ],
+        "review_notes": []
+      }
+    ],
+    "lessons": [
+      {
+        "kind": "recommendation",
+        "theme": "Event purpose",
+        "text": "From Campus Wellness Panel: agree whether the gala primarily serves fundraising, awareness or both before evaluating spending and format. This reinforces the board's already-adopted lesson rather than proposing a new decision.",
+        "event_ids": [
+          3,
+          2
+        ],
+        "reflection_ids": [
+          5
+        ],
+        "confidence": "high",
+        "area": "fundraising_approach",
+        "basis": "records_and_feedback",
+        "id": 213
+      },
+      {
+        "kind": "recurring_problem",
+        "theme": "Food commitments",
+        "text": "Spring Awareness Walk and Butterfly Benefit Dinner both encountered unexpected food commitments and inadequate volunteer food. Campus Wellness Panel also identified food as a substantial cost. Treat food quantities, volunteer meals and vendor minimums as separate planning items.",
+        "event_ids": [
+          1,
+          2,
+          3
+        ],
+        "reflection_ids": [
+          1,
+          3,
+          5,
+          6,
+          7
+        ],
+        "confidence": "high",
+        "area": "costs",
+        "basis": "records_and_feedback",
+        "id": 214
+      },
+      {
+        "kind": "what_worked",
+        "theme": "Welcome table",
+        "text": "At Butterfly Spring Raffle, the welcome table gave first-time guests someone to talk to. Consider carrying this practice into gala arrival and check-in.",
+        "event_ids": [
+          4
+        ],
+        "reflection_ids": [
+          8
+        ],
+        "confidence": "medium",
+        "area": "community",
+        "basis": "records_and_feedback",
+        "id": 215
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Volunteer readiness",
+        "text": "From Butterfly Spring Raffle, brief volunteers before the event, assign a lead per station and lock the volunteer list three weeks out. Preserve the clear check-in responsibilities praised at Butterfly Benefit Dinner.",
+        "event_ids": [
+          4,
+          2
+        ],
+        "reflection_ids": [
+          8,
+          4
+        ],
+        "confidence": "medium",
+        "area": "logistics",
+        "basis": "records_and_feedback",
+        "id": 216
+      },
+      {
+        "kind": "what_worked",
+        "theme": "Mission-centered engagement",
+        "text": "Spring Awareness Walk's resource fair drew families into conversations with mental-health groups, while Campus Wellness Panel generated a recorded request from its co-host to repeat the event. Consider a mission-centered conversation opportunity at the gala, without assuming these formats will transfer unchanged.",
+        "event_ids": [
+          1,
+          3
+        ],
+        "reflection_ids": [
+          1,
+          5
+        ],
+        "confidence": "medium",
+        "area": "community",
+        "basis": "records_and_feedback",
+        "id": 217
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Catering terms",
+        "text": "From Butterfly Benefit Dinner and Spring Awareness Walk: compare food-and-beverage minimums before selecting a venue, obtain written pricing and minimum guarantees, and establish a guest-count deadline. The dinner reflection specifically recommends locking the count two weeks out.",
+        "event_ids": [
+          2,
+          1
+        ],
+        "reflection_ids": [
+          3,
+          6
+        ],
+        "confidence": "high",
+        "area": "costs",
+        "basis": "records_and_feedback",
+        "id": 218
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Speaker and pacing",
+        "text": "From Butterfly Benefit Dinner: retain the recovery speaker while drafting a program under an hour. This is an already-reviewed recommendation, not an adopted rule. The raffle's extended draw reinforces the need to time fundraising segments.",
+        "event_ids": [
+          2,
+          4
+        ],
+        "reflection_ids": [
+          3,
+          4,
+          9
+        ],
+        "confidence": "medium",
+        "area": "logistics",
+        "basis": "records_and_feedback",
+        "id": 219
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Pledge collection",
+        "text": "From Butterfly Benefit Dinner: arrange payment collection at the table rather than relying on post-event follow-up. Strong auction pledges did not ensure collection.",
+        "event_ids": [
+          2
+        ],
+        "reflection_ids": [
+          3,
+          4
+        ],
+        "confidence": "medium",
+        "area": "fundraising_approach",
+        "basis": "records_and_feedback",
+        "id": 220
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Inclusive gala experience",
+        "text": "From Butterfly Benefit Dinner, Campus Wellness Panel and Butterfly Spring Raffle: check step-free entrance access, consider a quiet conversation area and plan a welcoming arrival experience. Discuss how to address the reported price-related discomfort without treating the plated-meal preference as settled.",
+        "event_ids": [
+          2,
+          3,
+          4
+        ],
+        "reflection_ids": [
+          3,
+          5,
+          7,
+          8
+        ],
+        "confidence": "medium",
+        "area": "community",
+        "basis": "records_and_feedback",
+        "id": 221
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Sponsor and printing deadlines",
+        "text": "From Spring Awareness Walk: retain business sponsorship opportunities and lock sponsor logos a month before printing. Butterfly Spring Raffle's last-minute printing costs reinforce the need for an artwork deadline.",
+        "event_ids": [
+          1,
+          4
+        ],
+        "reflection_ids": [
+          2,
+          9
+        ],
+        "confidence": "medium",
+        "area": "sponsorship",
+        "basis": "records_and_feedback",
+        "id": 222
+      },
+      {
+        "kind": "recommendation",
+        "theme": "Speaker audibility",
+        "text": "From Hartford trivia night: assess room noise and microphone provision before committing to a speaker setup, and provide enough name tags. These are transferable checks, not evidence of conditions at a New York venue.",
+        "event_ids": [
+          5
+        ],
+        "reflection_ids": [
+          10
+        ],
+        "confidence": "medium",
+        "area": "logistics",
+        "basis": "records_and_feedback",
+        "id": 223
+      }
+    ],
+    "disagreements": [
+      {
+        "topic": "Dinner spending, perceived value and inclusion",
+        "positions": [
+          "Demo board member A: \"Treat catering as the biggest budget risk.\" The same member reported: \"Some first-time guests told me they felt out of place at a $250 dinner.\"",
+          "Demo board member D: \"The plated dinner made guests feel honored. It was worth the cost.\" Their recommendation was: \"Keep the dinner format; trim decor instead of food.\""
+        ],
+        "evidence_reflection_ids": [
+          3,
+          7
+        ]
+      },
+      {
+        "topic": "Dinner program experience: differing feedback, not a direct disagreement about retaining the speaker",
+        "positions": [
+          "Demo board member A: \"Guests said the speaker was the heart of the night.\"",
+          "Demo board member C: \"A few guests found the program too long.\" Their advice was: \"Shorten the program to under an hour.\""
+        ],
+        "evidence_reflection_ids": [
+          3,
+          4
+        ]
+      }
+    ],
+    "findings": [],
+    "selection": null,
+    "mission_contribution": {
+      "inclusion": "Explore sponsor-funded places alongside the modeled $250 ticket, subject to board review and recalculation. Explain the reception format clearly and provide seating options if verified. These measures address potential price discomfort and the needs of guests who cannot comfortably stand; they do not replace financial feasibility.",
+      "connection": "Use a staffed welcome table to offer introductions, then make room for optional conversation after the recovery talk. Explore a quieter conversation area and a modest mission-resource point without assuming past formats will transfer unchanged.",
+      "accessibility": "No shortlisted venue accessibility features are explicitly verified in the supplied data. Portable staging and flexible seating are listed, but step-free access, restrooms, sensory arrangements and dietary accommodations require confirmation.",
+      "recognition": "Thank volunteers, sponsors and participants appropriately, with consent for named recognition. Pair volunteer thanks with separately planned meals and service coverage rather than recognition alone.",
+      "charitable_alignment": "Honor Sabrina through a short, sensitively framed recovery talk and a clear explanation of the foundation's mental-health, eating-disorder research and community purposes. Keep personal disclosure and giving optional, and confirm speaker preferences with the board.",
+      "community_lessons_applied": [
+        "Butterfly Spring Raffle (synthetic sample): use a welcome table and personal introductions; reported impressions are not verified welcome outcomes.",
+        "Butterfly Benefit Dinner (sample): address reported price discomfort, preserve optional conversation after the recovery speaker and verify step-free entry after the reported entrance barrier.",
+        "Campus Wellness Panel (sample): explore a quieter space for post-program conversation in response to reported feedback.",
+        "Spring Awareness Walk (sample): consider mission-resource conversations based on recorded engagement, without claiming belonging; protect volunteer meals alongside named thanks."
+      ],
+      "open_questions": [
+        "Can the venue verify step-free routes, accessible restrooms, seating during the program and a quieter conversation area?",
+        "What dietary and sensory accommodations can be supported, and at what quoted terms?",
+        "Would sponsor-funded places and a clearly described reception address price and format concerns for intended guests?",
+        "What recovery-speaker content, consent practices and optional resource information would the board consider appropriate?",
+        "Can the board obtain a financially compliant, calculator-tested plan before choosing a venue?"
+      ]
+    },
+    "community_insights": [
+      {
+        "lens": "welcomed",
+        "lens_label": "Welcome and inclusion",
+        "observation": "The raffle board reflection associates the welcome table with first-time guests having someone to speak with; this is an impression, not a verified welcome outcome.",
+        "quote": "(Sample reflection) The raffle drew everyone in, and the welcome table gave first-time guests someone to talk to.",
+        "reflection_ids": [
+          8
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Spring Raffle (synthetic sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 224
+      },
+      {
+        "lens": "welcomed",
+        "lens_label": "Welcome and inclusion",
+        "observation": "A dinner board member reported that some first-time guests experienced price-related discomfort.",
+        "quote": "Some first-time guests told me they felt out of place at a $250 dinner.",
+        "reflection_ids": [
+          3
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Benefit Dinner (sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 225
+      },
+      {
+        "lens": "connection",
+        "lens_label": "Connection",
+        "observation": "The dinner speaker was followed by personal conversation among tablemates in one board member's observation.",
+        "quote": "After the recovery speaker, strangers at my table talked about their own families.",
+        "reflection_ids": [
+          3
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Benefit Dinner (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 226
+      },
+      {
+        "lens": "volunteers",
+        "lens_label": "Volunteer appreciation",
+        "observation": "Named thanks were reported at the walk, but inadequate food limited practical volunteer care; the quote does not establish volunteers' feelings.",
+        "quote": "We thanked volunteers by name at the finish line, but their food ran short.",
+        "reflection_ids": [
+          1
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Spring Awareness Walk (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 227
+      },
+      {
+        "lens": "community",
+        "lens_label": "Sense of community",
+        "observation": "Reported raffle feedback described a neighborhood-gathering atmosphere.",
+        "quote": "(Sample reflection) Several guests said it felt like a neighborhood gathering.",
+        "reflection_ids": [
+          8
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Spring Raffle (synthetic sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 228
+      },
+      {
+        "lens": "community",
+        "lens_label": "Sense of community",
+        "observation": "The walk recorded resource participation and follow-up signups. These are engagement outcomes, not proof of belonging.",
+        "quote": "Four local mental-health groups staffed resource tables, and 61 families signed up for follow-up resource emails (sample).",
+        "reflection_ids": [],
+        "event_ids": [
+          1
+        ],
+        "event_names": [
+          "Spring Awareness Walk (sample)"
+        ],
+        "evidence_type": "verified_outcome",
+        "evidence_label": "Recorded outcome",
+        "id": 229
+      },
+      {
+        "lens": "accessibility",
+        "lens_label": "Accessibility and inclusion",
+        "observation": "The dinner entrance presented a physical access barrier for a guest.",
+        "quote": "The dining room had steps at the entrance, and one guest needed help getting in.",
+        "reflection_ids": [
+          7
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Butterfly Benefit Dinner (sample)"
+        ],
+        "evidence_type": "board_observation",
+        "evidence_label": "Board observation (not a verified outcome)",
+        "id": 230
+      },
+      {
+        "lens": "improvement",
+        "lens_label": "Improvements",
+        "observation": "Reported panel feedback supports providing a quieter space for conversation after the program.",
+        "quote": "Students wanted a quieter space to talk afterwards.",
+        "reflection_ids": [
+          5
+        ],
+        "event_ids": [],
+        "event_names": [
+          "Campus Wellness Panel (sample)"
+        ],
+        "evidence_type": "attendee_feedback_reported",
+        "evidence_label": "Attendee feedback, as reported by the board",
+        "id": 231
+      }
+    ],
+    "donations": "[redacted]"
+  }
+}

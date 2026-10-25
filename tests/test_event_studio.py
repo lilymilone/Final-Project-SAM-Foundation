@@ -80,7 +80,7 @@ def test_affordable_event_needs_no_revision(client):
     run, steps, _ = run_plan(client, pid, script=ScriptedClient({"EventStrategyOutput": pick("chelsea")}))
     keys = [s.step_key for s in steps]
     assert run.status == "completed", run.error
-    assert keys == ["intake", "lessons", "venues", "finance", "evaluate", "outreach", "recommendation", "verification"]
+    assert keys == ["intake", "lessons", "venues", "finance", "evaluate", "outreach_decision", "outreach", "recommendation", "verification"]
     assert run.result["finance"]["verdict"] == "affordable"
     assert run.result["revised_plan"] is None and run.result["revision_reasons"] == []
     model = run.result["finance"]["model"]

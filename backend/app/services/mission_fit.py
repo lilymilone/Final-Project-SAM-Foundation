@@ -30,6 +30,6 @@ def fit_label(*, charitable: dict, verification: str, blockers: list[str], purpo
         if verification not in ("verified", "synthetic"):
             why.append("the source is not verified")
         if blockers:
-            why.append("feasibility issues: " + "; ".join(blockers[:2]))
+            why.append("feasibility issues: " + "; ".join(b.rstrip(".") for b in blockers[:2]))
         return "Possible fit", "Aligned, but " + ", ".join(why) + "."
     return "Weak fit", "The sources show no more than an unclear connection to the foundation's purpose areas."

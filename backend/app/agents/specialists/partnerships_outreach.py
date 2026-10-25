@@ -18,6 +18,8 @@ dropped with a warning.
 
 from __future__ import annotations
 
+import re
+
 from ...mission import FOUNDATION, PHILOSOPHY
 from ...safety.policy import wrap_untrusted
 from ..base import BaseAgent
@@ -26,6 +28,10 @@ from ..outputs import DRAFT_TYPES, DraftsOutput
 from ..registry import OUTREACH_DRAFTS, OUTREACH_PERSONALIZED
 from ..runtime import RunContext
 from ..verification import collect_amounts, outreach_violations
+
+CONTACT_RULES = """Contact details: each target has a "contact" checked on the organization's official website. Write an email
+address only if it is contact.email, exactly. Never write any other email address, any phone number, or the name of a person.
+If contact.email is null, write no address at all: the board will use the official contact page."""
 
 INSTRUCTIONS = f"""Write one outreach draft per target (use only target_id values from "targets").
 Fields:
@@ -43,14 +49,40 @@ Rules:
 - Mention a dollar amount only if it appears in the target data (e.g. a published table fee).
 - The guiding philosophy ("{PHILOSOPHY}") may appear once if it fits naturally; it is never required.
 - Sign off with placeholders: [Board member name], [Title], Sabrina Audrey Milone Foundation, [Email], [Phone].
-- Never claim anything was sent, booked, agreed, or approved. No donor names, amounts, or private financial details."""
+- Never claim anything was sent, booked, agreed, or approved. No donor names, amounts, or private financial details.
+- By type: a charitable or research organization: express interest in learning about its programs, impact, and how the
+  foundation might support or collaborate, explain the mission alignment, and politely ask for more information; never
+  promise or imply a donation or grant. A sponsor: describe the sponsorship opportunity and possible benefits as proposals,
+  not guarantees, and invite a conversation. A research initiative: ask about the work and possible support; never invent a
+  relationship with researchers or institutions.
+""" + CONTACT_RULES
 
 VENUE_INSTRUCTIONS = """Write one short venue-inquiry draft per target (use only target_id values from "targets").
 - draft_type: venue_inquiry. Ask about availability, capacity, pricing, deposits, nonprofit rates, and accessibility for the
   event details given. purpose, foundation_background, opportunity, next_step: one sentence each.
 - source_ids: the target's source_ids. personalization_basis: which venue facts you used.
 - Use only facts in the data; do not invent anything about the venue. Never claim anything was sent, booked, or agreed.
-- Sign off with placeholders like [Board member name] and [Phone]. No donor names, amounts, or private financial details."""
+- Include: the venue name, a short introduction to the foundation, the proposed event concept, the estimated attendance,
+  questions about availability, capacity, pricing, catering, and any nonprofit accommodations, and a professional closing.
+- Sign off with placeholders like [Board member name] and [Phone]. No donor names, amounts, or private financial details.
+""" + CONTACT_RULES
+
+DRAFT_CATEGORY = {"venue_inquiry": "venue", "corporate_sponsorship": "sponsor", "research_support": "research",
+                  "nonprofit_collaboration": "charity", "partnership_inquiry": "partner", "community_program": "partner"}
+EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b")
+PHONE_RE = re.compile(r"(?<![\w$])(?:\+?1[\s.\-]?)?\(?\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4}\b")
+
+
+def contact_violations(text: str, verified_email: str | None) -> list[str]:
+    """Contact details in a draft must come from the official website: no other email, and no phone numbers at all."""
+    problems = []
+    stray = [e for e in EMAIL_RE.findall(text) if not verified_email or e.lower() != verified_email.lower()]
+    if stray:
+        problems.append("includes an email address that was not verified on the organization's website (" + ", ".join(stray[:3]) + ")")
+    if PHONE_RE.search(text):
+        problems.append("includes a phone number (SAM SPACE never adds phone numbers)")
+    return problems
+
 
 CATEGORY_TYPE = {"research": "research_support", "sponsor": "corporate_sponsorship", "event": "community_program",
                  "partnership": "partnership_inquiry", "organization": "nonprofit_collaboration"}
@@ -105,11 +137,22 @@ class PartnershipsOutreachAgent(BaseAgent):
             return self.result(task, "completed", "No outreach targets yet. Save opportunities in Mission Discovery first.",
                                next_steps=["Run Mission Discovery and save promising partners."])
 
+        provenance = task.inputs.get("provenance") or {}
+        for t in targets:  # official public contact details first; never guessed
+            kind = "venue" if t["suggested_type"] == "venue_inquiry" else "sponsor" if t["suggested_type"] == "corporate_sponsorship" else "default"
+            website = (t["details"] or {}).get("website") or next((x.get("url") for x in t["sources"] if x.get("url")), None)
+            found = self.tool(ctx, "lookup_inquiry_details", name=t["name"], website=website, kind=kind)
+            t["contact"] = found.data if found.ok else None
+            t["details"] = {**(t["details"] or {}), "contact": {"email": (t["contact"] or {}).get("email"),
+                                                                 "contact_page": (t["contact"] or {}).get("contact_page_url"),
+                                                                 "status": (t["contact"] or {}).get("status")}}
+            if t["contact"] and not t["contact"].get("email"):
+                t["review_notes"] = list(t["review_notes"]) + [t["contact"]["display"]]
         personalized = any(t["finding_id"] for t in targets)
         profile = OUTREACH_PERSONALIZED if personalized else OUTREACH_DRAFTS
         instructions = INSTRUCTIONS if personalized else VENUE_INSTRUCTIONS
         payload = {"foundation": {**FOUNDATION, "background": _background()}, "event": event,
-                   "targets": [{k: v for k, v in t.items() if k not in ("sources", "review_notes", "finding_id")} for t in targets]}
+                   "targets": [{k: v for k, v in t.items() if k not in ("sources", "review_notes", "finding_id", "contact")} for t in targets]}
         allowed_amounts = collect_amounts({"targets": payload["targets"], "event": event})
 
         by_id = {t["target_id"]: t for t in targets}
@@ -126,7 +169,9 @@ class PartnershipsOutreachAgent(BaseAgent):
                     continue
                 if d.target_id in accepted:
                     continue
-                problems = outreach_violations(f"{d.subject}\n{d.body}\n{d.opportunity}\n{d.next_step}", allowed_amounts)
+                text = f"{d.subject}\n{d.body}\n{d.opportunity}\n{d.next_step}"
+                problems = outreach_violations(text, allowed_amounts)
+                problems += contact_violations(text, (target.get("contact") or {}).get("email"))
                 if problems:
                     rejected[d.target_id] = problems
                 else:
@@ -146,13 +191,18 @@ class PartnershipsOutreachAgent(BaseAgent):
             draft_type = forced_type if forced_type in DRAFT_TYPES else d.draft_type
             used = [s for s in target["sources"]] if not d.source_ids else \
                 [s for s, sid in zip(target["sources"], target["source_ids"]) if sid in d.source_ids] or target["sources"]
+            prov = provenance.get(tid) or {}
+            contact = target.get("contact")
             row = self.tool(ctx, "create_outreach_draft", draft_type=draft_type, recipient_org=target["name"], subject=d.subject,
                             body=d.body, personalization_basis=d.personalization_basis, is_synthetic_target=target["synthetic"],
                             purpose=d.purpose, opportunity=d.opportunity, next_step=d.next_step,
                             foundation_background=d.foundation_background, sources=used, finding_id=target["finding_id"],
-                            review_notes=target["review_notes"])
+                            review_notes=target["review_notes"], category=prov.get("category") or DRAFT_CATEGORY.get(draft_type),
+                            contact=contact, found_by_agent=prov.get("found_by"), recommendation_reason=prov.get("reason"),
+                            related_findings=prov.get("related_findings"), financial_considerations=prov.get("financial_considerations"))
             if row.ok:
                 made.append({"id": row.data["id"], "recipient": target["name"], "subject": d.subject, "draft_type": draft_type,
+                             "contact_status": (contact or {}).get("status"), "contact_email": (contact or {}).get("email"),
                              "finding_id": target["finding_id"], "synthetic_target": target["synthetic"], "status": "draft",
                              "purpose": d.purpose, "next_step": d.next_step, "sources": used, "review_notes": target["review_notes"]})
         findings = [Finding(claim=f"Unsent {m['draft_type'].replace('_', ' ')} draft to {m['recipient']}: “{m['subject']}”",

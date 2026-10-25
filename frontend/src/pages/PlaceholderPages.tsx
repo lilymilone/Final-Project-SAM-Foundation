@@ -5,7 +5,7 @@ import { formatDate, useApi } from "../api/useApi";
 import { AgentPanel } from "../components/AgentPanel";
 import { StatusPill } from "../components/agents";
 import { OpportunityDashboard } from "../components/opportunities";
-import { DraftsPanel } from "../components/outputs";
+import { ReviewCenter } from "../components/reviewcenter";
 import { PHILOSOPHY } from "../components/Philosophy";
 import { RunLauncher } from "../components/RunLauncher";
 import { Card, PageHeader } from "../components/ui";
@@ -88,7 +88,7 @@ export function PartnershipsPage() {
         <div className="min-w-0 space-y-5">
           <RunLauncher title="Find partners and draft outreach" intent="partnership_outreach" mode="live" lockIntent
             examples={[NY_PARTNERS_EXAMPLE, "Draft partnership inquiries to the opportunities we saved in Mission Discovery"]} />
-          <DraftsPanel kind="outreach" title="Drafts awaiting review" />
+          <ReviewCenter />
         </div>
         <div className="min-w-0 space-y-5">
           <PartnershipPackets />

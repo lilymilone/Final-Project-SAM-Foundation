@@ -63,6 +63,7 @@ The matrix is generated from code (`docs/evidence/safety/permission_matrix.md`).
 | Workflow duration | 480 s | 900 s |
 | Revision rounds | 1 | 2 |
 | Web searches / page fetches | 4 / 10 | 10 / 25 |
+| Contact pages per outreach draft (separate from page fetches; at most 3 drafts' worth per run) | 2 | 3 |
 
 The exact active values are in `docs/evidence/safety/limits.md`. No agent can change a limit: there is no tool for it, and limits are read once when a workflow starts.
 

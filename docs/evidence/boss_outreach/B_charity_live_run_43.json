@@ -1,0 +1,275 @@
+{
+  "workflow": "B_charity_live",
+  "run_id": 43,
+  "status": "completed",
+  "error": null,
+  "cost_usd": 0.095304,
+  "model_calls": 5,
+  "route": [
+    [
+      "board",
+      "orchestrator",
+      "intake"
+    ],
+    [
+      "orchestrator",
+      "mission_discovery",
+      "research"
+    ],
+    [
+      "orchestrator",
+      "financial_analysis",
+      "finance"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "outreach_decision"
+    ],
+    [
+      "orchestrator",
+      "partnerships_outreach",
+      "outreach"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "recommendation"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "verification"
+    ]
+  ],
+  "reports": {
+    "research": {
+      "outreach": {
+        "appropriate": true,
+        "reason": "6 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+        "candidates": [
+          "Western New York Comprehensive Care Center for Eating Disorders",
+          "Columbia Center for Eating Disorders",
+          "NewYork-Presbyterian Center for Eating Disorders",
+          "New York LGBTQ+ Pro-Recovery Support Group",
+          "NEDA"
+        ]
+      },
+      "additional_agents": [
+        {
+          "agent": "partnerships_outreach",
+          "reason": "Draft introductory messages to the promising opportunities."
+        },
+        {
+          "agent": "financial_analysis",
+          "reason": "State what the foundation could responsibly consider supporting, if the board's role allows financial access."
+        }
+      ],
+      "approval": {
+        "board_review": false,
+        "professional_review": false,
+        "reasons": []
+      },
+      "financial_considerations": []
+    },
+    "finance": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "Finance analyzes; it does not identify outreach targets.",
+        "candidates": []
+      },
+      "additional_agents": [],
+      "approval": {
+        "board_review": false,
+        "professional_review": false,
+        "reasons": []
+      },
+      "financial_considerations": [
+        "Available unrestricted planning budget above the reserve floor: $9,938 (a starting point for discussion, not approval to spend)."
+      ]
+    },
+    "outreach": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "Drafts prepared; nothing is sent. A person reviews and sends them outside SAM SPACE.",
+        "candidates": [
+          "Western New York Comprehensive Care Center for Eating Disorders",
+          "Columbia Center for Eating Disorders",
+          "NewYork-Presbyterian Center for Eating Disorders"
+        ]
+      },
+      "additional_agents": [],
+      "approval": {
+        "board_review": true,
+        "professional_review": false,
+        "reasons": [
+          "Every draft needs a person's review before anyone contacts the organization."
+        ]
+      },
+      "financial_considerations": []
+    }
+  },
+  "decision": {
+    "trigger": "6 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+    "selected": [
+      "finding:19",
+      "finding:20",
+      "finding:21"
+    ],
+    "skipped": [
+      {
+        "name": "New York LGBTQ+ Pro-Recovery Support Group",
+        "reason": "limit of 3 drafts per run"
+      },
+      {
+        "name": "NEDA",
+        "reason": "limit of 3 drafts per run"
+      },
+      {
+        "name": "New York Chapter of the International Association of Eating Disorders Professionals",
+        "reason": "limit of 3 drafts per run"
+      }
+    ],
+    "provenance": {
+      "finding:19": {
+        "found_by": "mission_discovery",
+        "reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "related_findings": [
+          "Link individuals, families, and providers with tailored eating-disorder support, trusted care, education, and resources.",
+          "This is a strong mission match combining eating-disorder support with an explicit community-connection role. Its resource-hub model offers a practical starting point for learning about local needs without committing to a clinical service.",
+          "Ask whether the center welcomes foundation support for community education or caregiver-resource outreach."
+        ],
+        "financial_considerations": [
+          "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+          "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+          "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+        ],
+        "category": "charity"
+      },
+      "finding:20": {
+        "found_by": "mission_discovery",
+        "reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "related_findings": [
+          "Research and treatment of eating disorders.",
+          "The center has strong charitable alignment through its explicit eating-disorder research and treatment mission. Limited detail about community connection or inclusion does not diminish that scientific alignment, but the foundation needs more information about how support could be directed.",
+          "Request a brief overview of current eating-disorder research priorities and whether designated foundation support is accepted."
+        ],
+        "financial_considerations": [
+          "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+          "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+          "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+        ],
+        "category": "charity"
+      },
+      "finding:21": {
+        "found_by": "mission_discovery",
+        "reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "related_findings": [
+          "Treat eating disorders using the latest research in a comfortable and supportive environment.",
+          "The center is a strong charitable match through research-informed eating-disorder treatment, with explicit evidence of a supportive care environment. The excerpt is too limited to establish a community partnership model or a specific research-funding opportunity.",
+          "Ask whether the center accepts designated foundation support and what patient-support or research-related needs it currently prioritizes."
+        ],
+        "financial_considerations": [
+          "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+          "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+          "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+        ],
+        "category": "charity"
+      }
+    }
+  },
+  "drafts": [
+    {
+      "id": 59,
+      "recipient_org": "NewYork-Presbyterian Center for Eating Disorders",
+      "category": "charity",
+      "draft_type": "nonprofit_collaboration",
+      "status_label": "AI Draft",
+      "subject": "Inquiry about eating-disorder education and possible foundation support",
+      "contact": {
+        "organization": "NewYork-Presbyterian Center for Eating Disorders",
+        "department": null,
+        "email": null,
+        "contact_page_url": null,
+        "source_url": null,
+        "verified_at": null,
+        "status": "not_found",
+        "confidence": "none",
+        "display": "Contact email not verified \u2014 use official contact page.",
+        "notes": [
+          "Stopped after 0 page(s): page-fetch limit for this run reached. Other contact pages were not checked."
+        ]
+      },
+      "found_by_agent": "mission_discovery",
+      "recommendation_reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+      "financial_considerations": [
+        "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+        "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+        "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+      ],
+      "model_used": "gpt-6.1-sol",
+      "body": "Dear NewYork-Presbyterian Center for Eating Disorders team,\n\nI am writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.\n\nYour emphasis on research-informed eating-disorder treatment in a comfortable, supportive environment resonates with our mission. We would welcome the opportunity to learn more about your programs, their impact, and the needs you currently prioritize.\n\nWe are interested in whether you offer educational information that our foundation could share with its community. We would also appreciate understanding whether designated foundation support for the center is accepted and whether patient-support or research-related needs are among your current priorities. We are seeking information at this stage, without making a funding commitment.\n\nCould you direct us to the appropriate team for a brief overview of these opportunities?\n\nThank you for considering our inquiry.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
+    },
+    {
+      "id": 58,
+      "recipient_org": "Columbia Center for Eating Disorders",
+      "category": "charity",
+      "draft_type": "nonprofit_collaboration",
+      "status_label": "AI Draft",
+      "subject": "Learning about eating-disorder research priorities and foundation engagement",
+      "contact": {
+        "organization": "Columbia Center for Eating Disorders",
+        "department": null,
+        "email": null,
+        "contact_page_url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+        "source_url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+        "verified_at": "2026-10-25T23:01:47+00:00",
+        "status": "website_only",
+        "confidence": "low",
+        "display": "Contact email not verified \u2014 use official contact page.",
+        "notes": [
+          "Stopped after 1 page(s): page-fetch limit for this run reached. Other contact pages were not checked.",
+          "No contact page or public email was found; the official website is listed instead."
+        ]
+      },
+      "found_by_agent": "mission_discovery",
+      "recommendation_reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+      "financial_considerations": [
+        "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+        "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+        "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+      ],
+      "model_used": "gpt-6.1-sol",
+      "body": "Dear Columbia Center for Eating Disorders team,\n\nI am writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.\n\nYour focus on eating-disorder research and treatment aligns with our interest in understanding how foundations might help advance this work. We would appreciate learning more about your current programs, research priorities, and impact.\n\nWe are exploring appropriate avenues for possible foundation engagement. In particular, we would like to understand whether designated support for eating-disorder research is accepted through your institution's giving channel and how prospective foundation supporters can learn about current needs. This is an initial inquiry, not a funding commitment.\n\nCould you share a brief overview of your current research priorities and the appropriate route for discussing possible foundation support?\n\nThank you for your time and consideration.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
+    },
+    {
+      "id": 57,
+      "recipient_org": "Western New York Comprehensive Care Center for Eating Disorders",
+      "category": "charity",
+      "draft_type": "nonprofit_collaboration",
+      "status_label": "AI Draft",
+      "subject": "Exploring eating-disorder education and caregiver-resource outreach",
+      "contact": {
+        "organization": "Western New York Comprehensive Care Center for Eating Disorders",
+        "department": null,
+        "email": null,
+        "contact_page_url": "https://www.nyeatingdisorders.org/contact-us",
+        "source_url": "https://www.nyeatingdisorders.org/contact-us",
+        "verified_at": "2026-10-25T23:01:44+00:00",
+        "status": "contact_page_only",
+        "confidence": "medium",
+        "display": "Contact email not verified \u2014 use official contact page.",
+        "notes": []
+      },
+      "found_by_agent": "mission_discovery",
+      "recommendation_reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+      "financial_considerations": [
+        "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+        "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+        "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+      ],
+      "model_used": "gpt-6.1-sol",
+      "body": "Dear Western New York Comprehensive Care Center for Eating Disorders team,\n\nI am writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus areas are mental health awareness, eating disorder research and support, and community-building initiatives.\n\nYour work connecting individuals, families, and providers with tailored eating-disorder support, care, education, and resources aligns closely with our mission. We are interested in learning more about your programs, their impact, and your current community outreach priorities.\n\nOne possible starting point could be sharing your care-navigation and caregiver resources with our community. We would also welcome information about whether you work with foundations on eating-disorder education or caregiver-resource outreach, and what forms of collaboration may be appropriate.\n\nCould you share a brief overview of your current priorities and whether you welcome this kind of foundation collaboration?\n\nThank you for considering our inquiry.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
+    }
+  ]
+}

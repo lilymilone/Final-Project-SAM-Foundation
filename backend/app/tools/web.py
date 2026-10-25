@@ -99,6 +99,10 @@ class _MetaParser(HTMLParser):
         self._skip = 0
         self.text_parts: list[str] = []
         self._text_len = 0
+        self.links: list[dict] = []  # {href, text}: used to find an official contact page (never followed off-site)
+        self.mailtos: list[str] = []
+        self.has_form = False
+        self._link: dict | None = None
 
     def handle_starttag(self, tag, attrs):
         a = {k.lower(): (v or "") for k, v in attrs}
@@ -112,8 +116,19 @@ class _MetaParser(HTMLParser):
                 self.meta.setdefault(key, a["content"].strip())
         elif tag == "time" and a.get("datetime") and not self.time:
             self.time = a["datetime"]
+        elif tag == "a" and a.get("href") and len(self.links) < 300:
+            href = a["href"].strip()
+            if href.lower().startswith("mailto:"):
+                self.mailtos.append(href[7:].split("?")[0].strip())
+            else:
+                self._link = {"href": href, "text": ""}
+                self.links.append(self._link)
+        elif tag == "form":
+            self.has_form = True
 
     def handle_endtag(self, tag):
+        if tag == "a":
+            self._link = None
         if tag == "title":
             self._in_title = False
         if tag in ("script", "style", "noscript", "template") and self._skip:
@@ -125,6 +140,8 @@ class _MetaParser(HTMLParser):
         elif not self._skip and self._text_len < self.MAX_TEXT and data.strip():
             self.text_parts.append(data.strip())
             self._text_len += len(data)
+        if self._link is not None and len(self._link["text"]) < 80:
+            self._link["text"] += " " + data.strip()
 
 
 def fetch_page(url: str, *, client: httpx.Client | None = None) -> dict:
@@ -170,6 +187,9 @@ def parse_page(url: str, final_url: str, status: int, content_type: str, body: b
     """Parse fetched bytes (text only; nothing is executed). Shared by live fetches and server-side fixtures."""
     meta = {"title": "", "description": None, "published": None}
     text = ""
+    links: list[dict] = []
+    mailtos: list[str] = []
+    has_form = False
     if "html" in content_type or body.lstrip()[:15].lower().startswith((b"<!doctype", b"<html")):
         parser = _MetaParser()
         try:
@@ -180,6 +200,8 @@ def parse_page(url: str, final_url: str, status: int, content_type: str, body: b
         meta["description"] = parser.meta.get("description") or parser.meta.get("og:description")
         meta["published"] = next((parser.meta[k] for k in DATE_META if k in parser.meta), None) or parser.time
         text = " ".join(parser.text_parts)
+        links = [{"href": urljoin(final_url, x["href"]), "text": " ".join(x["text"].split())[:80]} for x in parser.links]
+        mailtos, has_form = parser.mailtos[:20], parser.has_form
     elif content_type == "text/plain":
         text = body.decode("utf-8", errors="ignore")[:_MetaParser.MAX_TEXT]
     ok = 200 <= status < 400
@@ -194,7 +216,20 @@ def parse_page(url: str, final_url: str, status: int, content_type: str, body: b
         "retrieved_at": retrieved,
         "error": None if ok else f"HTTP {status}",
         "text": text if ok else "",
+        "links": links if ok else [], "mailtos": mailtos if ok else [], "has_form": has_form if ok else False,
     }
+
+
+def robots_allowed(url: str, *, client: httpx.Client | None = None) -> bool:
+    """Respect the site's robots.txt for our user agent. A missing or unreadable robots.txt allows the fetch."""
+    from urllib.robotparser import RobotFileParser
+    parsed = urlparse(url)
+    page = fetch_page(f"{parsed.scheme}://{parsed.netloc}/robots.txt", client=client)
+    if not page.get("ok") or not page.get("text"):
+        return True
+    rp = RobotFileParser()
+    rp.parse(page["text"].splitlines())
+    return rp.can_fetch(USER_AGENT, url)
 
 
 def figures_on_page(text: str, values: list[float]) -> dict[str, bool]:

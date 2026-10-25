@@ -70,6 +70,19 @@ function StepCard({ step, index }: { step: RunStep; index: number }) {
       {open && !step.redacted && (
         <div className="mt-4 space-y-4 border-t border-lavender/30 pt-4 pl-11 text-sm">
           {step.error && <p className="rounded-xl bg-[#fbeef3] px-3 py-2 text-danger">{step.error}</p>}
+          {step.report && (
+            <div className="rounded-xl bg-lilac/30 p-3">
+              <p className="label">Structured report to the Orchestrator</p>
+              <dl className="grid gap-x-4 gap-y-1 text-xs sm:grid-cols-2">
+                <div><dt className="inline font-semibold text-plum">Outreach appropriate: </dt><dd className="inline">{step.report.outreach.appropriate ? "yes" : "no"}. {step.report.outreach.reason}</dd></div>
+                <div><dt className="inline font-semibold text-plum">Other agents suggested: </dt><dd className="inline">{step.report.additional_agents.map((x) => `${AGENT_LABELS[x.agent] ?? x.agent} (${x.reason})`).join("; ") || "none"}</dd></div>
+                <div><dt className="inline font-semibold text-plum">Board review: </dt><dd className="inline">{step.report.approval.board_review ? "needed" : "not needed"}{step.report.approval.professional_review ? " · professional review needed" : ""}{step.report.approval.reasons.length ? ` (${step.report.approval.reasons.join(" ")})` : ""}</dd></div>
+                <div><dt className="inline font-semibold text-plum">Financial considerations: </dt><dd className="inline">{step.report.financial_considerations.join(" ") || "none"}</dd></div>
+                <div><dt className="inline font-semibold text-plum">Tools: </dt><dd className="inline">{step.report.tool_calls.map((x) => x.tool).join(", ") || "none"}</dd></div>
+                <div><dt className="inline font-semibold text-plum">Model use: </dt><dd className="inline">{step.report.model_usage.model_calls} call(s), ${step.report.model_usage.cost_usd.toFixed(4)} {step.report.model_usage.models.join(", ")}</dd></div>
+              </dl>
+            </div>
+          )}
           {r && r.findings.length > 0 && (
             <div><p className="label">Findings</p><ul className="list-disc space-y-1 pl-5">{r.findings.map((f, i) => <li key={i}><span className="mr-1 rounded bg-lilac px-1.5 text-[0.65rem] uppercase text-royal">{f.kind.replace("_", " ")}</span>{f.claim}</li>)}</ul></div>
           )}

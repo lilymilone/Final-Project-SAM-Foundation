@@ -1,0 +1,37 @@
+{
+  "workflow": "C_sponsor_synthetic",
+  "run_id": 42,
+  "status": "stopped",
+  "cost_usd": 8.4e-05,
+  "model_calls": 2,
+  "route": [
+    [
+      "board",
+      "orchestrator",
+      "intake"
+    ],
+    [
+      "orchestrator",
+      "mission_discovery",
+      "research"
+    ]
+  ],
+  "reports": {
+    "research": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "No opportunity is both well aligned and verified, so outreach would be premature.",
+        "candidates": []
+      },
+      "additional_agents": [],
+      "approval": {
+        "board_review": false,
+        "professional_review": false,
+        "reasons": []
+      },
+      "financial_considerations": []
+    }
+  },
+  "decision": null,
+  "drafts": []
+}

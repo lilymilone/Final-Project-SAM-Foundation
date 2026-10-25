@@ -1,0 +1,1742 @@
+{
+  "run": {
+    "id": 43,
+    "status": "completed",
+    "research_mode": "live",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Research eating disorder and mental health organizations in New York that the foundation could learn about supporting.",
+    "started_at": "2026-10-25T22:59:34.832457",
+    "duration_ms": 166546,
+    "spent_usd": 0.09530383,
+    "model_calls": 5,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 284,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 4,
+      "constraints": [],
+      "summary": "Intent: mission discovery (board routing). Specialists: mission discovery.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 285,
+      "step_key": "research",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "mission_discovery",
+      "objective": "Research mission-aligned opportunities and explain their fit",
+      "status": "completed",
+      "duration_ms": 116930,
+      "constraints": [],
+      "summary": "All six sources describe relevant eating-disorder organizations or programs on official websites. Western New York Comprehensive Care Center offers the clearest documented community-support role; Columbia and NewYork-Presbyterian offer clinical or research alignment; the remaining sources offer support-group, awareness, or professional-education opportunities. Several excerpts are incomplete, so local availability and specific ways the foundation could help need confirmation.",
+      "warnings": [
+        "Selected sources cover New York research and treatment, regional community support, support-group discovery, and professional education. No upcoming event or deadline dates were stated in the selected sources."
+      ],
+      "report": {
+        "task_id": 285,
+        "workflow_id": 43,
+        "step_key": "research",
+        "agent": "mission_discovery",
+        "objective": "Research mission-aligned opportunities and explain their fit",
+        "status": "completed",
+        "work_completed": "All six sources describe relevant eating-disorder organizations or programs on official websites. Western New York Comprehensive Care Center offers the clearest documented community-support role; Columbia and NewYork-Presbyterian offer clinical or research alignment; the remaining sources offer support-group, awareness, or professional-education opportunities. Several excerpts are incomplete, so local availability and specific ways the foundation could help need confirmation.",
+        "key_findings": [
+          {
+            "claim": "Western New York Comprehensive Care Center for Eating Disorders: Strong fit. This is a strong mission match combining eating-disorder support with an explicit community-connection role. Its resource-hub model offers a practical starting point for learning about local needs without committing to a clinical service.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:1"
+            ]
+          },
+          {
+            "claim": "Columbia Center for Eating Disorders: Strong fit. The center has strong charitable alignment through its explicit eating-disorder research and treatment mission. Limited detail about community connection or inclusion does not diminish that scientific alignment, but the foundation needs more information about how support could be directed.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:2"
+            ]
+          },
+          {
+            "claim": "NewYork-Presbyterian Center for Eating Disorders: Strong fit. The center is a strong charitable match through research-informed eating-disorder treatment, with explicit evidence of a supportive care environment. The excerpt is too limited to establish a community partnership model or a specific research-funding opportunity.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:3"
+            ]
+          },
+          {
+            "claim": "New York LGBTQ+ Pro-Recovery Support Group: Strong fit. This opportunity combines direct eating-disorder support with explicit LGBTQ+ inclusion and recurring human connection. It is a promising community-focused option, but participation details and ways to support the specific group need confirmation.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:4"
+            ]
+          },
+          {
+            "claim": "NEDA: Strong fit. NEDA is strongly aligned with eating-disorder awareness and access to support, and its directory could help the board identify additional local organizations. Its New York-specific relevance is not confirmed by the excerpt, so it is best treated initially as a resource and a potential broader support opportunity.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:5"
+            ]
+          },
+          {
+            "claim": "New York Chapter of the International Association of Eating Disorders Professionals: Strong fit. The chapter is a strong eating-disorder awareness and professional-education match with an explicitly available sponsorship route. It is less clearly suited to direct community support, so the board should clarify whether its priorities favor practitioner education or public-facing awareness.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:6"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "web:1",
+            "title": "Eating Disorder Support & Resources | | Western New York Comprehensive Care Center",
+            "url": "https://www.nyeatingdisorders.org/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:2",
+            "title": "Eating Disorders Clinic | Columbia University Department of Psychiatry",
+            "url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+            "verification": "verified"
+          },
+          {
+            "id": "web:3",
+            "title": "Center for Eating Disorders - Psychiatry | NewYork-Presbyterian",
+            "url": "https://www.nyp.org/psychiatry/center-for-eating-disorders",
+            "verification": "verified"
+          },
+          {
+            "id": "web:4",
+            "title": "New York - National Alliance for Eating DisordersNew York - National Alliance for Eating Disorders",
+            "url": "https://www.allianceforeatingdisorders.com/groups/new-york-lgbtq/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:5",
+            "title": "Eating Disorders Support Groups | NEDAsearchsearch",
+            "url": "https://www.nationaleatingdisorders.org/eating-disorders-support-groups/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:6",
+            "title": "iaedp ny chapter",
+            "url": "https://www.iaedpny.com/",
+            "verification": "verified"
+          }
+        ],
+        "assumptions": [
+          "6 of 6 sources verified by fetching the page just now."
+        ],
+        "risks_uncertainties": [
+          "Selected sources cover New York research and treatment, regional community support, support-group discovery, and professional education. No upcoming event or deadline dates were stated in the selected sources."
+        ],
+        "financial_considerations": [],
+        "recommended_next_actions": [
+          "The supplied sources are concentrated on eating disorders; they do not provide a separate review of general mental-health organizations in New York.",
+          "Several excerpts contain mostly website navigation, limiting confirmation of local services and collaboration options.",
+          "No source provides a quoted dollar cost for sponsorship or foundation participation.",
+          "Volunteer responsibilities, safeguarding requirements, and foundation-specific partnership terms are largely unstated.",
+          "New York locations or service reach need confirmation for Columbia, the NewYork-Presbyterian center, and NEDA's directory listings."
+        ],
+        "outreach": {
+          "appropriate": true,
+          "reason": "6 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+          "candidates": [
+            "Western New York Comprehensive Care Center for Eating Disorders",
+            "Columbia Center for Eating Disorders",
+            "NewYork-Presbyterian Center for Eating Disorders",
+            "New York LGBTQ+ Pro-Recovery Support Group",
+            "NEDA"
+          ]
+        },
+        "additional_agents": [
+          {
+            "agent": "partnerships_outreach",
+            "reason": "Draft introductory messages to the promising opportunities."
+          },
+          {
+            "agent": "financial_analysis",
+            "reason": "State what the foundation could responsibly consider supporting, if the board's role allows financial access."
+          }
+        ],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "tool_calls": [
+          {
+            "tool": "search_web",
+            "allowed": true,
+            "ok": true,
+            "summary": "6 live results (links not yet verified)"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Eating Disorder Support & Resources | | Western New York Comprehensive Care Cent"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Eating Disorders Clinic | Columbia University Department of Psychiatry"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Center for Eating Disorders - Psychiatry | NewYork-Presbyterian"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 New York - National Alliance for Eating DisordersNew York - National Alliance fo"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Eating Disorders Support Groups | NEDAsearchsearch"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 iaedp ny chapter"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #19"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #20"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #21"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #22"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #23"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #24"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 3,
+          "input_tokens": 17818,
+          "cached_input_tokens": 4763,
+          "output_tokens": 5930,
+          "web_search_calls": 1,
+          "cost_usd": 0.075104,
+          "models": [
+            "gpt-6-luna",
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 286,
+      "step_key": "finance",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "financial_analysis",
+      "objective": "State the available planning budget relevant to possible charitable support (no amount is proposed)",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+      "warnings": [],
+      "report": {
+        "task_id": 286,
+        "workflow_id": 43,
+        "step_key": "finance",
+        "agent": "financial_analysis",
+        "objective": "State the available planning budget relevant to possible charitable support (no amount is proposed)",
+        "status": "completed",
+        "work_completed": "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+        "key_findings": [
+          {
+            "claim": "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          },
+          {
+            "claim": "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+            "kind": "computed",
+            "confidence": null,
+            "source_ids": [
+              "ledger"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "ledger",
+            "title": "Financial records (synthetic demo books)",
+            "url": null,
+            "verification": "internal"
+          }
+        ],
+        "assumptions": [
+          "Reserve guideline: keep 3 months of average expenses (board guideline).",
+          "Figures come from the synthetic demo ledger."
+        ],
+        "risks_uncertainties": [],
+        "financial_considerations": [
+          "Available unrestricted planning budget above the reserve floor: $9,938 (a starting point for discussion, not approval to spend)."
+        ],
+        "recommended_next_actions": [],
+        "outreach": {
+          "appropriate": false,
+          "reason": "Finance analyzes; it does not identify outreach targets.",
+          "candidates": []
+        },
+        "additional_agents": [],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "tool_calls": [
+          {
+            "tool": "read_financial_records",
+            "allowed": true,
+            "ok": true,
+            "summary": "[sensitive: contents not logged] 22 ledger rows "
+          },
+          {
+            "tool": "compute_financial_position",
+            "allowed": true,
+            "ok": true,
+            "summary": "5 months; available planning budget: $9,938"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 0,
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "web_search_calls": 0,
+          "cost_usd": 0.0,
+          "models": []
+        }
+      }
+    },
+    {
+      "id": 287,
+      "step_key": "outreach_decision",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Decide whether introductory drafts would help with the opportunities Mission Discovery found",
+      "status": "completed",
+      "duration_ms": 0,
+      "constraints": [],
+      "summary": "Delegating 3 unsent draft(s) to Partnerships & Outreach: Western New York Comprehensive Care Center for Eating Disorders, Columbia Center for Eating Disorders, NewYork-Presbyterian Center for Eating Disorders.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 288,
+      "step_key": "outreach",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "partnerships_outreach",
+      "objective": "Research public inquiry details and draft unsent introductions to the 3 opportunities the Orchestrator selected",
+      "status": "completed",
+      "duration_ms": 36006,
+      "constraints": [
+        {
+          "name": "drafts_only",
+          "detail": "Generate and save unsent drafts only. Never send, schedule, or commit, and never promise a donation.",
+          "value": null,
+          "source_agent": "orchestrator"
+        }
+      ],
+      "summary": "Three unsent first-contact drafts for board review. No email addresses were supplied. An official inquiry page is listed for the first target and an official website page for the second; no contact route was found for the third, so one must be verified before use.",
+      "warnings": [],
+      "report": {
+        "task_id": 288,
+        "workflow_id": 43,
+        "step_key": "outreach",
+        "agent": "partnerships_outreach",
+        "objective": "Research public inquiry details and draft unsent introductions to the 3 opportunities the Orchestrator selected",
+        "status": "completed",
+        "work_completed": "Three unsent first-contact drafts for board review. No email addresses were supplied. An official inquiry page is listed for the first target and an official website page for the second; no contact route was found for the third, so one must be verified before use.",
+        "key_findings": [
+          {
+            "claim": "Unsent nonprofit collaboration draft to Western New York Comprehensive Care Center for Eating Disorders: \u201cExploring eating-disorder education and caregiver-resource outreach\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:1"
+            ]
+          },
+          {
+            "claim": "Unsent nonprofit collaboration draft to Columbia Center for Eating Disorders: \u201cLearning about eating-disorder research priorities and foundation engagement\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:2"
+            ]
+          },
+          {
+            "claim": "Unsent nonprofit collaboration draft to NewYork-Presbyterian Center for Eating Disorders: \u201cInquiry about eating-disorder education and possible foundation support\u201d",
+            "kind": "recommendation",
+            "confidence": null,
+            "source_ids": [
+              "web:3"
+            ]
+          }
+        ],
+        "sources": [],
+        "assumptions": [
+          "Nothing was sent. SAM SPACE has no tool that can send, schedule, or publish a message."
+        ],
+        "risks_uncertainties": [],
+        "financial_considerations": [],
+        "recommended_next_actions": [
+          "Unsent nonprofit collaboration draft to Western New York Comprehensive Care Center for Eating Disorders: \u201cExploring eating-disorder education and caregiver-resource outreach\u201d",
+          "Unsent nonprofit collaboration draft to Columbia Center for Eating Disorders: \u201cLearning about eating-disorder research priorities and foundation engagement\u201d",
+          "Unsent nonprofit collaboration draft to NewYork-Presbyterian Center for Eating Disorders: \u201cInquiry about eating-disorder education and possible foundation support\u201d",
+          "Review and edit each draft in Partnerships & Outreach. If the board agrees, a person sends it outside SAM SPACE."
+        ],
+        "outreach": {
+          "appropriate": false,
+          "reason": "Drafts prepared; nothing is sent. A person reviews and sends them outside SAM SPACE.",
+          "candidates": [
+            "Western New York Comprehensive Care Center for Eating Disorders",
+            "Columbia Center for Eating Disorders",
+            "NewYork-Presbyterian Center for Eating Disorders"
+          ]
+        },
+        "additional_agents": [],
+        "approval": {
+          "board_review": true,
+          "professional_review": false,
+          "reasons": [
+            "Every draft needs a person's review before anyone contacts the organization."
+          ]
+        },
+        "tool_calls": [
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "Western New York Comprehensive Care Center for Eating Disorders: contact page only"
+          },
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "Columbia Center for Eating Disorders: website only"
+          },
+          {
+            "tool": "lookup_inquiry_details",
+            "allowed": true,
+            "ok": true,
+            "summary": "NewYork-Presbyterian Center for Eating Disorders: not found"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #57 (unsent)"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #58 (unsent)"
+          },
+          {
+            "tool": "create_outreach_draft",
+            "allowed": true,
+            "ok": true,
+            "summary": "draft #59 (unsent)"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 1,
+          "input_tokens": 2160,
+          "cached_input_tokens": 0,
+          "output_tokens": 1371,
+          "web_search_calls": 0,
+          "cost_usd": 0.019109,
+          "models": [
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 289,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 13563,
+      "constraints": [],
+      "summary": "Begin with learning and nonfinancial engagement; defer any financial commitment until needs and giving routes are confirmed.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 290,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "All checks passed.",
+      "warnings": [],
+      "report": null
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "search_web",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 11662,
+      "summary": "6 live results (links not yet verified)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3485,
+      "summary": "HTTP 200 Eating Disorder Support & Resources | | Western New York Comprehensive Care Cent",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1108,
+      "summary": "HTTP 200 Eating Disorders Clinic | Columbia University Department of Psychiatry",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 714,
+      "summary": "HTTP 200 Center for Eating Disorders - Psychiatry | NewYork-Presbyterian",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2385,
+      "summary": "HTTP 200 New York - National Alliance for Eating DisordersNew York - National Alliance fo",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1949,
+      "summary": "HTTP 200 Eating Disorders Support Groups | NEDAsearchsearch",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 5083,
+      "summary": "HTTP 200 iaedp ny chapter",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 14,
+      "summary": "new opportunity #19",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #20",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #21",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #22",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #23",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #24",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 286,
+      "agent": "financial_analysis",
+      "tool": "read_financial_records",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "[sensitive: contents not logged] 22 ledger rows ",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 286,
+      "agent": "financial_analysis",
+      "tool": "compute_financial_position",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "5 months; available planning budget: $9,938",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 15304,
+      "summary": "Western New York Comprehensive Care Center for Eating Disorders: contact page only",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2515,
+      "summary": "Columbia Center for Eating Disorders: website only",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "tool": "lookup_inquiry_details",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "NewYork-Presbyterian Center for Eating Disorders: not found",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 5,
+      "summary": "draft #57 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "draft #58 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "draft #59 (unsent)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 290,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "8/8 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "task": "Understand the research request (extraction)",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0031 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 496,
+      "cached_input_tokens": 0,
+      "output_tokens": 60,
+      "web_search_calls": 0,
+      "cost_usd": 7.96e-05,
+      "latency_ms": 2769,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "task": "Web search: mission-aligned opportunities",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0016 fits the remaining budget of $0.4999.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 12886,
+      "cached_input_tokens": 4763,
+      "output_tokens": 592,
+      "web_search_calls": 1,
+      "cost_usd": 0.01115593,
+      "latency_ms": 11658,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 285,
+      "agent": "mission_discovery",
+      "task": "Compare sources and synthesize mission alignment",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=low) under Auto \u2192 Sol (intermediate) tier. Estimated $0.1324 fits the remaining budget of $0.4888.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 4436,
+      "cached_input_tokens": 0,
+      "output_tokens": 5278,
+      "web_search_calls": 0,
+      "cost_usd": 0.0638685,
+      "latency_ms": 87729,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 288,
+      "agent": "partnerships_outreach",
+      "task": "Personalized partnership drafts from research",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=medium) under Auto \u2192 Sol (intermediate) tier. Estimated $0.1000 fits the remaining budget of $0.4249.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 2160,
+      "cached_input_tokens": 0,
+      "output_tokens": 1371,
+      "web_search_calls": 0,
+      "cost_usd": 0.0191085,
+      "latency_ms": 18168,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 289,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0026 fits the remaining budget of $0.4058.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 3919,
+      "cached_input_tokens": 0,
+      "output_tokens": 1203,
+      "web_search_calls": 0,
+      "cost_usd": 0.0010913,
+      "latency_ms": 13557,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "mission_discovery",
+    "routing": "board",
+    "analysis": {
+      "intent": "mission_discovery",
+      "city": "Manhattan, New York, NY",
+      "attendance": null,
+      "event_type": null,
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": "Research eating disorder and mental health organizations in New York that the foundation could learn about supporting.",
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "live",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [],
+    "events_consulted": [],
+    "boss_decisions": [
+      {
+        "step": "outreach_decision",
+        "trigger": "6 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+        "selected": [
+          "finding:19",
+          "finding:20",
+          "finding:21"
+        ],
+        "skipped": [
+          {
+            "name": "New York LGBTQ+ Pro-Recovery Support Group",
+            "reason": "limit of 3 drafts per run"
+          },
+          {
+            "name": "NEDA",
+            "reason": "limit of 3 drafts per run"
+          },
+          {
+            "name": "New York Chapter of the International Association of Eating Disorders Professionals",
+            "reason": "limit of 3 drafts per run"
+          }
+        ],
+        "provenance": {
+          "finding:19": {
+            "found_by": "mission_discovery",
+            "reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+            "related_findings": [
+              "Link individuals, families, and providers with tailored eating-disorder support, trusted care, education, and resources.",
+              "This is a strong mission match combining eating-disorder support with an explicit community-connection role. Its resource-hub model offers a practical starting point for learning about local needs without committing to a clinical service.",
+              "Ask whether the center welcomes foundation support for community education or caregiver-resource outreach."
+            ],
+            "financial_considerations": [
+              "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+              "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+              "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+            ],
+            "category": "charity"
+          },
+          "finding:20": {
+            "found_by": "mission_discovery",
+            "reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+            "related_findings": [
+              "Research and treatment of eating disorders.",
+              "The center has strong charitable alignment through its explicit eating-disorder research and treatment mission. Limited detail about community connection or inclusion does not diminish that scientific alignment, but the foundation needs more information about how support could be directed.",
+              "Request a brief overview of current eating-disorder research priorities and whether designated foundation support is accepted."
+            ],
+            "financial_considerations": [
+              "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+              "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+              "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+            ],
+            "category": "charity"
+          },
+          "finding:21": {
+            "found_by": "mission_discovery",
+            "reason": "Mission Discovery rated it: Strong fit. Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+            "related_findings": [
+              "Treat eating disorders using the latest research in a comfortable and supportive environment.",
+              "The center is a strong charitable match through research-informed eating-disorder treatment, with explicit evidence of a supportive care environment. The excerpt is too limited to establish a community partnership model or a specific research-funding opportunity.",
+              "Ask whether the center accepts designated foundation support and what patient-support or research-related needs it currently prioritizes."
+            ],
+            "financial_considerations": [
+              "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend.",
+              "Restricted gifts can only be used for their stated purpose; revenue is not cash.",
+              "SAM SPACE proposes no support amount. Any gift is a board decision made outside SAM SPACE."
+            ],
+            "category": "charity"
+          }
+        }
+      }
+    ],
+    "outreach_drafts": [
+      {
+        "id": 57,
+        "recipient": "Western New York Comprehensive Care Center for Eating Disorders",
+        "subject": "Exploring eating-disorder education and caregiver-resource outreach",
+        "draft_type": "nonprofit_collaboration",
+        "contact_status": "contact_page_only",
+        "contact_email": null,
+        "finding_id": 19,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "Learn whether the center welcomes foundation collaboration on eating-disorder education and caregiver-resource outreach.",
+        "next_step": "Request a brief overview of current outreach priorities and whether foundation collaboration is welcome.",
+        "sources": [
+          {
+            "title": "Eating Disorder Support & Resources | | Western New York Comprehensive Care Center",
+            "url": "https://www.nyeatingdisorders.org/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:49+00:00"
+          }
+        ],
+        "review_notes": [
+          "Whether foundation partnerships or financial support are accepted",
+          "Current outreach priorities",
+          "Volunteer opportunities",
+          "Specific service boundaries and access arrangements",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      },
+      {
+        "id": 58,
+        "recipient": "Columbia Center for Eating Disorders",
+        "subject": "Learning about eating-disorder research priorities and foundation engagement",
+        "draft_type": "nonprofit_collaboration",
+        "contact_status": "website_only",
+        "contact_email": null,
+        "finding_id": 20,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "Request information about the center's research priorities and appropriate avenues for possible foundation support.",
+        "next_step": "Request a brief overview of current research priorities and the appropriate route for discussing possible foundation support.",
+        "sources": [
+          {
+            "title": "Eating Disorders Clinic | Columbia University Department of Psychiatry",
+            "url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:52+00:00"
+          }
+        ],
+        "review_notes": [
+          "New York location and service reach",
+          "Current research projects and funding priorities",
+          "Whether foundation gifts can be directed to eating-disorder research",
+          "Center-specific volunteer or educational opportunities",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated.",
+          "Unconfirmed: The search snippet describes treatment in exchange for research participation; the excerpt does not confirm this arrangement; The search snippet describes research-training options that are not established for this center in the excerpt.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      },
+      {
+        "id": 59,
+        "recipient": "NewYork-Presbyterian Center for Eating Disorders",
+        "subject": "Inquiry about eating-disorder education and possible foundation support",
+        "draft_type": "nonprofit_collaboration",
+        "contact_status": "not_found",
+        "contact_email": null,
+        "finding_id": 21,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "Learn about the center's current needs, educational resources, and whether designated foundation support is accepted.",
+        "next_step": "Request direction to the appropriate team for information about education resources and possible designated foundation support.",
+        "sources": [
+          {
+            "title": "Center for Eating Disorders - Psychiatry | NewYork-Presbyterian",
+            "url": "https://www.nyp.org/psychiatry/center-for-eating-disorders",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:53+00:00"
+          }
+        ],
+        "review_notes": [
+          "Center location and service area",
+          "Whether the center conducts research or primarily applies research findings",
+          "Designated giving opportunities",
+          "Community education and volunteer options",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated.",
+          "Unconfirmed: The search snippet identifies a Westchester-based program; The search snippet describes collaboration among NewYork-Presbyterian, Weill Cornell Medicine, Columbia University Irving Medical Center, and the New York State Psychiatric Institute; the excerpt does not establish that collaboration.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      }
+    ],
+    "quantitative_observations": [],
+    "events_strategy": null,
+    "themes": [],
+    "comparison": null,
+    "recommendation": {
+      "headline": "Begin with learning and nonfinancial engagement; defer any financial commitment until needs and giving routes are confirmed.",
+      "recommendation": "Prioritize exploratory conversations with Western New York Comprehensive Care Center for Eating Disorders, Columbia Center for Eating Disorders, and NewYork-Presbyterian Center for Eating Disorders. The outreach drafts are prepared but unsent. Treat the available unrestricted planning budget of $9,938 as a planning reference, not authorization to give or spend. Do not make a financial commitment until the board has clearer information about partner priorities, designated giving routes, and costs.",
+      "rationale": [
+        "The Western New York center offers the clearest documented community-support role and a practical starting point for learning about local needs.",
+        "Columbia has explicit eating-disorder research and treatment alignment; NewYork-Presbyterian describes research-informed treatment in a supportive environment. Both require clarification on how foundation support could be directed.",
+        "The three proposed first-contact drafts ask about outreach, research priorities, education resources, and possible support without committing the foundation.",
+        "Other identified options broaden the possibilities: an LGBTQ+ pro-recovery support group emphasizes inclusion and connection; NEDA may help identify local providers; and the New York IAEEDP chapter offers a professional-education and sponsorship route.",
+        "No source provides costs or giving levels, and the research does not establish comparative outcomes. Available planning capacity alone does not establish that spending is affordable or appropriate."
+      ],
+      "options": [
+        {
+          "title": "Explore community education and caregiver-resource outreach with Western New York Comprehensive Care Center for Eating Disorders",
+          "option_id": null,
+          "summary": "Best-documented community-connection starting point. Ask whether foundation collaboration is welcome and what outreach priorities exist. The prepared inquiry remains unsent."
+        },
+        {
+          "title": "Learn about eating-disorder research priorities at Columbia Center for Eating Disorders",
+          "option_id": null,
+          "summary": "Strong research alignment, but location, current projects, and designated giving options need confirmation. The prepared inquiry remains unsent."
+        },
+        {
+          "title": "Ask NewYork-Presbyterian Center for Eating Disorders about education resources and possible designated support",
+          "option_id": null,
+          "summary": "Strong treatment alignment, but the center's location, research role, partnership model, and giving route are unresolved. The prepared inquiry remains unsent."
+        },
+        {
+          "title": "Conduct further discovery among community, inclusion, and professional-education opportunities",
+          "option_id": null,
+          "summary": "Follow up on the LGBTQ+ pro-recovery support group, NEDA's directory, and the New York IAEEDP chapter. Confirm current details, access, needs, and any costs before selecting an activity or considering support."
+        }
+      ],
+      "risks": [
+        "Several source excerpts are incomplete; service reach, current availability, and partnership details need confirmation.",
+        "The LGBTQ+ group\u2019s schedule, format, eligibility, fees, facilitation, and donation route are not confirmed by the excerpt.",
+        "NEDA's New York-specific relevance and the operators of directory listings are unresolved.",
+        "The IAEEDP chapter's sponsorship terms and costs are unknown, and its fit for direct community support is less clear.",
+        "The financial figures come from a synthetic demo ledger. The planning-budget figure is not authorization, and restricted gifts are unavailable for other purposes."
+      ],
+      "decisions_for_board": [
+        "Whether to authorize a person to review and, if desired, send the three unsent exploratory inquiries outside SAM SPACE.",
+        "Which mission emphasis to prioritize for further discovery: community support and caregiver resources, research, inclusive peer support, public awareness, or professional education.",
+        "Whether to consider any future financial support only after costs, restrictions, partner terms, and the proposed use of funds have been verified."
+      ],
+      "next_steps": [
+        "Review and edit the three prepared drafts before any person sends them.",
+        "Request current outreach priorities from the Western New York center and current research and giving information from Columbia and NewYork-Presbyterian.",
+        "Verify local service reach, current participation details, volunteer requirements, safeguarding expectations, and any costs before pursuing an activity.",
+        "Separately investigate general mental-health organizations in New York; the supplied research focused on eating-disorder organizations and programs.",
+        "Return to the board with confirmed opportunities and costs before proposing any financial commitment."
+      ],
+      "lessons_applied": [],
+      "caveats": [
+        "Past events, books, and donations are the synthetic demo dataset.",
+        "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+        "Financial figures are from a synthetic demo ledger and are for planning discussion only.",
+        "All six research sources were reported as checked, but source excerpts were incomplete; some claims and details remain unconfirmed.",
+        "No costs, giving levels, or event deadlines were supplied for the opportunities.",
+        "No outreach was sent. Drafts are not approvals or commitments.",
+        "An official inquiry page was listed for the Western New York center and an official website page for Columbia; no contact route was found for NewYork-Presbyterian in the outreach results, so its route must be verified before use.",
+        "No option IDs were supplied; these are non-venue discovery options."
+      ],
+      "mission_impact_considerations": [
+        "Exploratory, nonfinancial engagement can help clarify which organizations' work best supports eating-disorder awareness, research, inclusion, and community support before resources are committed.",
+        "The community-support, research, LGBTQ+ inclusion, and professional-education options serve different purposes; the board should weigh those trade-offs rather than treating them as interchangeable.",
+        "Any later spending should be evaluated against confirmed costs, restrictions, and other charitable uses. Mission alignment does not override financial constraints or restricted-fund rules."
+      ]
+    },
+    "verification": {
+      "passed": true,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No unconfirmed availability claims",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No links that are not in the sources",
+          "passed": true,
+          "detail": "Every link appears in the run's sources."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "3 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Every partnership draft carries the sources it was written from",
+          "passed": true,
+          "detail": "3 of 3 drafts link to their research sources."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "1 internal, 6 verified"
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {
+      "total_income_usd": 17400.0,
+      "total_expense_usd": 19270.0,
+      "net_usd": -1870.0,
+      "average_monthly_expense_usd": 3854.0,
+      "reserve_usd": 21500.0,
+      "reserve_floor_usd": 11562.0,
+      "available_planning_budget_usd": 9938.0
+    },
+    "revision_history": [],
+    "unresolved_conflicts": [],
+    "event_plan_id": null,
+    "specialists": {
+      "research": {
+        "agent": "mission_discovery",
+        "status": "completed",
+        "summary": "All six sources describe relevant eating-disorder organizations or programs on official websites. Western New York Comprehensive Care Center offers the clearest documented community-support role; Columbia and NewYork-Presbyterian offer clinical or research alignment; the remaining sources offer support-group, awareness, or professional-education opportunities. Several excerpts are incomplete, so local availability and specific ways the foundation could help need confirmation."
+      },
+      "finance": {
+        "agent": "financial_analysis",
+        "status": "completed",
+        "summary": "Available unrestricted planning budget above the reserve floor: $9,938. A starting point for board discussion, not approval to give or spend."
+      },
+      "outreach": {
+        "agent": "partnerships_outreach",
+        "status": "completed",
+        "summary": "Three unsent first-contact drafts for board review. No email addresses were supplied. An official inquiry page is listed for the first target and an official website page for the second; no contact route was found for the third, so one must be verified before use."
+      }
+    },
+    "finance": {
+      "verdict": null,
+      "affordability": null,
+      "model": null,
+      "position": {
+        "months_of_data": 5,
+        "period_start": "2026-05",
+        "period_end": "2026-09",
+        "total_income_usd": 17400.0,
+        "total_expense_usd": 19270.0,
+        "net_usd": -1870.0,
+        "average_monthly_expense_usd": 3854.0,
+        "reserve_usd": 21500.0,
+        "reserve_guideline_months": 3.0,
+        "available_planning_budget_usd": 9938.0,
+        "available_planning_budget_basis": "Reserve $21,500 minus a 3-month floor ($11,562 = 3 \u00d7 $3,854 average monthly expense).",
+        "restricted_income_usd": 5000.0,
+        "cash": {
+          "as_of": "2026-09",
+          "cash_usd": 26500.0,
+          "restricted_usd": 5000.0,
+          "unrestricted_usd": 21500.0,
+          "basis": "no restricted balance recorded, so all restricted gifts on record are assumed unspent"
+        },
+        "reserve_floor_usd": 11562.0
+      },
+      "venue": null,
+      "event_format": null,
+      "option_id": null
+    },
+    "event": null,
+    "venues": [],
+    "shortlist": [],
+    "original_plan": null,
+    "revised_plan": null,
+    "revision_reasons": [],
+    "evaluation": null,
+    "proposal_comparison": [],
+    "finance_feedback": [],
+    "authorized_budget_usd": null,
+    "drafts": [
+      {
+        "id": 57,
+        "recipient": "Western New York Comprehensive Care Center for Eating Disorders",
+        "subject": "Exploring eating-disorder education and caregiver-resource outreach",
+        "draft_type": "nonprofit_collaboration",
+        "contact_status": "contact_page_only",
+        "contact_email": null,
+        "finding_id": 19,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "Learn whether the center welcomes foundation collaboration on eating-disorder education and caregiver-resource outreach.",
+        "next_step": "Request a brief overview of current outreach priorities and whether foundation collaboration is welcome.",
+        "sources": [
+          {
+            "title": "Eating Disorder Support & Resources | | Western New York Comprehensive Care Center",
+            "url": "https://www.nyeatingdisorders.org/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:49+00:00"
+          }
+        ],
+        "review_notes": [
+          "Whether foundation partnerships or financial support are accepted",
+          "Current outreach priorities",
+          "Volunteer opportunities",
+          "Specific service boundaries and access arrangements",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      },
+      {
+        "id": 58,
+        "recipient": "Columbia Center for Eating Disorders",
+        "subject": "Learning about eating-disorder research priorities and foundation engagement",
+        "draft_type": "nonprofit_collaboration",
+        "contact_status": "website_only",
+        "contact_email": null,
+        "finding_id": 20,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "Request information about the center's research priorities and appropriate avenues for possible foundation support.",
+        "next_step": "Request a brief overview of current research priorities and the appropriate route for discussing possible foundation support.",
+        "sources": [
+          {
+            "title": "Eating Disorders Clinic | Columbia University Department of Psychiatry",
+            "url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:52+00:00"
+          }
+        ],
+        "review_notes": [
+          "New York location and service reach",
+          "Current research projects and funding priorities",
+          "Whether foundation gifts can be directed to eating-disorder research",
+          "Center-specific volunteer or educational opportunities",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated.",
+          "Unconfirmed: The search snippet describes treatment in exchange for research participation; the excerpt does not confirm this arrangement; The search snippet describes research-training options that are not established for this center in the excerpt.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      },
+      {
+        "id": 59,
+        "recipient": "NewYork-Presbyterian Center for Eating Disorders",
+        "subject": "Inquiry about eating-disorder education and possible foundation support",
+        "draft_type": "nonprofit_collaboration",
+        "contact_status": "not_found",
+        "contact_email": null,
+        "finding_id": 21,
+        "synthetic_target": false,
+        "status": "draft",
+        "purpose": "Learn about the center's current needs, educational resources, and whether designated foundation support is accepted.",
+        "next_step": "Request direction to the appropriate team for information about education resources and possible designated foundation support.",
+        "sources": [
+          {
+            "title": "Center for Eating Disorders - Psychiatry | NewYork-Presbyterian",
+            "url": "https://www.nyp.org/psychiatry/center-for-eating-disorders",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:53+00:00"
+          }
+        ],
+        "review_notes": [
+          "Center location and service area",
+          "Whether the center conducts research or primarily applies research findings",
+          "Designated giving opportunities",
+          "Community education and volunteer options",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated.",
+          "Unconfirmed: The search snippet identifies a Westchester-based program; The search snippet describes collaboration among NewYork-Presbyterian, Weill Cornell Medicine, Columbia University Irving Medical Center, and the New York State Psychiatric Institute; the excerpt does not establish that collaboration.",
+          "Contact email not verified \u2014 use official contact page."
+        ]
+      }
+    ],
+    "lessons": [],
+    "disagreements": [],
+    "findings": [
+      {
+        "id": 19,
+        "refreshed": false,
+        "name": "Western New York Comprehensive Care Center for Eating Disorders",
+        "url": "https://www.nyeatingdisorders.org/",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": "Western New York",
+        "purpose": "Link individuals, families, and providers with tailored eating-disorder support, trusted care, education, and resources.",
+        "alignment_summary": "This is a strong mission match combining eating-disorder support with an explicit community-connection role. Its resource-hub model offers a practical starting point for learning about local needs without committing to a clinical service.",
+        "contribution_ways": [
+          "Explore sharing its care-navigation and caregiver resources with the foundation's community.",
+          "Ask whether the foundation could support eating-disorder education or community outreach."
+        ],
+        "partnership_types": [],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "Whether foundation partnerships or financial support are accepted",
+          "Current outreach priorities",
+          "Volunteer opportunities",
+          "Specific service boundaries and access arrangements",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [],
+        "next_step": "Ask whether the center welcomes foundation support for community education or caregiver-resource outreach.",
+        "injection_flagged": false,
+        "source_id": "web:1",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:1",
+            "title": "Eating Disorder Support & Resources | | Western New York Comprehensive Care Center",
+            "url": "https://www.nyeatingdisorders.org/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:49+00:00"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "refreshed": false,
+        "name": "Columbia Center for Eating Disorders",
+        "url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": null,
+        "purpose": "Research and treatment of eating disorders.",
+        "alignment_summary": "The center has strong charitable alignment through its explicit eating-disorder research and treatment mission. Limited detail about community connection or inclusion does not diminish that scientific alignment, but the foundation needs more information about how support could be directed.",
+        "contribution_ways": [
+          "Ask about supporting eating-disorder research through the institution's giving channel.",
+          "Request information about current research priorities and appropriate foundation engagement."
+        ],
+        "partnership_types": [],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "New York location and service reach",
+          "Current research projects and funding priorities",
+          "Whether foundation gifts can be directed to eating-disorder research",
+          "Center-specific volunteer or educational opportunities",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet describes treatment in exchange for research participation; the excerpt does not confirm this arrangement; The search snippet describes research-training options that are not established for this center in the excerpt."
+        ],
+        "next_step": "Request a brief overview of current eating-disorder research priorities and whether designated foundation support is accepted.",
+        "injection_flagged": false,
+        "source_id": "web:2",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:2",
+            "title": "Eating Disorders Clinic | Columbia University Department of Psychiatry",
+            "url": "https://www.columbiapsychiatry.org/research-clinics/eating-disorders-clinic",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:52+00:00"
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "refreshed": false,
+        "name": "NewYork-Presbyterian Center for Eating Disorders",
+        "url": "https://www.nyp.org/psychiatry/center-for-eating-disorders",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": null,
+        "purpose": "Treat eating disorders using the latest research in a comfortable and supportive environment.",
+        "alignment_summary": "The center is a strong charitable match through research-informed eating-disorder treatment, with explicit evidence of a supportive care environment. The excerpt is too limited to establish a community partnership model or a specific research-funding opportunity.",
+        "contribution_ways": [
+          "Ask the institution's giving team whether support can be designated for the eating-disorders center.",
+          "Explore whether the center offers educational information the foundation could share."
+        ],
+        "partnership_types": [],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "Center location and service area",
+          "Whether the center conducts research or primarily applies research findings",
+          "Designated giving opportunities",
+          "Community education and volunteer options",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet identifies a Westchester-based program; The search snippet describes collaboration among NewYork-Presbyterian, Weill Cornell Medicine, Columbia University Irving Medical Center, and the New York State Psychiatric Institute; the excerpt does not establish that collaboration."
+        ],
+        "next_step": "Ask whether the center accepts designated foundation support and what patient-support or research-related needs it currently prioritizes.",
+        "injection_flagged": false,
+        "source_id": "web:3",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:3",
+            "title": "Center for Eating Disorders - Psychiatry | NewYork-Presbyterian",
+            "url": "https://www.nyp.org/psychiatry/center-for-eating-disorders",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:53+00:00"
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "refreshed": false,
+        "name": "New York LGBTQ+ Pro-Recovery Support Group",
+        "url": "https://www.allianceforeatingdisorders.com/groups/new-york-lgbtq/",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": "New York",
+        "purpose": "Provide an LGBTQ+ pro-recovery eating-disorder support group.",
+        "alignment_summary": "This opportunity combines direct eating-disorder support with explicit LGBTQ+ inclusion and recurring human connection. It is a promising community-focused option, but participation details and ways to support the specific group need confirmation.",
+        "contribution_ways": [
+          "Ask whether donations can support the New York LGBTQ+ group.",
+          "Explore sharing verified group information with appropriate community contacts.",
+          "Ask about relevant volunteer or event-hosting opportunities listed on the organization's website."
+        ],
+        "partnership_types": [],
+        "known_costs": null,
+        "dates_text": "Every Monday evening from 7:00\u20138:30 PM EST.",
+        "date_status": "none",
+        "missing_info": [
+          "Current schedule, venue, and online or in-person format",
+          "Eligibility, registration, fees, and facilitation",
+          "Whether donations can be directed to this group",
+          "Local volunteer needs and partnership options",
+          "Costs or giving levels are not stated on the source."
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet describes the group as free, therapist-led, and for adults; the excerpt does not confirm these details; The search snippet describes collaboration with The Center; the excerpt does not confirm it."
+        ],
+        "next_step": "Ask the organizer whether the foundation could support the New York LGBTQ+ group and request current participation details.",
+        "injection_flagged": false,
+        "source_id": "web:4",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:4",
+            "title": "New York - National Alliance for Eating DisordersNew York - National Alliance for Eating Disorders",
+            "url": "https://www.allianceforeatingdisorders.com/groups/new-york-lgbtq/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:54+00:00"
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "refreshed": false,
+        "name": "NEDA",
+        "url": "https://www.nationaleatingdisorders.org/eating-disorders-support-groups/",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": null,
+        "purpose": "Help people find local and online eating-disorder support groups to connect with others and support healing.",
+        "alignment_summary": "NEDA is strongly aligned with eating-disorder awareness and access to support, and its directory could help the board identify additional local organizations. Its New York-specific relevance is not confirmed by the excerpt, so it is best treated initially as a resource and a potential broader support opportunity.",
+        "contribution_ways": [
+          "Explore the listed giving and community-awareness routes.",
+          "Use the directory to identify New York support providers for further review.",
+          "Ask whether there are opportunities to support eating-disorder research grants."
+        ],
+        "partnership_types": [],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "Current New York support-group listings and their operators",
+          "Whether directory groups are independently operated",
+          "New York-specific giving or awareness opportunities",
+          "Current research-grant support options",
+          "Meaning and relevance of supplied date metadata",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet identifies Port Jefferson and New York City listings that are not visible in the excerpt; Supplied date metadata lists dates without enough context to associate them with an opportunity or deadline."
+        ],
+        "next_step": "Request current New York support-group listings and ask which local awareness or support activities welcome foundation involvement.",
+        "injection_flagged": false,
+        "source_id": "web:5",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:5",
+            "title": "Eating Disorders Support Groups | NEDAsearchsearch",
+            "url": "https://www.nationaleatingdisorders.org/eating-disorders-support-groups/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:56+00:00"
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "refreshed": false,
+        "name": "New York Chapter of the International Association of Eating Disorders Professionals",
+        "url": "https://www.iaedpny.com/",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": "New York area",
+        "purpose": "Promote professionalism among eating-disorder practitioners through ethical standards, education, training, certification, awareness, and prevention efforts.",
+        "alignment_summary": "The chapter is a strong eating-disorder awareness and professional-education match with an explicitly available sponsorship route. It is less clearly suited to direct community support, so the board should clarify whether its priorities favor practitioner education or public-facing awareness.",
+        "contribution_ways": [
+          "Explore chapter sponsorship.",
+          "Ask whether the chapter welcomes collaboration on public eating-disorder awareness.",
+          "Ask about speaker opportunities relevant to the foundation's awareness mission."
+        ],
+        "partnership_types": [
+          "Chapter sponsorship",
+          "Membership",
+          "Speaking"
+        ],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "Current sponsorship terms and costs",
+          "Current event calendar",
+          "Speaker and membership eligibility",
+          "Whether public-awareness collaborations are accepted",
+          "How sponsorship supports the chapter's activities",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [],
+        "next_step": "Request current chapter sponsorship information and ask whether sponsorship can support public eating-disorder education.",
+        "injection_flagged": false,
+        "source_id": "web:6",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:6",
+            "title": "iaedp ny chapter",
+            "url": "https://www.iaedpny.com/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T22:59:58+00:00"
+          }
+        ]
+      }
+    ],
+    "selection": null,
+    "mission_contribution": null,
+    "community_insights": [],
+    "donations": "[redacted]"
+  }
+}

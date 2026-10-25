@@ -1,0 +1,279 @@
+{
+  "workflow": "A_venue_live",
+  "run_id": 40,
+  "status": "completed",
+  "cost_usd": 0.211163,
+  "model_calls": 8,
+  "route": [
+    [
+      "board",
+      "orchestrator",
+      "intake"
+    ],
+    [
+      "orchestrator",
+      "event_intelligence",
+      "lessons"
+    ],
+    [
+      "orchestrator",
+      "fundraising_events",
+      "venues"
+    ],
+    [
+      "orchestrator",
+      "financial_analysis",
+      "finance"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "evaluate"
+    ],
+    [
+      "orchestrator",
+      "fundraising_events",
+      "venues_revision_1"
+    ],
+    [
+      "orchestrator",
+      "financial_analysis",
+      "finance_revision_1"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "evaluate_revision_1"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "outreach_decision"
+    ],
+    [
+      "orchestrator",
+      "partnerships_outreach",
+      "outreach"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "recommendation"
+    ],
+    [
+      "orchestrator",
+      "orchestrator",
+      "verification"
+    ]
+  ],
+  "reports": {
+    "lessons": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "This report does not identify an outreach opportunity.",
+        "candidates": []
+      },
+      "additional_agents": [
+        {
+          "agent": "fundraising_events",
+          "reason": "Apply the evidence-backed lessons to the plan."
+        }
+      ],
+      "approval": {
+        "board_review": true,
+        "professional_review": false,
+        "reasons": [
+          "Lessons become planning guidance once the board reviews or adopts them."
+        ]
+      },
+      "financial_considerations": []
+    },
+    "venues": {
+      "outreach": {
+        "appropriate": true,
+        "reason": "1 venue(s) fit the guest count; an inquiry can confirm availability, pricing, catering, and nonprofit terms.",
+        "candidates": [
+          "David Rubenstein Atrium at Lincoln Center"
+        ]
+      },
+      "additional_agents": [
+        {
+          "agent": "financial_analysis",
+          "reason": "Check the shortlisted costs against the budget and cash position."
+        },
+        {
+          "agent": "partnerships_outreach",
+          "reason": "Prepare unsent inquiries to the shortlisted venues."
+        }
+      ],
+      "approval": {
+        "board_review": false,
+        "professional_review": false,
+        "reasons": []
+      },
+      "financial_considerations": [
+        "David Rubenstein Atrium at Lincoln Center (seated dinner): projected $35,200, upfront $15,350"
+      ]
+    },
+    "finance": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "Finance analyzes; it does not identify outreach targets.",
+        "candidates": []
+      },
+      "additional_agents": [
+        {
+          "agent": "fundraising_events",
+          "reason": "Revise the plan to resolve the financial conflicts."
+        }
+      ],
+      "approval": {
+        "board_review": true,
+        "professional_review": false,
+        "reasons": [
+          "Any spending decision belongs to the board."
+        ]
+      },
+      "financial_considerations": [
+        "Affordability verdict: not affordable as planned.",
+        "Projected total $35,200; upfront cash $15,350.",
+        "Projected cost $35,200 vs maximum $18,000.",
+        "Deposits and prepaid costs $15,350 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "Available unrestricted planning budget above the reserve floor: $9,938 (a starting point for discussion, not approval to spend)."
+      ]
+    },
+    "venues_revision_1": {
+      "outreach": {
+        "appropriate": true,
+        "reason": "1 venue(s) fit the guest count; an inquiry can confirm availability, pricing, catering, and nonprofit terms.",
+        "candidates": [
+          "David Rubenstein Atrium at Lincoln Center"
+        ]
+      },
+      "additional_agents": [
+        {
+          "agent": "financial_analysis",
+          "reason": "Check the shortlisted costs against the budget and cash position."
+        },
+        {
+          "agent": "partnerships_outreach",
+          "reason": "Prepare unsent inquiries to the shortlisted venues."
+        }
+      ],
+      "approval": {
+        "board_review": false,
+        "professional_review": false,
+        "reasons": []
+      },
+      "financial_considerations": [
+        "David Rubenstein Atrium at Lincoln Center (reception): projected $24,475, upfront $10,475"
+      ]
+    },
+    "finance_revision_1": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "Finance analyzes; it does not identify outreach targets.",
+        "candidates": []
+      },
+      "additional_agents": [
+        {
+          "agent": "fundraising_events",
+          "reason": "Revise the plan to resolve the financial conflicts."
+        }
+      ],
+      "approval": {
+        "board_review": true,
+        "professional_review": false,
+        "reasons": [
+          "Any spending decision belongs to the board."
+        ]
+      },
+      "financial_considerations": [
+        "Affordability verdict: not affordable as planned.",
+        "Projected total $24,475; upfront cash $10,475.",
+        "Projected cost $24,475 vs maximum $18,000.",
+        "Deposits and prepaid costs $10,475 vs $9,938 available above the reserve floor (event revenue arrives after deposits are due, so it is not counted).",
+        "Available unrestricted planning budget above the reserve floor: $9,938 (a starting point for discussion, not approval to spend)."
+      ]
+    },
+    "outreach": {
+      "outreach": {
+        "appropriate": false,
+        "reason": "Drafts prepared; nothing is sent. A person reviews and sends them outside SAM SPACE.",
+        "candidates": [
+          "David Rubenstein Atrium at Lincoln Center"
+        ]
+      },
+      "additional_agents": [],
+      "approval": {
+        "board_review": true,
+        "professional_review": false,
+        "reasons": [
+          "Every draft needs a person's review before anyone contacts the organization."
+        ]
+      },
+      "financial_considerations": []
+    }
+  },
+  "decision": {
+    "trigger": "1 venue(s) fit the guest count; an inquiry can confirm availability, pricing, catering, and nonprofit terms.",
+    "selected": [
+      "venue:live-1"
+    ],
+    "skipped": [],
+    "provenance": {
+      "venue:live-1": {
+        "found_by": "fundraising_events",
+        "reason": "Events shortlisted it for a reception for 150 guests. The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied r An inquiry can confirm availability, capacity, pricing, catering, and nonprofit terms.",
+        "related_findings": [
+          "No supplied option meets both Finance limits. Rank the Atrium reception as the closest option for further quotation only\u2014not as an affordable or approved plan. It preserves the Manhattan location and recovery-speaker program while improving the supplied financial projections relative to dinner, but ",
+          "Butterfly Benefit Dinner: retain the recovery speaker and propose a program under an hour; verify seating and audibility rather than assuming a reception will support attentive listening.",
+          "Butterfly Benefit Dinner and Spring Awareness Walk: obtain written catering pricing, minimums and guarantees, with a guest-count deadline two weeks out and separately protected volunteer meals.",
+          "Butterfly Spring Raffle: provide a staffed welcome table, advance volunteer assignments and clear station leads."
+        ],
+        "financial_considerations": [
+          "Projected total $24,475 vs the $18,000 maximum (over budget); upfront cash $10,475.",
+          "Pricing not published: the inquiry asks for a quote.",
+          "Financial Analysis verdict: not affordable as planned."
+        ],
+        "category": "venue"
+      }
+    }
+  },
+  "drafts": [
+    {
+      "id": 56,
+      "recipient_org": "David Rubenstein Atrium at Lincoln Center",
+      "category": "venue",
+      "draft_type": "venue_inquiry",
+      "status_label": "AI Draft",
+      "subject": "Venue inquiry: Manhattan Spring Gala \u2014 April 17, 2027",
+      "contact": {
+        "organization": "David Rubenstein Atrium at Lincoln Center",
+        "department": null,
+        "email": "yourevent@lincolncenter.org",
+        "contact_page_url": null,
+        "source_url": "https://yourevent.lincolncenter.org/venues/david-rubenstein-atrium/",
+        "verified_at": "2026-10-25T22:38:29+00:00",
+        "status": "verified_email",
+        "confidence": "medium",
+        "display": "yourevent@lincolncenter.org",
+        "notes": [
+          "Could not read https://yourevent.lincolncenter.org/ (page-fetch limit for this run reached).",
+          "Could not read https://yourevent.lincolncenter.org/submit-inquiry (page-fetch limit for this run reached).",
+          "Could not read http://support.lincolncenter.org/?_ga=2.151971258.2060871270.1626700726-1412909141.1600342792 (page-fetch limit for this run reached).",
+          "Could not read https://yourevent.lincolncenter.org/about-venue-sales/ (page-fetch limit for this run reached)."
+        ]
+      },
+      "found_by_agent": "fundraising_events",
+      "recommendation_reason": "Events shortlisted it for a reception for 150 guests. The David Rubenstein Atrium reception has published capacity for 250 against planned attendance of 150, plus portable staging, flexible seating and in-house sound and projection for a personal tribute and short recovery talk. All supplied r An inquiry can confirm availability, capacity, pricing, catering, and nonprofit terms.",
+      "financial_considerations": [
+        "Projected total $24,475 vs the $18,000 maximum (over budget); upfront cash $10,475.",
+        "Pricing not published: the inquiry asks for a quote.",
+        "Financial Analysis verdict: not affordable as planned."
+      ],
+      "model_used": "gpt-6-luna",
+      "body": "Hello David Rubenstein Atrium at Lincoln Center team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab). We are exploring venues for our Manhattan Spring Gala, a proposed reception in New York, NY, for an estimated 150 attendees on April 17, 2027. The evening would honor Sabrina and include a short talk from a recovery speaker.\n\nCould you please let us know whether the Atrium is available that date and suitable for this attendance? We would also appreciate information about capacity, pricing, any deposit requirements, catering options, and accessibility. Do you offer nonprofit rates or other accommodations for nonprofit events?\n\nThank you for your time. We would be glad to learn more about the possibilities.\n\nWarm regards,\n[Board member name]\nSabrina Audrey Milone Foundation (Smile Like Sab)\n[Phone]"
+    }
+  ]
+}

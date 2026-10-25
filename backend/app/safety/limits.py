@@ -22,6 +22,7 @@ LIMIT_SPECS: dict[str, tuple[str, float, float, str]] = {
     "max_revisions": ("Revision rounds per plan", 0, 2, "int"),
     "max_web_searches": ("Web searches per workflow", 0, 10, "int"),
     "max_page_fetches": ("Page fetches per workflow", 0, 25, "int"),
+    "max_contact_pages": ("Contact pages read per outreach draft", 0, 3, "int"),  # separate, so research cannot use them up
 }
 
 
@@ -38,6 +39,7 @@ class SafetyLimits:
     max_revisions: int
     max_web_searches: int
     max_page_fetches: int
+    max_contact_pages: int
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -56,6 +58,7 @@ def defaults(settings) -> dict:
         "max_tool_calls": getattr(settings, "max_tool_calls_per_run", 120), "max_retries": 2, "max_output_tokens": 12000,
         "max_workflow_seconds": getattr(settings, "max_workflow_seconds", 480), "max_revisions": settings.max_revisions,
         "max_web_searches": settings.max_web_searches_per_run, "max_page_fetches": settings.max_page_fetches_per_run,
+        "max_contact_pages": getattr(settings, "max_contact_pages_per_draft", 2),
     }
 
 

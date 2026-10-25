@@ -6,6 +6,8 @@ no route, tool, or integration in SAM SPACE sends mail.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -19,6 +21,8 @@ from ..deps import CurrentUser, audit, current_user, get_db, require, is_foreign
 
 router = APIRouter(prefix="/api", tags=["outputs"])
 DONOR_DRAFTS = ("donor_acknowledgment", "donor_thank_you", "contribution_acknowledgment")
+# Review statuses. There is deliberately no "approved" or "sent": SAM SPACE cannot send, and an AI draft is never auto-approved.
+STATUS_LABELS = {"draft": "AI Draft", "needs_review": "Needs Review", "reviewed": "Reviewed", "archived": "Archived"}
 
 
 def draft_out(d: OutreachDraft) -> dict:
@@ -28,6 +32,12 @@ def draft_out(d: OutreachDraft) -> dict:
             "purpose": d.purpose, "opportunity": d.opportunity, "next_step": d.next_step,
             "foundation_background": d.foundation_background, "sources": d.sources or [], "finding_id": d.finding_id,
             "review_notes": d.review_notes or [], "donation_id": d.donation_id,
+            "category": d.category, "contact": d.contact, "found_by_agent": d.found_by_agent, "recommendation_reason": d.recommendation_reason,
+            "related_findings": d.related_findings or [], "financial_considerations": d.financial_considerations or [],
+            "model_used": d.model_used, "handoff_id": d.handoff_id,
+            "edited_at": d.edited_at.isoformat() if d.edited_at else None, "reviewed_at": d.reviewed_at.isoformat() if d.reviewed_at else None,
+            "reviewed_by": d.reviewed_by, "status_label": STATUS_LABELS.get(d.status, d.status),
+            "notice": "AI-prepared draft. Review all details before contacting this organization.",
             "created_at": d.created_at.isoformat(), "updated_at": d.updated_at.isoformat() if d.updated_at else None}
 
 
@@ -57,7 +67,7 @@ class DraftUpdate(BaseModel):
     opportunity: str | None = Field(default=None, max_length=2000)
     next_step: str | None = Field(default=None, max_length=1000)
     recipient_name: str | None = Field(default=None, max_length=200)
-    status: Literal["draft", "reviewed", "archived"] | None = None
+    status: Literal["draft", "needs_review", "reviewed", "archived"] | None = None
 
 
 @router.put("/drafts/{draft_id}")
@@ -68,9 +78,16 @@ def update_draft(draft_id: int, body: DraftUpdate, cu: CurrentUser = Depends(req
         raise HTTPException(404, "Draft not found.")
     if d.draft_type in DONOR_DRAFTS and Permission.VIEW_DONOR_DATA not in cu.permissions:
         raise HTTPException(403, "Donor acknowledgments are limited to the chair and treasurer.")
-    for k, v in body.model_dump(exclude_none=True).items():
+    changes = body.model_dump(exclude_none=True)
+    edited = [k for k in changes if k != "status" and getattr(d, k) != changes[k]]
+    for k, v in changes.items():
         setattr(d, k, v)
-    audit(db, cu, "draft_updated", f"draft:{d.id}", status=d.status)
+    now = datetime.now(timezone.utc)
+    if edited:
+        d.edited_by, d.edited_at = cu.user.id, now
+    if changes.get("status") == "reviewed":
+        d.reviewed_by, d.reviewed_at = cu.user.id, now
+    audit(db, cu, "draft_updated", f"draft:{d.id}", status=d.status, edited=edited)
     db.commit()
     return {"draft": draft_out(d)}
 

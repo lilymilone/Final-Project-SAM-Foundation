@@ -89,9 +89,10 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     ),
     AgentSpec(
         A.PARTNERSHIPS_OUTREACH, "Partnerships & Outreach",
-        "Writes personalized, unsent outreach drafts from verified research. It can only read findings and save drafts: "
-        "it has no web, mail, messaging, or scheduling tool.",
-        ("read_saved_findings", "create_outreach_draft"),
+        "Writes personalized, unsent outreach drafts from verified research, with public inquiry details read from each "
+        "organization's own website. It can only read findings and official pages and save drafts: it has no mail, messaging, "
+        "form-submission, or scheduling tool.",
+        ("read_saved_findings", "lookup_inquiry_details", "create_outreach_draft"),
         (OUTREACH_DRAFTS, OUTREACH_PERSONALIZED),
     ),
     AgentSpec(
