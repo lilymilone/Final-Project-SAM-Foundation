@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "name": "The router keeps the course key on Luna",
+      "passed": true,
+      "observed": "requested advanced \u2192 gpt-6-luna; escalation allowed: False"
+    },
+    {
+      "name": "A forged Astra call is refused before any request",
+      "passed": true,
+      "observed": "refused: True; models actually sent: ['gpt-6-luna']"
+    },
+    {
+      "name": "Luna still works through the course key",
+      "passed": true,
+      "observed": "model reported by the API: gpt-6-luna-global"
+    }
+  ]
+}

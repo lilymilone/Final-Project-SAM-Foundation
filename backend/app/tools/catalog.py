@@ -31,7 +31,7 @@ from ..db.models import (
     VenueCandidate,
 )
 from ..research import fixtures
-from ..safety.policy import sanitize_untrusted, scrub_outbound_query
+from ..safety.policy import private_details_in_url, sanitize_untrusted, scrub_outbound_query
 from ..services import opportunities as opp
 from ..services import calculators as calc
 from ..services import documents as docs
@@ -49,18 +49,35 @@ NYC_ALIASES = ("manhattan", "new york", "nyc")
 FOOD_LESSON = re.compile(r"food|cater|f&b|menu|meal|minimum", re.IGNORECASE)
 
 
+# Which kind of data each tool touches. The safety layer refuses a tool whose scope is outside the calling agent's
+# data scopes (safety/manager.py DATA_SCOPES), even if the tool were mistakenly added to that agent's allow-list.
+TOOL_SCOPES = {
+    **{t: "donor_records" for t in ("read_donations", "flag_donation_issues", "read_compliance_items", "create_acknowledgment_drafts",
+                                     "create_contribution_acknowledgments")},
+    **{t: "financial_records" for t in ("read_financial_records", "compute_financial_position", "compute_financial_analysis",
+                                         "read_document_text", "save_extracted_figures")},
+    **{t: "board_records" for t in ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "save_historical_lesson")},
+    "get_historical_lessons": "board_lessons",
+    **{t: "public_web" for t in ("search_web", "fetch_source", "search_venues")},
+    **{t: "research_findings" for t in ("save_research_finding", "read_saved_findings")},
+    **{t: "opportunities" for t in ("read_opportunities", "select_opportunities")},
+    **{t: "event_plan" for t in ("read_event_plan", "create_event_plan", "save_venue_candidate", "compute_event_model")},
+    "create_outreach_draft": "drafts",
+}
+
+
 def _norm_city(city: str | None) -> str:
     return (city or "").strip().lower()
 
 
 def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided to prevent a cycle)
-    reg = ToolRegistry(ctx.db)
+    reg = ToolRegistry(ctx.db, safety=getattr(ctx, "safety", None))
     org = ctx.organization_id
     db = ctx.db
     synthetic = ctx.research_mode == "synthetic"
 
     def add(name, description, kind, func, permission=None, sensitive=False):
-        reg.register(ToolSpec(name, description, kind, func, permission, sensitive))
+        reg.register(ToolSpec(name, description, kind, func, permission, sensitive, data_scope=TOOL_SCOPES.get(name, "general")))
 
     # ── Event Intelligence ─────────────────────────────────────────────────────────
 
@@ -191,6 +208,10 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             return ToolResult(tool="search_venues", ok=True, data=out, sources=sources,
                               summary=f"{len(out)} synthetic venues fit {attendance} guests ({', '.join(formats)})",
                               warnings=["Synthetic venue fixtures, not live web research."])
+        if ctx.research_mode == "fixture":  # server-side test fixture: venue search results shaped exactly like live ones
+            out = [dict(v) for v in (ctx.fixtures or {}).get("venues", [])]
+            return ToolResult(tool="search_venues", ok=True, data=out, summary=f"{len(out)} fixture venue(s) (server-side test)",
+                              warnings=["Test fixture, not live web research."])
         from ..research.live import live_venue_search
         return live_venue_search(ctx, city, attendance, formats)
 
@@ -279,8 +300,8 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             return ToolResult(tool="read_document_text", ok=False, error="Only PDFs are read this way; CSV files are parsed in code.")
         parsed = docs.read_pdf(path.read_bytes())
         pages, flags = [], []
-        for text in parsed["pages"]:
-            clean, found = sanitize_untrusted(text)
+        for i, text in enumerate(parsed["pages"]):
+            clean, found = _screen(text, f"page {i + 1} of the uploaded document “{meta['filename']}”", "financial_analysis")
             pages.append(clean)
             flags += found
         return ToolResult(tool="read_document_text", ok=True, summary=f"{len(pages)} page(s), status {parsed['status']} | text not logged",
@@ -504,9 +525,14 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         result.warnings = notes + result.warnings
         return result
 
-    def _page_checks(text: str, data: dict, check_terms: list | None, check_dates: list | None) -> None:
+    def _screen(text: str, source: str, agent: str | None = None) -> tuple[str, list[str]]:
+        if getattr(ctx, "safety", None) is not None:
+            return ctx.safety.ingest_untrusted(text, source, agent=agent, max_chars=200_000)
+        return sanitize_untrusted(text)
+
+    def _page_checks(text: str, data: dict, check_terms: list | None, check_dates: list | None, source: str = "a web page") -> None:
         """Screen untrusted page text, then record what it does and does not say. The raw text is never returned."""
-        clean, flags = sanitize_untrusted(text)
+        clean, flags = _screen(text, source)
         low = clean.lower()
         data["injection_flags"] = flags
         data["excerpt"] = clean[:2200]
@@ -527,15 +553,36 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                 _page_checks((fixture or {}).get("page_text", ""), data, check_terms, check_dates)
             flagged = f" · {len(data.get('injection_flags') or [])} instruction-like fragment(s) removed" if data.get("injection_flags") else ""
             return ToolResult(tool="fetch_source", ok=True, data=data, sources=[src], summary=f"synthetic fixture (not fetched){flagged}")
-        if ctx.counters["page_fetches"] >= ctx.settings.max_page_fetches_per_run:
+        leaks = private_details_in_url(url, private_terms())
+        if leaks:  # a link built to carry private details out (for example, by an injected instruction) is never followed
+            if getattr(ctx, "safety", None) is not None:
+                ctx.safety.record("url_blocked", f"Did not fetch a link that carries private details ({', '.join(leaks)}).",
+                                  severity="high", defense="Private data never leaves in a URL")
+            return ToolResult(tool="fetch_source", ok=False, error="This link carries private details, so it was not fetched.",
+                              sources=[SourceRecord(id=source_id, title="link withheld", url=None, verification="unverified",
+                                                    note="not fetched: carries private details")])
+        if ctx.counters["page_fetches"] >= ctx.max_page_fetches:
             return ToolResult(tool="fetch_source", ok=False, error="Page-fetch limit for this run reached.",
                               sources=[SourceRecord(id=source_id, title=url, url=url, verification="unverified", note="not fetched: limit")])
         ctx.counters["page_fetches"] += 1
-        page = web.fetch_page(url)
+        fixture_pages = (ctx.fixtures or {}).get("pages") if ctx.research_mode == "fixture" else None
+        if fixture_pages is not None:  # server-side test fixture: the same parser and checks, no network
+            html = fixture_pages.get(url)
+            page = (web.parse_page(url, url, 200, "text/html", html.encode(), datetime.now(timezone.utc).isoformat(timespec="seconds"))
+                    if html is not None else {"url": url, "ok": False, "http_status": 404, "error": "HTTP 404", "text": "",
+                                              "retrieved_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+        else:
+            page = web.fetch_page(url)
+        if page.get("blocked") and getattr(ctx, "safety", None) is not None:
+            ctx.safety.record("url_blocked", f"Did not fetch {url[:120]}: {page.get('error')}", severity="medium",
+                              defense="Safe web retrieval (SSRF guard, content types)")
         text = page.pop("text", "")
+        # The page's visible text is untrusted: screen it before anything reads it, even the figure check.
+        text, page_flags = _screen(text, f"the page {url[:80]}")
+        page["injection_flags"] = page_flags
         page["figures_found"] = web.figures_on_page(text, [float(x) for x in (check_values or [])])
         if screen:
-            _page_checks(" ".join(x for x in (page.get("description"), text) if x), page, check_terms, check_dates)
+            _page_checks(" ".join(x for x in (page.get("description"), text) if x), page, check_terms, check_dates, f"the page {url[:80]}")
         src = SourceRecord(id=source_id, title=page.get("title") or url, url=url, published=page.get("published"),
                            retrieved_at=page.get("retrieved_at"), verification="verified" if page["ok"] else "unverified",
                            http_status=page.get("http_status"), note=None if page["ok"] else page.get("error"))

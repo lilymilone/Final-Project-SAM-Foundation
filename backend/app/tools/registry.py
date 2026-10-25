@@ -49,12 +49,14 @@ class ToolSpec:
     func: Callable[..., Any]
     required_permission: Permission | None = None
     sensitive: bool = False
+    data_scope: str = "general"  # checked against the agent's data scopes (safety/manager.py)
 
 
 class ToolRegistry:
-    def __init__(self, db: Database | None = None):
+    def __init__(self, db: Database | None = None, safety=None):
         self._tools: dict[str, ToolSpec] = {}
         self._db = db
+        self.safety = safety  # SafetyManager for a workflow; None in narrow unit tests
 
     def register(self, spec: ToolSpec) -> None:
         if spec.name in PROHIBITED_ACTIONS:
@@ -83,6 +85,23 @@ class ToolRegistry:
         """Run a tool after permission checks. Returns the tool's own return
         value (usually a ToolResult). Raises on permission problems."""
         log = dict(run_id=run_id, handoff_id=handoff_id, agent=agent, tool_name=tool_name, arguments=arguments)
+        if self.safety is not None:  # the central safety layer decides; denials are logged as security events
+            spec = self._tools.get(tool_name)
+            reason = self.safety.authorize_tool(agent=agent, tool_name=tool_name, allowed_tools=allowed_tools,
+                                                tool_scope=spec.data_scope if spec else None,
+                                                required_permission=spec.required_permission if spec else None,
+                                                user_permissions=user_permissions)
+            if reason is None and spec is None:
+                reason = "Unknown tool"
+            if reason is not None:
+                self._log(**log, allowed=False, denial=reason)
+                if tool_name in PROHIBITED_ACTIONS:
+                    raise ProhibitedActionError(f"{PROHIBITED_ACTIONS[tool_name]} is never done by SAM SPACE. A person must do it outside the app.")
+                if reason.startswith("User lacks"):
+                    raise ToolPermissionError(f"Your board role does not allow '{tool_name}' (needs {spec.required_permission.value}).")
+                raise ToolPermissionError(f"Agent '{agent}' is not allowed to use '{tool_name}' ({reason}).")
+            self.safety.before_tool_call(agent, tool_name)
+            return self._run(spec, tool_name, arguments, log)
         if tool_name in PROHIBITED_ACTIONS:
             self._log(**log, allowed=False, denial=f"Prohibited action: {PROHIBITED_ACTIONS[tool_name]}")
             raise ProhibitedActionError(
@@ -101,12 +120,16 @@ class ToolRegistry:
                 f"Your board role does not allow '{tool_name}' (needs {spec.required_permission.value})."
             )
 
+        return self._run(spec, tool_name, arguments, log)
+
+    def _run(self, spec: ToolSpec, tool_name: str, arguments: dict[str, Any], log: dict) -> Any:
+        from ..safety.redact import configured_secrets, redact
         started = time.perf_counter()
         try:
             result = spec.func(**arguments)
         except Exception as exc:
             duration = int((time.perf_counter() - started) * 1000)
-            error = f"{type(exc).__name__}: {str(exc)[:300]}"
+            error = redact(f"{type(exc).__name__}: {str(exc)[:300]}", configured_secrets())
             self._log(**log, allowed=True, ok=False, error=error, duration_ms=duration)
             return ToolResult(tool=tool_name, ok=False, error=error, duration_ms=duration)
         duration = int((time.perf_counter() - started) * 1000)

@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from ...core.config import Settings
 from ...core.permissions import Permission
 from ...db.models import AgentHandoff, AgentRun, AgentToolCall, Donation, EventPlan, FinancialDocument, HistoricalEvent, ModelUsage, ResearchFinding
-from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require
+from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require, is_foreign_or_missing
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])
 
@@ -83,7 +83,7 @@ def start_run(
         raise HTTPException(409, f"Workflow #{active} is still running. Wait for it to finish or stop it first.")
     if body.event_plan_id is not None:
         plan = db.get(EventPlan, body.event_plan_id)
-        if plan is None or plan.organization_id != cu.organization_id:
+        if is_foreign_or_missing(db, cu, plan, "plan"):
             raise HTTPException(404, "Event plan not found.")
     options = {"use_history": body.use_history, "interpret": body.interpret}
     wanted = list(body.finding_ids or []) + ([body.follow_up_finding_id] if body.follow_up_finding_id else [])
@@ -96,7 +96,7 @@ def start_run(
         options.update(finding_ids=body.finding_ids, draft_type=body.draft_type)
     if body.intent == "document_extraction":
         doc = db.get(FinancialDocument, body.document_id) if body.document_id else None
-        if doc is None or doc.organization_id != cu.organization_id:
+        if is_foreign_or_missing(db, cu, doc, "doc"):
             raise HTTPException(404, "Document not found.")
         if doc.file_type != "pdf":
             raise HTTPException(422, "Only PDFs need extraction; CSV files are parsed in code when uploaded.")
@@ -116,7 +116,7 @@ def start_run(
         db.get(ResearchFinding, body.follow_up_finding_id).research_requested = True
     if body.historical_event_id is not None:
         past = db.get(HistoricalEvent, body.historical_event_id)
-        if past is None or past.organization_id != cu.organization_id:
+        if is_foreign_or_missing(db, cu, past, "past"):
             raise HTTPException(404, "Past event not found.")
         options.update(historical_event_id=past.id, historical_event_name=past.name)
     run = AgentRun(
@@ -144,7 +144,7 @@ def list_runs(cu: CurrentUser = Depends(current_user), db: Session = Depends(get
 @router.get("/{run_id}")
 def run_detail(run_id: int, cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
     run = db.get(AgentRun, run_id)
-    if run is None or run.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, run, "run"):
         raise HTTPException(404, "Run not found.")
     hidden_agents = set()
     if Permission.VIEW_FINANCIALS not in cu.permissions:
@@ -201,7 +201,7 @@ def run_detail(run_id: int, cu: CurrentUser = Depends(current_user), db: Session
 @router.post("/{run_id}/stop")
 def stop_run(run_id: int, request: Request, cu: CurrentUser = Depends(require(Permission.RUN_AGENTS)), db: Session = Depends(get_db)) -> dict:
     run = db.get(AgentRun, run_id)
-    if run is None or run.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, run, "run"):
         raise HTTPException(404, "Run not found.")
     if run.status not in ("queued", "running"):
         return {"stopping": False, "status": run.status}

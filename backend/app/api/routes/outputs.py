@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 from ...core.permissions import Permission
 from ...db.models import EventPlan, OutreachDraft, ResearchFinding, VenueCandidate
-from ..deps import CurrentUser, audit, current_user, get_db, require
+from ..deps import CurrentUser, audit, current_user, get_db, require, is_foreign_or_missing
 
 router = APIRouter(prefix="/api", tags=["outputs"])
 DONOR_DRAFTS = ("donor_acknowledgment", "donor_thank_you", "contribution_acknowledgment")
@@ -64,7 +64,7 @@ class DraftUpdate(BaseModel):
 def update_draft(draft_id: int, body: DraftUpdate, cu: CurrentUser = Depends(require(Permission.RUN_AGENTS)),
                  db: Session = Depends(get_db)) -> dict:
     d = db.get(OutreachDraft, draft_id)
-    if d is None or d.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, d, "d"):
         raise HTTPException(404, "Draft not found.")
     if d.draft_type in DONOR_DRAFTS and Permission.VIEW_DONOR_DATA not in cu.permissions:
         raise HTTPException(403, "Donor acknowledgments are limited to the chair and treasurer.")
@@ -94,7 +94,7 @@ class SaveFinding(BaseModel):
 def save_finding(finding_id: int, body: SaveFinding, cu: CurrentUser = Depends(require(Permission.RUN_AGENTS)),
                  db: Session = Depends(get_db)) -> dict:
     f = db.get(ResearchFinding, finding_id)
-    if f is None or f.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, f, "f"):
         raise HTTPException(404, "Finding not found.")
     f.saved = body.saved
     f.status = "saved" if body.saved else "new"
@@ -106,7 +106,7 @@ def save_finding(finding_id: int, body: SaveFinding, cu: CurrentUser = Depends(r
 @router.get("/events/{event_id}/venues")
 def venue_candidates(event_id: int, cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
     plan = db.get(EventPlan, event_id)
-    if plan is None or plan.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, plan, "plan"):
         raise HTTPException(404, "Event plan not found.")
     rows = db.scalars(select(VenueCandidate).where(VenueCandidate.event_plan_id == event_id).order_by(VenueCandidate.estimated_cost_usd)).all()
     return {"venues": [{

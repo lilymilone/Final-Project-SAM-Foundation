@@ -12,7 +12,7 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from typing import Literal
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, select
@@ -23,7 +23,7 @@ from ...core.permissions import Permission
 from ...db.models import Campaign, Donation, Donor, EventPlan, FinancialRecord, HistoricalEvent
 from ...services import documents as docs
 from ...services import donations as dsvc
-from ..deps import CurrentUser, audit, current_user, get_db, require
+from ..deps import CurrentUser, audit, current_user, get_db, is_foreign_or_missing, require, security_event
 
 router = APIRouter(prefix="/api", tags=["donations"])
 
@@ -212,7 +212,7 @@ class DonationEdit(BaseModel):
 def edit_donation(donation_id: int, body: DonationEdit, cu: CurrentUser = Depends(require(Permission.MANAGE_DONATIONS)),
                   db: Session = Depends(get_db)) -> dict:
     d = db.get(Donation, donation_id)
-    if d is None or d.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, d, "d"):
         raise HTTPException(404, "Donation not found.")
     changes = body.model_dump(exclude_unset=True)
     if "campaign_id" in changes:
@@ -239,7 +239,7 @@ def set_acknowledgment(donation_id: int, body: AckIn, cu: CurrentUser = Depends(
                        db: Session = Depends(get_db)) -> dict:
     """Bookkeeping only: 'completed' records that a person sent the acknowledgment outside SAM SPACE."""
     d = db.get(Donation, donation_id)
-    if d is None or d.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, d, "d"):
         raise HTTPException(404, "Donation not found.")
     _apply(d, {"ack_status": body.status})
     d.updated_at, d.updated_by = datetime.now(timezone.utc), cu.user.id
@@ -250,7 +250,7 @@ def set_acknowledgment(donation_id: int, body: AckIn, cu: CurrentUser = Depends(
 
 
 @router.post("/donations/import", status_code=status.HTTP_201_CREATED)
-async def import_donations(file: UploadFile = File(...), allow_duplicates: bool = Form(default=False),
+async def import_donations(request: Request, file: UploadFile = File(...), allow_duplicates: bool = Form(default=False),
                            cu: CurrentUser = Depends(require(Permission.MANAGE_DONATIONS)), db: Session = Depends(get_db)) -> dict:
     data = await file.read(docs.MAX_CSV_BYTES + 1)
     name = docs.sanitize_filename(file.filename)
@@ -258,6 +258,8 @@ async def import_donations(file: UploadFile = File(...), allow_duplicates: bool 
         if docs.detect_type(data, name) != "csv":
             raise docs.DocumentError("Donation imports must be CSV files.")
     except docs.DocumentError as exc:
+        security_event(db, cu, "upload_rejected", f"Donation import “{name}” rejected: {exc}", severity="low",
+                       defense="File type and size checks")
         raise HTTPException(422, str(exc)) from exc
     org = cu.organization_id
     digest = docs.sha256(data)

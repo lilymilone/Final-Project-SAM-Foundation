@@ -1,0 +1,285 @@
+{
+  "run": {
+    "id": 28,
+    "status": "stopped",
+    "error": "BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in this workflow's $0.01 budget.",
+    "research_mode": "live",
+    "request": "Plan a 150-person Manhattan fundraising gala with live venue research and check whether we can afford it.",
+    "spent_usd": 0.00147382,
+    "budget_usd": 0.01,
+    "model_calls": 1,
+    "duration_ms": 25066
+  },
+  "handoffs": [
+    {
+      "step": "intake",
+      "from": "board",
+      "to": "orchestrator",
+      "status": "completed",
+      "summary": "Intent: plan event (board routing). Specialists: event intelligence, fundraising events, financial analysis, partnerships outreach.",
+      "warnings": []
+    },
+    {
+      "step": "lessons",
+      "from": "orchestrator",
+      "to": "event_intelligence",
+      "status": "completed",
+      "summary": "The records are explicitly marked as sample/demo data, and the events differ in purpose and format. Reflections point to strong engagement from personal speakers, resource connections and volunteers, alongside recurring planning risks around food, vendor terms, access, and follow-through. For a New York gala, treat these as planning signals rather than established forecasts.",
+      "warnings": [
+        "All three events are marked as demo/sample data; their results may not represent actual foundation events.",
+        "There are only three events and seven reflections, and reflections cover different events and topics; they do not establish how common an experience was among attendees.",
+        "The records do not establish likely attendance, revenue, or cost for the planned 150-guest New York gala.",
+        "The reflections report catering over quote but do not give a general overrun percentage suitable for setting a contingency.",
+        "No reflection provides a detailed account of volunteer appreciation across all events.",
+        "Reported attendee feedback is relayed by board members; no direct attendee survey results are provided."
+      ]
+    },
+    {
+      "step": "venues",
+      "from": "orchestrator",
+      "to": "fundraising_events",
+      "status": "stopped",
+      "summary": "BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in this workflow's $0.01 budget.",
+      "warnings": [
+        "Spending limit reached."
+      ]
+    }
+  ],
+  "tool_calls": [
+    {
+      "agent": "orchestrator",
+      "tool": "read_event_plan",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Manhattan Spring Gala (sample plan)"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "read_historical_events",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "3 past events"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "read_board_reflections",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "7 reflections"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "compare_event_outcomes",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "compared 3 events (sufficient data)"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "get_historical_lessons",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "2 saved lessons"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #126 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #127 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #128 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #129 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #130 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #131 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #132 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #133 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #134 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #135 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #136 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #137 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #138 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #139 saved"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "search_venues",
+      "allowed": true,
+      "denial": null,
+      "ok": false,
+      "summary": ""
+    }
+  ],
+  "model_calls": [
+    {
+      "agent": "event_intelligence",
+      "task": "Synthesize lessons from events and reflections",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 4105,
+      "cached": 4102,
+      "out": 2865,
+      "cost_usd": 0.00147382,
+      "error": null
+    },
+    {
+      "agent": "fundraising_events",
+      "task": "Web search: venue candidates",
+      "model": "gpt-6-luna",
+      "status": "refused",
+      "in": null,
+      "cached": null,
+      "out": null,
+      "cost_usd": null,
+      "error": "Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in this workflow's $0.01 budget."
+    }
+  ],
+  "drafts": [],
+  "security_events": [
+    {
+      "category": "budget_stepdown",
+      "severity": "info",
+      "agent": "event_intelligence",
+      "defense": "Budget-aware routing",
+      "detail": "event_intelligence: the intermediate tier could not fit the remaining budget, so gpt-6-luna was used instead. w) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0690 for gpt-6.1-sol exceeds the remaining budget of $0.0100; stepped down to Luna (fast). Estimated $0.0034 fits the remaining budget of $0.0100."
+    },
+    {
+      "category": "budget_limit",
+      "severity": "medium",
+      "agent": null,
+      "defense": "Workflow limits",
+      "detail": "Workflow stopped: BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in this workflow's $0.01 budget."
+    }
+  ],
+  "recommendation": null,
+  "verification": null,
+  "partial": {
+    "stopped": true,
+    "verified_partial_steps": 2,
+    "message": "The workflow stopped before it finished: BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in this workflow's $0.01 budget. Steps completed before the stop are listed; nothing after that point was produced, and no recommendation was written."
+  },
+  "checks": [
+    {
+      "name": "Real paid calls ran before the limit",
+      "passed": true,
+      "observed": "1 paid call(s)"
+    },
+    {
+      "name": "The workflow stopped at its budget",
+      "passed": true,
+      "observed": "status stopped: BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in this workflow's $0.01 budget."
+    },
+    {
+      "name": "Spending never exceeded the limit",
+      "passed": true,
+      "observed": "$0.00147 of $0.01; 1 call(s) refused before sending"
+    },
+    {
+      "name": "No recommendation was fabricated; finished steps kept as partial",
+      "passed": true,
+      "observed": "recommendation is None; partial result: {\"stopped\": true, \"verified_partial_steps\": 2, \"message\": \"The workflow stopped before it finished: BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in "
+    },
+    {
+      "name": "A budget stop was logged",
+      "passed": true,
+      "observed": "Workflow stopped: BudgetExceededError: Stopped: the next call could cost up to $0.0250, more than the $0.0085 left in th"
+    }
+  ]
+}

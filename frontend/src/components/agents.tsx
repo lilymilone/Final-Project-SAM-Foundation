@@ -1,4 +1,4 @@
-import { BadgeCheck, CircleDashed, FlaskConical, Globe2, Link2Off, Database } from "lucide-react";
+import { BadgeCheck, CircleDashed, FlaskConical, Globe2, Link2Off, Database, ShieldAlert } from "lucide-react";
 
 export const AGENT_LABELS: Record<string, string> = {
   board: "Board member",
@@ -80,6 +80,13 @@ export function VerificationBadge({ value }: { value: string | null | undefined 
 }
 
 export function ModeBadge({ mode }: { mode: string | null | undefined }) {
+  if (mode === "fixture") {  // server-side safety-test fixture; never selectable from the app
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-[#fbeef3] px-2.5 py-0.5 text-xs font-semibold text-danger">
+        <ShieldAlert size={12} aria-hidden="true" /> Safety test fixture
+      </span>
+    );
+  }
   return mode === "live" ? (
     <span className="inline-flex items-center gap-1 rounded-full bg-[#e3eef8] px-2.5 py-0.5 text-xs font-semibold text-[#2c5a85]">
       <Globe2 size={12} aria-hidden="true" /> Live web research

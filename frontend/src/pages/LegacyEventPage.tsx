@@ -39,7 +39,7 @@ function AnalyzeButton({ eventId, eventName, onDone }: { eventId: number; eventN
       setDetail(d);
       if (d.run.status === "queued" || d.run.status === "running") window.setTimeout(tick, 1500);
       else {
-        if (d.run.status.startsWith("completed")) celebrate("workflow", boxRef.current);
+        if (d.run.status === "completed") celebrate("workflow", boxRef.current);  // never on warnings or stops
         onDone(d);
       }
     };

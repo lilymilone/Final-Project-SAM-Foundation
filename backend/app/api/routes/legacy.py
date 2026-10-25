@@ -36,7 +36,7 @@ from ...services.legacy import (
     photo_out,
     reflection_out,
 )
-from ..deps import CurrentUser, audit, current_user, get_db, require
+from ..deps import CurrentUser, audit, current_user, get_db, is_foreign_or_missing, require, security_event
 
 router = APIRouter(prefix="/api", tags=["legacy"])
 
@@ -66,9 +66,18 @@ def _photo_dir(request: Request) -> Path:
     return path
 
 
+def _photo_path(request: Request, file_path: str) -> Path:
+    """Resolve a stored photo inside the photo folder only (no path traversal, even from a bad database value)."""
+    root = _photo_dir(request).resolve()
+    path = (root / file_path).resolve()
+    if root not in path.parents:
+        raise HTTPException(404, "Photo file is missing.")
+    return path
+
+
 def _get_event(db: Session, cu: CurrentUser, event_id: int) -> HistoricalEvent:
     event = db.get(HistoricalEvent, event_id)
-    if event is None or event.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, event, "event"):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Event not found.")
     return event
 
@@ -242,12 +251,17 @@ async def upload_photo(event_id: int, request: Request, file: UploadFile = File(
     event = _get_event(db, cu, event_id)
     data = await file.read(MAX_PHOTO_BYTES + 1)
     if len(data) > MAX_PHOTO_BYTES:
+        security_event(db, cu, "upload_rejected", "Photo rejected: larger than 5 MB.", severity="low", defense="Upload size limit")
         raise HTTPException(413, "Photos must be 5 MB or smaller.")
     kind = _sniff(data[:16])
     if kind is None:
+        security_event(db, cu, "upload_rejected", "Photo rejected: not a PNG, JPEG, or WebP image by its contents.", severity="low",
+                       defense="File signature check")
         raise HTTPException(422, "Only PNG, JPEG, or WebP images are accepted (checked by file contents, not name).")
     content_type, ext = kind
-    name = f"{uuid.uuid4().hex}.{ext}"
+    folder = _photo_dir(request) / str(int(cu.organization_id))  # workspace-scoped storage; names are random, never user-supplied
+    folder.mkdir(parents=True, exist_ok=True)
+    name = f"{int(cu.organization_id)}/{uuid.uuid4().hex}.{ext}"
     (_photo_dir(request) / name).write_bytes(data)
     photo = EventPhoto(historical_event_id=event.id, file_path=name, caption=caption.strip(), uploaded_by=cu.user.id,
                        content_type=content_type, size_bytes=len(data), is_demo=False)
@@ -263,7 +277,7 @@ def get_photo(photo_id: int, request: Request, cu: CurrentUser = Depends(current
     photo = db.get(EventPhoto, photo_id)
     if photo is None or db.get(HistoricalEvent, photo.historical_event_id).organization_id != cu.organization_id:
         raise HTTPException(404, "Photo not found.")
-    path = (_photo_dir(request) / Path(photo.file_path).name).resolve()
+    path = _photo_path(request, photo.file_path)
     if not path.is_file():
         raise HTTPException(404, "Photo file is missing.")
     return FileResponse(path, media_type=photo.content_type or "application/octet-stream",
@@ -276,7 +290,7 @@ def delete_photo(photo_id: int, request: Request, cu: CurrentUser = Depends(requ
     photo = db.get(EventPhoto, photo_id)
     if photo is None or db.get(HistoricalEvent, photo.historical_event_id).organization_id != cu.organization_id:
         raise HTTPException(404, "Photo not found.")
-    (_photo_dir(request) / Path(photo.file_path).name).unlink(missing_ok=True)
+    _photo_path(request, photo.file_path).unlink(missing_ok=True)
     audit(db, cu, "photo_removed", f"historical_event:{photo.historical_event_id}", photo_id=photo.id)
     db.delete(photo)
     db.commit()
@@ -304,7 +318,7 @@ class LessonReview(BaseModel):
 def review_lesson(lesson_id: int, body: LessonReview, cu: CurrentUser = Depends(require(Permission.RUN_AGENTS)),
                   db: Session = Depends(get_db)) -> dict:
     lesson = db.get(HistoricalLesson, lesson_id)
-    if lesson is None or lesson.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, lesson, "lesson"):
         raise HTTPException(404, "Lesson not found.")
     lesson.status = body.status
     lesson.reviewed_by = cu.user.id

@@ -1,6 +1,6 @@
 import {
   ArrowLeft, ArrowRight, CheckCircle2, ChevronDown, CircleSlash, Coins, FileText, FlaskConical, Gauge, Lightbulb, ListChecks,
-  RefreshCcw, ShieldCheck, Square, Wrench, XCircle,
+  RefreshCcw, ShieldAlert, ShieldCheck, Square, Wrench, XCircle,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -206,6 +206,11 @@ export default function RunPage() {
             <p className="text-[0.7rem] text-muted">{totals.revisions} revision step{totals.revisions === 1 ? "" : "s"}</p></div>
         </div>
         {run.error && <p className="mt-3 rounded-xl bg-[#fbeef3] px-3 py-2 text-sm text-danger">{run.error}</p>}
+        {run.research_mode === "fixture" && (
+          <p className="mt-3 flex items-center gap-2 rounded-xl bg-[#fbeef3] px-3 py-2 text-xs text-plum">
+            <ShieldAlert size={14} className="text-danger" aria-hidden="true" /> Adversarial safety test: the venue listing and page are a server-side attack fixture containing injected instructions. Only the network was replaced; every other step is the production pipeline.
+          </p>
+        )}
         {run.research_mode === "synthetic" && (
           <p className="mt-3 flex items-center gap-2 rounded-xl bg-blush/60 px-3 py-2 text-xs text-plum">
             <FlaskConical size={14} aria-hidden="true" /> This run used labeled synthetic research fixtures (venues, partners). It demonstrates the agents' collaboration; it is not live web research.
@@ -248,15 +253,32 @@ export default function RunPage() {
                 </li>))}</ol>
             </Card>
           )}
-          {result?.finance && (
-            <Card title="Affordability (computed in Python)" icon={<ListChecks size={16} aria-hidden="true" />}>
-              <p className="mb-3 text-sm">Verdict for <b>{result.finance.venue}</b>: <span className="font-semibold capitalize text-royal">{result.finance.verdict.replace(/_/g, " ")}</span></p>
-              <ul className="space-y-2">{result.finance.affordability.checks.map((c) => <CheckRow key={c.name} c={c} />)}</ul>
-              <table className="mt-4 w-full text-left text-sm"><tbody>
-                {result.finance.budget.line_items.map((li) => <tr key={li.name} className="border-t border-lavender/25"><td className="py-1.5">{li.name}<span className="block text-xs text-muted">{li.basis}</span></td><td className="py-1.5 text-right">{money(li.amount_usd, 2)}</td></tr>)}
-                <tr className="border-t border-lavender/25"><td className="py-1.5">Contingency ({Math.round(result.finance.budget.contingency_pct * 100)}%)</td><td className="py-1.5 text-right">{money(result.finance.budget.contingency_usd, 2)}</td></tr>
-                <tr className="border-t-2 border-plum/30 font-semibold text-plum"><td className="py-1.5">Projected total</td><td className="py-1.5 text-right">{money(result.finance.budget.total_usd, 2)}</td></tr>
-              </tbody></table>
+          {result?.finance && (() => {
+            const f = result.finance;
+            const lines = f.budget?.line_items ?? (f.model?.lines ?? []).map((l) => ({ name: l.category, amount_usd: l.amount_usd, basis: l.basis }));
+            const contingencyPct = f.budget?.contingency_pct ?? f.model?.contingency_pct ?? 0;
+            const contingencyUsd = f.budget?.contingency_usd ?? f.model?.contingency_usd ?? 0;
+            const total = f.budget?.total_usd ?? f.model?.total_cost_usd ?? null;
+            return (
+              <Card title="Affordability (computed in Python)" icon={<ListChecks size={16} aria-hidden="true" />}>
+                <p className="mb-3 text-sm">Verdict for <b>{f.venue}</b>: <span className="font-semibold capitalize text-royal">{f.verdict.replace(/_/g, " ")}</span></p>
+                <ul className="space-y-2">{f.affordability.checks.map((c) => <CheckRow key={c.name} c={c} />)}</ul>
+                {lines.length > 0 && (
+                  <table className="mt-4 w-full text-left text-sm"><tbody>
+                    {lines.map((li) => <tr key={li.name} className="border-t border-lavender/25"><td className="py-1.5">{li.name}<span className="block text-xs text-muted">{li.basis}</span></td><td className="py-1.5 text-right">{money(li.amount_usd, 2)}</td></tr>)}
+                    <tr className="border-t border-lavender/25"><td className="py-1.5">Contingency ({Math.round(contingencyPct * 100)}%)</td><td className="py-1.5 text-right">{money(contingencyUsd, 2)}</td></tr>
+                    {total !== null && <tr className="border-t-2 border-plum/30 font-semibold text-plum"><td className="py-1.5">Projected total</td><td className="py-1.5 text-right">{money(total, 2)}</td></tr>}
+                  </tbody></table>
+                )}
+              </Card>
+            );
+          })()}
+          {result?.stopped && (
+            <Card title="Stopped before it finished" icon={<Square size={16} aria-hidden="true" />}>
+              <p className="text-sm text-ink">{result.verified_partial_steps ?? 0} step(s) finished before the stop and are listed on the left. Nothing after the stop was produced.</p>
+              {result.missing && result.missing.length > 0 && (
+                <><p className="label mt-3">Not produced</p><ul className="list-disc space-y-0.5 pl-5 text-sm text-muted">{result.missing.map((m) => <li key={m}>{m}</li>)}</ul></>
+              )}
             </Card>
           )}
           {result?.verification && (
@@ -265,12 +287,12 @@ export default function RunPage() {
               <ul className="space-y-2">{result.verification.checks.map((c) => <CheckRow key={c.name} c={c} />)}</ul>
             </Card>
           )}
-          {result && result.drafts.length > 0 && (
+          {result?.drafts && result.drafts.length > 0 && (
             <Card title="Unsent drafts created" icon={<FileText size={16} aria-hidden="true" />} action={<Link className="btn btn-ghost !py-1 text-sm" to="/partnerships">Review →</Link>}>
               <ul className="space-y-1.5 text-sm">{result.drafts.map((d) => <li key={d.id}><b className="text-plum">{d.recipient}</b>: <span className="text-muted">{d.subject}</span></li>)}</ul>
             </Card>
           )}
-          {result && result.findings.length > 0 && (
+          {result?.findings && result.findings.length > 0 && (
             <Card title="Research findings" action={<Link className="btn btn-ghost !py-1 text-sm" to="/mission">Save the best →</Link>}>
               <ul className="space-y-2 text-sm">{result.findings.map((f) => (
                 <li key={f.id} className="rounded-xl bg-ivory px-3 py-2">

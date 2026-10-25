@@ -24,7 +24,7 @@ from ...mission import public_config
 from ...services.impact import impact_metrics
 from ...services.opportunities import opportunity_out
 from ...services.partnership_packet import build_partnership_packet, partnership_markdown
-from ..deps import CurrentUser, audit, current_user, get_db, require
+from ..deps import CurrentUser, audit, current_user, get_db, require, is_foreign_or_missing
 
 router = APIRouter(prefix="/api", tags=["mission"])
 BOARD_CATEGORIES = ("Partnership prospect", "Research to support", "Event to join", "Sponsor prospect", "Watch list")
@@ -65,7 +65,7 @@ def list_opportunities(status: Literal["new", "saved", "dismissed", "all", "acti
 
 def _owned(db: Session, cu: CurrentUser, finding_id: int) -> ResearchFinding:
     f = db.get(ResearchFinding, finding_id)
-    if f is None or f.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, f, "f"):
         raise HTTPException(404, "Opportunity not found.")
     return f
 

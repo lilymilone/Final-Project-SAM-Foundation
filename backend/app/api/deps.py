@@ -76,6 +76,10 @@ def require(permission: Permission):
     def dependency(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> CurrentUser:
         if permission not in cu.permissions:
             audit(db, cu, "access_denied", permission.value)
+            from ..db.models import SecurityEvent
+            db.add(SecurityEvent(organization_id=cu.organization_id, user_id=cu.user.id, category="permission_denied", severity="low",
+                                 defense="Server-side role permissions",
+                                 detail=f"A {cu.role} was refused an action that needs “{permission.value}”."))
             db.commit()
             raise HTTPException(
                 status.HTTP_403_FORBIDDEN,
@@ -96,3 +100,30 @@ def audit(db: Session, cu: CurrentUser | None, action: str, target: str = "", **
             detail=detail or None,
         )
     )
+
+
+def is_foreign_or_missing(db: Session, cu: CurrentUser, row, label: str) -> bool:
+    """True if the record does not exist or belongs to another workspace. A cross-workspace attempt is recorded
+    as a security event; both cases look identical to the caller (404), so nothing about the other workspace leaks."""
+    if row is None:
+        return True
+    if getattr(row, "organization_id", cu.organization_id) != cu.organization_id:
+        from ..db.models import SecurityEvent
+        db.add(SecurityEvent(organization_id=cu.organization_id, user_id=cu.user.id, category="cross_workspace", severity="high",
+                             defense="Workspace-scoped queries", detail=f"Blocked access to {label} #{getattr(row, 'id', '?')}, which belongs "
+                             "to another workspace."))
+        db.commit()
+        return True
+    return False
+
+
+def security_event(db: Session, cu: CurrentUser | None, category: str, detail: str, *, severity: str = "medium",
+                   defense: str = "", commit: bool = True) -> None:
+    """Record a security event from a route (upload rejected, URL blocked, ...) on the request's own session, so it
+    never waits on a second connection. Details are redacted."""
+    from ..db.models import SecurityEvent
+    from ..safety.redact import configured_secrets, redact
+    db.add(SecurityEvent(organization_id=cu.organization_id if cu else None, user_id=cu.user.id if cu else None, category=category,
+                         severity=severity, defense=defense[:80], detail=redact(detail, configured_secrets())[:1000]))
+    if commit:
+        db.commit()

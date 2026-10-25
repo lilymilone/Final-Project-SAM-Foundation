@@ -208,7 +208,7 @@ export type UserSettings = {
 // ── Agent workflows ─────────────────────────────────────────────────────────────
 
 export type Intent = "plan_event" | "mission_discovery" | "partnership_outreach" | "financial_review" | "donations_review" | "event_learning";
-export type ResearchMode = "synthetic" | "live";
+export type ResearchMode = "synthetic" | "live" | "fixture";  // "fixture": server-side safety tests only
 
 export type RunSummary = {
   id: number;
@@ -302,12 +302,20 @@ export type RunResult = {
   verification: { passed: boolean; checks: Check[]; unsupported_figures: number[] } | null;
   revision_history: { round: number; venue: string; event_format: string; total_usd: number; upfront_cash_usd: number; verdict: string | null; finance_status: string; conflicts: string[] }[];
   unresolved_conflicts: { type: string; detail: string }[];
-  finance?: { verdict: string; affordability: { checks: Check[] }; budget: { total_usd: number; upfront_cash_usd: number; line_items: { name: string; amount_usd: number; basis: string }[]; contingency_pct: number; contingency_usd: number; assumptions: string[] }; position: Record<string, number | string | null>; break_even: { break_even_attendance: number | null }; venue: string; event_format: string } | null;
+  finance?: {
+    verdict: string; affordability: { checks: Check[] }; venue: string; event_format: string;
+    // Runs before Event Studio stored "budget"; Event Studio runs store the deterministic event "model".
+    budget?: { total_usd: number; upfront_cash_usd: number; line_items: { name: string; amount_usd: number; basis: string }[]; contingency_pct: number; contingency_usd: number; assumptions: string[] };
+    model?: { lines: { category: string; amount_usd: number; basis: string }[]; contingency_pct: number; contingency_usd: number; total_cost_usd: number; upfront_cash_usd: number };
+  } | null;
+  // A stopped workflow keeps only what it finished (never a recommendation).
+  stopped?: boolean; stop_reason?: string; verified_partial_steps?: number; missing?: string[];
+  completed_steps?: { step_key: string; agent: string; status: string; summary: string; warnings: string[] }[];
   shortlist: { option_id: string; venue: string; event_format: string; total_usd: number; upfront_cash_usd: number; rationale: string; verification: string; source_url: string | null }[];
-  drafts: { id: number; recipient: string; subject: string; draft_type: string; synthetic_target: boolean }[];
+  drafts?: { id: number; recipient: string; subject: string; draft_type: string; synthetic_target: boolean }[];
   lessons: { kind: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string }[];
   disagreements: { topic: string; positions: string[]; evidence_reflection_ids: number[] }[];
-  findings: { id: number; title: string; url: string | null; category: string; alignment: string; verification: string; summary: string; date: string | null; uncertainty: string }[];
+  findings?: { id: number; title: string; url: string | null; category: string; alignment: string; verification: string; summary: string; date: string | null; uncertainty: string }[];
   donations: { aggregate: Record<string, unknown>; drafts_created: number; review_items: { issue: string; why_professional_review: string }[] } | null;
   event_plan_id: number | null;
 };
@@ -607,4 +615,35 @@ export type ComplianceRef = {
 export type ComplianceItem = {
   key: string; title: string; detail: string; kind: "verified_requirement" | "general_guidance" | "needs_professional_review";
   professional: string | null; donation_ids: number[]; references: ComplianceRef[];
+};
+
+export type SafetyLimit = { key: string; label: string; value: number; minimum: number; hard_cap: number; kind: "usd" | "int" };
+export type SafetyLimitsResponse = { limits: SafetyLimit[]; editable: boolean; note: string };
+export type SecurityEventRow = {
+  id: number; category: string; label: string; severity: "info" | "low" | "medium" | "high"; agent: string | null; run_id: number | null;
+  defense: string; created_at: string; detail: string;
+};
+export type SafetyTestRow = {
+  name: string; category: string; mode: "mocked" | "live"; passed: boolean; observed: string; expected: string | null;
+  defense: string | null; run_id: number | null; ran_at: string;
+};
+export type SafetyOverview = {
+  admin: boolean;
+  limits: SafetyLimit[];
+  matrix: {
+    agents: { agent: string; name: string; purpose: string; data_scopes: string[]; tools: { tool: string; data_scope: string }[] }[];
+    prohibited: { name: string; label: string }[];
+    notes: string[];
+  };
+  tests: SafetyTestRow[];
+  events: {
+    counts: Record<string, { label: string; count: number }>;
+    total_30_days: number;
+    blocked_actions: SecurityEventRow[];
+    budget: SecurityEventRow[];
+    injections: SecurityEventRow[];
+    data_access: SecurityEventRow[];
+    other: SecurityEventRow[];
+  };
+  risks: { risk: string; mitigation: string; residual: string }[];
 };

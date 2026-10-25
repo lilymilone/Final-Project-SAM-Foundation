@@ -1,9 +1,10 @@
-import { Ban, Check, Gauge, KeyRound, Lock, Route, ShieldCheck, X } from "lucide-react";
+import { Ban, Check, Gauge, KeyRound, Lock, Route, X } from "lucide-react";
 import { useState } from "react";
-import type { ModelsOverview, SafetyPolicy, Strategy, SystemStatus } from "../api/types";
+import type { ModelsOverview, SafetyOverview, SafetyPolicy, Strategy, SystemStatus } from "../api/types";
 import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
-import { Card, EmptyState, ErrorState, LoadingState, PageHeader } from "../components/ui";
+import { LimitsCard, PermissionMatrix, SafetyEvents, SafetySummary, TestResults } from "../components/safety";
+import { Card, ErrorState, LoadingState, PageHeader } from "../components/ui";
 
 function Yes({ ok, label }: { ok: boolean; label: string }) {
   return (
@@ -15,21 +16,13 @@ function Yes({ ok, label }: { ok: boolean; label: string }) {
   );
 }
 
-const LIMIT_LABELS: Record<string, string> = {
-  workflow_budget_usd: "Budget per workflow (USD)",
-  daily_budget_usd: "Daily AI budget (USD)",
-  max_model_calls_per_workflow: "Max model calls per workflow",
-  max_agent_iterations: "Max agent iterations",
-  session_hours: "Session length (hours)",
-  login_attempts: "Failed sign-ins",
-};
-
 export default function SafetyPage() {
   const { user } = useAuth();
   const [strategy, setStrategy] = useState<Strategy>(user?.settings.model_strategy ?? "auto");
   const status = useApi<SystemStatus>("/api/system/status");
   const models = useApi<ModelsOverview>(`/api/models?strategy=${strategy}`);
   const policy = useApi<SafetyPolicy>("/api/safety/policy");
+  const overview = useApi<SafetyOverview>("/api/safety/overview");
 
   return (
     <>
@@ -120,50 +113,48 @@ export default function SafetyPage() {
           )}
         </Card>
 
-        <Card title="Spending limits" icon={<Gauge size={16} aria-hidden="true" />}>
-          {policy.loading && <LoadingState rows={2} />}
-          {policy.error && <ErrorState message={policy.error.message} onRetry={policy.reload} />}
+        <Card title="Accounts and sessions" icon={<Gauge size={16} aria-hidden="true" />}>
           {policy.data && (
             <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 text-sm">
-              {Object.entries(policy.data.limits).map(([k, v]) => (
-                <div key={k} className="contents">
-                  <dt className="text-muted">{LIMIT_LABELS[k] ?? k}</dt>
-                  <dd className="text-right font-semibold text-plum">{typeof v === "number" && k.endsWith("usd") ? `$${v.toFixed(2)}` : v}</dd>
-                </div>
-              ))}
+              <dt className="text-muted">Session length</dt><dd className="text-right font-semibold text-plum">{policy.data.limits.session_hours} hours</dd>
+              <dt className="text-muted">Failed sign-ins before a pause</dt><dd className="text-right font-semibold text-plum">{policy.data.limits.login_attempts}</dd>
             </dl>
           )}
-        </Card>
-
-        <Card title="Never done by SAM SPACE" icon={<Ban size={16} aria-hidden="true" />}>
-          {policy.data && (
-            <>
-              <ul className="flex flex-wrap gap-1.5">
-                {policy.data.prohibited_actions.map((a) => (
-                  <li key={a.name} className="rounded-full bg-[#fbeef3] px-2.5 py-1 text-xs font-medium text-danger">{a.label}</li>
-                ))}
-              </ul>
-              <p className="mt-3 text-xs text-muted">Refused by the tool registry in code, not just by prompts. Allowed: {policy.data.allowed_capabilities.join(", ").toLowerCase()}.</p>
-            </>
-          )}
-        </Card>
-
-        <Card title="Safety tests" icon={<ShieldCheck size={16} aria-hidden="true" />} className="lg:col-span-2">
-          {policy.data && (policy.data.safety_tests.length === 0 ? (
-            <EmptyState title="No live safety tests recorded yet">
-              Prompt-injection and malfunction tests against the running agents will record their results here. The automated test suite (pytest) already covers the guards built so far.
-            </EmptyState>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {policy.data.safety_tests.map((t) => (
-                <li key={`${t.name}-${t.ran_at}`} className="flex justify-between gap-3 rounded-xl bg-ivory/70 px-3 py-2">
-                  <span>{t.name}</span><span className={t.passed ? "text-sage" : "text-danger"}>{t.passed ? "passed" : "failed"}</span>
-                </li>
-              ))}
-            </ul>
-          ))}
+          <p className="mt-3 text-xs text-muted">Sessions use an HttpOnly cookie; no key or token is ever stored in the browser.</p>
         </Card>
       </div>
+
+      <section id="safety" className="mt-10 scroll-mt-6" aria-labelledby="safety-heading">
+        <div className="mb-5">
+          <p className="eyebrow mb-1.5">Safety</p>
+          <h2 id="safety-heading" className="font-display text-3xl font-semibold text-plum">What the safeguards have actually done</h2>
+          <p className="mt-1.5 max-w-3xl text-sm text-muted">
+            Limits, permissions, test results, and events below come from the code that enforces them and from the security log.{" "}
+            {overview.data && !overview.data.admin && "Event details are visible to the chair; you see categories and counts."}
+          </p>
+        </div>
+        {overview.loading && <LoadingState rows={4} />}
+        {overview.error && <ErrorState message={overview.error.message} onRetry={overview.reload} />}
+        {overview.data && (
+          <div className="space-y-5">
+            <SafetySummary data={overview.data} />
+            <div className="grid gap-5 lg:grid-cols-2">
+              <LimitsCard onSaved={overview.reload} />
+              <Card title="How a workflow is stopped" icon={<Ban size={16} aria-hidden="true" />}>
+                <ul className="space-y-2 text-sm text-ink">
+                  <li><b className="text-plum">Before every model call</b>, the worst-case cost is reserved against the workflow and daily budgets. If it does not fit, the call never happens.</li>
+                  <li><b className="text-plum">Before every handoff</b>, the Orchestrator checks the step, revision, and repeat limits and the time limit.</li>
+                  <li><b className="text-plum">Before every tool call</b>, the agent's allow-list, the tool's data scope, and the tool-call, search, and page-fetch limits are checked.</li>
+                  <li><b className="text-plum">When a limit stops a run</b>, finished steps are kept and labeled partial. Nothing is reported as complete, and no celebration plays.</li>
+                </ul>
+              </Card>
+              <PermissionMatrix matrix={overview.data.matrix} />
+              <TestResults tests={overview.data.tests} />
+              <SafetyEvents data={overview.data} />
+            </div>
+          </div>
+        )}
+      </section>
     </>
   );
 }

@@ -19,6 +19,7 @@ dropped with a warning.
 from __future__ import annotations
 
 from ...mission import FOUNDATION, PHILOSOPHY
+from ...safety.policy import wrap_untrusted
 from ..base import BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding
 from ..outputs import DRAFT_TYPES, DraftsOutput
@@ -72,7 +73,8 @@ class PartnershipsOutreachAgent(BaseAgent):
         for item in (task.inputs.get("shortlist") or [])[:3]:
             v = item["venue"]
             targets.append({"target_id": f"venue:{v['venue_key']}", "suggested_type": "venue_inquiry", "name": v["name"],
-                            "details": {"neighborhood": v.get("neighborhood"), "format": item["event_format"], "notes": v.get("notes"),
+                            "details": {"neighborhood": v.get("neighborhood"), "format": item["event_format"],
+                                        "notes": wrap_untrusted(v.get("notes") or "", f"venue listing {v.get('venue_key')}", max_chars=600),
                                         "pricing_quote": v.get("pricing_quote"), "website": v.get("website")},
                             "synthetic": v.get("verification") == "synthetic", "finding_id": None,
                             "source_ids": [v["source_id"]] if v.get("source_id") else [],

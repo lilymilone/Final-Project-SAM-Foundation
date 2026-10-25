@@ -17,6 +17,7 @@ enforces Finance's limits and the history constraints.
 from __future__ import annotations
 
 from ...mission import EVENT_CONSIDERATIONS, PHILOSOPHY
+from ...safety.policy import wrap_untrusted
 from ..base import BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding, SourceRecord
 from ..outputs import EventStrategyOutput
@@ -89,6 +90,35 @@ def _verify_live_venue(agent: BaseAgent, ctx: RunContext, v: dict) -> list[Sourc
     return sources
 
 
+VENUE_TEXT_FIELDS = ("name", "address", "neighborhood", "notes", "capacity_quote", "pricing_quote", "catering")
+
+
+def _screen_venue(ctx: RunContext, v: dict, warnings: list[str]) -> None:
+    """Venue names, descriptions, amenities, and quotes come from outside sources: screen every text field once.
+    Instruction-like sentences are removed and recorded; the rest only ever reaches a model as labeled data."""
+    if v.get("screened") or ctx.safety is None:
+        return
+    found = []
+    for k in VENUE_TEXT_FIELDS:
+        if isinstance(v.get(k), str) and v[k]:
+            v[k], flags = ctx.safety.ingest_untrusted(v[k], f"the description of venue {v.get('venue_key')}", agent="fundraising_events",
+                                                       max_chars=1500)
+            found += flags
+    for k in ("amenities", "restrictions"):
+        cleaned = []
+        for item in v.get(k) or []:
+            text, flags = ctx.safety.ingest_untrusted(str(item), f"venue {v.get('venue_key')} {k}", agent="fundraising_events", max_chars=200)
+            found += flags
+            if not flags:
+                cleaned.append(text)
+        v[k] = cleaned
+    v["screened"] = True
+    if found:
+        v["injection_flagged"] = True
+        warnings.append(f"{v.get('name') or v.get('venue_key')}: its listing contained instructions aimed at AI systems. They were removed and "
+                        "not followed; only the venue facts were used.")
+
+
 class FundraisingEventsAgent(BaseAgent):
     name = AgentName.FUNDRAISING_EVENTS
 
@@ -127,6 +157,7 @@ class FundraisingEventsAgent(BaseAgent):
             for v in venues:
                 if v.get("verification") == "unverified":
                     sources += _verify_live_venue(self, ctx, v)
+                _screen_venue(ctx, v, warnings)
         else:
             sources += [SourceRecord(id=f"{v['source_id']}:website", title=v["name"], url=v.get("website"),
                                      verification=v.get("verification") or "unverified", retrieved_at=v.get("verified_at"))
@@ -148,6 +179,7 @@ class FundraisingEventsAgent(BaseAgent):
             "option_id": o["option_id"], "venue": o["venue"]["name"], "neighborhood": o["venue"].get("neighborhood"),
             "format": o["event_format"], "capacity": o["venue"].get("capacity"), "capacity_status": o["venue"].get("capacity_status"),
             "pricing_status": o["venue"].get("pricing_status"), "amenities": o["venue"].get("amenities"),
+            "description": wrap_untrusted(o["venue"].get("notes") or "", f"venue listing {o['venue'].get('venue_key')}", max_chars=600),
             "restrictions": o["venue"].get("restrictions"), "catering_terms": o["venue"].get("catering"),
             "total_cost_usd": o["model"]["total_cost_usd"], "total_usd": o["model"]["total_cost_usd"],
             "upfront_cash_usd": o["model"]["upfront_cash_usd"], "base_net_usd": o["model"]["scenarios"]["base"]["net_usd"],

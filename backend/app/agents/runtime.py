@@ -49,10 +49,26 @@ class RunContext:
     cancel: threading.Event = field(default_factory=threading.Event)
     current_handoff_id: int | None = None
     counters: dict[str, int] = field(default_factory=lambda: {"handoffs": 0, "web_searches": 0, "page_fetches": 0})
+    safety: Any = None  # SafetyManager (safety/manager.py)
+    fixtures: dict | None = None  # research_mode "fixture": server-side test fixtures (venues and page HTML); never set from the API
 
     def check_cancelled(self) -> None:
         if self.cancel.is_set():
             raise RunStopped("Stopped by a board member.")
+        if self.safety is not None:
+            self.safety.check_duration()
+
+    @property
+    def max_web_searches(self) -> int:
+        return self.safety.limits.max_web_searches if self.safety else self.settings.max_web_searches_per_run
+
+    @property
+    def max_page_fetches(self) -> int:
+        return self.safety.limits.max_page_fetches if self.safety else self.settings.max_page_fetches_per_run
+
+    @property
+    def max_revisions(self) -> int:
+        return self.safety.limits.max_revisions if self.safety else self.settings.max_revisions
 
 
 def _now() -> datetime:

@@ -24,13 +24,18 @@ from sqlalchemy import func, select
 
 from ..db.database import Database
 from ..db.models import ModelUsage
-from .budget import WorkflowBudget
+from ..safety.redact import configured_secrets, redact
+from .budget import DAILY_GUARD, WorkflowBudget
 from .pricing import PriceTable, get_price_table
-from .providers import AIProvider
+from .providers import AIProvider, ProviderPolicyError
 from .router import BudgetExceededError, RoutingDecision
 
 
 T = TypeVar("T", bound=BaseModel)
+
+
+class SafeProviderError(RuntimeError):
+    """A provider failure whose message has been redacted (no keys or tokens)."""
 
 
 class StructuredOutputError(RuntimeError):
@@ -81,11 +86,21 @@ class LLMService:
         max_output_tokens: int = 1200,
         **kwargs: Any,
     ) -> LLMResult:
-        budget.check_call(decision.estimated_cost_usd)
+        # Reserve a conservatively bounded cost before calling: worst-case input plus the full output allowance.
+        worst = self.worst_case_cost(decision.model, instructions, input, max_output_tokens, kwargs.get("max_tool_calls"),
+                                     bool(kwargs.get("tools")))
+        try:
+            token = budget.reserve(worst)
+        except BudgetExceededError as exc:
+            self._record(decision, run_id, handoff_id=handoff_id, attempt=attempt, status="refused", error=str(exc))
+            raise
         spent_today = self.spent_today_usd()
-        if spent_today >= self.daily_budget_usd:
-            self._record(decision, run_id, handoff_id=handoff_id, status="refused", error=f"Daily budget ${self.daily_budget_usd:.2f} reached.")
-            raise BudgetExceededError(f"Stopped: the daily AI budget of ${self.daily_budget_usd:.2f} is used up.")
+        try:
+            day_token = DAILY_GUARD.reserve(spent_today, self.daily_budget_usd, worst or 0.0)
+        except BudgetExceededError as exc:
+            budget.release(token)  # nothing was called
+            self._record(decision, run_id, handoff_id=handoff_id, status="refused", error=str(exc))
+            raise
 
         started = time.perf_counter()
         try:
@@ -97,12 +112,20 @@ class LLMService:
                 store=False,
                 **kwargs,
             )
+        except ProviderPolicyError:
+            budget.release(token)  # blocked before any API call
+            DAILY_GUARD.release(day_token)
+            self._record(decision, run_id, handoff_id=handoff_id, attempt=attempt, status="refused",
+                         error=f"Blocked by provider policy: {decision.model} is not allowed with this key.")
+            raise
         except Exception as exc:
             latency = int((time.perf_counter() - started) * 1000)
             self._record(decision, run_id, handoff_id=handoff_id, attempt=attempt, status="error",
-                         error=f"{type(exc).__name__}: {str(exc)[:300]}", latency_ms=latency)
-            budget.record(None)
-            raise
+                         error=redact(f"{type(exc).__name__}: {str(exc)[:300]}", configured_secrets()), latency_ms=latency)
+            budget.settle(token, None)
+            DAILY_GUARD.release(day_token)
+            raise SafeProviderError(redact(f"{type(exc).__name__}: {str(exc)[:200]}", configured_secrets())) from None
+        DAILY_GUARD.release(day_token)
         latency = int((time.perf_counter() - started) * 1000)
 
         usage = getattr(response, "usage", None)
@@ -117,7 +140,7 @@ class LLMService:
             cost = self.prices.cost_usd(decision.model, input_tokens, output_tokens, cached or 0, cache_write or 0)
             if cost is not None:
                 cost = round(cost + searches * self.prices.web_search_per_call, 8)
-        budget.record(cost)
+        budget.settle(token, cost if cost is not None else worst)  # unknown price: count the reserved worst case
         status = getattr(response, "status", "completed") or "completed"
         usage_id = self._record(
             decision,
@@ -148,6 +171,19 @@ class LLMService:
             status=status,
             raw=response,
         )
+
+    def worst_case_cost(self, model: str, instructions: str, input: Any, max_output_tokens: int, max_tool_calls: int | None,
+                        uses_tools: bool) -> float | None:
+        """Upper bound for one call: input at ~3 characters per token (generous), the full output allowance,
+        and, for hosted web search, extra context and the per-search fee for every allowed search."""
+        chars = len(instructions or "") + len(input if isinstance(input, str) else str(input))
+        in_tokens = chars // 3 + 200
+        searches = (max_tool_calls or 2) if uses_tools else 0
+        in_tokens += searches * 12000  # search results enter the context
+        cost = self.prices.cost_usd(model, in_tokens, max_output_tokens)
+        if cost is None:
+            return None
+        return round(cost + searches * self.prices.web_search_per_call, 6)
 
     def structured(
         self,

@@ -163,6 +163,8 @@ def packet_markdown(p: dict) -> str:
     rec = p.get("recommendation") or {}
     L = [f"# Event Strategy Packet: {ev.get('name', 'Event')}", "",
          f"_Workflow #{p['run']['id']} · {p['run']['status']} · research: {p['run']['research_mode']} · {p['run']['started_at'][:10]}_", "",
+         *([f"> **This workflow stopped before it finished.** {p['run'].get('error') or ''} Only the steps finished before that point are "
+            "shown; there is no board recommendation.", ""] if p["run"]["status"] in ("stopped", "failed", "interrupted") else []),
          "## 1. Event overview", "",
          f"- **Event:** {ev.get('event_type')} · {ev.get('attendance')} guests · {ev.get('city')}",
          f"- **Date:** {ev.get('target_date') or 'not set'}{(' to ' + ev['date_end']) if ev.get('date_end') else ''}",
@@ -208,6 +210,8 @@ def packet_markdown(p: dict) -> str:
                  + (f": projected {_money(n.get('total_usd'))}, verdict {n.get('verdict')}" if "total_usd" in n else ""))
         if n.get("changes_from_previous"):
             L.append(f"- **What changed:** {n['changes_from_previous']}")
+    elif p["run"]["status"] in ("stopped", "failed", "interrupted"):
+        L.append("- Not produced: the workflow stopped before the plan was checked.")
     else:
         L.append("- No revision was needed.")
     if rv.get("reasons"):

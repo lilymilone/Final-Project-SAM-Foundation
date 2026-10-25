@@ -21,7 +21,7 @@ from ...core.config import Settings
 from ...core.permissions import Permission
 from ...db.models import AgentRun, EventPlan, Experiment
 from ...services.comparison import compare_runs, comparison_markdown, run_snapshot
-from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require
+from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require, is_foreign_or_missing
 
 router = APIRouter(prefix="/api/experiments", tags=["experiments"])
 DEFAULT_REQUEST = "Plan a 150-person Manhattan fundraising gala and check whether we can afford it."
@@ -107,7 +107,7 @@ def list_experiments(cu: CurrentUser = Depends(current_user), db: Session = Depe
 @router.get("/{exp_id}")
 def get_experiment(exp_id: int, cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
     e = db.get(Experiment, exp_id)
-    if e is None or e.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, e, "e"):
         raise HTTPException(404, "Experiment not found.")
     return {"experiment": experiment_out(e, Permission.VIEW_FINANCIALS in cu.permissions)}
 

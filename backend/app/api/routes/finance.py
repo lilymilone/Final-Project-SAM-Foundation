@@ -25,7 +25,7 @@ from ...core.permissions import Permission
 from ...db.models import Donation, EventPlan, ExtractedFigure, FinancialDocument, FinancialRecord, HistoricalEvent
 from ...services import documents as docs
 from ...services.finance_dashboard import build_dashboard
-from ..deps import CurrentUser, audit, get_db, require
+from ..deps import CurrentUser, audit, get_db, is_foreign_or_missing, require, security_event
 
 router = APIRouter(prefix="/api/finance", tags=["finance"])
 
@@ -97,6 +97,8 @@ async def upload_document(request: Request, file: UploadFile = File(...), doc_ty
     try:
         file_type = docs.detect_type(data, name)
     except docs.DocumentError as exc:
+        security_event(db, cu, "upload_rejected", f"Financial upload “{name}” rejected: {exc}", severity="low",
+                       defense="File type and size checks")
         raise HTTPException(422, str(exc)) from exc
     digest = docs.sha256(data)
     existing = db.scalar(select(FinancialDocument).where(FinancialDocument.organization_id == cu.organization_id,
@@ -108,6 +110,8 @@ async def upload_document(request: Request, file: UploadFile = File(...), doc_ty
     if file_type == "csv":
         rows, errors = docs.parse_ledger_csv(data.decode("utf-8-sig"))
         if errors:
+            security_event(db, cu, "upload_rejected", f"CSV “{name}” rejected: {len(errors)} invalid row(s); nothing imported.",
+                           severity="low", defense="Row-by-row CSV validation")
             raise HTTPException(422, "Nothing was imported. " + " | ".join(errors[:6]) + (" | …" if len(errors) > 6 else ""))
         have = {docs.duplicate_key({"period": r.period, "kind": r.kind, "category": r.category, "amount_usd": r.amount_usd})
                 for r in db.scalars(select(FinancialRecord).where(FinancialRecord.organization_id == cu.organization_id,
@@ -135,11 +139,16 @@ async def upload_document(request: Request, file: UploadFile = File(...), doc_ty
             [f"{len(duplicates)} row(s) matched existing figures and were imported after confirmation."] if duplicates else [])
         audit(db, cu, "financial_document_uploaded", f"financial_document:{doc.id}", file_type="csv", rows=len(rows))
     else:
-        parsed = docs.read_pdf(data)
+        parsed = docs.read_pdf_isolated(data)
         doc.page_count = parsed["page_count"]
         doc.text_chars = sum(len(p) for p in parsed["pages"])
         doc.notes = parsed["notes"]
         doc.status = "ready_for_extraction" if parsed["status"] == "readable" else "unreadable"
+        risky = [n for n in parsed["notes"] if "none of it was run" in n or "took longer" in n or "could not be read" in n]
+        if risky:
+            security_event(db, cu, "upload_rejected" if doc.status == "unreadable" else "injection_detected",
+                           f"PDF “{name}”: " + " ".join(risky), severity="medium", defense="Text-only PDF parsing in an isolated process",
+                           commit=False)
         audit(db, cu, "financial_document_uploaded", f"financial_document:{doc.id}", file_type="pdf", status=doc.status)
     db.commit()
     return {"document": doc_out(doc)}
@@ -148,7 +157,7 @@ async def upload_document(request: Request, file: UploadFile = File(...), doc_ty
 @router.get("/documents/{doc_id}/figures")
 def document_figures(doc_id: int, cu: CurrentUser = Depends(require(Permission.VIEW_FINANCIALS)), db: Session = Depends(get_db)) -> dict:
     doc = db.get(FinancialDocument, doc_id)
-    if doc is None or doc.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, doc, "doc"):
         raise HTTPException(404, "Document not found.")
     figures = db.scalars(select(ExtractedFigure).where(ExtractedFigure.document_id == doc_id).order_by(ExtractedFigure.page, ExtractedFigure.id)).all()
     records = db.scalars(select(FinancialRecord).where(FinancialRecord.document_id == doc_id).order_by(FinancialRecord.source_row)).all()
@@ -180,7 +189,7 @@ class FigureReview(BaseModel):
 def review_figure(figure_id: int, body: FigureReview, cu: CurrentUser = Depends(require(Permission.MANAGE_FINANCIALS)),
                   db: Session = Depends(get_db)) -> dict:
     f = db.get(ExtractedFigure, figure_id)
-    if f is None or f.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, f, "f"):
         raise HTTPException(404, "Figure not found.")
     if f.status != "pending":
         raise HTTPException(409, f"This figure is already {f.status}.")
@@ -308,7 +317,7 @@ class RecordEdit(BaseModel):
 def edit_record(record_id: int, body: RecordEdit, cu: CurrentUser = Depends(require(Permission.MANAGE_FINANCIALS)),
                 db: Session = Depends(get_db)) -> dict:
     r = db.get(FinancialRecord, record_id)
-    if r is None or r.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, r, "r"):
         raise HTTPException(404, "Record not found.")
     changes = body.model_dump(exclude_unset=True)
     for k, v in changes.items():

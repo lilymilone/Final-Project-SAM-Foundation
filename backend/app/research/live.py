@@ -26,7 +26,7 @@ SEARCH_RULES = """Use web search to find real, current sources. Report only what
 
 
 def _search(ctx, agent: str, profile: TaskProfile, query: str, instructions: str, output_model):
-    if ctx.counters["web_searches"] >= ctx.settings.max_web_searches_per_run:
+    if ctx.counters["web_searches"] >= ctx.max_web_searches:
         raise RuntimeError("Web-search limit for this run reached.")
     if ctx.llm is None:
         raise RuntimeError("No AI provider configured for live research.")

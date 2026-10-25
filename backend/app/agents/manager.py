@@ -14,11 +14,12 @@ from datetime import datetime, timezone
 
 from sqlalchemy import select, update
 
-from ..ai.budget import WorkflowBudget
 from ..ai.llm import LLMService
 from ..ai.router import BudgetExceededError, ModelRouter
 from ..core.permissions import Permission
 from ..db.models import AgentRun, Experiment
+from ..safety.limits import effective_limits, load_overrides
+from ..safety.manager import SafetyManager
 from ..tools.catalog import build_tool_registry
 from .orchestrator import Orchestrator
 from .runtime import RunContext, RunStopped
@@ -69,29 +70,37 @@ class WorkflowManager:
         st = self.state
         settings = st.settings
         started = time.perf_counter()
-        budget = WorkflowBudget(limit_usd=settings.workflow_budget_usd, max_calls=settings.max_model_calls_per_workflow)
-        llm = LLMService(st.provider, st.db, settings.daily_budget_usd) if st.provider is not None else None
+        options = dict(options or {})
+        fixtures = options.pop("_fixtures", None)  # server-side test fixtures only (research_mode "fixture"); never from the API
+        # The central safety layer: limits from configuration and the board's settings, clamped to hard caps.
+        limits = effective_limits(settings, load_overrides(st.db, organization_id))
+        safety = SafetyManager(st.db, limits, organization_id=organization_id, user_id=user_id, run_id=run_id, cancel=cancel)
+        budget = safety.new_budget()
+        llm = LLMService(st.provider, st.db, limits.daily_budget_usd) if st.provider is not None else None
         ctx = RunContext(
             run_id=run_id, organization_id=organization_id, user_id=user_id, user_permissions=permissions, strategy=strategy,
             research_mode=research_mode, db=st.db, router=ModelRouter(settings.provider, st.availability.available),
-            budget=budget, settings=settings, llm=llm, cancel=cancel,
+            budget=budget, settings=settings, llm=llm, cancel=cancel, safety=safety, fixtures=fixtures,
         )
         ctx.tools = build_tool_registry(ctx)
         with st.db.transaction() as s:
             run = s.get(AgentRun, run_id)
             run.status = "running"
+            run.budget_usd = limits.workflow_budget_usd
 
         status, error, result = "completed", None, None
+        orchestrator = Orchestrator()
         try:
-            result = Orchestrator().run(ctx, request, intent_hint, event_plan_id, options)
+            result = orchestrator.run(ctx, request, intent_hint, event_plan_id, options)
             if result.get("verification") and not result["verification"]["passed"]:
                 status = "completed_with_warnings"
-        except RunStopped as exc:
-            status, error = "stopped", str(exc)
-        except BudgetExceededError as exc:
-            status, error = "stopped", str(exc)
+        except (RunStopped, BudgetExceededError) as exc:
+            status, error = "stopped", safety.redact(str(exc))
+            safety.on_stop(error)
+            result = orchestrator.partial_result(error)  # keep what was verified before the stop; never a fake success
         except Exception as exc:
-            status, error = "failed", f"{type(exc).__name__}: {str(exc)[:400]}"
+            status, error = "failed", safety.redact(f"{type(exc).__name__}: {str(exc)[:400]}")
+            result = orchestrator.partial_result(error)
         finally:
             with st.db.transaction() as s:
                 run = s.get(AgentRun, run_id)

@@ -249,13 +249,14 @@ class _OrchestratorSelf(BaseAgent):
             instructions = f"{SYNTHESIS_INSTRUCTIONS}\n- Note how the plan serves inclusion, connection, accessibility, and recognition " \
                            "(see the Events agent's mission_contribution), alongside, never instead of, financial feasibility."
         rec = self.think(ctx, profile, instructions, task.inputs["payload"], BoardRecommendation,
-                         reasoning="medium" if profile in (BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY) else "low", max_output_tokens=8000)
+                         reasoning="medium" if profile in (BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY) else "low", max_output_tokens=4000)
         return self.result(task, "completed", rec.headline, data={"recommendation": rec.model_dump()},
                            findings=[Finding(claim=rec.recommendation, kind="recommendation")])
 
 
 class Orchestrator:
     def __init__(self) -> None:
+        self.completed: list[dict] = []  # every finished handoff, kept so a stopped run still shows what was verified
         self.me = _OrchestratorSelf()
         self.agents: dict[AgentName, BaseAgent] = {
             A.ORCHESTRATOR: self.me,
@@ -271,7 +272,9 @@ class Orchestrator:
 
     def dispatch(self, ctx: RunContext, task: AgentTask, from_agent: str = "orchestrator") -> AgentResult:
         ctx.check_cancelled()
-        if ctx.counters["handoffs"] >= ctx.settings.max_handoffs_per_run:
+        if ctx.safety is not None:  # bounded execution graph: steps, repeated edges, and revision loops stop in code
+            ctx.safety.before_handoff(from_agent, task.agent.value, task.step_key, task.kind)
+        elif ctx.counters["handoffs"] >= ctx.settings.max_handoffs_per_run:
             raise RunStopped(f"Stopped: reached the limit of {ctx.settings.max_handoffs_per_run} handoffs for one run.")
         ctx.counters["handoffs"] += 1
         handoff_id = open_handoff(ctx, task, from_agent)
@@ -281,9 +284,20 @@ class Orchestrator:
         finally:
             ctx.current_handoff_id = None
         close_handoff(ctx, handoff_id, result)
+        self.completed.append({"step_key": task.step_key, "agent": task.agent.value, "status": result.status, "summary": result.summary,
+                               "warnings": result.warnings[:5], "findings": [f.claim for f in result.findings][:8]})
         if result.status == "stopped":
             raise RunStopped(result.summary)
         return result
+
+    def partial_result(self, reason: str) -> dict:
+        """What a stopped or failed workflow had verified before it stopped. Never presented as a finished result."""
+        done = [c for c in self.completed if c["status"] in ("completed", "needs_revision")]
+        return {"intent": None, "stopped": True, "stop_reason": reason, "recommendation": None, "verification": None,
+                "completed_steps": self.completed, "verified_partial_steps": len(done),
+                "message": ("The workflow stopped before it finished: " + reason + " Steps completed before the stop are listed; "
+                            "nothing after that point was produced, and no recommendation was written."),
+                "missing": ["A board-ready recommendation", "Any step after the stop"]}
 
     def _task(self, ctx: RunContext, step: str, agent: AgentName, objective: str, **kw: Any) -> AgentTask:
         return AgentTask(run_id=ctx.run_id, step_key=step, agent=agent, objective=objective, **kw)
@@ -362,6 +376,10 @@ class Orchestrator:
                 rec = BoardRecommendation.model_validate(retry.data["recommendation"])
                 report = verify_workflow(ctx.db, ctx.run_id, results, rec, allowed, option_ids)
         self.dispatch(ctx, self._task(ctx, "verification", A.ORCHESTRATOR, "Verify the final result in code", inputs={"report": report}))
+        if not report["passed"] and ctx.safety is not None:
+            failed = "; ".join(f"{c['name']}: {c['detail']}" for c in report["checks"] if c["passed"] is False)
+            ctx.safety.record_output_rejection("orchestrator", f"The final recommendation still failed verification after one fix, so it is "
+                                                               f"flagged for the board: {failed}")
 
         caveats = self._deterministic_caveats(ctx, results, extra)
         if rec is not None:
@@ -498,7 +516,7 @@ class Orchestrator:
             extra["revision_history"].append(self._history_entry(round_no, top, finance, conflicts, venues))
             if round_no == 0 and conflicts:
                 extra["revision_reasons"] = conflicts
-            if not conflicts or round_no >= ctx.settings.max_revisions:
+            if not conflicts or round_no >= ctx.max_revisions:
                 break
             # Step 6: request a revised, lower-cost or lesson-compliant strategy from the Events agent.
             round_no += 1
@@ -520,7 +538,7 @@ class Orchestrator:
 
         if conflicts:
             extra["unresolved_conflicts"] = conflicts
-            if round_no >= ctx.settings.max_revisions:
+            if round_no >= ctx.max_revisions:
                 extra["revision_limit_reached"] = True
         extra["proposal_comparison"] = self._compare_proposals(extra["revision_history"])
         extra["authorized_budget_usd"] = event["budget_limit_usd"]
@@ -764,7 +782,7 @@ class Orchestrator:
             caveats.append("No explicitly authorized planning budget is recorded for this event. The comparison uses the "
                            "preliminary capacity from the records, which is not an authorization; the board must set a budget.")
         if extra.get("revision_limit_reached"):
-            caveats.append(f"Stopped after {ctx.settings.max_revisions} revision round(s) (loop limit). Remaining conflicts need a board decision.")
+            caveats.append(f"Stopped after {ctx.max_revisions} revision round(s) (loop limit). Remaining conflicts need a board decision.")
         research = results.get("research")
         if research is not None and research.status == "completed":
             flagged = [f["name"] for f in research.data.get("findings", []) if f.get("injection_flagged")]

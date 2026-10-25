@@ -68,6 +68,7 @@ export default function PacketPage() {
   const ev = (packet.overview.event ?? {}) as Record<string, string | number | null>;
   const rec = packet.recommendation;
   const m = packet.financial_model;
+  const incomplete = ["stopped", "failed", "interrupted"].includes(packet.run.status);  // never presented as a finished plan
   const minContingency = packet.lessons.length ? (m?.assumptions.contingency_pct.kind === "lesson" ? m.assumptions.contingency_pct.value : null) : null;
 
   return (
@@ -100,6 +101,16 @@ export default function PacketPage() {
       </header>
 
       {live && <Card title="The agents are still working" className="mb-6"><StrategyProgress detail={live} /></Card>}
+      {incomplete && (
+        <div role="alert" className="mb-6 flex gap-3 rounded-2xl border border-danger/25 bg-[#fbeef3] p-4 text-sm text-plum">
+          <AlertTriangle size={18} className="mt-0.5 shrink-0 text-danger" aria-hidden="true" />
+          <div>
+            <p className="font-semibold">This workflow {packet.run.status === "failed" ? "failed" : "stopped"} before it finished.</p>
+            {packet.run.error && <p className="text-muted">{packet.run.error}</p>}
+            <p className="mt-1">The sections below show only what was finished before that point. There is no board recommendation, and an empty section means the step never ran, not that it found nothing.</p>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-6">
         <Section id="overview" title="1. Event overview" icon={<FileText size={16} aria-hidden="true" />}>
@@ -183,7 +194,7 @@ export default function PacketPage() {
             </>
           ) : (
             <><Snapshot label="Plan" s={packet.revision.original} tone="plain" />
-              <p className="mt-3 text-sm text-muted">No revision was needed: the first plan passed Finance's checks and the history checks.</p></>
+              <p className="mt-3 text-sm text-muted">{incomplete ? "Not produced: the workflow stopped before the plan was checked." : "No revision was needed: the first plan passed Finance's checks and the history checks."}</p></>
           )}
         </Section>
 
@@ -209,7 +220,7 @@ export default function PacketPage() {
               </article>
             ))}
           </div>
-          {packet.venues.length === 0 && <p className="text-sm text-muted">No venues were found for this request.</p>}
+          {packet.venues.length === 0 && <p className="text-sm text-muted">{incomplete ? "Not produced: the workflow stopped before venue research finished." : "No venues were found for this request."}</p>}
         </Section>
 
         <Section id="model" title="5. Preliminary financial model" icon={<Coins size={16} aria-hidden="true" />}>

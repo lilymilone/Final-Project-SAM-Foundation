@@ -1,0 +1,795 @@
+{
+  "run": {
+    "id": 25,
+    "status": "completed",
+    "error": null,
+    "research_mode": "synthetic",
+    "request": "Plan a 150-person Manhattan fundraising gala and check whether we can afford it.",
+    "spent_usd": 0.00893551,
+    "budget_usd": 0.02,
+    "model_calls": 7,
+    "duration_ms": 119808
+  },
+  "handoffs": [
+    {
+      "step": "intake",
+      "from": "board",
+      "to": "orchestrator",
+      "status": "completed",
+      "summary": "Intent: plan event (board routing). Specialists: event intelligence, fundraising events, financial analysis, partnerships outreach.",
+      "warnings": []
+    },
+    {
+      "step": "lessons",
+      "from": "orchestrator",
+      "to": "event_intelligence",
+      "status": "completed",
+      "summary": "The records are demo data from three different event formats, so they offer useful planning signals but limited basis for predicting a 150-guest New York gala. Reflections point to the value of engaging speakers, community partnerships, and volunteer teams, alongside recurring risks in food costs, logistics, pledge collection, and accessibility. Board members differ on how to manage dinner costs and whether to shorten the program.",
+      "warnings": [
+        "All three events are explicitly marked as sample/demo events, so their results may not represent actual foundation events.",
+        "The records cover only three events, with different formats and attendance levels; they do not establish what a 150-guest gala in New York would cost or raise.",
+        "The reflections are board members' reports and impressions. Attendee feedback is reported secondhand and is not independently verified here.",
+        "The records do not provide a gala venue, vendor quotes, a planned budget, or enough information to determine an evidence-based contingency percentage.",
+        "Some event records have no community-outcomes entry, and several reflection fields are blank."
+      ]
+    },
+    {
+      "step": "venues",
+      "from": "orchestrator",
+      "to": "fundraising_events",
+      "status": "completed",
+      "summary": "Recommend Hudson Garden Room as the top option, subject to resolving the budget gap: its published seated capacity fits the planned attendance and it is the only listed venue that states it is wheelchair accessible. However, its computed total cost is above the event budget limit, so none of the options is currently within budget. Keep Gramercy Hall as a quote-dependent alternative only if written pricing and terms can be confirmed; Lavender Loft is least suitable financially.",
+      "warnings": [
+        "Synthetic venue fixtures, not live web research.",
+        "Availability of each venue on 2027-04-17 is not stated.",
+        "The venue data is synthetic; confirm details directly before relying on it.",
+        "Hudson Garden Room's written per-head catering terms, entrance route, and other accessibility provisions are unknown.",
+        "Gramercy Hall's actual quote and catering terms are unknown; its model cost is hypothetical.",
+        "The attendee count, ticket sales, sponsorships, donations, and other revenue are not confirmed."
+      ]
+    },
+    {
+      "step": "finance",
+      "from": "orchestrator",
+      "to": "financial_analysis",
+      "status": "needs_revision",
+      "summary": "The dinner is not affordable as planned under the model because its projected cost exceeds the maximum planning budget. The model also finds that the base case falls short of the fundraising target. The other listed financial checks pass, including covering projected costs in both the base and conservative scenarios and fitting upfront cash within the available planning budget.",
+      "warnings": [
+        "The projected cost exceeds the maximum planning budget, which is why the model verdict is not_affordable_as_planned.",
+        "Base-case net is below the fundraising target.",
+        "Several cost lines are placeholders, so actual costs may differ from the projection.",
+        "Pledged sponsorship is not guaranteed, and projected event revenue is not available for deposits when they are due.",
+        "The cash record assumes restricted gifts on record are unspent; restricted funds are not treated as spendable.",
+        "Base-case net $18,792 vs target $40,000."
+      ]
+    },
+    {
+      "step": "evaluate",
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "status": "needs_revision",
+      "summary": "2 conflict(s) to resolve: finance; history.",
+      "warnings": []
+    },
+    {
+      "step": "venues_revision_1",
+      "from": "orchestrator",
+      "to": "fundraising_events",
+      "status": "completed",
+      "summary": "Recommend Chelsea Atelier: reception as the only option in the data that meets the $18,000 total-cost limit and avoids a catering minimum. Its published total cost is $15,400, capacity is 200, and conservative net is $16,337. The reception format is standing-only, so confirm that it can support a welcoming, accessible evening and the recovery-speaker program before committing.",
+      "warnings": [
+        "Availability on 2027-04-17 is unconfirmed.",
+        "Chelsea Atelier's accessibility, seating possibilities, and relevant accommodation details are unknown.",
+        "Caterer pricing, menu, dietary options, guest-count deadline, volunteer meal arrangements, and payment terms are unconfirmed.",
+        "Many budget inputs are placeholders; confirm actual costs before making a commitment.",
+        "Sponsorship and donation proceeds are not confirmed.",
+        "Chelsea Atelier is standing-receptions-only; this may not suit every guest, and seating arrangements need to be discussed with the venue."
+      ]
+    },
+    {
+      "step": "finance_revision_1",
+      "from": "orchestrator",
+      "to": "financial_analysis",
+      "status": "completed",
+      "summary": "The event is assessed as affordable with conditions, not authorized. The projected cost is $15,400, within the stated $18,000 planning limit, and the upfront cash requirement of $4,250 is within the $9,938 available above the reserve floor. The base case projects a net of $31,442.5, below the $40,000 fundraising target.",
+      "warnings": [
+        "The base-case net is below the $40,000 fundraising target, and the affordability checks flag this as a failed target check.",
+        "Several cost categories are placeholders rather than quoted costs, so actual costs may differ from the projection.",
+        "The projected revenues depend on attendance, sponsorship, and donations assumptions and are not guaranteed.",
+        "The recorded financial position shows a net of -$1,870 over the stated five-month period; recorded income should not be treated as cash on hand.",
+        "Base-case net $31,442 vs target $40,000."
+      ]
+    },
+    {
+      "step": "evaluate_revision_1",
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "status": "completed",
+      "summary": "No conflicts: the plan fits the budget and respects the lessons checked.",
+      "warnings": []
+    },
+    {
+      "step": "outreach",
+      "from": "orchestrator",
+      "to": "partnerships_outreach",
+      "status": "completed",
+      "summary": "Prepared one unsent venue inquiry using the supplied venue details and event plan.",
+      "warnings": []
+    },
+    {
+      "step": "recommendation",
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "status": "completed",
+      "summary": "Advance the Chelsea Atelier reception plan for due diligence, but do not commit yet",
+      "warnings": []
+    },
+    {
+      "step": "verification",
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "status": "completed",
+      "summary": "All checks passed.",
+      "warnings": []
+    }
+  ],
+  "tool_calls": [
+    {
+      "agent": "orchestrator",
+      "tool": "read_event_plan",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Manhattan Spring Gala (sample plan)"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "read_historical_events",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "3 past events"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "read_board_reflections",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "7 reflections"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "compare_event_outcomes",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "compared 3 events (sufficient data)"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "get_historical_lessons",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "2 saved lessons"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #96 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #97 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #98 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #99 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #100 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #101 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #102 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #103 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #104 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #105 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #106 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #107 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #108 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #109 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #110 saved"
+    },
+    {
+      "agent": "event_intelligence",
+      "tool": "save_historical_lesson",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "lesson #111 saved"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "search_venues",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "4 synthetic venues fit 150 guests (seated_dinner, reception)"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Lavender Loft (synthetic) seated_dinner: cost $41,800, upfront $18,350"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Hudson Garden Room (synthetic) seated_dinner: cost $28,050, upfront $7,700"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Gramercy Hall (synthetic) seated_dinner: cost $35,200, upfront $15,350"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "save_venue_candidate",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "venue candidate #2"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "save_venue_candidate",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "venue candidate #7"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "save_venue_candidate",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "venue candidate #8"
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "read_financial_records",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "[sensitive: contents not logged] 22 ledger rows "
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "compute_financial_position",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "5 months; available planning budget: $9,938"
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "recompute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "recomputed: cost $28,050"
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "check_event_affordability",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "verdict not_affordable_as_planned; 1 conflict(s)"
+    },
+    {
+      "agent": "orchestrator",
+      "tool": "evaluate_constraints",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "2 conflict(s): finance, history"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Lavender Loft (synthetic) seated_dinner: cost $41,800, upfront $18,350"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Lavender Loft (synthetic) reception: cost $41,800, upfront $18,350"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Hudson Garden Room (synthetic) seated_dinner: cost $28,050, upfront $7,700"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Chelsea Atelier (synthetic) reception: cost $15,400, upfront $4,250"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Gramercy Hall (synthetic) seated_dinner: cost $35,200, upfront $15,350"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "compute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "Gramercy Hall (synthetic) reception: cost $24,475, upfront $10,475"
+    },
+    {
+      "agent": "fundraising_events",
+      "tool": "save_venue_candidate",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "venue candidate #1"
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "read_financial_records",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "[sensitive: contents not logged] 22 ledger rows "
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "compute_financial_position",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "5 months; available planning budget: $9,938"
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "recompute_event_model",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "recomputed: cost $15,400"
+    },
+    {
+      "agent": "financial_analysis",
+      "tool": "check_event_affordability",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "verdict affordable_with_conditions; 0 conflict(s)"
+    },
+    {
+      "agent": "orchestrator",
+      "tool": "evaluate_constraints",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "no conflicts"
+    },
+    {
+      "agent": "partnerships_outreach",
+      "tool": "create_outreach_draft",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "draft #46 (unsent)"
+    },
+    {
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "denial": null,
+      "ok": true,
+      "summary": "9/9 checks passed"
+    }
+  ],
+  "model_calls": [
+    {
+      "agent": "event_intelligence",
+      "task": "Synthesize lessons from events and reflections",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 4105,
+      "cached": 0,
+      "out": 3090,
+      "cost_usd": 0.00205805,
+      "error": null
+    },
+    {
+      "agent": "fundraising_events",
+      "task": "Shortlist venues and fundraising strategy",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 4348,
+      "cached": 0,
+      "out": 2166,
+      "cost_usd": 0.00162642,
+      "error": null
+    },
+    {
+      "agent": "financial_analysis",
+      "task": "Explain computed financial results",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 1810,
+      "cached": 0,
+      "out": 570,
+      "cost_usd": 0.00051117,
+      "error": null
+    },
+    {
+      "agent": "fundraising_events",
+      "task": "Shortlist venues and fundraising strategy",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 6232,
+      "cached": 1062,
+      "out": 1631,
+      "cost_usd": 0.00147229,
+      "error": null
+    },
+    {
+      "agent": "financial_analysis",
+      "task": "Explain computed financial results",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 1753,
+      "cached": 0,
+      "out": 773,
+      "cost_usd": 0.00060555,
+      "error": null
+    },
+    {
+      "agent": "partnerships_outreach",
+      "task": "Short venue-inquiry drafts",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 1016,
+      "cached": 0,
+      "out": 581,
+      "cost_usd": 0.0003921,
+      "error": null
+    },
+    {
+      "agent": "orchestrator",
+      "task": "Board-ready recommendation with trade-offs",
+      "model": "gpt-6-luna",
+      "status": "ok",
+      "in": 7972,
+      "cached": 0,
+      "out": 2547,
+      "cost_usd": 0.00226993,
+      "error": null
+    }
+  ],
+  "drafts": [
+    {
+      "type": "venue_inquiry",
+      "status": "draft",
+      "recipient": "Chelsea Atelier (synthetic)",
+      "subject": "Venue inquiry: Manhattan Spring Gala on April 17, 2027"
+    }
+  ],
+  "security_events": [
+    {
+      "category": "budget_limit",
+      "severity": "info",
+      "agent": "event_intelligence",
+      "defense": "Budget-aware routing",
+      "detail": "event_intelligence: the intermediate tier could not fit the remaining budget, so gpt-6-luna was used instead. w) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0690 for gpt-6.1-sol exceeds the remaining budget of $0.0200; stepped down to Luna (fast). Estimated $0.0034 fits the remaining budget of $0.0200."
+    },
+    {
+      "category": "budget_limit",
+      "severity": "info",
+      "agent": "fundraising_events",
+      "defense": "Budget-aware routing",
+      "detail": "fundraising_events: the intermediate tier could not fit the remaining budget, so gpt-6-luna was used instead. m) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0711 for gpt-6.1-sol exceeds the remaining budget of $0.0179; stepped down to Luna (fast). Estimated $0.0036 fits the remaining budget of $0.0179."
+    },
+    {
+      "category": "budget_limit",
+      "severity": "info",
+      "agent": "financial_analysis",
+      "defense": "Budget-aware routing",
+      "detail": "financial_analysis: the intermediate tier could not fit the remaining budget, so gpt-6-luna was used instead. h) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0680 for gpt-6.1-sol exceeds the remaining budget of $0.0163; stepped down to Luna (fast). Estimated $0.0034 fits the remaining budget of $0.0163."
+    },
+    {
+      "category": "budget_limit",
+      "severity": "info",
+      "agent": "fundraising_events",
+      "defense": "Budget-aware routing",
+      "detail": "fundraising_events: the intermediate tier could not fit the remaining budget, so gpt-6-luna was used instead. m) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0753 for gpt-6.1-sol exceeds the remaining budget of $0.0158; stepped down to Luna (fast). Estimated $0.0038 fits the remaining budget of $0.0158."
+    },
+    {
+      "category": "budget_limit",
+      "severity": "info",
+      "agent": "financial_analysis",
+      "defense": "Budget-aware routing",
+      "detail": "financial_analysis: the intermediate tier could not fit the remaining budget, so gpt-6-luna was used instead. h) under Auto \u2192 Sol (intermediate) tier. Estimated $0.0680 for gpt-6.1-sol exceeds the remaining budget of $0.0143; stepped down to Luna (fast). Estimated $0.0034 fits the remaining budget of $0.0143."
+    },
+    {
+      "category": "budget_limit",
+      "severity": "info",
+      "agent": "orchestrator",
+      "defense": "Budget-aware routing",
+      "detail": "orchestrator: the advanced tier could not fit the remaining budget, so gpt-6-luna was used instead. 133; stepped down to Sol (intermediate). Estimated $0.0616 for gpt-6.1-sol exceeds the remaining budget of $0.0133; stepped down to Luna (fast). Estimated $0.0031 fits the remaining budget of $0.0133."
+    }
+  ],
+  "recommendation": {
+    "headline": "Advance the Chelsea Atelier reception plan for due diligence, but do not commit yet",
+    "recommendation": "Recommend continuing planning around Chelsea Atelier: reception for the 150-person Manhattan gala, subject to confirming venue availability, accessibility and seating, and replacing placeholder costs with written quotes. The projection is within the stated planning limit, and the upfront cash requirement fits the available planning budget above the reserve floor. However, this is not board authorization: the projections are synthetic, sponsorship and donations are uncertain, and the base-case net falls short of the fundraising target.",
+    "rationale": [
+      "Chelsea Atelier: reception is the only option in the venue review identified as meeting the $18,000 total-cost limit. Its projected cost is $15,400, with upfront cash of $4,250; the available planning budget above the reserve floor is $9,938.",
+      "The venue has capacity for the planned attendance, allows outside caterers, has no food-and-beverage minimum, and lists a small stage for the speaker. Those features support the proposed reception and short recovery-speaker program.",
+      "The base-case projected net is $31,442.5, below the $40,000 fundraising target. The conservative case projects a net of $16,337, but neither scenario is a guarantee.",
+      "The suggested plan uses the board-set $250 standard ticket price, a short recovery-speaker talk, and a brief direct-giving moment with payment collection available at the event. Sponsorship and donation proceeds should be treated as uncertain until confirmed."
+    ],
+    "options": [
+      {
+        "title": "Chelsea Atelier: reception \u2014 recommended for due diligence",
+        "option_id": "chelsea-atelier:reception",
+        "summary": "Projected cost $15,400; upfront cash $4,250. Within the $18,000 planning limit and capacity accommodates the planned attendance. Standing-only format, late load-in, accessibility, seating, and actual catering costs require confirmation."
+      },
+      {
+        "title": "Gramercy Hall: reception",
+        "option_id": "gramercy-hall:reception",
+        "summary": "Projected cost $24,475, above the $18,000 planning limit; not affordable as planned under the stated constraint."
+      },
+      {
+        "title": "Hudson Garden Room: seated dinner",
+        "option_id": "hudson-garden-room:seated_dinner",
+        "summary": "Projected cost $28,050, above the $18,000 planning limit. The seated format may better suit guests who cannot stand, but the option is not affordable as planned and its catering-minimum exposure was identified as a concern."
+      },
+      {
+        "title": "Defer the gala pending stronger cost and revenue information",
+        "option_id": null,
+        "summary": "Avoid a commitment while the board obtains written quotes, confirms access requirements, and considers whether to proceed despite the projected shortfall against the fundraising target."
+      }
+    ],
+    "risks": [
+      "The venue is standing-receptions-only. Seating possibilities and accessibility features, including the entrance route, are unknown; this could burden or exclude some guests.",
+      "Catering pricing, dietary accommodations, volunteer meals, guest-count deadline, and payment terms are unconfirmed. Obtain written terms and set a firm guest-count lock before making commitments.",
+      "Several expense categories are placeholders, and the projected costs may differ from actual costs. Availability on the proposed date is also unconfirmed.",
+      "Projected sponsorship and donation proceeds are not confirmed. The base case does not meet the fundraising target, and the conservative case assumes no sponsorship.",
+      "The finance review reports a recorded net of -$1,870 over the stated period; recorded income is not cash on hand. Preserve the reserve floor and use only unrestricted funds for any deposits."
+    ],
+    "decisions_for_board": [
+      "Decide whether to advance the Chelsea Atelier reception plan to quote and accessibility review, without treating that decision as authorization to book or spend.",
+      "Set the event's primary purpose: fundraising, awareness, or both, and decide whether the projected base-case shortfall against the fundraising target is acceptable.",
+      "Decide whether proceeding should depend on confirmed sponsorship or other fundraising commitments.",
+      "Confirm whether the $250 standard ticket price and any supported or lower-price tickets are appropriate, including the funding source and affordability of supported access.",
+      "Approve any eventual spending or commitment only after reviewing actual quotes, deposit requirements, accessibility information, and the revised financial projection."
+    ],
+    "next_steps": [
+      "Request written venue information on availability, deposit requirements, accessibility, step-free access, accessible restrooms, seating, and whether a quieter conversation area is possible.",
+      "Obtain written catering and other vendor quotes, including per-head terms, dietary options, volunteer meals, and guest-count deadlines; replace placeholders and enter known costs.",
+      "Recheck the financial projection using confirmed costs and only confirmed, unrestricted funds; do not rely on event revenue arriving after deposits are due or count pledged sponsorship as available money.",
+      "If the board continues planning, shape the program around a short recovery-speaker talk and a brief direct-giving moment, with payment collection available at the event.",
+      "Plan clear volunteer roles, sufficient volunteer food and appreciation, sponsor recognition, and a low-pressure opportunity for conversation or resource sharing.",
+      "Test registration before launch and confirm seating and other arrangements before finalizing event materials."
+    ],
+    "lessons_applied": [
+      "Butterfly Benefit Dinner (sample): retain a strong personal recovery speaker, while keeping the program concise in response to reports that some guests found the program too long.",
+      "Butterfly Benefit Dinner (sample): the entrance steps created an access barrier; confirm the entrance route and accommodations before selecting a venue.",
+      "Butterfly Benefit Dinner (sample): catering costs changed with the guest count, and some pledges were reportedly not collected; obtain written food terms, set a firm guest-count deadline, and make payment collection available at the event.",
+      "Spring Awareness Walk (sample): the resource fair was described as supporting one-on-one conversation; consider a welcoming, low-pressure opportunity for connection or resource sharing.",
+      "Spring Awareness Walk (sample): volunteers were thanked by name, but food ran short; plan volunteer recognition and sufficient food.",
+      "Campus Wellness Panel (sample): attendees reportedly wanted a quieter place to talk afterward; ask whether a quieter conversation area is possible."
+    ],
+    "caveats": [
+      "Research used labeled synthetic fixtures, not live web research. Venue names, prices, and partners are not real.",
+      "Past events, books, and donations are the synthetic demo dataset.",
+      "Every draft is unsent. A person must review it and send it outside SAM SPACE if the board agrees.",
+      "The event records and financial ledger are synthetic demo data. They are limited planning signals, not reliable predictions for a New York gala.",
+      "The venue is identified as synthetic, its availability is unconfirmed, and its accessibility and seating details are unknown.",
+      "Cost estimates include placeholder assumptions; vendor quotes, deposit terms, and actual revenue are not confirmed.",
+      "The proposed date and venue inquiry are planning details only. Nothing has been sent, booked, reserved, paid, or approved."
+    ],
+    "mission_impact_considerations": [
+      "A recovery-speaker talk and fundraising appeal can connect the event to mental health awareness and eating-disorder recovery work; the board should decide whether fundraising, awareness, or both should lead.",
+      "A reception may support informal connection and resource sharing, but a standing-only format may limit participation. Confirm seating and accessibility before proceeding, and consider supported access only with an identified funding source.",
+      "Recognize volunteers and sponsors, and acknowledge participants without making recognition dependent on donation size.",
+      "The projected cost is within the planning limit, but that does not establish that the expense is authorized or preferable to alternative uses of unrestricted funds. The projected base-case net remains below the fundraising target."
+    ]
+  },
+  "verification": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "Every dollar figure traces to a calculation",
+        "passed": true,
+        "detail": "All figures match computed results."
+      },
+      {
+        "name": "No claims that anything was sent, booked, or paid",
+        "passed": true,
+        "detail": "None found."
+      },
+      {
+        "name": "No unconfirmed availability claims",
+        "passed": true,
+        "detail": "None found."
+      },
+      {
+        "name": "No links that are not in the sources",
+        "passed": true,
+        "detail": "Every link appears in the run's sources."
+      },
+      {
+        "name": "Options come from the Events agent's research",
+        "passed": true,
+        "detail": "All options are real candidates."
+      },
+      {
+        "name": "All outreach drafts remain unsent",
+        "passed": true,
+        "detail": "1 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+      },
+      {
+        "name": "Every lesson cites real events or reflections",
+        "passed": true,
+        "detail": "10 lesson(s) checked against the database."
+      },
+      {
+        "name": "Sources are labeled by provenance",
+        "passed": true,
+        "detail": "11 internal, 4 synthetic"
+      },
+      {
+        "name": "Specialists finished",
+        "passed": true,
+        "detail": "All specialists completed."
+      }
+    ],
+    "unsupported_figures": []
+  },
+  "checks": [
+    {
+      "name": "The workflow stopped at its budget",
+      "passed": false,
+      "observed": "status completed: None"
+    },
+    {
+      "name": "Spending never exceeded the limit",
+      "passed": true,
+      "observed": "$0.00894 of $0.02 over 7 paid call(s)"
+    },
+    {
+      "name": "No recommendation was fabricated after the stop",
+      "passed": false,
+      "observed": "a recommendation exists"
+    },
+    {
+      "name": "A budget security event was recorded",
+      "passed": true,
+      "observed": "6 budget event(s)"
+    }
+  ]
+}

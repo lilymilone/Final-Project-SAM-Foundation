@@ -263,6 +263,34 @@ The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_w
   - outcome improvement, shown as **not yet measured**
 - **Community impact** (from records only): participants, volunteers, repeat participants, partnerships formed, funds directed to programs, feedback, reported belonging, documented outcomes, and community insights. Each is labeled **Actual observation**, **Self-reported**, **AI interpretation**, or **Estimate**. Blank fields show as “Not recorded”, never zero.
 
+## Safety, privacy, and spending controls
+
+The walkthrough, with the threat model, test results, and screenshots, is in **[docs/safety_workflow.md](docs/safety_workflow.md)**. Evidence is in [docs/evidence/safety/](docs/evidence/safety/).
+
+- **One safety layer per workflow** (`backend/app/safety/manager.py`). It decides, in code:
+  - which tools an agent may call (an allow-list) and which data each tool may read (a data scope, a second wall)
+  - whether a model call fits the budget (the worst-case cost is reserved first, under a lock)
+  - whether another handoff, revision, tool call, search, or page fetch is allowed
+  - what happens to outside text (instruction-like sentences are removed; the rest reaches a model only as labeled data)
+
+  Every refusal is written to a redacted security log.
+- **Nothing leaves in the foundation's name.** No send, contact, schedule, publish, book, or pay tool exists, and the registry refuses those names. Drafts have no "sent" status.
+- **Limits the chair controls:** spend per workflow and per day, model calls, handoffs, tool calls, retries, output tokens, duration, revisions, searches, and page fetches.
+  - Each is clamped to a hard cap that only a code change can move.
+  - A run that hits a limit stops and keeps its finished steps, labeled partial. It never shows a fake success, and no butterflies play.
+- **Course key:** `PORTKEY_API_KEY` only ever reaches `gpt-6-luna`. The router and the provider wrapper each enforce this.
+- **Safe web retrieval:**
+  - http(s) on standard ports only, with no credentials in links
+  - every resolved address must be public, and the checked IP is pinned (DNS rebinding)
+  - redirects are re-checked; size, type, and time limits apply
+  - links carrying donor names or emails are never fetched
+- **Uploads** are parsed as text only, in a separate, resource-limited process that has no keys.
+- **Analytics & Safety → Safety** shows the active limits (editable by the chair), the permission matrix, mocked and live test results, blocked actions, budget events, injection outcomes, data-access warnings, and known risks. All of it comes from logged records.
+- **Run the tests yourself:**
+  - `python -m backend.scripts.run_safety_suite`: the adversarial suite, scripted model, free
+  - `python -m backend.scripts.run_live_safety`: real models, about $1
+  - `python -m backend.scripts.export_safety_evidence`: writes the evidence files
+
 ## What's in this stage
 
 - **Board sign-in.**
@@ -333,11 +361,13 @@ backend/app/
   ai/         ModelRouter, providers (OpenAI / Portkey), LLMService, budgets, pricing
   agents/     agent interfaces, the seven agent specs, orchestration plans
   tools/      tool registry with allow-lists and prohibited-action blocking
-  safety/     oversight policy, untrusted-content wrapper, injection screening, query scrubbing
+  safety/     SafetyManager (permissions, limits, budgets, events), limits, redaction, injection screening,
+              query and link scrubbing, the prompt-injection scenario, known risks
   services/   deterministic finance, event model, mission fit, opportunity selection, impact, packets
   mission.py  FoundationMission: philosophy, criteria, fit rubric (shared by the agents)
   compliance.py  cited compliance sources (IRS, NY, CT) with jurisdiction and check date
-backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py, export_trace.py
+backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py, export_trace.py,
+                  run_safety_suite.py, run_live_safety.py, export_safety_evidence.py
 frontend/     React + TypeScript + Vite + Tailwind (built output in frontend/dist)
 tests/        pytest suite
 assets/       Smile Like Sab logo (smile-like-sab.png)

@@ -1,0 +1,299 @@
+{
+  "agents": [
+    {
+      "agent": "orchestrator",
+      "name": "Orchestrator",
+      "purpose": "Reads the board's request, picks the specialists, manages dependencies and revisions, and writes the board-ready recommendation.",
+      "data_scopes": [
+        "event_plan",
+        "general",
+        "opportunities"
+      ],
+      "tools": [
+        {
+          "tool": "read_event_plan",
+          "data_scope": "event_plan"
+        },
+        {
+          "tool": "create_event_plan",
+          "data_scope": "event_plan"
+        },
+        {
+          "tool": "evaluate_constraints",
+          "data_scope": "general"
+        },
+        {
+          "tool": "read_opportunities",
+          "data_scope": "opportunities"
+        },
+        {
+          "tool": "select_opportunities",
+          "data_scope": "opportunities"
+        },
+        {
+          "tool": "verify_final_result",
+          "data_scope": "general"
+        }
+      ]
+    },
+    {
+      "agent": "mission_discovery",
+      "name": "Mission Discovery",
+      "purpose": "Researches mental-health and eating-disorder organizations, research initiatives, awareness events, and partnership opportunities, and explains their fit with the foundation's mission and philosophy from sources.",
+      "data_scopes": [
+        "general",
+        "public_web",
+        "research_findings"
+      ],
+      "tools": [
+        {
+          "tool": "search_web",
+          "data_scope": "public_web"
+        },
+        {
+          "tool": "fetch_source",
+          "data_scope": "public_web"
+        },
+        {
+          "tool": "classify_mission_alignment",
+          "data_scope": "general"
+        },
+        {
+          "tool": "save_research_finding",
+          "data_scope": "research_findings"
+        }
+      ]
+    },
+    {
+      "agent": "fundraising_events",
+      "name": "Fundraising & Events",
+      "purpose": "Researches venues (Manhattan first), builds fundraising strategy, and prices every option with the budget calculator.",
+      "data_scopes": [
+        "board_lessons",
+        "event_plan",
+        "general",
+        "public_web"
+      ],
+      "tools": [
+        {
+          "tool": "search_venues",
+          "data_scope": "public_web"
+        },
+        {
+          "tool": "fetch_source",
+          "data_scope": "public_web"
+        },
+        {
+          "tool": "save_venue_candidate",
+          "data_scope": "event_plan"
+        },
+        {
+          "tool": "compute_event_model",
+          "data_scope": "event_plan"
+        },
+        {
+          "tool": "get_historical_lessons",
+          "data_scope": "board_lessons"
+        },
+        {
+          "tool": "read_event_plan",
+          "data_scope": "event_plan"
+        }
+      ]
+    },
+    {
+      "agent": "financial_analysis",
+      "name": "Financial Analysis",
+      "purpose": "Analyzes recorded financial data, organizes figures from uploaded statements for board review, and checks event affordability. All arithmetic is deterministic Python.",
+      "data_scopes": [
+        "event_plan",
+        "financial_records",
+        "general"
+      ],
+      "tools": [
+        {
+          "tool": "read_financial_records",
+          "data_scope": "financial_records"
+        },
+        {
+          "tool": "compute_financial_position",
+          "data_scope": "financial_records"
+        },
+        {
+          "tool": "compute_financial_analysis",
+          "data_scope": "financial_records"
+        },
+        {
+          "tool": "recompute_event_model",
+          "data_scope": "general"
+        },
+        {
+          "tool": "check_event_affordability",
+          "data_scope": "general"
+        },
+        {
+          "tool": "read_document_text",
+          "data_scope": "financial_records"
+        },
+        {
+          "tool": "save_extracted_figures",
+          "data_scope": "financial_records"
+        }
+      ]
+    },
+    {
+      "agent": "donations_compliance",
+      "name": "Donations & Compliance",
+      "purpose": "Organizes contribution records by campaign, flags incomplete records and acknowledgments, drafts thank-you letters, and lists reporting questions for an accountant or attorney, citing sources. It never sends, files, or changes records.",
+      "data_scopes": [
+        "donor_records",
+        "general"
+      ],
+      "tools": [
+        {
+          "tool": "read_donations",
+          "data_scope": "donor_records"
+        },
+        {
+          "tool": "flag_donation_issues",
+          "data_scope": "donor_records"
+        },
+        {
+          "tool": "read_compliance_items",
+          "data_scope": "donor_records"
+        },
+        {
+          "tool": "create_acknowledgment_drafts",
+          "data_scope": "donor_records"
+        },
+        {
+          "tool": "create_contribution_acknowledgments",
+          "data_scope": "donor_records"
+        }
+      ]
+    },
+    {
+      "agent": "partnerships_outreach",
+      "name": "Partnerships & Outreach",
+      "purpose": "Writes personalized, unsent outreach drafts from verified research. It can only read findings and save drafts: it has no web, mail, messaging, or scheduling tool.",
+      "data_scopes": [
+        "drafts",
+        "general",
+        "research_findings"
+      ],
+      "tools": [
+        {
+          "tool": "read_saved_findings",
+          "data_scope": "research_findings"
+        },
+        {
+          "tool": "create_outreach_draft",
+          "data_scope": "drafts"
+        }
+      ]
+    },
+    {
+      "agent": "event_intelligence",
+      "name": "Event Intelligence & Learning",
+      "purpose": "Compares past events and board reflections, surfaces disagreements, and shares evidence-backed lessons with the Events agent.",
+      "data_scopes": [
+        "board_lessons",
+        "board_records",
+        "general"
+      ],
+      "tools": [
+        {
+          "tool": "read_historical_events",
+          "data_scope": "board_records"
+        },
+        {
+          "tool": "read_board_reflections",
+          "data_scope": "board_records"
+        },
+        {
+          "tool": "compare_event_outcomes",
+          "data_scope": "board_records"
+        },
+        {
+          "tool": "get_historical_lessons",
+          "data_scope": "board_lessons"
+        },
+        {
+          "tool": "save_historical_lesson",
+          "data_scope": "board_records"
+        }
+      ]
+    }
+  ],
+  "prohibited": [
+    {
+      "name": "send_email",
+      "label": "Send outreach emails"
+    },
+    {
+      "name": "send_donor_communication",
+      "label": "Send donor communications"
+    },
+    {
+      "name": "make_payment",
+      "label": "Make payments"
+    },
+    {
+      "name": "book_venue",
+      "label": "Book venues"
+    },
+    {
+      "name": "purchase_service",
+      "label": "Purchase services"
+    },
+    {
+      "name": "submit_tax_document",
+      "label": "Submit tax documents"
+    },
+    {
+      "name": "publish_announcement",
+      "label": "Publish announcements"
+    },
+    {
+      "name": "commit_foundation_resources",
+      "label": "Commit foundation resources"
+    },
+    {
+      "name": "approve_donation",
+      "label": "Approve charitable donations"
+    },
+    {
+      "name": "disclose_private_data",
+      "label": "Disclose private financial or donor information"
+    },
+    {
+      "name": "send_message",
+      "label": "Send messages on the foundation's behalf"
+    },
+    {
+      "name": "send_direct_message",
+      "label": "Send direct messages"
+    },
+    {
+      "name": "contact_organization",
+      "label": "Contact outside organizations"
+    },
+    {
+      "name": "schedule_outreach",
+      "label": "Schedule outreach"
+    },
+    {
+      "name": "publish_message",
+      "label": "Publish messages"
+    },
+    {
+      "name": "make_commitment",
+      "label": "Make commitments on the foundation's behalf"
+    }
+  ],
+  "notes": [
+    "Only the Orchestrator delegates, in code; no agent has a delegation tool.",
+    "No agent has a shell, filesystem, general database, mail, payment, booking, or publishing tool.",
+    "A tool outside an agent's allow-list or data scope is refused in code and logged as a security event."
+  ]
+}

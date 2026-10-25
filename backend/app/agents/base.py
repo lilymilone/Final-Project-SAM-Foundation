@@ -60,7 +60,7 @@ class BaseAgent(ABC):
             handoff_id=ctx.current_handoff_id,
         )
         if isinstance(result, ToolResult) and not result.ok and result.error and "Budget" in result.error:
-            raise BudgetExceededError(result.error)
+            raise BudgetExceededError(result.error.removeprefix("BudgetExceededError: "))
         return result
 
     def think(
@@ -78,21 +78,29 @@ class BaseAgent(ABC):
         if ctx.llm is None:
             raise AgentError("No AI provider is configured (add OPENAI_API_KEY to .env).")
         text = json.dumps(compact(payload), default=str, ensure_ascii=False)
+        full_instructions = f"{GROUND_RULES}\n\nYour role: {self.spec.display_name}. {self.spec.purpose}\n\n{instructions}"
+        limits = ctx.safety.limits if ctx.safety else None
+        if limits:
+            max_output_tokens = min(max_output_tokens, limits.max_output_tokens)
+        # Route on the worst case (all input at ~3 characters per token, the full output allowance), the same bound the
+        # budget reserves, so an expensive tier that cannot fit steps down instead of failing mid-workflow.
         sized = TaskProfile(
             profile.agent, profile.task, profile.complexity, profile.reasoning, profile.risk,
-            expected_input_tokens=max(profile.expected_input_tokens, len(text) // 3 + 600),
-            expected_output_tokens=profile.expected_output_tokens,
+            expected_input_tokens=max(profile.expected_input_tokens, (len(text) + len(full_instructions)) // 3 + 200),
+            expected_output_tokens=max_output_tokens,
         )
         decision = ctx.router.select(sized, ctx.strategy, budget_remaining_usd=ctx.budget.remaining_usd)
+        if ctx.safety:
+            ctx.safety.on_routing(self.name.value, decision)
         parsed, _attempts = ctx.llm.structured(
             decision=decision,
-            instructions=f"{GROUND_RULES}\n\nYour role: {self.spec.display_name}. {self.spec.purpose}\n\n{instructions}",
+            instructions=full_instructions,
             input=f"DATA (JSON):\n{text}",
             output_model=output_model,
             budget=ctx.budget,
             run_id=ctx.run_id,
             handoff_id=ctx.current_handoff_id,
-            max_retries=2,
+            max_retries=min(2, limits.max_retries) if limits else 2,
             reasoning_effort=reasoning,
             max_output_tokens=max_output_tokens,
         )

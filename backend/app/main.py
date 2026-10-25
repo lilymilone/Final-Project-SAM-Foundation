@@ -7,8 +7,10 @@ to change the frontend.
 
 from __future__ import annotations
 
+import logging
 import threading
 
+from fastapi.exceptions import RequestValidationError
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,7 +19,7 @@ from .ai.availability import ModelAvailability, check_availability, describe_tie
 from .ai.providers import AIProvider
 from .api.deps import CSRF_HEADER
 from .agents.manager import WorkflowManager
-from .api.routes import activity, auth, donations as donation_routes, experiments, finance as finance_routes, legacy, mission, outputs, records, runs, settings as settings_routes, studio, system, workspace
+from .api.routes import activity, auth, donations as donation_routes, safety as safety_routes, experiments, finance as finance_routes, legacy, mission, outputs, records, runs, settings as settings_routes, studio, system, workspace
 from .core.config import Settings, get_settings
 from .core.env import REPO_ROOT
 from .core.ratelimit import LoginLimiter
@@ -57,6 +59,19 @@ def create_app(settings: Settings | None = None, *, verify_models: bool | None =
 
         threading.Thread(target=_verify, name="verify-models", daemon=True).start()
 
+    @app.exception_handler(RequestValidationError)
+    async def _validation_error(request: Request, exc: RequestValidationError):
+        # Safe error messages: say which field and why, never echo the submitted values back.
+        errors = [{"loc": list(e.get("loc", [])), "msg": str(e.get("msg", "Invalid value"))[:200], "type": e.get("type")} for e in exc.errors()]
+        return JSONResponse(status_code=422, content={"detail": errors})
+
+    @app.exception_handler(Exception)
+    async def _unexpected_error(request: Request, exc: Exception):
+        from .safety.redact import configured_secrets, redact
+        logging.getLogger("sam_space").error("Unhandled error on %s: %s", request.url.path,
+                                             redact(f"{type(exc).__name__}: {exc}", configured_secrets()))
+        return JSONResponse(status_code=500, content={"detail": "Something went wrong on our side. Please try again."})
+
     @app.middleware("http")
     async def guard(request: Request, call_next):
         # Same-origin check for state-changing API calls: browsers will not send
@@ -74,7 +89,7 @@ def create_app(settings: Settings | None = None, *, verify_models: bool | None =
         return response
 
     for module in (system, auth, workspace, records, activity, settings_routes, runs, outputs, legacy, experiments, studio, mission,
-                   finance_routes, donation_routes):
+                   finance_routes, donation_routes, safety_routes):
         app.include_router(module.router)
 
     @app.api_route("/api/{rest:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"], include_in_schema=False)

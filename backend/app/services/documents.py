@@ -253,3 +253,32 @@ def read_pdf(data: bytes) -> dict:
         notes.append(f"Pages {', '.join(map(str, image_only[:10]))} have no readable text (possibly scanned). "
                      "Check those pages by hand.")
     return {"pages": pages, "page_count": page_count, "status": "readable", "notes": notes}
+
+
+PARSE_TIMEOUT_S = 20.0
+
+
+def read_pdf_isolated(data: bytes, timeout: float = PARSE_TIMEOUT_S) -> dict:
+    """Parse a PDF in a separate, short-lived process with a time limit and a minimal environment (no API keys), so a
+    hostile or pathological file cannot hang the server, exhaust its memory, or reach any secret. Text only."""
+    import json
+    import os
+    import subprocess
+    import sys
+    from ..core.env import REPO_ROOT
+    env = {"PATH": os.environ.get("PATH", ""), "PYTHONPATH": str(REPO_ROOT), "PYTHONIOENCODING": "utf-8"}
+    if os.name == "nt":
+        env["SYSTEMROOT"] = os.environ.get("SYSTEMROOT", "")
+    try:
+        proc = subprocess.run([sys.executable, "-m", "backend.app.services.pdf_worker"], input=data, capture_output=True,
+                              timeout=timeout, cwd=str(REPO_ROOT), env=env)
+    except subprocess.TimeoutExpired:
+        return {"pages": [], "page_count": None, "status": "unreadable",
+                "notes": [f"Reading this PDF took longer than {int(timeout)} seconds, so it was stopped. Enter the figures manually."]}
+    except OSError:
+        return read_pdf(data)  # isolation unavailable: still text-only, never executed
+    try:
+        return json.loads(proc.stdout.decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return {"pages": [], "page_count": None, "status": "unreadable",
+                "notes": ["The PDF could not be read safely (the parser stopped). Enter the figures manually or upload a CSV."]}

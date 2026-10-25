@@ -13,42 +13,76 @@ from __future__ import annotations
 
 import ipaddress
 import socket
+import time
 from datetime import datetime, timezone
 from html.parser import HTMLParser
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, urlunparse
 
 import httpx
 
 MAX_BYTES = 600_000
-TIMEOUT_S = 8.0
+TIMEOUT = httpx.Timeout(connect=5.0, read=8.0, write=5.0, pool=5.0)
+DEADLINE_S = 20.0  # total across redirects
 MAX_REDIRECTS = 3
 USER_AGENT = "SAM-SPACE-research/0.2 (nonprofit board tool; educational project)"
 DATE_META = ("article:published_time", "og:published_time", "datepublished", "date", "dc.date", "pubdate", "last-modified")
+ALLOWED_CONTENT_TYPES = ("text/html", "application/xhtml+xml", "text/plain")
+BLOCKED_HOSTNAMES = ("localhost", "metadata.google.internal", "metadata", "instance-data", "169.254.169.254")
 
 
 class UnsafeURLError(ValueError):
     pass
 
 
-def _host_is_public(host: str) -> bool:
+def _resolve(host: str) -> list[str]:
     try:
         infos = socket.getaddrinfo(host, None)
     except socket.gaierror:
-        return False
-    return bool(infos) and all(ipaddress.ip_address(info[4][0]).is_global for info in infos)
+        return []
+    return sorted({info[4][0] for info in infos})
 
 
-def check_url(url: str) -> str:
+def _host_is_public(host: str) -> bool:
+    addresses = _resolve(host)
+    return bool(addresses) and all(ipaddress.ip_address(a).is_global for a in addresses)
+
+
+def resolve_public(url: str) -> tuple:
+    """Validate a URL and resolve its host ONCE. Every address must be public (no loopback, private, link-local,
+    cloud-metadata, CGNAT, or reserved ranges). Returns (parsed_url, pinned_ip)."""
     parsed = urlparse(url)
     if parsed.scheme not in ("http", "https"):
         raise UnsafeURLError(f"Only http(s) links can be fetched, not {parsed.scheme or 'none'}.")
-    if not parsed.hostname:
+    host = (parsed.hostname or "").rstrip(".").lower()
+    if not host:
         raise UnsafeURLError("Link has no host.")
+    if parsed.username or parsed.password:
+        raise UnsafeURLError("Links with embedded credentials are not fetched.")
     if parsed.port not in (None, 80, 443):
         raise UnsafeURLError("Only standard web ports are allowed.")
-    if not _host_is_public(parsed.hostname):
-        raise UnsafeURLError(f"{parsed.hostname} is not a public internet host.")
+    if host in BLOCKED_HOSTNAMES or host.endswith((".internal", ".local", ".localhost")):
+        raise UnsafeURLError(f"{host} is not a public internet host.")
+    addresses = _resolve(host)
+    if not addresses or not all(ipaddress.ip_address(a).is_global for a in addresses):
+        raise UnsafeURLError(f"{host} is not a public internet host.")
+    return parsed, addresses[0]
+
+
+def check_url(url: str) -> str:
+    resolve_public(url)
     return url
+
+
+def _pinned(parsed, ip: str) -> tuple[str, dict, dict]:
+    """Connect to the IP we validated (so a second DNS answer cannot redirect us: DNS-rebinding protection),
+    while sending the real Host header and TLS server name so certificates are still checked for the real host."""
+    host = parsed.hostname
+    ip_literal = f"[{ip}]" if ":" in ip else ip
+    port = f":{parsed.port}" if parsed.port else ""
+    target = urlunparse((parsed.scheme, f"{ip_literal}{port}", parsed.path or "/", parsed.params, parsed.query, ""))
+    headers = {"Host": host + port}
+    extensions = {"sni_hostname": host} if parsed.scheme == "https" else {}
+    return target, headers, extensions
 
 
 class _MetaParser(HTMLParser):
@@ -97,21 +131,27 @@ def fetch_page(url: str, *, client: httpx.Client | None = None) -> dict:
     """Fetch one page safely. Returns metadata, never raises for HTTP errors."""
     retrieved = datetime.now(timezone.utc).isoformat(timespec="seconds")
     own_client = client is None
-    client = client or httpx.Client(timeout=TIMEOUT_S, follow_redirects=False, headers={"User-Agent": USER_AGENT})
+    client = client or httpx.Client(timeout=TIMEOUT, follow_redirects=False, headers={"User-Agent": USER_AGENT})
+    deadline = time.monotonic() + DEADLINE_S
     try:
-        current = check_url(url)
+        current = url
         for _ in range(MAX_REDIRECTS + 1):
-            with client.stream("GET", current) as resp:
+            parsed, ip = resolve_public(current)  # re-validated on every hop
+            target, headers, extensions = _pinned(parsed, ip)
+            with client.stream("GET", target, headers=headers, extensions=extensions) as resp:
                 if resp.is_redirect and resp.headers.get("location"):
-                    current = check_url(urljoin(current, resp.headers["location"]))
+                    current = urljoin(current, resp.headers["location"])
                     continue
+                status = resp.status_code
+                content_type = resp.headers.get("content-type", "").split(";")[0].strip().lower()
+                if 200 <= status < 400 and content_type and content_type not in ALLOWED_CONTENT_TYPES:
+                    return {"url": url, "final_url": current, "ok": False, "http_status": status, "retrieved_at": retrieved,
+                            "error": f"Unsupported content type ({content_type}); only web pages are read.", "blocked": True, "text": ""}
                 body = b""
                 for chunk in resp.iter_bytes():
                     body += chunk
-                    if len(body) >= MAX_BYTES:
+                    if len(body) >= MAX_BYTES or time.monotonic() > deadline:
                         break
-                status = resp.status_code
-                content_type = resp.headers.get("content-type", "")
                 break
         else:
             return {"url": url, "final_url": current, "ok": False, "http_status": None, "error": "Too many redirects.",
@@ -123,7 +163,11 @@ def fetch_page(url: str, *, client: httpx.Client | None = None) -> dict:
     finally:
         if own_client:
             client.close()
+    return parse_page(url, current, status, content_type, body, retrieved)
 
+
+def parse_page(url: str, final_url: str, status: int, content_type: str, body: bytes, retrieved: str) -> dict:
+    """Parse fetched bytes (text only; nothing is executed). Shared by live fetches and server-side fixtures."""
     meta = {"title": "", "description": None, "published": None}
     text = ""
     if "html" in content_type or body.lstrip()[:15].lower().startswith((b"<!doctype", b"<html")):
@@ -136,10 +180,12 @@ def fetch_page(url: str, *, client: httpx.Client | None = None) -> dict:
         meta["description"] = parser.meta.get("description") or parser.meta.get("og:description")
         meta["published"] = next((parser.meta[k] for k in DATE_META if k in parser.meta), None) or parser.time
         text = " ".join(parser.text_parts)
+    elif content_type == "text/plain":
+        text = body.decode("utf-8", errors="ignore")[:_MetaParser.MAX_TEXT]
     ok = 200 <= status < 400
     return {
         "url": url,
-        "final_url": current,
+        "final_url": final_url,
         "ok": ok,
         "http_status": status,
         "title": meta["title"][:300],

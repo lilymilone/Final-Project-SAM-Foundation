@@ -18,7 +18,7 @@ from ...db.models import AgentRun, EventPlan, FinancialRecord
 from ...services import calculators as calc
 from ...services import event_model as em
 from ...services.packet import build_packet, packet_markdown
-from ..deps import CurrentUser, audit, current_user, get_db, require
+from ..deps import CurrentUser, audit, current_user, get_db, require, is_foreign_or_missing
 from .workspace import EventPlanIn, plan_out
 
 router = APIRouter(prefix="/api", tags=["studio"])
@@ -49,7 +49,7 @@ def _clean_assumptions(values: dict) -> dict:
 
 def _get_plan(db: Session, cu: CurrentUser, plan_id: int) -> EventPlan:
     plan = db.get(EventPlan, plan_id)
-    if plan is None or plan.organization_id != cu.organization_id:
+    if is_foreign_or_missing(db, cu, plan, "plan"):
         raise HTTPException(404, "Event plan not found.")
     return plan
 

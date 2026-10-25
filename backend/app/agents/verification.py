@@ -34,6 +34,22 @@ ACTION_CLAIMS = re.compile(
 NEGATION = re.compile(r"\b(?:no|not|nothing|never|none|neither|nor|without|n't|cannot|can't|won't)\b|n't\b", re.IGNORECASE)
 
 
+AVAILABILITY_CLAIMS = re.compile(r"\b(?:is|are|remains?)\s+(?:confirmed\s+)?available\b|\bavailability\s+(?:is|has been|was)\s+confirmed\b"
+                                 r"|\bhas (?:confirmed )?availability\b|\bconfirmed (?:the )?(?:date|availability)\b", re.IGNORECASE)
+URLS = re.compile(r"https?://[^\s)\]>\"']+", re.IGNORECASE)
+
+
+def availability_claims(text: str) -> list[str]:
+    """Claims that a venue or date is available. Availability is never known from public pages."""
+    found = []
+    for m in AVAILABILITY_CLAIMS.finditer(text):
+        start = max(0, text.rfind(".", 0, m.start()) + 1, m.start() - 60)
+        if not NEGATION.search(text[start:m.start()]) and not re.search(r"\b(un|not yet|to be|if|whether|ask|confirm)\b",
+                                                                        text[start:m.end() + 20], re.IGNORECASE):
+            found.append(m.group(0))
+    return found
+
+
 def action_claims(text: str) -> list[str]:
     """Claims that something was sent/booked/paid, ignoring negated ones
     ("nothing has been sent", "no venue has been booked")."""
@@ -154,6 +170,13 @@ def verify_workflow(db, run_id: int, results: dict[str, AgentResult], rec: Board
         claims = action_claims(text)
         add("No claims that anything was sent, booked, or paid", not claims,
             "None found." if not claims else "Found: " + "; ".join(f"“{c}”" for c in claims[:3]))
+        avail = availability_claims(text)
+        add("No unconfirmed availability claims", not avail,
+            "None found." if not avail else "Claims availability without confirmation: " + "; ".join(f"“{c}”" for c in avail[:3]))
+        known_urls = {(src.url or "").rstrip("/").lower() for r in results.values() for src in r.sources if src.url}
+        invented = [u for u in URLS.findall(text) if u.rstrip("/.,").lower() not in known_urls]
+        add("No links that are not in the sources", not invented,
+            "Every link appears in the run's sources." if not invented else "Links not found in any source: " + ", ".join(invented[:3]))
         named = [o.option_id for o in rec.options if o.option_id]
         if named or known_option_ids:
             bad = [o for o in named if o not in known_option_ids]

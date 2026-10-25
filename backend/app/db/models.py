@@ -597,6 +597,39 @@ class SafetyTestResult(Base):
     passed: Mapped[bool] = mapped_column(Boolean, default=False)
     run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
     ran_at: Mapped[datetime] = _created()
+    mode: Mapped[str | None] = mapped_column(String(20), nullable=True)  # mocked | live
+    defense: Mapped[str | None] = mapped_column(Text, nullable=True)
+    test_id: Mapped[str | None] = mapped_column(String(200), nullable=True)
+
+
+class SecurityEvent(Base):
+    """A safety control acting: a blocked tool, a denied record, an injection screened out, a budget or loop
+    stop, a restricted model, a rejected upload or URL, a rejected output. Details are redacted before saving."""
+
+    __tablename__ = "security_events"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int | None] = mapped_column(ForeignKey("organizations.id"), nullable=True, index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    category: Mapped[str] = mapped_column(String(40), index=True)
+    severity: Mapped[str] = mapped_column(String(10), default="medium")  # info | low | medium | high
+    agent: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    defense: Mapped[str] = mapped_column(String(80), default="")
+    detail: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[datetime] = _created()
+
+
+class SafetySetting(Base):
+    """A board-configured safety limit. Always clamped to the hard caps in safety/limits.py."""
+
+    __tablename__ = "safety_settings"
+    __table_args__ = (UniqueConstraint("organization_id", "key", name="uq_safety_setting"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    key: Mapped[str] = mapped_column(String(40))
+    value: Mapped[float] = mapped_column(Float)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    updated_at: Mapped[datetime] = _created()
 
 
 class AuditLog(Base):

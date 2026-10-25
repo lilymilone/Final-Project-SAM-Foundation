@@ -72,6 +72,13 @@ INJECTION_PATTERNS = [
     r"(?:send|email|e-mail|forward|export|reveal|share|upload|post)\b.{0,60}\b(?:donor|password|api[ -]?key|credential|financial|bank|records|ledger|board member)",
     r"<<<\s*end[_ ]untrusted",
     r"\bact as\b.{0,40}\b(?:administrator|admin|developer|system)\b",
+    r"\b(?:important\s+)?system\s+(?:update|override|message|notice|instruction)s?\b",
+    r"\b(?:disable|turn off|bypass|override|remove|ignore)\b.{0,40}\b(?:safety|limits?|guard(?:rail)?s?|filters?|restrictions?|checks?)\b",
+    r"\breveal\b.{0,40}\b(?:prompt|instructions|system message|credentials?|secrets?|keys?)\b",
+    r"\b(?:use|switch to|select)\b.{0,30}\b(?:different|another|gpt-6-astra|astra|gpt-6\.1-sol)\b.{0,20}\bmodel\b",
+    r"\b(?:invent|make up|fabricate)\b.{0,30}\b(?:prices?|figures?|numbers?|capacity|sources?)\b",
+    r"\bwithout (?:any )?limits\b",
+    r"\b(?:include|put|insert|add|paste|copy)\b.{0,40}\b(?:in|into) your (?:final )?(?:response|answer|reply|output)\b",
 ]
 _INJECTION_RE = [_re.compile(p, _re.IGNORECASE) for p in INJECTION_PATTERNS]
 
@@ -114,6 +121,24 @@ _EMAIL = _re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 _PHONE = _re.compile(r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}")
 _MONEY = _re.compile(r"\$\s?\d[\d,]*(?:\.\d+)?\s*(?:k|K|m|M)?")
 _DIGITS = _re.compile(r"\b\d{6,}\b")
+
+
+def private_details_in_url(url: str, private_terms: list[str] | None = None) -> list[str]:
+    """Categories of private detail a link would carry out of SAM SPACE (never the values). Checked before any page
+    is fetched: email addresses anywhere in the link, and donor or board names in its query string or fragment.
+    (Names in a path are not checked, because organizations' own pages legitimately carry their names.)"""
+    from urllib.parse import unquote_plus, urlparse
+    parsed = urlparse(url)
+    tail = unquote_plus(f"{parsed.query} {parsed.fragment}")
+    found: list[str] = []
+    if _EMAIL.search(unquote_plus(parsed.path) + " " + tail):
+        found.append("email address")
+    words = _re.sub(r"[-_+=&/.]", " ", tail)
+    for term in {t.strip() for t in (private_terms or []) if t and len(t.strip()) >= 4}:
+        if _re.search(r"\b" + r"\s+".join(_re.escape(w) for w in term.split()) + r"\b", words, _re.IGNORECASE):
+            found.append("private name")
+            break
+    return found
 
 
 def scrub_outbound_query(query: str, private_terms: list[str] | None = None) -> tuple[str, list[str]]:
