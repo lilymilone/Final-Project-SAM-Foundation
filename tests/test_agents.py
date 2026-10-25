@@ -13,7 +13,7 @@ from backend.app.agents.outputs import BoardRecommendation, RequestAnalysis
 from backend.app.agents.registry import AGENT_SPECS, AGENTS_BY_NAME
 from backend.app.agents.verification import verify_workflow
 from backend.app.ai.providers import AIProvider
-from backend.app.core.permissions import Permission, permissions_for
+from backend.app.core.permissions import permissions_for
 from backend.app.db.models import AgentHandoff, AgentRun, AgentToolCall, EventPlan, HistoricalLesson, ModelUsage, OutreachDraft
 from backend.app.safety.policy import PROHIBITED_ACTIONS
 from backend.app.services import calculators as calc
@@ -160,7 +160,7 @@ def test_gala_collaboration_and_revision(client):
     assert constraints["max_total_usd"] == 18000
     assert constraints["max_upfront_usd"] == pytest.approx(9938.0)
     assert constraints["min_contingency_pct"] == 0.15  # historical feedback from Event Intelligence
-    assert "lock_guest_count" in constraints
+    assert "history:lock_guest_count" in constraints
 
     second = steps[keys.index("finance_revision_1")]
     assert second.status == "completed" and second.result["data"]["verdict"] == "affordable"
@@ -194,7 +194,7 @@ def test_outputs_saved_lessons_with_evidence_and_unsent_drafts(client):
 def test_invented_lesson_evidence_is_dropped(client):
     def fake_lessons(p, kw):
         out = ScriptedClient().handlers["LessonsOutput"](p, kw)
-        out["lessons"].append({"kind": "recommendation", "text": "Invented lesson.", "evidence_event_ids": [999],
+        out["lessons"].append({"kind": "recommendation", "theme": "invented", "text": "Invented lesson.", "evidence_event_ids": [999],
                                "evidence_reflection_ids": [888], "confidence": "high"})
         return out
 

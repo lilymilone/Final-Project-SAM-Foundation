@@ -84,7 +84,7 @@ When both keys are present, `AI_PROVIDER=auto` (the default) uses OpenAI. Set `A
 python run.py --port 8001     # if port 8000 is busy
 python run.py --reset-db      # delete the local database and re-create the demo workspace
 python run.py --open          # open the browser automatically
-python -m pytest              # run the automated tests (112 tests, no API key or network needed)
+python -m pytest              # run the automated tests (132 tests, no API key or network needed)
 ```
 
 ---
@@ -137,6 +137,10 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
 | Gala plan, synthetic research, 1 revision | 8 | 15,088 / 6,868 | $0.1967 | 112 s |
 | Mission discovery, live web search (1 search), 6 links verified | 4 | 16,030 / 2,371 | $0.0130 | 31 s |
 | Donations review | 3 | 2,255 / 1,254 | $0.0009 | 15 s |
+| Analyze one past event (Event Intelligence) | 2 | 5,007 / 3,267 | $0.0319 | 43 s |
+| Same analysis again (2,867 input tokens cached) | 2 | 4,838 / 2,733 | $0.0215 | 36 s |
+| Gala plan without history (A/B run A) | 6 | 10,326 / 4,848 | $0.1375 | 90 s |
+| Gala plan with history (A/B run B) | 7 | 16,718 / 7,828 | $0.2115 | 134 s |
 
 **Safeguards** (all tested):
 
@@ -155,6 +159,30 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
   - Finance and donor details are redacted in the run log for roles without access.
 - **Web fetching:** blocks private and loopback addresses and follows at most 3 redirects. Pages are capped at 600 KB with an 8-second timeout.
 - **Logging:** activity logs show objectives, results, tools, tokens, and cost, never prompts or keys.
+
+## Our Legacy (institutional memory)
+
+The full walkthrough, with screenshots and measured runs, is in **[docs/legacy_workflow.md](docs/legacy_workflow.md)**.
+
+- **Event gallery and records:**
+  - date, type, venue, attendance, goal, funds raised, expenses, **calculated net**, sponsors, summary, notes
+  - photos, checked by file contents and served privately
+  - edits are audited; events are never deleted
+- **Structured reflections:** seven post-event questions per board member, with name and date. They are **append-only**, and AI never edits them.
+- **"Analyze Event & Generate Lessons":**
+  - Event Intelligence finds themes, strengths and weaknesses, and disagreements (in the members' own words).
+  - It compares outcomes in code when the data allows.
+  - Every lesson links to its event and reflection records.
+  - The board can mark lessons reviewed, adopted, or dismissed.
+- **Planning integration:**
+  - The Orchestrator asks Event Intelligence before the Events agent plans.
+  - History constraints are advisory and namespaced. Hard limits come only from Financial Analysis.
+- **Evidence test:** the same gala plan is run without and with history, and code compares the results and API usage. Experiment #1 is in [docs/evidence/history_ab_experiment_1.md](docs/evidence/history_ab_experiment_1.md).
+- **Impact metrics:**
+  - events, reflections, contributors, lessons
+  - recurring issues (2+ records)
+  - reviewed and adopted counts
+  - outcome improvement, shown as **not yet measured**
 
 ## What's in this stage
 

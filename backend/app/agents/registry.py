@@ -87,7 +87,7 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
     AgentSpec(
         A.EVENT_INTELLIGENCE, "Event Intelligence & Learning",
         "Compares past events and board reflections, surfaces disagreements, and shares evidence-backed lessons with the Events agent.",
-        ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "save_historical_lesson"),
+        ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "get_historical_lessons", "save_historical_lesson"),
         (LESSONS,),
     ),
 )

@@ -22,7 +22,8 @@ from ..db.models import OutreachDraft
 from .contracts import AgentResult
 from .outputs import BoardRecommendation
 
-MONEY = re.compile(r"\$\s?(\d[\d,]*(?:\.\d+)?)\s*(k|K|thousand|million|M)?(?![\w.])")
+# A trailing sentence period is fine ("…total of $14,850.00."); a decimal continuation is not.
+MONEY = re.compile(r"\$\s?(\d[\d,]*(?:\.\d+)?)\s*(k|K|thousand|million|M)?(?!\w)(?!\.\d)")
 ACTION_CLAIMS = re.compile(
     r"\b(?:we|i|sam space|the agents?)\s+(?:have\s+|has\s+)?(?:already\s+)?(?:sent|emailed|booked|reserved|paid|submitted|signed|approved)\b"
     r"|\b(?:has|have)\s+been\s+(?:sent|booked|paid|submitted|approved|reserved)\b",

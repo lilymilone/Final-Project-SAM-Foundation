@@ -326,8 +326,15 @@ class HistoricalEvent(Base):
     event_type: Mapped[str] = mapped_column(String(60), default="fundraiser")
     attendance: Mapped[int | None] = mapped_column(Integer, nullable=True)
     funds_raised_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
-    total_cost_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    total_cost_usd: Mapped[float | None] = mapped_column(Float, nullable=True)  # expenses
     summary: Mapped[str] = mapped_column(Text, default="")
+    venue: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    fundraising_goal_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sponsorship_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sponsorship_info: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = _created()
 
@@ -341,6 +348,9 @@ class EventPhoto(Base):
     historical_event_id: Mapped[int] = mapped_column(ForeignKey("historical_events.id", ondelete="CASCADE"), index=True)
     file_path: Mapped[str] = mapped_column(String(500))
     caption: Mapped[str] = mapped_column(String(300), default="")
+    content_type: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    is_demo: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     uploaded_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = _created()
 
@@ -353,9 +363,14 @@ class BoardReflection(Base):
     historical_event_id: Mapped[int] = mapped_column(ForeignKey("historical_events.id", ondelete="CASCADE"), index=True)
     user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     author_label: Mapped[str] = mapped_column(String(120), default="")
-    went_well: Mapped[str] = mapped_column(Text, default="")
-    challenges: Mapped[str] = mapped_column(Text, default="")
-    do_differently: Mapped[str] = mapped_column(Text, default="")
+    # The seven post-event questions. Stored exactly as written and never edited by AI.
+    went_well: Mapped[str] = mapped_column(Text, default="")  # 1. What worked particularly well?
+    challenges: Mapped[str] = mapped_column(Text, default="")  # 2. What did not go as planned?
+    unexpected_costs: Mapped[str | None] = mapped_column(Text, nullable=True)  # 3. Unexpected expenses or complications?
+    attendee_feedback: Mapped[str | None] = mapped_column(Text, nullable=True)  # 4. What feedback did attendees provide?
+    should_repeat: Mapped[str | None] = mapped_column(Text, nullable=True)  # 5. What should we repeat?
+    do_differently: Mapped[str] = mapped_column(Text, default="")  # 6. What should we change?
+    advice: Mapped[str | None] = mapped_column(Text, nullable=True)  # 7. Advice for the next planning board
     rating: Mapped[int | None] = mapped_column(Integer, nullable=True)  # 1-5
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = _created()
@@ -371,12 +386,37 @@ class HistoricalLesson(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
     run_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
     lesson: Mapped[str] = mapped_column(Text)
-    kind: Mapped[str | None] = mapped_column(String(30), nullable=True)  # what_worked|recurring_problem|recommendation|disagreement
+    kind: Mapped[str | None] = mapped_column(String(30), nullable=True)  # what_worked|recurring_problem|recommendation
+    theme: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    scope: Mapped[str | None] = mapped_column(String(160), nullable=True)  # "event:3" or "planning:..." (newer analyses supersede)
+    focus_event_id: Mapped[int | None] = mapped_column(ForeignKey("historical_events.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # new|reviewed|adopted|dismissed|superseded
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     based_on_demo_data: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     evidence: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
     confidence: Mapped[str] = mapped_column(String(10), default="medium")
     applies_to: Mapped[str] = mapped_column(String(120), default="")
     created_at: Mapped[datetime] = _created()
+
+
+class Experiment(Base):
+    """A controlled comparison, e.g. the same plan run without and with historical lessons."""
+
+    __tablename__ = "experiments"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    kind: Mapped[str] = mapped_column(String(40))  # history_ab
+    request_text: Mapped[str] = mapped_column(Text)
+    research_mode: Mapped[str] = mapped_column(String(20), default="synthetic")
+    run_a_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    run_b_id: Mapped[int | None] = mapped_column(ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="queued")
+    result: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = _created()
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 # --- Safety + audit -----------------------------------------------------------

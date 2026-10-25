@@ -1,0 +1,422 @@
+{
+  "id": 1,
+  "kind": "history_ab",
+  "request": "Plan a 150-person Manhattan fundraising gala and check whether we can afford it.",
+  "research_mode": "synthetic",
+  "run_a_id": 6,
+  "run_b_id": 7,
+  "status": "completed",
+  "error": null,
+  "created_at": "2026-10-25T00:18:44.330275",
+  "finished_at": "2026-10-25T00:22:28.524156",
+  "comparison": {
+    "summary_of_changes": [
+      "Final venue unchanged: Chelsea Atelier (synthetic) (reception).",
+      "Contingency changed from 10% to 22%, moving the projected total from $14,850 to $16,470.",
+      "With history, Event Intelligence gave the Events agent 7 evidence-backed constraint(s).",
+      "Extra cost of consulting history: $+0.0740 (+1 model calls)."
+    ],
+    "numbers": {
+      "Projected total (USD)": {
+        "without_history": 14850.0,
+        "with_history": 16470.0,
+        "delta": 1620.0
+      },
+      "Upfront cash (USD)": {
+        "without_history": 6150.0,
+        "with_history": 6150.0,
+        "delta": 0.0
+      },
+      "Contingency": {
+        "without_history": 0.1,
+        "with_history": 0.22,
+        "delta": 0.12
+      },
+      "Revision rounds": {
+        "without_history": 1,
+        "with_history": 1,
+        "delta": 0
+      },
+      "Historical constraints given to Events": {
+        "without_history": 0,
+        "with_history": 7,
+        "delta": 7
+      },
+      "Lessons applied in the recommendation": {
+        "without_history": 1,
+        "with_history": 4,
+        "delta": 3
+      },
+      "Model calls": {
+        "without_history": 6,
+        "with_history": 7,
+        "delta": 1
+      },
+      "Input tokens": {
+        "without_history": 10326,
+        "with_history": 16718,
+        "delta": 6392
+      },
+      "Output tokens": {
+        "without_history": 4848,
+        "with_history": 7828,
+        "delta": 2980
+      },
+      "Cost (USD)": {
+        "without_history": 0.137472,
+        "with_history": 0.211469,
+        "delta": 0.073997
+      },
+      "Duration (s)": {
+        "without_history": 89.9,
+        "with_history": 134.3,
+        "delta": 44.4
+      }
+    },
+    "history_constraints": [
+      "Before signing, compare venue food-and-beverage minimums, per-head pricing, and vendor guarantees in writing, including how minimums interact with guest-count changes.",
+      "Use the proposed two-week guest-count lock as a planning requirement to confirm with vendors, and establish a seating-change process before the final deadline.",
+      "Create a distinct volunteer-food budget rather than assuming attendee catering covers volunteers.",
+      "Have a workable table-payment process ready before the gala rather than making post-event pledge follow-up the default.",
+      "Test registration before launch, lock sponsor logos a month before printing, and set auction-item delivery deadlines to reduce rush work.",
+      "Bring the catering-risk and donor-experience positions to the board before approving the meal format; the reflections do not establish agreement to cut food or retain it at any cost.",
+      "Past reflections report overruns; plan at least 22% contingency."
+    ],
+    "lessons_applied": {
+      "only_without": [
+        "No historical event lessons or named past-event records were supplied, so no event-specific lessons can be attributed. The current Manhattan Spring Gala revision applies Finance\u2019s feedback by replacing the unaffordable seated dinner with a reception."
+      ],
+      "only_with": [
+        "Butterfly Benefit Dinner (sample): preserve the mission-centered recovery speaker while drafting a shorter formal program. The under-an-hour recommendation reflects individual advice, not documented board consensus.",
+        "Butterfly Benefit Dinner (sample): obtain written catering prices and clarify venue minimums and guest-count changes; food costs were a significant source of exposure.",
+        "Butterfly Benefit Dinner (sample): collect donations during the event and distinguish pledges from received payments rather than relying on later follow-up.",
+        "Butterfly Benefit Dinner (sample): establish earlier operational deadlines and explicitly resolve the tension between meal quality and cost control."
+      ],
+      "in_both": []
+    },
+    "fundraising_strategy": {
+      "only_without": [
+        "Offer standard reception tickets, supporter tickets with an additional charitable contribution, and sponsor-hosted guest packages. Set prices only after the board reviews the revenue assumptions and confirms event costs; no ticket prices are supplied.",
+        "Seek event and program sponsorships tied to mental health awareness, eating disorder research, and community. Draft clear recognition benefits without promising unconfirmed venue permissions.",
+        "Include a brief mission-focused speaker segment followed by an optional paddle raise or direct appeal. Keep messaging supportive and avoid pressure to disclose personal experiences.",
+        "Seek in-kind catering, AV, decor, and printing support. Treat these as prospective contributions, not reductions to the computed budget, until confirmed.",
+        "Use the supplied low revenue scenario of $34,815.9, base scenario of $49,737, and high scenario of $57,197.55 for sensitivity planning, not as guaranteed income. Track committed sponsorships, ticket receipts, and pledges separately."
+      ],
+      "only_with": [
+        "Agree whether fundraising or awareness is the primary objective before committing the budget; track collected payments separately from pledges.",
+        "Develop standard, supporter, and sponsored-access ticket tiers. Set prices only after the board reviews the final catering scope, donor experience, and confirmed budget; ticket prices are not supplied.",
+        "Seek sponsorship for mission programming, production, and volunteer meals. Request written commitments and distinguish cash sponsorship from in-kind support.",
+        "Invite in-kind catering and production support, subject to vendor acceptance and written scope. Do not reduce the supplied budget for unconfirmed donations.",
+        "Pair a brief mission-centered speaker segment with a focused paddle raise. Draft the formal program under an hour, recognizing that this is advisory rather than documented board consensus.",
+        "Provide a tested, staffed payment table suitable for a reception so guests can complete donations during the event rather than relying on later pledge follow-up.",
+        "Use the supplied low $34,815.9, base $49,737.0, and high $57,197.55 revenue scenarios only as planning sensitivities, not guaranteed collections. Their historical basis is a sample dinner and may not transfer to a reception."
+      ],
+      "in_both": []
+    },
+    "logistics_notes": {
+      "only_without": [
+        "Confirm availability for 2027-04-17 and obtain written venue and catering quotes before recommending any commitment.",
+        "Plan for 150 attendees and confirm whether venue capacity includes staff, volunteers, speakers, and vendors.",
+        "Agree on a guest-count lock and catering guarantee deadline; neither is supplied.",
+        "Verify step-free access, accessible restrooms, seating for guests who cannot stand comfortably, dietary accommodations, and space for a quieter area.",
+        "Build a run of show around arrival, passed bites, a speaker, the fundraising appeal, and closing. Confirm AV needs and sound restrictions.",
+        "Assign volunteers to check-in, accessibility support, speaker coordination, and donation tracking. Confirm deposit and payment deadlines against available cash."
+      ],
+      "only_with": [
+        "Confirm availability for 2027-04-17 before proceeding. Obtain written venue and catering quotes covering minimums, per-head pricing, vendor guarantees, guest-count changes, and all included services.",
+        "Have the budget calculator verify at least 22% contingency and a distinct volunteer-food budget before any commitment. The supplied totals do not establish these requirements.",
+        "Confirm the proposed two-week guest-count lock with vendors and establish a controlled process for late attendance, seating, and layout changes.",
+        "Test registration before launch, lock sponsor logos a month before printing, and set auction-item delivery deadlines if an auction is included.",
+        "Assign volunteer leads for dedicated check-in, donor payment assistance, speaker support, and vendor coordination.",
+        "Verify step-free access, accessible restrooms, seating and rest opportunities during the reception, dietary accommodations, and speaker audibility.",
+        "Present the reception format and catering-risk trade-offs to the board before seeking a format decision."
+      ],
+      "in_both": []
+    },
+    "risks": {
+      "only_without": [
+        "Upfront affordability does not establish that later invoices can be paid before ticket and sponsorship receipts arrive.",
+        "Fundraising projections rely on one listed comparable past event whose relevance to this reception is uncertain. Ticket prices, donor demand, and committed sponsorships are unknown.",
+        "The supplied revenue scenarios are not clearly defined as gross receipts or another fundraising measure. Finance\u2019s positive-net assessment should remain conditional until that definition is confirmed.",
+        "Recorded expenses exceeded income over the supplied five-month period, reinforcing the need to protect reserves.",
+        "Accessibility, seating, dietary accommodations, catering, AV, cancellation terms, and payment schedules are unverified."
+      ],
+      "only_with": [
+        "Recent recorded expenses exceed income, and the financial history covers only five months. Protect the $11,562 reserve floor rather than relying on anticipated donations.",
+        "Positive projected proceeds do not establish that receipts will arrive before vendor payments are due. The full cash-flow schedule is unknown.",
+        "The catering-overrun scenario exceeds the supplied budget cap. Volunteer meals, guarantees, service scope, and late guest-count changes require explicit written terms.",
+        "Accessibility, reception seating, dietary accommodations, speaker participation, payment readiness, and registration testing remain unverified.",
+        "Some sample board reflections treat the plated meal as essential to donor experience; the reception format should not be presented as a consensus choice."
+      ],
+      "in_both": []
+    },
+    "decisions_for_board": {
+      "only_without": [
+        "Whether to advance the reception format and proposed date to quote validation and detailed planning.",
+        "What sponsorship or other committed funding must be secured before deposits may be authorized.",
+        "Whether to approve a final budget and payment schedule after quotes and revenue assumptions are validated.",
+        "What ticket tiers, sponsor benefits, and fundraising approach to adopt after reviewing costs and revenue assumptions."
+      ],
+      "only_with": [
+        "Choose whether fundraising or awareness is the primary objective and define success using collected payments separately from pledges.",
+        "Decide whether to proceed conditionally with the reception format or defer venue selection.",
+        "Confirm the budget cap, reserve protection, and requirement for board review before accepting any overrun.",
+        "Set the sponsorship or other committed-funding requirement before authorizing deposits.",
+        "Determine ticket tiers and prices after reviewing the verified budget and donor experience; prices are not yet supplied."
+      ],
+      "in_both": []
+    },
+    "next_steps": {
+      "only_without": [
+        "Validate venue availability, supplier quotes, accessibility, seating, catering, dietary provisions, AV, contract terms, and payment deadlines.",
+        "Validate the production placeholder and default 10% contingency; have Finance recheck affordability against actual quotes.",
+        "Build a full cash-flow schedule that preserves the reserve floor and distinguishes committed sponsorships, collected ticket receipts, and pledges.",
+        "Develop standard reception tickets, supporter tickets, and sponsor-hosted packages without setting unsupported prices. Plan a brief mission-focused speaker segment and an optional fundraising appeal, without pressure to disclose personal experiences.",
+        "Seek prospective in-kind support, but do not reduce the budget until contributions are confirmed.",
+        "Have authorized volunteers review and personalize the unsent venue and sponsor outreach drafts before deciding whether to send them."
+      ],
+      "only_with": [
+        "Obtain current written venue and catering quotes, availability, payment dates, cancellation terms, minimums, volunteer-meal costs, and guest-count change rules.",
+        "Have Finance recheck the complete quoted budget, preserve the modeled contingency, and map confirmed receipts against every payment deadline.",
+        "Draft a formal program under an hour with a recovery speaker and focused fundraising appeal; organize volunteer leads, dedicated check-in, and a tested payment table.",
+        "Set shared deadlines for materials, seating, deliveries, and guest counts; seek vendor acceptance of the proposed two-week guest-count lock.",
+        "Verify accessibility, seating, dietary provision, registration, and payment arrangements before presenting a commitment-ready plan.",
+        "Have an authorized board representative review and personalize the unsent venue and sponsor drafts after verifying recipients and links."
+      ],
+      "in_both": []
+    },
+    "headlines": {
+      "without_history": "Advance the Chelsea Atelier reception: affordable on current assumptions, subject to quote and cash-flow validation.",
+      "with_history": "Proceed with conditional planning for a 150-person Manhattan reception\u2014not a venue commitment."
+    },
+    "recommendations": {
+      "without_history": "Recommend a 150-person Manhattan Spring Gala reception at Chelsea Atelier (synthetic), proposed for April 17, 2027. The projected cost is $14,850, with $6,150 upfront. Finance reports that this option passes all four affordability checks. Advance to validation\u2014not booking or spending\u2014because supplier prices, availability, fundraising commitments, and later payment coverage remain unconfirmed.",
+      "with_history": "Chelsea Atelier\u2019s synthetic reception option is affordable in the supplied planning model: projected cost is $16,470, including $2,970 contingency, with $6,150 required upfront. Recommend developing this option for the proposed April 17, 2027 gala, subject to board acceptance of a reception rather than a seated dinner, verified quotes, operational checks, and a payment-and-receipts schedule. Actual affordability remains conditional; projected fundraising is not committed cash."
+    },
+    "runs": {
+      "without_history": {
+        "run_id": 6,
+        "status": "completed",
+        "use_history": false,
+        "duration_s": 89.9,
+        "usage": {
+          "model_calls": 6,
+          "input_tokens": 10326,
+          "cached_input_tokens": 0,
+          "output_tokens": 4848,
+          "web_search_calls": 0,
+          "cost_usd": 0.137472,
+          "by_agent": {
+            "financial_analysis": {
+              "calls": 2,
+              "cost_usd": 0.019467
+            },
+            "fundraising_events": {
+              "calls": 2,
+              "cost_usd": 0.025565
+            },
+            "orchestrator": {
+              "calls": 1,
+              "cost_usd": 0.091917
+            },
+            "partnerships_outreach": {
+              "calls": 1,
+              "cost_usd": 0.000523
+            }
+          }
+        },
+        "steps": [
+          "intake",
+          "venues",
+          "finance",
+          "venues_revision_1",
+          "finance_revision_1",
+          "outreach",
+          "recommendation",
+          "verification"
+        ],
+        "first_choice": {
+          "venue": "Hudson Garden Room (synthetic)",
+          "event_format": "seated_dinner",
+          "total_usd": 27500.0,
+          "verdict": "not_affordable_as_planned"
+        },
+        "final_choice": {
+          "venue": "Chelsea Atelier (synthetic)",
+          "event_format": "reception",
+          "total_usd": 14850.0,
+          "upfront_cash_usd": 6150.0,
+          "contingency_pct": 0.1,
+          "verdict": "affordable"
+        },
+        "revisions": 1,
+        "history_constraints": [],
+        "lessons_used": 0,
+        "headline": "Advance the Chelsea Atelier reception: affordable on current assumptions, subject to quote and cash-flow validation.",
+        "recommendation": "Recommend a 150-person Manhattan Spring Gala reception at Chelsea Atelier (synthetic), proposed for April 17, 2027. The projected cost is $14,850, with $6,150 upfront. Finance reports that this option passes all four affordability checks. Advance to validation\u2014not booking or spending\u2014because supplier prices, availability, fundraising commitments, and later payment coverage remain unconfirmed.",
+        "lessons_applied": [
+          "No historical event lessons or named past-event records were supplied, so no event-specific lessons can be attributed. The current Manhattan Spring Gala revision applies Finance\u2019s feedback by replacing the unaffordable seated dinner with a reception."
+        ],
+        "fundraising_strategy": [
+          "Offer standard reception tickets, supporter tickets with an additional charitable contribution, and sponsor-hosted guest packages. Set prices only after the board reviews the revenue assumptions and confirms event costs; no ticket prices are supplied.",
+          "Seek event and program sponsorships tied to mental health awareness, eating disorder research, and community. Draft clear recognition benefits without promising unconfirmed venue permissions.",
+          "Include a brief mission-focused speaker segment followed by an optional paddle raise or direct appeal. Keep messaging supportive and avoid pressure to disclose personal experiences.",
+          "Seek in-kind catering, AV, decor, and printing support. Treat these as prospective contributions, not reductions to the computed budget, until confirmed.",
+          "Use the supplied low revenue scenario of $34,815.9, base scenario of $49,737, and high scenario of $57,197.55 for sensitivity planning, not as guaranteed income. Track committed sponsorships, ticket receipts, and pledges separately."
+        ],
+        "logistics_notes": [
+          "Confirm availability for 2027-04-17 and obtain written venue and catering quotes before recommending any commitment.",
+          "Plan for 150 attendees and confirm whether venue capacity includes staff, volunteers, speakers, and vendors.",
+          "Agree on a guest-count lock and catering guarantee deadline; neither is supplied.",
+          "Verify step-free access, accessible restrooms, seating for guests who cannot stand comfortably, dietary accommodations, and space for a quieter area.",
+          "Build a run of show around arrival, passed bites, a speaker, the fundraising appeal, and closing. Confirm AV needs and sound restrictions.",
+          "Assign volunteers to check-in, accessibility support, speaker coordination, and donation tracking. Confirm deposit and payment deadlines against available cash."
+        ],
+        "risks": [
+          "Upfront affordability does not establish that later invoices can be paid before ticket and sponsorship receipts arrive.",
+          "Fundraising projections rely on one listed comparable past event whose relevance to this reception is uncertain. Ticket prices, donor demand, and committed sponsorships are unknown.",
+          "The supplied revenue scenarios are not clearly defined as gross receipts or another fundraising measure. Finance\u2019s positive-net assessment should remain conditional until that definition is confirmed.",
+          "Recorded expenses exceeded income over the supplied five-month period, reinforcing the need to protect reserves.",
+          "Accessibility, seating, dietary accommodations, catering, AV, cancellation terms, and payment schedules are unverified."
+        ],
+        "decisions_for_board": [
+          "Whether to advance the reception format and proposed date to quote validation and detailed planning.",
+          "What sponsorship or other committed funding must be secured before deposits may be authorized.",
+          "Whether to approve a final budget and payment schedule after quotes and revenue assumptions are validated.",
+          "What ticket tiers, sponsor benefits, and fundraising approach to adopt after reviewing costs and revenue assumptions."
+        ],
+        "next_steps": [
+          "Validate venue availability, supplier quotes, accessibility, seating, catering, dietary provisions, AV, contract terms, and payment deadlines.",
+          "Validate the production placeholder and default 10% contingency; have Finance recheck affordability against actual quotes.",
+          "Build a full cash-flow schedule that preserves the reserve floor and distinguishes committed sponsorships, collected ticket receipts, and pledges.",
+          "Develop standard reception tickets, supporter tickets, and sponsor-hosted packages without setting unsupported prices. Plan a brief mission-focused speaker segment and an optional fundraising appeal, without pressure to disclose personal experiences.",
+          "Seek prospective in-kind support, but do not reduce the budget until contributions are confirmed.",
+          "Have authorized volunteers review and personalize the unsent venue and sponsor outreach drafts before deciding whether to send them."
+        ],
+        "verification_passed": true
+      },
+      "with_history": {
+        "run_id": 7,
+        "status": "completed",
+        "use_history": true,
+        "duration_s": 134.3,
+        "usage": {
+          "model_calls": 7,
+          "input_tokens": 16718,
+          "cached_input_tokens": 1070,
+          "output_tokens": 7828,
+          "web_search_calls": 0,
+          "cost_usd": 0.211469,
+          "by_agent": {
+            "event_intelligence": {
+              "calls": 1,
+              "cost_usd": 0.026563
+            },
+            "financial_analysis": {
+              "calls": 2,
+              "cost_usd": 0.019577
+            },
+            "fundraising_events": {
+              "calls": 2,
+              "cost_usd": 0.036224
+            },
+            "orchestrator": {
+              "calls": 1,
+              "cost_usd": 0.128655
+            },
+            "partnerships_outreach": {
+              "calls": 1,
+              "cost_usd": 0.00045
+            }
+          }
+        },
+        "steps": [
+          "intake",
+          "lessons",
+          "venues",
+          "finance",
+          "venues_revision_1",
+          "finance_revision_1",
+          "outreach",
+          "recommendation",
+          "verification"
+        ],
+        "first_choice": {
+          "venue": "Hudson Garden Room (synthetic)",
+          "event_format": "seated_dinner",
+          "total_usd": 30500.0,
+          "verdict": "not_affordable_as_planned"
+        },
+        "final_choice": {
+          "venue": "Chelsea Atelier (synthetic)",
+          "event_format": "reception",
+          "total_usd": 16470.0,
+          "upfront_cash_usd": 6150.0,
+          "contingency_pct": 0.22,
+          "verdict": "affordable"
+        },
+        "revisions": 1,
+        "history_constraints": [
+          "Before signing, compare venue food-and-beverage minimums, per-head pricing, and vendor guarantees in writing, including how minimums interact with guest-count changes.",
+          "Use the proposed two-week guest-count lock as a planning requirement to confirm with vendors, and establish a seating-change process before the final deadline.",
+          "Create a distinct volunteer-food budget rather than assuming attendee catering covers volunteers.",
+          "Have a workable table-payment process ready before the gala rather than making post-event pledge follow-up the default.",
+          "Test registration before launch, lock sponsor logos a month before printing, and set auction-item delivery deadlines to reduce rush work.",
+          "Bring the catering-risk and donor-experience positions to the board before approving the meal format; the reflections do not establish agreement to cut food or retain it at any cost.",
+          "Past reflections report overruns; plan at least 22% contingency."
+        ],
+        "lessons_used": 8,
+        "headline": "Proceed with conditional planning for a 150-person Manhattan reception\u2014not a venue commitment.",
+        "recommendation": "Chelsea Atelier\u2019s synthetic reception option is affordable in the supplied planning model: projected cost is $16,470, including $2,970 contingency, with $6,150 required upfront. Recommend developing this option for the proposed April 17, 2027 gala, subject to board acceptance of a reception rather than a seated dinner, verified quotes, operational checks, and a payment-and-receipts schedule. Actual affordability remains conditional; projected fundraising is not committed cash.",
+        "lessons_applied": [
+          "Butterfly Benefit Dinner (sample): preserve the mission-centered recovery speaker while drafting a shorter formal program. The under-an-hour recommendation reflects individual advice, not documented board consensus.",
+          "Butterfly Benefit Dinner (sample): obtain written catering prices and clarify venue minimums and guest-count changes; food costs were a significant source of exposure.",
+          "Butterfly Benefit Dinner (sample): collect donations during the event and distinguish pledges from received payments rather than relying on later follow-up.",
+          "Butterfly Benefit Dinner (sample): establish earlier operational deadlines and explicitly resolve the tension between meal quality and cost control."
+        ],
+        "fundraising_strategy": [
+          "Agree whether fundraising or awareness is the primary objective before committing the budget; track collected payments separately from pledges.",
+          "Develop standard, supporter, and sponsored-access ticket tiers. Set prices only after the board reviews the final catering scope, donor experience, and confirmed budget; ticket prices are not supplied.",
+          "Seek sponsorship for mission programming, production, and volunteer meals. Request written commitments and distinguish cash sponsorship from in-kind support.",
+          "Invite in-kind catering and production support, subject to vendor acceptance and written scope. Do not reduce the supplied budget for unconfirmed donations.",
+          "Pair a brief mission-centered speaker segment with a focused paddle raise. Draft the formal program under an hour, recognizing that this is advisory rather than documented board consensus.",
+          "Provide a tested, staffed payment table suitable for a reception so guests can complete donations during the event rather than relying on later pledge follow-up.",
+          "Use the supplied low $34,815.9, base $49,737.0, and high $57,197.55 revenue scenarios only as planning sensitivities, not guaranteed collections. Their historical basis is a sample dinner and may not transfer to a reception."
+        ],
+        "logistics_notes": [
+          "Confirm availability for 2027-04-17 before proceeding. Obtain written venue and catering quotes covering minimums, per-head pricing, vendor guarantees, guest-count changes, and all included services.",
+          "Have the budget calculator verify at least 22% contingency and a distinct volunteer-food budget before any commitment. The supplied totals do not establish these requirements.",
+          "Confirm the proposed two-week guest-count lock with vendors and establish a controlled process for late attendance, seating, and layout changes.",
+          "Test registration before launch, lock sponsor logos a month before printing, and set auction-item delivery deadlines if an auction is included.",
+          "Assign volunteer leads for dedicated check-in, donor payment assistance, speaker support, and vendor coordination.",
+          "Verify step-free access, accessible restrooms, seating and rest opportunities during the reception, dietary accommodations, and speaker audibility.",
+          "Present the reception format and catering-risk trade-offs to the board before seeking a format decision."
+        ],
+        "risks": [
+          "Recent recorded expenses exceed income, and the financial history covers only five months. Protect the $11,562 reserve floor rather than relying on anticipated donations.",
+          "Positive projected proceeds do not establish that receipts will arrive before vendor payments are due. The full cash-flow schedule is unknown.",
+          "The catering-overrun scenario exceeds the supplied budget cap. Volunteer meals, guarantees, service scope, and late guest-count changes require explicit written terms.",
+          "Accessibility, reception seating, dietary accommodations, speaker participation, payment readiness, and registration testing remain unverified.",
+          "Some sample board reflections treat the plated meal as essential to donor experience; the reception format should not be presented as a consensus choice."
+        ],
+        "decisions_for_board": [
+          "Choose whether fundraising or awareness is the primary objective and define success using collected payments separately from pledges.",
+          "Decide whether to proceed conditionally with the reception format or defer venue selection.",
+          "Confirm the budget cap, reserve protection, and requirement for board review before accepting any overrun.",
+          "Set the sponsorship or other committed-funding requirement before authorizing deposits.",
+          "Determine ticket tiers and prices after reviewing the verified budget and donor experience; prices are not yet supplied."
+        ],
+        "next_steps": [
+          "Obtain current written venue and catering quotes, availability, payment dates, cancellation terms, minimums, volunteer-meal costs, and guest-count change rules.",
+          "Have Finance recheck the complete quoted budget, preserve the modeled contingency, and map confirmed receipts against every payment deadline.",
+          "Draft a formal program under an hour with a recovery speaker and focused fundraising appeal; organize volunteer leads, dedicated check-in, and a tested payment table.",
+          "Set shared deadlines for materials, seating, deliveries, and guest counts; seek vendor acceptance of the proposed two-week guest-count lock.",
+          "Verify accessibility, seating, dietary provision, registration, and payment arrangements before presenting a commitment-ready plan.",
+          "Have an authorized board representative review and personalize the unsent venue and sponsor drafts after verifying recipients and links."
+        ],
+        "verification_passed": true
+      }
+    },
+    "note": "Both runs used the same request, event plan, research data, and model strategy. Only the Event Intelligence step differs. Model outputs vary between runs, so some text differences are wording, not substance."
+  }
+}

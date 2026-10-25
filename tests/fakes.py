@@ -31,21 +31,37 @@ def analysis(p: dict, kw: dict) -> dict:
 
 def lessons(p: dict, kw: dict) -> dict:
     events, refl = p["events"], p["reflections"]
-    overrun = next((r for r in refl if "over" in (r["challenges"] or "").lower()), refl[0])
+
+    def text(r):
+        return " ".join(str(r.get(k) or "") for k in ("did_not_go_as_planned", "unexpected_costs_or_complications", "change")).lower()
+
+    food = [r for r in refl if any(w in text(r) for w in ("catering", "food"))] or refl[:1]
+    overrun = next((r for r in food if "%" in text(r) or "over" in text(r)), food[0])
+    praise = [r for r in refl if "worth" in str(r.get("what_worked") or "").lower()]
     return {
         "summary": f"Reviewed {len(events)} events and {len(refl)} reflections.",
+        "themes": [{"name": "Food and catering costs", "polarity": "weakness" if len(food) > 1 else "mixed",
+                    "description": "Several members flag food costs.", "evidence_event_ids": sorted({r["event_id"] for r in food}),
+                    "evidence_reflection_ids": [r["id"] for r in food]}],
         "lessons": [
-            {"kind": "what_worked", "text": "A personal speaker moved guests to give.", "evidence_event_ids": [overrun["event_id"]],
-             "evidence_reflection_ids": [overrun["id"]], "confidence": "medium"},
-            {"kind": "recurring_problem", "text": "Catering costs rose after guest counts changed.", "evidence_event_ids": [],
-             "evidence_reflection_ids": [overrun["id"]], "confidence": "high"},
+            {"kind": "what_worked", "theme": "speaker", "text": "A personal speaker moved guests to give.",
+             "evidence_event_ids": [overrun["event_id"]], "evidence_reflection_ids": [overrun["id"]], "confidence": "medium"},
+            {"kind": "recurring_problem", "theme": "food and catering costs", "text": "Food costs ran over at more than one event.",
+             "evidence_event_ids": [], "evidence_reflection_ids": [r["id"] for r in food], "confidence": "high"},
+            {"kind": "recommendation", "theme": "food and catering costs",
+             "text": "Compare venue catering minimums before selecting a venue.", "evidence_event_ids": [],
+             "evidence_reflection_ids": [r["id"] for r in food], "confidence": "high"},
         ],
-        "disagreements": [{"topic": "Dinner value", "positions": ["Pledges were strong", "Pledges went uncollected"],
-                           "evidence_reflection_ids": [r["id"] for r in refl if r["event_id"] == overrun["event_id"]]}],
-        "planning_constraints": [{"name": "lock_guest_count", "detail": "Lock the guest count two weeks out.",
-                                  "evidence_reflection_ids": [overrun["id"]]}],
+        "disagreements": [{"topic": "Is the meal worth the cost?", "positions": ["Food costs are a problem", "The meal was worth it"],
+                           "evidence_reflection_ids": [overrun["id"]] + [r["id"] for r in praise]}],
+        "planning_constraints": [
+            {"name": "lock_guest_count", "detail": "Lock the guest count two weeks out.", "evidence_reflection_ids": [overrun["id"]]},
+            {"name": "compare_catering_minimums", "detail": "Compare venue catering minimums before choosing a venue.",
+             "evidence_reflection_ids": [r["id"] for r in food]},
+        ],
         "recommended_contingency_pct": 0.15,
         "contingency_evidence_reflection_ids": [overrun["id"]],
+        "numeric_comparison_note": "The dinner had the highest net." if p["comparison"]["sufficient"] else None,
         "uncertainties": ["Small sample of demo events."],
     }
 

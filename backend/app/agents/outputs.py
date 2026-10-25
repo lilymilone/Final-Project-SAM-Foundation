@@ -43,10 +43,19 @@ class RequestAnalysis(BaseModel):
 
 class Lesson(BaseModel):
     kind: Literal["what_worked", "recurring_problem", "recommendation"]
+    theme: str
     text: str
     evidence_event_ids: list[int]
     evidence_reflection_ids: list[int]
     confidence: Confidence
+
+
+class Theme(BaseModel):
+    name: str
+    polarity: Literal["strength", "weakness", "mixed"]
+    description: str
+    evidence_event_ids: list[int]
+    evidence_reflection_ids: list[int]
 
 
 class Disagreement(BaseModel):
@@ -63,11 +72,13 @@ class PlanningConstraint(BaseModel):
 
 class LessonsOutput(BaseModel):
     summary: str
+    themes: list[Theme]
     lessons: list[Lesson]
     disagreements: list[Disagreement]
     planning_constraints: list[PlanningConstraint]
     recommended_contingency_pct: float | None
     contingency_evidence_reflection_ids: list[int]
+    numeric_comparison_note: str | None
     uncertainties: list[str]
 
     @field_validator("recommended_contingency_pct")

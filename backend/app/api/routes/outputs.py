@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...core.permissions import Permission
-from ...db.models import BoardReflection, EventPlan, HistoricalEvent, HistoricalLesson, OutreachDraft, ResearchFinding, VenueCandidate
+from ...db.models import EventPlan, OutreachDraft, ResearchFinding, VenueCandidate
 from ..deps import CurrentUser, audit, current_user, get_db, require
 
 router = APIRouter(prefix="/api", tags=["outputs"])
@@ -89,29 +89,6 @@ def save_finding(finding_id: int, body: SaveFinding, cu: CurrentUser = Depends(r
     audit(db, cu, "finding_saved" if body.saved else "finding_unsaved", f"finding:{f.id}")
     db.commit()
     return {"id": f.id, "saved": f.saved}
-
-
-@router.get("/lessons")
-def list_lessons(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
-    rows = db.scalars(select(HistoricalLesson).where(HistoricalLesson.organization_id == cu.organization_id)
-                      .order_by(HistoricalLesson.created_at.desc()).limit(40)).all()
-    event_names = dict(db.execute(select(HistoricalEvent.id, HistoricalEvent.name)
-                                  .where(HistoricalEvent.organization_id == cu.organization_id)).all())
-    refl = {r.id: (r.author_label or "Board member", event_names.get(r.historical_event_id, "event"))
-            for r in db.scalars(select(BoardReflection))}
-    out = []
-    for l in rows:
-        evidence = []
-        for e in l.evidence or []:
-            if e.get("type") == "event" and e.get("id") in event_names:
-                evidence.append({"type": "event", "id": e["id"], "label": event_names[e["id"]]})
-            elif e.get("type") == "reflection" and e.get("id") in refl:
-                author, ev = refl[e["id"]]
-                evidence.append({"type": "reflection", "id": e["id"], "label": f"{author} on {ev}"})
-        out.append({"id": l.id, "run_id": l.run_id, "lesson": l.lesson, "kind": l.kind, "confidence": l.confidence,
-                    "applies_to": l.applies_to, "based_on_demo_data": l.based_on_demo_data, "evidence": evidence,
-                    "created_at": l.created_at.isoformat()})
-    return {"lessons": out}
 
 
 @router.get("/events/{event_id}/venues")

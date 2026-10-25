@@ -5,15 +5,14 @@ from __future__ import annotations
 from datetime import date
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field, field_validator
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...core.permissions import Permission
 from ...db.models import (
     AgentRun,
-    BoardReflection,
     EventPlan,
     FinancialRecord,
     HistoricalEvent,
@@ -22,12 +21,12 @@ from ...db.models import (
     ResearchFinding,
 )
 from ...services.finance import finance_summary
+from ...services.legacy import history_stats
 from ..deps import CurrentUser, audit, current_user, get_db, require
 
 router = APIRouter(prefix="/api", tags=["workspace"])
 
 ACTIVE_PLAN_STATUSES = ("idea", "planning", "board_review")
-MILESTONE_FUNDS_STEP = 25_000
 
 
 # --- serializers --------------------------------------------------------------
@@ -40,48 +39,6 @@ def plan_out(p: EventPlan) -> dict:
         "expected_attendance": p.expected_attendance, "fundraising_goal_usd": p.fundraising_goal_usd,
         "budget_limit_usd": p.budget_limit_usd, "status": p.status, "notes": p.notes, "is_demo": p.is_demo,
         "created_at": p.created_at.isoformat(),
-    }
-
-
-def reflection_out(r: BoardReflection) -> dict:
-    return {
-        "id": r.id, "author": r.author_label, "went_well": r.went_well, "challenges": r.challenges,
-        "do_differently": r.do_differently, "rating": r.rating, "is_demo": r.is_demo,
-        "created_at": r.created_at.isoformat(),
-    }
-
-
-def history_out(e: HistoricalEvent) -> dict:
-    net = None
-    if e.funds_raised_usd is not None and e.total_cost_usd is not None:
-        net = round(e.funds_raised_usd - e.total_cost_usd, 2)
-    return {
-        "id": e.id, "name": e.name, "event_date": e.event_date.isoformat() if e.event_date else None,
-        "location": e.location, "event_type": e.event_type, "attendance": e.attendance,
-        "funds_raised_usd": e.funds_raised_usd, "total_cost_usd": e.total_cost_usd, "net_usd": net,
-        "summary": e.summary, "is_demo": e.is_demo,
-        "reflections": [reflection_out(r) for r in sorted(e.reflections, key=lambda r: r.created_at)],
-    }
-
-
-def history_stats(events: list[HistoricalEvent]) -> dict:
-    """Plain arithmetic over recorded events. No AI involved."""
-    with_money = [e for e in events if e.funds_raised_usd is not None and e.total_cost_usd is not None]
-    best = max(with_money, key=lambda e: e.funds_raised_usd - e.total_cost_usd, default=None)
-    efficient = max(
-        (e for e in with_money if e.total_cost_usd), key=lambda e: e.funds_raised_usd / e.total_cost_usd, default=None
-    )
-    return {
-        "events_recorded": len(events),
-        "total_raised_usd": round(sum(e.funds_raised_usd or 0 for e in events), 2),
-        "total_net_usd": round(sum(e.funds_raised_usd - e.total_cost_usd for e in with_money), 2),
-        "highest_net_event": {"name": best.name, "net_usd": round(best.funds_raised_usd - best.total_cost_usd, 2)}
-        if best else None,
-        "most_efficient_event": {
-            "name": efficient.name,
-            "raised_per_dollar": round(efficient.funds_raised_usd / efficient.total_cost_usd, 2),
-        } if efficient else None,
-        "is_demo": any(e.is_demo for e in events),
     }
 
 
@@ -178,85 +135,3 @@ def create_event(
     audit(db, cu, "event_plan_created", f"event_plan:{plan.id}", name=plan.name)
     db.commit()
     return {"event": plan_out(plan)}
-
-
-# --- Our Legacy ---------------------------------------------------------------
-
-
-class HistoricalEventIn(BaseModel):
-    name: str = Field(min_length=2, max_length=200)
-    event_date: date | None = None
-    location: str = Field(default="", max_length=200)
-    event_type: str = Field(default="fundraiser", max_length=60)
-    attendance: int | None = Field(default=None, ge=0, le=1_000_000)
-    funds_raised_usd: float | None = Field(default=None, ge=0, le=100_000_000)
-    total_cost_usd: float | None = Field(default=None, ge=0, le=100_000_000)
-    summary: str = Field(default="", max_length=4000)
-
-
-class ReflectionIn(BaseModel):
-    went_well: str = Field(default="", max_length=4000)
-    challenges: str = Field(default="", max_length=4000)
-    do_differently: str = Field(default="", max_length=4000)
-    rating: int | None = Field(default=None, ge=1, le=5)
-
-
-@router.get("/legacy/events")
-def list_history(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
-    events = db.scalars(
-        select(HistoricalEvent).where(HistoricalEvent.organization_id == cu.organization_id)
-        .order_by(HistoricalEvent.event_date.desc())
-    ).all()
-    return {"events": [history_out(e) for e in events], "stats": history_stats(list(events))}
-
-
-@router.post("/legacy/events", status_code=status.HTTP_201_CREATED)
-def create_history(
-    body: HistoricalEventIn,
-    cu: CurrentUser = Depends(require(Permission.MANAGE_EVENTS)),
-    db: Session = Depends(get_db),
-) -> dict:
-    org = cu.organization_id
-    raised_before = db.scalar(
-        select(func.coalesce(func.sum(HistoricalEvent.funds_raised_usd), 0.0)).where(HistoricalEvent.organization_id == org)
-    ) or 0.0
-    event = HistoricalEvent(organization_id=org, created_by=cu.user.id, **body.model_dump())
-    db.add(event)
-    db.flush()
-    count = db.scalar(select(func.count(HistoricalEvent.id)).where(HistoricalEvent.organization_id == org)) or 0
-    raised_after = raised_before + (body.funds_raised_usd or 0)
-
-    milestone = None
-    if raised_after // MILESTONE_FUNDS_STEP > raised_before // MILESTONE_FUNDS_STEP:
-        milestone = f"Recorded lifetime funds raised passed ${int(raised_after // MILESTONE_FUNDS_STEP * MILESTONE_FUNDS_STEP):,}."
-    elif count % 5 == 0:
-        milestone = f"{count} events now preserved in Our Legacy."
-    audit(db, cu, "historical_event_created", f"historical_event:{event.id}", name=event.name)
-    db.commit()
-    db.refresh(event)
-    return {"event": history_out(event), "milestone": milestone}
-
-
-@router.post("/legacy/events/{event_id}/reflections", status_code=status.HTTP_201_CREATED)
-def add_reflection(
-    event_id: int,
-    body: ReflectionIn,
-    cu: CurrentUser = Depends(require(Permission.WRITE_REFLECTIONS)),
-    db: Session = Depends(get_db),
-) -> dict:
-    event = db.get(HistoricalEvent, event_id)
-    if event is None or event.organization_id != cu.organization_id:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Event not found.")
-    if not (body.went_well.strip() or body.challenges.strip() or body.do_differently.strip()):
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Please write at least one reflection.")
-    reflection = BoardReflection(
-        historical_event_id=event.id,
-        user_id=cu.user.id,
-        author_label=f"{cu.user.first_name} {cu.user.last_name}".strip(),
-        **body.model_dump(),
-    )
-    db.add(reflection)
-    db.flush()
-    audit(db, cu, "reflection_created", f"historical_event:{event.id}")
-    db.commit()
-    return {"reflection": reflection_out(reflection)}

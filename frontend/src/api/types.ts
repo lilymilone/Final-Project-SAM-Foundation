@@ -333,3 +333,63 @@ export type VenueCandidateRow = {
   id: number; name: string; neighborhood: string; capacity: number | null; estimated_total_usd: number | null; fnb_per_guest_usd: number | null;
   formats: string[] | null; verification: string | null; is_synthetic: boolean | null; source_url: string | null; notes: string; run_id: number | null;
 };
+
+// ── Our Legacy ──────────────────────────────────────────────────────────────────
+
+export type LegacyPhoto = { id: number; caption: string; url: string; is_demo: boolean; created_at: string };
+
+export type LegacyEvent = {
+  id: number; name: string; event_date: string | null; location: string; event_type: string; venue: string | null;
+  attendance: number | null; fundraising_goal_usd: number | null; funds_raised_usd: number | null; total_cost_usd: number | null;
+  net_usd: number | null; goal_pct: number | null; sponsorship_usd: number | null; sponsorship_info: string | null;
+  summary: string; notes: string | null; is_demo: boolean; reflection_count: number; photos: LegacyPhoto[];
+  updated_at: string | null; lesson_count?: number; top_lesson?: string | null;
+};
+
+export type ReflectionAnswer = { key: string; question: string; answer: string };
+export type LegacyReflection = { id: number; event_id: number; author: string; user_id: number | null; answers: ReflectionAnswer[]; rating: number | null; is_demo: boolean; created_at: string };
+
+export type LessonItem = {
+  id: number; run_id: number | null; lesson: string; kind: string | null; theme: string | null; confidence: string; applies_to: string;
+  scope: string | null; focus_event_id: number | null; status: "new" | "reviewed" | "adopted" | "dismissed" | "superseded";
+  reviewed_at: string | null; based_on_demo_data: boolean | null; evidence: { type: string; id: number; event_id: number; label: string }[];
+  created_at: string;
+};
+
+export type LegacyAnalysis = {
+  run_id: number; date: string;
+  themes: { name: string; polarity: string; description: string }[];
+  disagreements: { topic: string; positions: string[] }[];
+  comparison: { sufficient: boolean; note: string | null } | null;
+  numeric_comparison_note: string | null;
+};
+
+export type LegacyEventDetail = {
+  event: LegacyEvent & { reflections: LegacyReflection[] };
+  lessons: LessonItem[];
+  latest_analysis: LegacyAnalysis | null;
+  questions: { key: string; question: string }[];
+};
+
+export type LegacyMetrics = {
+  events_recorded: number; events_demo: number; reflections_collected: number; reflections_demo: number; contributors: number;
+  photos: number; lessons_generated: number; lessons_current: number; recurring_issues: { theme: string; evidence_count: number }[];
+  recommendations_reviewed: number; recommendations_adopted: number; recommendations_dismissed: number;
+  outcome_improvement: string; outcome_note: string;
+};
+
+export type ListDiff = { only_without: string[]; only_with: string[]; in_both: string[] };
+export type ExperimentComparison = {
+  summary_of_changes: string[];
+  numbers: Record<string, { without_history: number | null; with_history: number | null; delta: number | null }>;
+  history_constraints: string[];
+  lessons_applied: ListDiff; fundraising_strategy: ListDiff; logistics_notes: ListDiff; risks: ListDiff; decisions_for_board: ListDiff; next_steps: ListDiff;
+  headlines: { without_history: string | null; with_history: string | null };
+  recommendations: { without_history: string | null; with_history: string | null };
+  note: string;
+};
+export type Experiment = {
+  id: number; kind: string; request: string; research_mode: string; run_a_id: number | null; run_b_id: number | null;
+  status: "queued" | "running" | "completed" | "failed"; error: string | null; created_at: string; finished_at: string | null;
+  comparison: ExperimentComparison | null;
+};

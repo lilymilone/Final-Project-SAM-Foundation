@@ -50,6 +50,9 @@ class Database:
             return False
         with self.transaction() as db:
             if db.scalar(select(Organization.id).limit(1)) is not None:
+                from .seed import upgrade_demo_history
+
+                upgrade_demo_history(db)  # idempotent: fills new demo fields in older databases
                 return False
             from .seed import seed_demo_workspace
 
@@ -69,6 +72,11 @@ class Database:
                     if column.name not in present and column.nullable:
                         col_type = column.type.compile(dialect=self.engine.dialect)
                         conn.execute(text(f'ALTER TABLE "{table.name}" ADD COLUMN "{column.name}" {col_type}'))
+            # Lessons saved before lessons had a scope can never be superseded by a newer
+            # analysis; retire unreviewed ones so the board sees only current lessons.
+            if existing.has_table("historical_lessons"):
+                conn.execute(text("UPDATE historical_lessons SET status = 'superseded' "
+                                  "WHERE scope IS NULL AND (status IS NULL OR status = 'new')"))
 
     def reset(self) -> None:
         self.engine.dispose()

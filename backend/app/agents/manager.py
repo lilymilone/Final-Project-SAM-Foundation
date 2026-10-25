@@ -18,7 +18,7 @@ from ..ai.budget import WorkflowBudget
 from ..ai.llm import LLMService
 from ..ai.router import BudgetExceededError, ModelRouter
 from ..core.permissions import Permission
-from ..db.models import AgentRun
+from ..db.models import AgentRun, Experiment
 from ..tools.catalog import build_tool_registry
 from .orchestrator import Orchestrator
 from .runtime import RunContext, RunStopped
@@ -37,17 +37,21 @@ class WorkflowManager:
         with self.state.db.transaction() as s:
             s.execute(update(AgentRun).where(AgentRun.status.in_(ACTIVE))
                       .values(status="failed", error="Interrupted: the server restarted.", finished_at=datetime.now(timezone.utc)))
+            s.execute(update(Experiment).where(Experiment.status.in_(("queued", "running")))
+                      .values(status="failed", error="Interrupted: the server restarted.", finished_at=datetime.now(timezone.utc)))
 
     def active_run(self, organization_id: int) -> int | None:
         with self.state.db.session() as s:
             return s.scalar(select(AgentRun.id).where(AgentRun.organization_id == organization_id, AgentRun.status.in_(ACTIVE)).limit(1))
 
     def start(self, run_id: int, *, user_id: int, organization_id: int, permissions: frozenset[Permission], strategy: str,
-              research_mode: str, request: str, intent_hint: str | None, event_plan_id: int | None, synchronous: bool = False) -> None:
+              research_mode: str, request: str, intent_hint: str | None, event_plan_id: int | None, synchronous: bool = False,
+              options: dict | None = None) -> None:
         cancel = threading.Event()
         with self._lock:
             self._cancel[run_id] = cancel
-        args = (run_id, user_id, organization_id, permissions, strategy, research_mode, request, intent_hint, event_plan_id, cancel)
+        args = (run_id, user_id, organization_id, permissions, strategy, research_mode, request, intent_hint, event_plan_id, cancel,
+                options or {})
         if synchronous:
             self._execute(*args)
         else:
@@ -60,7 +64,8 @@ class WorkflowManager:
             event.set()
         return event is not None
 
-    def _execute(self, run_id, user_id, organization_id, permissions, strategy, research_mode, request, intent_hint, event_plan_id, cancel) -> None:
+    def _execute(self, run_id, user_id, organization_id, permissions, strategy, research_mode, request, intent_hint, event_plan_id, cancel,
+                 options) -> None:
         st = self.state
         settings = st.settings
         started = time.perf_counter()
@@ -78,7 +83,7 @@ class WorkflowManager:
 
         status, error, result = "completed", None, None
         try:
-            result = Orchestrator().run(ctx, request, intent_hint, event_plan_id)
+            result = Orchestrator().run(ctx, request, intent_hint, event_plan_id, options)
             if result.get("verification") and not result["verification"]["passed"]:
                 status = "completed_with_warnings"
         except RunStopped as exc:

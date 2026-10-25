@@ -1,8 +1,8 @@
-import { Archive, BookmarkCheck, BookmarkPlus, Check, Copy, ExternalLink, FileText, Lightbulb, MapPin, MailX, Pencil } from "lucide-react";
+import { Archive, BookmarkCheck, BookmarkPlus, Check, Copy, ExternalLink, FileText, MapPin, MailX, Pencil } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import type { Draft, LessonRow, ResearchFindingRow, VenueCandidateRow } from "../api/types";
+import type { Draft, ResearchFindingRow, VenueCandidateRow } from "../api/types";
 import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { VerificationBadge, money } from "./agents";
@@ -125,37 +125,6 @@ export function FindingsPanel() {
             <p className="mt-1 text-sm text-ink/85">{f.summary}</p>
             {f.uncertainty && <p className="mt-1 text-xs text-amber">Uncertainty: {f.uncertainty}</p>}
             {f.run_id && <Link to={`/activity/runs/${f.run_id}`} className="mt-1 inline-block text-xs text-royal hover:underline">From workflow #{f.run_id}</Link>}
-          </li>))}</ul>
-      ))}
-    </Card>
-  );
-}
-
-// ── Lessons ─────────────────────────────────────────────────────────────────
-
-const KIND_STYLE: Record<string, string> = {
-  what_worked: "bg-[#e3f1e8] text-sage", recurring_problem: "bg-[#fbf1e3] text-amber", recommendation: "bg-lilac text-royal",
-};
-
-export function LessonsPanel() {
-  const { data, error, loading, reload } = useApi<{ lessons: LessonRow[] }>("/api/lessons");
-  return (
-    <Card title="Lessons learned" icon={<Lightbulb size={16} aria-hidden="true" />}>
-      {loading && <LoadingState rows={2} />}
-      {error && <ErrorState message={error.message} onRetry={reload} />}
-      {data && (data.lessons.length === 0 ? <EmptyState title="No lessons yet">Run "Learn from past events" and the Event Intelligence agent will add lessons, each citing its evidence.</EmptyState> : (
-        <ul className="space-y-3">{data.lessons.slice(0, 12).map((l) => (
-          <li key={l.id} className="rounded-2xl bg-ivory/80 p-3.5 text-sm">
-            <div className="mb-1 flex flex-wrap items-center gap-1.5">
-              <span className={`rounded-full px-2 py-0.5 text-[0.7rem] font-semibold capitalize ${KIND_STYLE[l.kind ?? ""] ?? "bg-lilac text-plum"}`}>{(l.kind ?? "lesson").replace(/_/g, " ")}</span>
-              <span className="text-xs text-muted">{l.confidence} confidence</span>
-              {l.based_on_demo_data && <DemoBadge label="From demo data" />}
-            </div>
-            <p className="text-ink">{l.lesson}</p>
-            <p className="mt-1.5 flex flex-wrap gap-1 text-[0.7rem]">
-              <span className="text-muted">Evidence:</span>
-              {l.evidence.map((e) => <span key={`${e.type}-${e.id}`} className="rounded bg-white px-1.5 py-0.5 text-plum ring-1 ring-lavender/40">{e.label}</span>)}
-            </p>
           </li>))}</ul>
       ))}
     </Card>

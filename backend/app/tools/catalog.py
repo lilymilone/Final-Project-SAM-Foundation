@@ -78,7 +78,9 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             ).all()
         data = [{
             "id": r.id, "event_id": r.historical_event_id, "event_name": name, "author": r.author_label or "Board member",
-            "went_well": r.went_well, "challenges": r.challenges, "do_differently": r.do_differently, "rating": r.rating,
+            "submitted": r.created_at.date().isoformat(), "what_worked": r.went_well, "did_not_go_as_planned": r.challenges,
+            "unexpected_costs_or_complications": r.unexpected_costs, "attendee_feedback": r.attendee_feedback,
+            "repeat": r.should_repeat, "change": r.do_differently, "advice_for_next_board": r.advice, "rating": r.rating,
         } for r, name in rows]
         sources = [SourceRecord(id=f"reflection:{r['id']}", title=f"Reflection on {r['event_name']} ({r['author']})",
                                 verification="internal") for r in data]
@@ -86,21 +88,37 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
 
     def compare_event_outcomes(events: list) -> ToolResult:
         rows = calc.compare_events(events)
-        return ToolResult(tool="compare_event_outcomes", ok=True, summary=f"compared {len(rows)} events", data=rows)
+        complete = [r for r in rows if r["net_usd"] is not None]
+        sufficient = len(complete) >= 2
+        return ToolResult(tool="compare_event_outcomes", ok=True, data={"rows": rows, "sufficient": sufficient,
+                          "note": None if sufficient else "Fewer than two events have both funds raised and expenses; numeric comparison is not meaningful."},
+                          summary=f"compared {len(rows)} events ({'sufficient' if sufficient else 'insufficient'} data)")
 
-    def save_historical_lesson(lesson: str, kind: str, confidence: str, applies_to: str, evidence: list, based_on_demo_data: bool) -> ToolResult:
+    superseded_scopes: set[str] = set()
+
+    def save_historical_lesson(lesson: str, kind: str, theme: str, confidence: str, applies_to: str, evidence: list,
+                               based_on_demo_data: bool, scope: str, focus_event_id: int | None) -> ToolResult:
         with db.transaction() as s:
-            row = HistoricalLesson(organization_id=org, run_id=ctx.run_id, lesson=lesson[:1500], kind=kind, confidence=confidence,
-                                   applies_to=applies_to[:120], evidence=evidence, based_on_demo_data=based_on_demo_data)
+            if scope not in superseded_scopes:  # a newer analysis replaces unreviewed lessons from older runs
+                superseded_scopes.add(scope)
+                for old in s.scalars(select(HistoricalLesson).where(HistoricalLesson.organization_id == org, HistoricalLesson.scope == scope,
+                                                                    HistoricalLesson.run_id != ctx.run_id)):
+                    if (old.status or "new") == "new":
+                        old.status = "superseded"
+            row = HistoricalLesson(organization_id=org, run_id=ctx.run_id, lesson=lesson[:1500], kind=kind, theme=theme[:80],
+                                   confidence=confidence, applies_to=applies_to[:120], evidence=evidence, scope=scope[:160],
+                                   focus_event_id=focus_event_id, status="new", based_on_demo_data=based_on_demo_data)
             s.add(row)
             s.flush()
             return ToolResult(tool="save_historical_lesson", ok=True, summary=f"lesson #{row.id} saved", data={"id": row.id})
 
-    def get_historical_lessons(limit: int = 12) -> ToolResult:
+    def get_historical_lessons(limit: int = 12, statuses: list | None = None) -> ToolResult:
+        wanted = statuses or ["new", "reviewed", "adopted"]
         with db.session() as s:
-            rows = s.scalars(select(HistoricalLesson).where(HistoricalLesson.organization_id == org)
-                             .order_by(HistoricalLesson.created_at.desc()).limit(limit)).all()
-        data = [{"id": l.id, "lesson": l.lesson, "kind": l.kind, "confidence": l.confidence, "evidence": l.evidence} for l in rows]
+            rows = [l for l in s.scalars(select(HistoricalLesson).where(HistoricalLesson.organization_id == org)
+                                         .order_by(HistoricalLesson.created_at.desc()).limit(200)) if (l.status or "new") in wanted][:limit]
+        data = [{"id": l.id, "lesson": l.lesson, "kind": l.kind, "theme": l.theme, "status": l.status or "new",
+                 "confidence": l.confidence, "evidence": l.evidence} for l in rows]
         return ToolResult(tool="get_historical_lessons", ok=True, summary=f"{len(data)} saved lessons", data=data)
 
     add("read_historical_events", "Past events with attendance, funds raised, and costs.", ToolKind.READ, read_historical_events, Permission.VIEW_DASHBOARD)
@@ -145,7 +163,8 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
                 src_id = f"synthetic:venue:{v['key']}"
                 out.append({"venue_key": v["key"], "name": v["name"], "neighborhood": v["neighborhood"], "formats": list(fits),
                             "capacity": v["capacity"], "rental_usd": v["rental_usd"], "fnb_per_guest_usd": v["fnb_per_guest_usd"],
-                            "deposit_pct": v["deposit_pct"], "notes": v["notes"], "source_id": src_id,
+                            "deposit_pct": v["deposit_pct"], "fnb_minimum_usd": v.get("fnb_minimum_usd"), "catering": v.get("catering"),
+                            "notes": v["notes"], "source_id": src_id,
                             "source_url": fixtures.fixture_url("venues", v["key"]), "verification": "synthetic"})
                 sources.append(SourceRecord(id=src_id, title=v["name"], url=fixtures.fixture_url("venues", v["key"]),
                                             verification="synthetic", note=fixtures.SYNTHETIC_NOTE))
@@ -185,7 +204,7 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         budget = calc.event_budget(
             venue_key=venue["venue_key"], venue_name=venue["name"], event_format=event_format, attendance=attendance,
             rental_usd=venue.get("rental_usd"), fnb_per_guest_usd=fnb_value, deposit_pct=venue.get("deposit_pct"),
-            contingency_pct=contingency_pct, source_label=label,
+            contingency_pct=contingency_pct, source_label=label, fnb_minimum_usd=venue.get("fnb_minimum_usd"),
         )
         return ToolResult(tool="compute_event_budget", ok=True, data=budget.as_dict(),
                           summary=f"{venue['name']} {event_format}: total ${budget.total_usd:,.0f}, upfront ${budget.upfront_cash_usd:,.0f}")

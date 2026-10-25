@@ -8,6 +8,7 @@ import ActivityPage from "./pages/ActivityPage";
 import DonationsPage from "./pages/DonationsPage";
 import EventStudioPage from "./pages/EventStudioPage";
 import FinancePage from "./pages/FinancePage";
+import LegacyEventPage from "./pages/LegacyEventPage";
 import LegacyPage from "./pages/LegacyPage";
 import LoginPage from "./pages/LoginPage";
 import OverviewPage from "./pages/OverviewPage";
@@ -50,6 +51,7 @@ function Shell() {
           <Route path="donations" element={<DonationsPage />} />
           <Route path="partnerships" element={<PartnershipsPage />} />
           <Route path="legacy" element={<LegacyPage />} />
+          <Route path="legacy/:id" element={<LegacyEventPage />} />
           <Route path="activity" element={<ActivityPage />} />
           <Route path="activity/runs/:id" element={<RunPage />} />
           <Route path="safety" element={<SafetyPage />} />

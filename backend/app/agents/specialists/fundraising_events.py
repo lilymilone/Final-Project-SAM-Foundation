@@ -20,7 +20,10 @@ from ..runtime import RunContext, dedupe_sources
 INSTRUCTIONS = """Rank the venue options and write a fundraising strategy for the event.
 - Choose only option_id values that appear in "options". Rank 1 = your top recommendation. Shortlist 1 to 3 options.
 - Use the computed budgets as given; do not recompute or invent costs.
-- Apply the lessons from past events and say which lesson each choice applies.
+- Apply the lessons from past events and say which lesson each choice applies. Lessons are ADVISORY: they shape your
+  ranking, strategy, and questions, but they never override the computed costs, Finance's limits, or verified source data.
+  If a lesson conflicts with current numbers, say so in risks rather than ignoring the numbers.
+- If no lessons are provided, plan from the current data alone and do not invent historical claims.
 - If "constraints" are present (this is a revision), every shortlisted option must satisfy them; explain what changed in
   changes_from_previous. If no option satisfies them, rank the closest one and say so plainly in risks.
 - fundraising_strategy: practical ideas (ticket tiers, sponsorship asks, paddle raise, in-kind support).
@@ -39,7 +42,8 @@ class FundraisingEventsAgent(BaseAgent):
         city = event.get("city") or "Manhattan, New York, NY"
         event_type = (event.get("event_type") or "gala").lower()
         revision = task.kind == "revision"
-        constraint_map = {c.name: c for c in task.constraints}
+        # Hard spending limits are taken only from Financial Analysis; history is advisory.
+        constraint_map = {c.name: c for c in task.constraints if c.source_agent == AgentName.FINANCIAL_ANALYSIS}
         contingency = task.inputs.get("contingency_pct")
 
         if revision:
@@ -84,6 +88,7 @@ class FundraisingEventsAgent(BaseAgent):
         prompt_options = [{
             "option_id": o["option_id"], "venue": o["venue"]["name"], "neighborhood": o["venue"].get("neighborhood"),
             "format": o["event_format"], "capacity": o["venue"].get("capacity"), "notes": o["venue"].get("notes"),
+            "catering_terms": o["venue"].get("catering"),
             "source": o["venue"].get("verification"), "total_usd": o["budget"]["total_usd"],
             "upfront_cash_usd": o["budget"]["upfront_cash_usd"], "cost_per_guest_usd": o["budget"]["cost_per_guest_usd"],
             "assumptions": o["budget"]["assumptions"],

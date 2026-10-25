@@ -67,6 +67,7 @@ def event_budget(
     production_usd: float | None = None,
     contingency_pct: float | None = None,
     source_label: str = "venue source",
+    fnb_minimum_usd: float | None = None,
 ) -> EventBudget:
     if attendance <= 0:
         raise ValueError("attendance must be positive")
@@ -94,6 +95,11 @@ def event_budget(
         assumptions.append(f"Contingency {contingency_pct:.0%} (default; no lesson-based figure supplied).")
 
     fnb_total = fnb_per_guest_usd * attendance
+    minimum_applies = fnb_minimum_usd is not None and fnb_minimum_usd > fnb_total
+    if minimum_applies:
+        assumptions.append(f"The venue's ${fnb_minimum_usd:,.0f} food-and-beverage minimum exceeds {attendance} × "
+                           f"${fnb_per_guest_usd:,.0f}, so the minimum is charged.")
+        fnb_total = fnb_minimum_usd
     subtotal = rental_usd + fnb_total + production_usd
     contingency = subtotal * contingency_pct
     total = subtotal + contingency
@@ -105,7 +111,8 @@ def event_budget(
         attendance=attendance,
         line_items=[
             LineItem("Venue rental", r2(rental_usd), rental_basis),
-            LineItem(f"Food & beverage ({attendance} × ${fnb_per_guest_usd:,.2f})", r2(fnb_total), fnb_basis),
+            LineItem(f"Food & beverage (venue minimum ${fnb_minimum_usd:,.0f})" if minimum_applies
+                     else f"Food & beverage ({attendance} × ${fnb_per_guest_usd:,.2f})", r2(fnb_total), fnb_basis),
             LineItem("Production", r2(production_usd), "placeholder planning assumption"),
         ],
         subtotal_usd=r2(subtotal),
@@ -114,8 +121,9 @@ def event_budget(
         total_usd=r2(total),
         upfront_cash_usd=r2(upfront),
         cost_per_guest_usd=r2(total / attendance),
-        fixed_costs_usd=r2((rental_usd + production_usd) * (1 + contingency_pct)),
-        variable_cost_per_guest_usd=r2(fnb_per_guest_usd * (1 + contingency_pct)),
+        fixed_costs_usd=r2((rental_usd + production_usd + (fnb_total if minimum_applies else 0.0)) * (1 + contingency_pct)),
+        # Under a binding minimum, food is effectively a fixed cost up to the minimum.
+        variable_cost_per_guest_usd=r2(0.0 if minimum_applies else fnb_per_guest_usd * (1 + contingency_pct)),
         assumptions=assumptions,
     )
 

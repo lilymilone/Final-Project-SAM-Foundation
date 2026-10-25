@@ -219,7 +219,10 @@ class Orchestrator:
 
     # -- workflow ---------------------------------------------------------------------
 
-    def run(self, ctx: RunContext, request: str, intent_hint: str | None = None, event_plan_id: int | None = None) -> dict:
+    def run(self, ctx: RunContext, request: str, intent_hint: str | None = None, event_plan_id: int | None = None,
+            options: dict | None = None) -> dict:
+        options = options or {}
+        use_history = options.get("use_history", True)
         intake = self.dispatch(ctx, self._task(ctx, "intake", A.ORCHESTRATOR, "Understand the request and choose specialists",
                                                inputs={"request": request, "intent_hint": intent_hint}), from_agent="board")
         if intake.status != "completed":
@@ -230,7 +233,7 @@ class Orchestrator:
         extra: dict[str, Any] = {"revision_history": []}
 
         if intent == "plan_event":
-            self._plan_event(ctx, analysis, request, event_plan_id, results, extra)
+            self._plan_event(ctx, analysis, request, event_plan_id, results, extra, use_history=use_history)
         elif intent == "mission_discovery":
             results["research"] = self.dispatch(ctx, self._task(ctx, "research", A.MISSION_DISCOVERY, "Research mission-aligned opportunities",
                                                                 inputs={"topic": analysis.research_topic or request}))
@@ -242,8 +245,12 @@ class Orchestrator:
         elif intent == "donations_review":
             results["donations"] = self.dispatch(ctx, self._task(ctx, "donations", A.DONATIONS_COMPLIANCE, "Review donations and draft acknowledgments"))
         elif intent == "event_learning":
-            results["lessons"] = self.dispatch(ctx, self._task(ctx, "lessons", A.EVENT_INTELLIGENCE, "Learn from past events and reflections",
-                                                               inputs={"focus": request}))
+            focus_id = options.get("historical_event_id")
+            focus_name = options.get("historical_event_name")
+            results["lessons"] = self.dispatch(ctx, self._task(
+                ctx, "lessons", A.EVENT_INTELLIGENCE,
+                f"Analyze {focus_name} and generate lessons" if focus_name else "Learn from past events and reflections",
+                inputs={"focus": focus_name or request, "focus_event_id": focus_id, "mode": "event_analysis"}))
         else:
             return {"intent": intent, "routing": intake.data["routing"], "analysis": analysis.model_dump(), "recommendation": None,
                     "message": "SAM SPACE can plan events, research mission partners, draft outreach, review finances, "
@@ -277,6 +284,12 @@ class Orchestrator:
             "routing": intake.data["routing"],
             "analysis": analysis.model_dump(),
             "research_mode": ctx.research_mode,
+            "options": {"use_history": use_history, "historical_event_id": options.get("historical_event_id")},
+            "history_constraints": extra.get("history_constraints", []),
+            "events_strategy": {k: results["venues"].data.get(k) for k in ("fundraising_strategy", "logistics_notes", "changes_from_previous")}
+            if "venues" in results and results["venues"].status == "completed" else None,
+            "themes": results["lessons"].data.get("themes") if "lessons" in results and results["lessons"].status == "completed" else [],
+            "comparison": results["lessons"].data.get("comparison") if "lessons" in results and results["lessons"].status == "completed" else None,
             "recommendation": rec.model_dump() if rec else None,
             "verification": report,
             "figures": figures,
@@ -298,7 +311,7 @@ class Orchestrator:
         }
 
     def _plan_event(self, ctx: RunContext, analysis: RequestAnalysis, request: str, event_plan_id: int | None,
-                    results: dict[str, AgentResult], extra: dict) -> None:
+                    results: dict[str, AgentResult], extra: dict, use_history: bool = True) -> None:
         plan: dict = {}
         if event_plan_id:
             got = self.me.tool(ctx, "read_event_plan", event_plan_id=event_plan_id)
@@ -323,16 +336,22 @@ class Orchestrator:
         extra["event_plan_id"] = event_plan_id
         focus = f"{event['attendance']}-guest {event['event_type']} in {event['city']}"
 
-        lessons = self.dispatch(ctx, self._task(ctx, "lessons", A.EVENT_INTELLIGENCE, f"Retrieve lessons from past events for a {focus}",
-                                                inputs={"focus": focus}))
-        results["lessons"] = lessons
-        contingency = lessons.data.get("recommended_contingency_pct") if lessons.status == "completed" else None
-        lesson_constraints = [Constraint(**c) for c in lessons.data.get("constraints", [])] if lessons.status == "completed" else []
+        contingency, lesson_constraints, lesson_list = None, [], []
+        if use_history:  # the Orchestrator asks Event Intelligence for relevant lessons first
+            lessons = self.dispatch(ctx, self._task(ctx, "lessons", A.EVENT_INTELLIGENCE, f"Retrieve lessons from past events for a {focus}",
+                                                    inputs={"focus": focus, "mode": "planning"}))
+            results["lessons"] = lessons
+            if lessons.status == "completed":
+                contingency = lessons.data.get("recommended_contingency_pct")
+                lesson_constraints = [Constraint(**c) for c in lessons.data.get("constraints", [])]
+                lesson_list = lessons.data.get("lessons", [])
+        extra["history_constraints"] = [c.model_dump(mode="json") for c in lesson_constraints]
 
-        base_inputs = {"event": event, "event_plan_id": event_plan_id, "contingency_pct": contingency,
-                       "lessons": lessons.data.get("lessons", []) if lessons.status == "completed" else []}
+        # An empty list (not None) tells the Events agent that no lessons were provided.
+        base_inputs = {"event": event, "event_plan_id": event_plan_id, "contingency_pct": contingency, "lessons": lesson_list}
         venues = self.dispatch(ctx, self._task(ctx, "venues", A.FUNDRAISING_EVENTS, f"Research venues and a fundraising strategy for a {focus}",
-                                               inputs=base_inputs, constraints=lesson_constraints, depends_on=["lessons"]))
+                                               inputs=base_inputs, constraints=lesson_constraints,
+                                               depends_on=["lessons"] if use_history else []))
         results["venues"] = venues
         top = venues.data.get("top_choice") if venues.status == "completed" else None
         if top is None:

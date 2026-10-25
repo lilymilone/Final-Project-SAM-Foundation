@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 
 from ...core.config import Settings
 from ...core.permissions import Permission
-from ...db.models import AgentHandoff, AgentRun, AgentToolCall, EventPlan, ModelUsage
+from ...db.models import AgentHandoff, AgentRun, AgentToolCall, EventPlan, HistoricalEvent, ModelUsage
 from ..deps import CurrentUser, audit, current_user, get_db, get_settings_dep, require
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])
@@ -31,6 +31,8 @@ class RunIn(BaseModel):
     intent: Intent | None = None
     research_mode: Literal["synthetic", "live"] = "synthetic"
     event_plan_id: int | None = None
+    historical_event_id: int | None = None
+    use_history: bool = True
 
     @field_validator("request")
     @classmethod
@@ -48,7 +50,7 @@ def run_summary(r: AgentRun) -> dict:
         "research_mode": r.research_mode, "budget_usd": r.budget_usd, "spent_usd": round(r.spent_usd or 0, 6),
         "model_calls": r.model_calls, "started_at": r.started_at.isoformat(),
         "finished_at": r.finished_at.isoformat() if r.finished_at else None, "duration_ms": r.duration_ms, "error": r.error,
-        "event_plan_id": r.event_plan_id,
+        "event_plan_id": r.event_plan_id, "options": (r.plan or {}).get("options"),
     }
 
 
@@ -72,10 +74,16 @@ def start_run(
         plan = db.get(EventPlan, body.event_plan_id)
         if plan is None or plan.organization_id != cu.organization_id:
             raise HTTPException(404, "Event plan not found.")
+    options = {"use_history": body.use_history}
+    if body.historical_event_id is not None:
+        past = db.get(HistoricalEvent, body.historical_event_id)
+        if past is None or past.organization_id != cu.organization_id:
+            raise HTTPException(404, "Past event not found.")
+        options.update(historical_event_id=past.id, historical_event_name=past.name)
     run = AgentRun(
         organization_id=cu.organization_id, user_id=cu.user.id, workflow_type=body.intent or "auto", request_text=body.request,
         status="queued", strategy=cu.user.model_strategy, provider=settings.provider, budget_usd=settings.workflow_budget_usd,
-        research_mode=body.research_mode, event_plan_id=body.event_plan_id,
+        research_mode=body.research_mode, event_plan_id=body.event_plan_id, plan={"options": options},
     )
     db.add(run)
     db.flush()
@@ -83,7 +91,7 @@ def start_run(
     db.commit()
     manager.start(run.id, user_id=cu.user.id, organization_id=cu.organization_id, permissions=cu.permissions,
                   strategy=cu.user.model_strategy, research_mode=body.research_mode, request=body.request,
-                  intent_hint=body.intent, event_plan_id=body.event_plan_id)
+                  intent_hint=body.intent, event_plan_id=body.event_plan_id, options=options)
     return {"run": run_summary(run)}
 
 

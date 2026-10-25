@@ -21,24 +21,28 @@ VENUES = [
         "key": "lavender-loft", "name": "Lavender Loft (synthetic)", "neighborhood": "Flatiron", "city": "Manhattan",
         "capacity": {"seated_dinner": 180, "reception": 250}, "rental_usd": 9500.0,
         "fnb_per_guest_usd": {"seated_dinner": 145.0, "reception": 95.0}, "deposit_pct": 0.5,
+        "fnb_minimum_usd": 25000.0, "catering": "In-house catering only; $25,000 food-and-beverage minimum.",
         "notes": "Skylit loft with in-house catering; elegant for a seated gala.",
     },
     {
         "key": "hudson-garden-room", "name": "Hudson Garden Room (synthetic)", "neighborhood": "West Village", "city": "Manhattan",
         "capacity": {"seated_dinner": 160}, "rental_usd": 4000.0,
         "fnb_per_guest_usd": {"seated_dinner": 110.0}, "deposit_pct": 0.5,
+        "fnb_minimum_usd": 18000.0, "catering": "In-house catering only; $18,000 food-and-beverage minimum.",
         "notes": "Garden-view dining room; seated events only.",
     },
     {
         "key": "chelsea-atelier", "name": "Chelsea Atelier (synthetic)", "neighborhood": "Chelsea", "city": "Manhattan",
         "capacity": {"reception": 200}, "rental_usd": 1800.0,
         "fnb_per_guest_usd": {"reception": 58.0}, "deposit_pct": 0.3,
+        "fnb_minimum_usd": None, "catering": "Outside caterers allowed; no food-and-beverage minimum.",
         "notes": "Gallery space for standing receptions with passed bites; flexible staging for a speaker.",
     },
     {
         "key": "harbor-salon", "name": "Harbor Salon (synthetic)", "neighborhood": "Battery Park City", "city": "Manhattan",
         "capacity": {"seated_dinner": 90, "reception": 120}, "rental_usd": 3000.0,
         "fnb_per_guest_usd": {"seated_dinner": 120.0, "reception": 70.0}, "deposit_pct": 0.4,
+        "fnb_minimum_usd": 6000.0, "catering": "Preferred caterer list; $6,000 minimum.",
         "notes": "Intimate waterfront salon.",
     },
 ]
