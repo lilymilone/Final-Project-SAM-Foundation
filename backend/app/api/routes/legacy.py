@@ -130,8 +130,10 @@ class HistoricalEventIn(BaseModel):
 
 @router.get("/legacy/events")
 def list_history(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
-    events = db.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == cu.organization_id)
-                        .order_by(HistoricalEvent.event_date.desc())).all()
+    events = db.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == cu.organization_id)).all()
+    # Newest first. An event known only by its year sorts with that year, after the dated events in it.
+    events = sorted(events, key=lambda e: (e.event_year or (e.event_date.year if e.event_date else 0),
+                                           e.event_date or date.min, e.id), reverse=True)
     lessons = db.scalars(select(HistoricalLesson).where(HistoricalLesson.organization_id == cu.organization_id,
                                                         HistoricalLesson.status.is_distinct_from("superseded"),
                                                         HistoricalLesson.status.is_distinct_from("dismissed"))

@@ -82,7 +82,7 @@ export function EventGalleryCard({ event }: { event: LegacyEvent }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
-          <CalendarDays size={12} aria-hidden="true" /> {formatDate(event.event_date)} · {event.location || "Location not recorded"}
+          <CalendarDays size={12} aria-hidden="true" /> {event.event_date ? formatDate(event.event_date) : event.event_year ?? "Date not recorded"} · {event.location || event.venue || "Location not recorded"}
         </p>
         <h3 className="mt-1 font-display text-2xl font-semibold leading-tight text-plum group-hover:text-royal">{event.name}</h3>
         <p className="mt-1 line-clamp-2 text-sm text-muted">{event.summary}</p>
