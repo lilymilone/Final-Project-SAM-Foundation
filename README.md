@@ -361,6 +361,7 @@ The walkthrough is in **[docs/impact_evaluation_workflow.md](docs/impact_evaluat
   - Times are recorded on the server clock and include reviewing the AI's work.
   - The run's own logs supply venues, sources, finance, lessons, drafts, and the agents' time and cost.
   - Both proposals are scored on the same human rubric, followed by a 12-question feedback form and mission questions.
+- **Informal board testing:** three board members tried SAM SPACE informally in October 2026, and all three supported moving forward (their feedback, without names, is in [docs/evidence/README.md](docs/evidence/README.md) §9). None of them completed this formal timed pilot, so it still shows *Pilot pending*.
 - **Honest by construction:**
   - With no real submissions, the dashboard says *Pilot pending — no real-user evaluation data collected yet.*
   - Practice runs are never counted.
@@ -444,7 +445,7 @@ Routing rule: `score = complexity (0–2) + 1 if multi-step reasoning + 1 if hig
 
 The full list, with what each means for the board, is in **[docs/limitations.md](docs/limitations.md)**. In short:
 
-- **No real-user evaluation yet.** The pilot framework works, but no board member has completed it, so time savings are not yet measured.
+- **No formal timed pilot yet.** Three board members tried SAM SPACE informally and gave feedback (all three supported moving forward), but none has completed the timed Impact & Evaluation pilot, so time savings are not yet measured.
 - **Demo data.** Finances, donors, board members, and most past events are labeled synthetic. Two live outreach workflows used real public web pages.
 - **Web research is shallow by design.** A few searches and page reads per run; prices count only if a fetched page shows them.
 - **Microsoft Outlook is planned, not built:** read-only, with no send permission ([docs/roadmap.md](docs/roadmap.md)).

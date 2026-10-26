@@ -136,7 +136,7 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 
 **Critical (must fix before submission)**
 - None in the code.
-- **Real-user evidence is missing:** no board member has used the app or completed the pilot. The report's Impact section needs at least one real person (a quote, a screenshot, and a before-and-after time). This needs Lily, not code.
+- **Real-user evidence (updated 2026-10-26):** three board members have since tried the app informally and gave feedback, including a direct quote ([../README.md](../README.md) §9). None completed the formal timed pilot, so no before-and-after time exists.
 
 **Important (fix if feasible)**
 - **The live sponsorship draft is not demonstrated.** Two live searches found no business sponsor. The path is covered by automated tests.

@@ -100,7 +100,9 @@ See [report/clean_clone_test.md](report/clean_clone_test.md): a fresh clone from
 
 ## 9. Real-user feedback
 
-**None collected yet.** The Impact & Evaluation pilot is ready (Analytics & Safety → Impact & Evaluation) and its dashboard shows *Pilot pending*. The method, rubric, and instructions are in [impact/](impact/) (`methodology.md`, `rubric.md`, `test_instructions.md`, `impact_summary.md`). No quotes, times, or scores are reported anywhere because none exist.
+**Informal board testing:** In October 2026, three board members tried SAM SPACE informally and told the developer what they thought: one with less experience with technology valued asking Sir’s Office questions directly and said she felt “relieved”; one with five years of event-planning experience said the planning tools’ “bones” were extremely useful, but that Our Legacy needs much richer event history; and one who co-leads fundraising and finance valued having the finances connected to planning instead of siloed. All three supported moving forward with logins for the board. Names are left out of this public repository.
+
+**Not yet done: the formal timed pilot.** None of the three completed the Impact & Evaluation pilot (Analytics & Safety → Impact & Evaluation), so its dashboard still shows *Pilot pending*, and no before-and-after times, rubric scores, or measured time savings exist. The method, rubric, and instructions are in [impact/](impact/) (`methodology.md`, `rubric.md`, `test_instructions.md`, `impact_summary.md`).
 
 ## How to regenerate
 

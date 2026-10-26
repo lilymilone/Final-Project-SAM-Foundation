@@ -7,7 +7,7 @@ What SAM SPACE does not do yet, where it relies on demonstration data, and what 
 | Item | Status |
 |---|---|
 | **Microsoft Outlook integration** | **Planned, not implemented.** A future version could, with a board member's explicit authorization, read selected incoming messages (read-only Microsoft Graph), route foundation tasks to the agents, and save draft replies for review. It would never request `Mail.Send` and could never send automatically or commit money. Today all drafts stay in SAM SPACE and are copied by hand. See [roadmap.md](roadmap.md). |
-| Real-user evaluation | The Impact & Evaluation pilot works, but **no board member has completed it yet**. The dashboard shows *Pilot pending*. No time savings, quality scores, or quotes have been collected. |
+| Real-user evaluation | Three board members tried SAM SPACE **informally** and gave feedback; all three supported moving forward ([evidence/README.md](evidence/README.md) §9). **None has completed the formal timed pilot**, so its dashboard shows *Pilot pending*, and no time savings or rubric scores have been measured. |
 | Human quality scores for history comparisons | The three history comparisons count lesson-backed changes in code. No person has scored the plans' quality yet. |
 | Live sponsorship draft | The sponsor → sponsorship-inquiry path is verified by automated tests only. Two live sponsor searches (#44, #45) found no business sponsor. |
 | Contact re-check before use | A draft's contact was correct on its verification date. There is no automatic re-check before a board member uses it. |

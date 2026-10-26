@@ -2,7 +2,7 @@
 
 This phase adds a way to *measure* SAM SPACE against the board's usual way of working, instead of asserting that it helps. It lives in **Analytics & Safety → Impact & Evaluation**.
 
-> **Status: pilot pending.** No real board member has completed an evaluation yet. The dashboard and the exported summary say so: *“Pilot pending — no real-user evaluation data collected yet.”* No time savings, ratings, quotes, or improvements are claimed anywhere.
+> **Status: formal pilot pending.** No board member has completed this timed evaluation yet, so the dashboard and the exported summary say *“Pilot pending — no real-user evaluation data collected yet.”* No time savings or ratings are claimed. Separately, three board members tried SAM SPACE informally and gave feedback (see [evidence/README.md](evidence/README.md) §9).
 >
 > What *is* measured and reported:
 > - the Our Legacy pre-check (live, real models)
@@ -136,7 +136,7 @@ Inputs, models, traces, outputs, token use, and costs are preserved in `evidence
 
 ## 5. What is missing
 
-- **Real-user evaluations: none yet.** To run the pilot, a board member opens *Impact & Evaluation → Start my evaluation* and follows the six steps (about as long as the task itself). Then run `python -m backend.scripts.export_impact_evidence` to refresh the evidence.
+- **Formal timed evaluations: none yet** (three board members tried the app informally; see [evidence/README.md](evidence/README.md) §9). To run the pilot, a board member opens *Impact & Evaluation → Start my evaluation* and follows the six steps (about as long as the task itself). Then run `python -m backend.scripts.export_impact_evidence` to refresh the evidence.
 - **Human quality scores** for the history comparisons: none entered.
 - **The tasks-per-year assumption:** not set, so there is no projection.
 

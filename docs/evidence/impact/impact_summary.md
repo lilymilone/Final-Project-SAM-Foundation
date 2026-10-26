@@ -6,7 +6,9 @@ _Exported 2026-10-25T21:58 UTC._
 
 > **Pilot pending — no real-user evaluation data collected yet.**
 >
-> The framework below is ready; no real participant has submitted an evaluation, so there are no time-savings, rating, or feedback results to report.
+> The framework below is ready; no real participant has submitted this timed evaluation, so there are no time-savings, rating, or feedback results to report here.
+>
+> *(Note added 2026-10-26: three board members have since tried SAM SPACE informally, outside this framework. Their feedback is in [../README.md](../README.md) §9.)*
 
 ## Calculations
 
