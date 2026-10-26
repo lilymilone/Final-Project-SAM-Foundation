@@ -107,6 +107,8 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 
 **Passed.** The app was usable 93 s after `git clone` (350 s during a slow network moment). The keys loaded from the parent `.env`; sign-in, the UI, and a real donations workflow worked. Details: [clean_clone_test.md](clean_clone_test.md).
 
+**Re-tested 2026-10-26 on `041fc93`:** usable 19 s after `git clone`; 8 of 8 checks passed, every page loaded with no browser errors, and 298 tests passed inside the clone.
+
 ## 10. GitHub readiness
 
 **Secrets:**
