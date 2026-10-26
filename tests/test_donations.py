@@ -225,7 +225,7 @@ def _other_workspace(client) -> None:
         s.add(BoardMembership(user_id=user.id, organization_id=org.id, role="chair", title="Chair"))
 
 
-def test_members_and_other_workspaces_cannot_reach_donor_or_financial_records(client):
+def test_members_and_other_workspaces_cannot_reach_donor_or_financial_records(client, member_without_finance):
     login(client)
     gift_id = donations(client)["donations"][0]["id"]
     record_id = client.get("/api/finance/records").json()["records"][0]["id"]

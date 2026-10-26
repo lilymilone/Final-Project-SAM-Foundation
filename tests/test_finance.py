@@ -48,7 +48,7 @@ def test_dashboard_separates_revenue_cash_and_restricted_funds(client):
     assert all(m[k]["explanation"] and m[k]["basis"] is not None for k in m)
 
 
-def test_members_cannot_see_or_change_financials(client):
+def test_members_cannot_see_or_change_financials(client, member_without_finance):
     login(client, email=MEMBER)
     assert client.get("/api/finance/dashboard").status_code == 403
     assert upload(client, b"period,kind,category,amount_usd\n2026-10,income,Gifts,10\n", "x.csv").status_code == 403

@@ -42,3 +42,11 @@ def client(make_client) -> TestClient:
 
 def login(client: TestClient, email: str = CHAIR, password: str = DEMO_PASSWORD_DEFAULT):
     return client.post("/api/auth/login", json={"email": email, "password": password})
+
+
+@pytest.fixture
+def member_without_finance(monkeypatch):
+    """Board members can read the finances. Tests of the guard for a role WITHOUT financial access (redaction, refused
+    Finance steps, 403s) use this fixture, which takes that permission away from the member role for one test."""
+    from backend.app.core.permissions import ROLE_PERMISSIONS, Permission, Role
+    monkeypatch.setitem(ROLE_PERMISSIONS, Role.MEMBER, ROLE_PERMISSIONS[Role.MEMBER] - {Permission.VIEW_FINANCIALS})

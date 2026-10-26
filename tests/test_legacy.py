@@ -266,7 +266,7 @@ def test_catering_minimum_is_applied_deterministically():
 # ── The evidence test: same plan with and without history ────────────────────────
 
 
-def test_history_ab_experiment_compares_runs_and_tracks_usage(client):
+def test_history_ab_experiment_compares_runs_and_tracks_usage(client, member_without_finance):
     client.app.state.provider = AIProvider("openai", ScriptedClient())
     login(client)
     r = client.post("/api/experiments/history-ab", json={})

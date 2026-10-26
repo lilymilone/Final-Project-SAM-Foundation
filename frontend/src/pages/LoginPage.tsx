@@ -134,7 +134,7 @@ export default function LoginPage() {
                     onClick={() => { setEmail(a.email); if (demo.default_password) setPassword(DEMO_PASSWORD); }}>
                     <span className="block text-sm font-semibold text-plum">{a.title}</span>
                     <span className="block text-xs text-muted">{a.email}</span>
-                    <span className="mt-1 block text-[0.7rem] text-royal">{a.role === "chair" ? "Full access" : "No donor or financial access"}</span>
+                    <span className="mt-1 block text-[0.7rem] text-royal">{a.role === "chair" ? "Full access" : "Views finances; no donor records"}</span>
                   </button>
                 ))}
               </div>

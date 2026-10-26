@@ -414,7 +414,7 @@ def test_photo_only_import_never_produces_figures(client):
     assert not fake.schema_calls("EventExtraction")  # no model call: there was nothing it may read
 
 
-def test_source_documents_and_imports_are_restricted(client, make_client):
+def test_source_documents_and_imports_are_restricted(client, make_client, member_without_finance):
     login(client)
     imp = upload_sample(client, sample_reply)
     pdf_id = next(d["id"] for d in imp["documents"] if d["file_type"] == "pdf")

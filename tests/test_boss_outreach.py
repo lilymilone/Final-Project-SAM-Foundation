@@ -112,10 +112,10 @@ def test_charity_and_research_discovery_trigger_drafts_without_promising_money(c
 def test_finance_is_consulted_only_with_financial_access():
     """Finance states available funds only for a board member whose role allows financial access; nobody proposes an amount."""
     from backend.app.agents.orchestrator import Orchestrator
-    from backend.app.core.permissions import permissions_for
+    from backend.app.core.permissions import Permission, permissions_for
 
     class Ctx:  # the helper reads only the permission set before deciding whether to consult Finance
-        user_permissions = permissions_for("member")
+        user_permissions = permissions_for("member") - {Permission.VIEW_FINANCIALS}  # a role without financial access
 
     notes = Orchestrator()._support_capacity(Ctx(), {}, [{"category": "organization"}])
     assert notes == ["Finance was not consulted: your board role has no financial access. No support amount is proposed."]

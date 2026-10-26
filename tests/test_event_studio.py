@@ -173,7 +173,7 @@ def test_same_plan_without_history_keeps_the_original_choice(client):
 # ── Recalculation, saved assumptions, packet permissions ─────────────────────────
 
 
-def test_board_can_recalculate_assumptions_deterministically(client):
+def test_board_can_recalculate_assumptions_deterministically(client, member_without_finance):
     login(client)
     run, _, _ = run_plan(client, gala_plan_id(client.app))
     assumptions = run.result["finance"]["model"]["assumptions"]
@@ -201,7 +201,7 @@ def test_saved_board_assumptions_feed_the_next_strategy(client):
     assert a["marketing_usd"]["value"] == 0.0
 
 
-def test_member_packet_hides_finance_but_shows_plan(client):
+def test_member_packet_hides_finance_but_shows_plan(client, member_without_finance):
     login(client)
     run, _, _ = run_plan(client, gala_plan_id(client.app))
     client.post("/api/auth/logout")

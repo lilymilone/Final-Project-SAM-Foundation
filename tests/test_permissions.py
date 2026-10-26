@@ -9,7 +9,7 @@ from backend.app.db.models import AuditLog
 from .conftest import MEMBER, login
 
 
-def test_member_blocked_from_financial_and_donor_data(client):
+def test_member_blocked_from_financial_and_donor_data(client, member_without_finance):
     assert login(client, email=MEMBER).status_code == 200
     assert client.get("/api/finance/summary").status_code == 403
     assert client.get("/api/donations").status_code == 403
@@ -94,3 +94,18 @@ def test_overview_never_lists_donor_drafts(client):
         overview = client.get("/api/overview").json()
         assert all(d["draft_type"] not in DONOR_DRAFTS for d in overview["drafts_awaiting_review"])
         assert "Private Donor" not in str(overview)
+
+
+def test_members_can_read_finances_but_not_change_them_or_see_donors(client):
+    """Board members see the finances, so Financial Analysis can check affordability for them. Uploading or editing
+    financial records stays with the chair and treasurer, and donor records stay private."""
+    assert login(client, email=MEMBER).status_code == 200
+    assert client.get("/api/finance/dashboard").status_code == 200
+    assert client.get("/api/finance/summary").status_code == 200
+    overview = client.get("/api/overview").json()
+    assert overview["financial"]["restricted"] is False
+    assert client.post("/api/finance/records", json={"period": "2026-01", "kind": "expense", "category": "test", "amount_usd": 1}).status_code == 403
+    assert client.get("/api/donations").status_code == 403
+    me = client.get("/api/auth/me").json()
+    assert "view_financials" in me["user"]["permissions"] and "manage_financials" not in me["user"]["permissions"]
+    assert "view_donor_data" not in me["user"]["permissions"]

@@ -58,7 +58,7 @@ python run.py
 | Account | Email | Password | Access |
 |---|---|---|---|
 | Board Chair (demo) | `chair@demo.samspace` | `SmileLikeSab-demo` | Everything |
-| Board Member (demo) | `member@demo.samspace` | `SmileLikeSab-demo` | No donor or financial records |
+| Board Member (demo) | `member@demo.samspace` | `SmileLikeSab-demo` | Can view finances; cannot change them or see donor records |
 
 These accounts and every record marked **Demo** are synthetic. No real foundation finances, donors, or board members are in this repository.
 
@@ -375,7 +375,7 @@ The walkthrough is in **[docs/impact_evaluation_workflow.md](docs/impact_evaluat
   - Sessions are server-side, in an HttpOnly + SameSite=Strict cookie. They expire after 8 hours and can be signed out.
   - Failed sign-ins are limited to 5 per 15 minutes.
   - State-changing calls need a same-origin header.
-- **Role-based access.** Chair, treasurer, and member roles. Donor and financial routes are blocked on the server (403) for members, and denied attempts are audited.
+- **Role-based access.** Chair, treasurer, and member roles. Members can view the finances, so Financial Analysis can check affordability for them, but cannot upload or edit financial records. Donor routes are blocked on the server (403) for members, and denied attempts are audited.
 - **Ten screens:**
   - Overview
   - Mission Discovery

@@ -69,7 +69,7 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 - **44 data-changing API routes, none of which sends, pays, books, or commits.** The donation "acknowledgment" route creates a draft.
 - **36 tools** can be given to agents. None is a prohibited action, and none has a send or spend name.
 - **23 of 23 prohibited actions are refused** when registered as a tool: send, reply, forward, DM, submit form, schedule, publish, pay, transfer, allocate funds, purchase, book, sign contract, approve donation, commit resources, and others.
-- Finance reads, calculates, compares, and recommends only. A member without financial access gets 403 on financial and donor routes, and the UI says so (`walkthrough-16-member-finance-restricted.jpg`).
+- Finance reads, calculates, compares, and recommends only. Board members can view finances but not change them (since 2026-10-26, at the chair's request); donor routes return 403 for members, and the UI says so (`walkthrough-16-member-donations-restricted.jpg`).
 - Marking a draft *Reviewed* leaves the donations ledger unchanged (`test_no_sending_and_no_spending_capability_exists`).
 
 ## 6. Historical learning (Our Legacy)

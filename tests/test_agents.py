@@ -249,7 +249,7 @@ def test_agent_cannot_use_another_agents_tool(client):
     assert any(d.agent == "financial_analysis" and d.tool_name == "read_donations" for d in denied)
 
 
-def test_member_workflow_skips_finance_by_permission(client):
+def test_member_workflow_skips_finance_by_permission(client, member_without_finance):
     run, steps, _ = run_sync(client, role="member")
     finance_steps = [s for s in steps if s.to_agent == "financial_analysis"]
     assert finance_steps and all(s.status == "refused" and "view_financials" in s.error for s in finance_steps)
@@ -363,7 +363,7 @@ def test_calculators():
 # ── API ─────────────────────────────────────────────────────────────────────────
 
 
-def test_run_api_end_to_end_and_member_redaction(client):
+def test_run_api_end_to_end_and_member_redaction(client, member_without_finance):
     client.app.state.provider = AIProvider("openai", ScriptedClient())
     login(client)
     r = client.post("/api/runs", json={"request": GALA, "research_mode": "synthetic", "event_plan_id": gala_plan_id(client.app)})
@@ -388,7 +388,7 @@ def test_run_api_end_to_end_and_member_redaction(client):
     assert "finance" not in (member_view["result"] or {})
 
 
-def test_only_one_active_run_and_permissions(client):
+def test_only_one_active_run_and_permissions(client, member_without_finance):
     client.app.state.provider = AIProvider("openai", ScriptedClient())
     login(client, email=MEMBER)
     assert client.post("/api/runs", json={"request": "Review our finances", "intent": "financial_review"}).status_code == 403

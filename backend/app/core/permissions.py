@@ -37,11 +37,13 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
             Permission.RUN_AGENTS,
         }
     ),
-    # Board members plan events and share reflections, but never see donor or
-    # financial records.
+    # Board members plan events, share reflections, and can read the finances (so the Financial Analysis agent can check
+    # whether a plan is affordable for them). They cannot upload or edit financial records, and they never see donor
+    # records, which hold private names and gifts.
     Role.MEMBER: frozenset(
         {
             Permission.VIEW_DASHBOARD,
+            Permission.VIEW_FINANCIALS,
             Permission.MANAGE_EVENTS,
             Permission.WRITE_REFLECTIONS,
             Permission.RUN_AGENTS,
