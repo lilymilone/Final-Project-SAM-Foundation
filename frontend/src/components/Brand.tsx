@@ -13,7 +13,7 @@ export function Logo({ className = "", size = 160 }: { className?: string; size?
   const [missing, setMissing] = useState(false);
   return (
     <div
-      className={`inline-flex items-center justify-center rounded-[1.4rem] bg-white p-3 shadow-[var(--shadow-soft)] ring-1 ring-lavender/40 ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-[1.4rem] bg-white p-3 shadow-[var(--shadow-soft)] ring-1 ring-lavender/40 ${className}`}
       style={{ width: size, height: size }}
     >
       {missing ? (

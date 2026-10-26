@@ -98,7 +98,7 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 |---|---|
 | Launch, sign in as the demo chair | Works. Butterflies played after sign-in (1 flight). |
 | Purple dashboard | Renders (`walkthrough-02/03`) |
-| Smile Like Sab logo | **Missing file:** `assets/smile-like-sab.png` is not in the repository, so the designed fallback (butterfly plus "Smile Like Sab") shows. This 404 is the only browser error on any page. |
+| Smile Like Sab logo | Renders from `assets/smile-like-sab.png`, Lily's file added unaltered on 2026-10-25, on the sign-in page and in the sidebar. The sidebar tile was kept from shrinking so the logo stays legible. With the file in place, **no page has any browser error**. |
 | Mission Discovery, Event Studio, Our Legacy (and a past event), Financial Intelligence, Donations, Partnerships (Review Center), Agent Activity, run #40 trace, Analytics & Safety, Impact & Evaluation, Settings | All load in about 1.5 s with content. No page errors, no failed API calls, no error text. |
 | Member account | Financial Intelligence shows "restricted"; enforced by the server |
 | Generating drafts in the UI | Not re-run (paid). The drafts from live runs #40–#45 were reviewed in the Review Center instead. |
@@ -120,7 +120,7 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 
 **`.gitignore`** excludes `.env*` (except `.env.example`), the local database and uploads, `node_modules`, `.claude/`, and editor files.
 
-**Logo:** the authentic logo file is still to be added by Lily (`assets/smile-like-sab.png`).
+**Logo:** the authentic logo is in `assets/smile-like-sab.png`, exactly as provided (same SHA-256 as the file Lily supplied).
 
 **Commit:** this stage's commit is local only. It will be pushed after Lily approves publication.
 
@@ -131,7 +131,6 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 - **Real-user evidence is missing:** no board member has used the app or completed the pilot. The report's Impact section needs at least one real person (a quote, a screenshot, and a before-and-after time). This needs Lily, not code.
 
 **Important (fix if feasible)**
-- **The authentic Smile Like Sab logo file is not in the repository.** Lily needs to add `assets/smile-like-sab.png`. It must not be recreated.
 - **The live sponsorship draft is not demonstrated.** Two live searches found no business sponsor. The path is covered by automated tests.
 - **Contact research after the allowance fix is untested live.** No live draft has been written since the separate allowance was added (run #45 drafted nothing). Covered by tests.
 - **No quality comparison for a cost cut.** Caching savings and budget step-downs are measured, but no cost cut has been compared on quality (for example, partner introductions on Luna instead of Sol).

@@ -36,8 +36,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { user, logout } = useAuth();
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 px-5 pb-5 pt-6">
-        <Logo size={64} className="!rounded-2xl !p-1.5" />
+      <div className="flex items-center gap-3 px-4 pb-5 pt-6">
+        <Logo size={56} className="!rounded-2xl !p-1" />
         <Wordmark />
       </div>
       <nav aria-label="Main" className="flex-1 overflow-y-auto px-3 py-2">

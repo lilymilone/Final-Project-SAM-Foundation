@@ -429,7 +429,6 @@ The full list, with what each means for the board, is in **[docs/limitations.md]
 - **No real-user evaluation yet.** The pilot framework works, but no board member has completed it, so time savings are not yet measured.
 - **Demo data.** Finances, donors, board members, and most past events are labeled synthetic. Two live outreach workflows used real public web pages.
 - **Web research is shallow by design.** A few searches and page reads per run; prices count only if a fetched page shows them.
-- **The Smile Like Sab logo file is not in the repository yet**, so a text fallback shows.
 - **Microsoft Outlook is planned, not built:** read-only, with no send permission ([docs/roadmap.md](docs/roadmap.md)).
 
 ## Evidence for the report

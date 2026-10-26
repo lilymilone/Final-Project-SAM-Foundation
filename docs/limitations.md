@@ -12,7 +12,6 @@ What SAM SPACE does not do yet, where it relies on demonstration data, and what 
 | Live sponsorship draft | The sponsor → sponsorship-inquiry path is verified by automated tests only. Two live sponsor searches (#44, #45) found no business sponsor. |
 | Contact re-check before use | A draft's contact was correct on its verification date. There is no automatic re-check before a board member uses it. |
 | Shared budget store | The daily spending cap is enforced per server process. Several processes would each enforce it separately. |
-| Smile Like Sab logo | The authentic logo file (`assets/smile-like-sab.png`) is not in the repository yet. Until it is added, a text-and-butterfly fallback shows. It must not be recreated. |
 
 ## Reliance on demonstration data
 
