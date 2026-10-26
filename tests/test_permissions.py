@@ -50,7 +50,7 @@ def test_member_can_plan_events_and_write_reflections(client):
     history = client.get("/api/legacy/events").json()["events"]
     r = client.post(f"/api/legacy/events/{history[0]['id']}/reflections", json={"went_well": "Great turnout", "rating": 5})
     assert r.status_code == 201
-    assert r.json()["reflection"]["author"] == "Sam Rivera"
+    assert r.json()["reflection"]["author"] == "Ava Milone"
 
 
 def test_event_validation(client):

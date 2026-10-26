@@ -35,7 +35,7 @@ DEMO_PASSWORD_DEFAULT = "SmileLikeSab-demo"
 DEMO_ACCOUNTS = [
     # email, first, last, role, title
     ("chair@demo.samspace", "Tauhid", "Zaman", "chair", "Board Chair (demo)"),
-    ("member@demo.samspace", "Sam", "Rivera", "member", "Board Member (demo)"),
+    ("member@demo.samspace", "Ava", "Milone", "member", "Board Member (demo)"),
 ]
 
 MISSION = (

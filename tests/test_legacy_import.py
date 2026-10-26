@@ -309,7 +309,7 @@ def test_multiple_reflections_keep_identity_original_words_and_disagreement(clie
     assert client.post(f"/api/legacy/events/{eid}/reflections", json={"challenges": "Volunteers did not know their roles."}).status_code == 201
     refl = client.get(f"/api/legacy/events/{eid}").json()["event"]["reflections"]
     mine = {r["author"]: r for r in refl[-3:]}
-    assert set(mine) == {"Tauhid Zaman", "Jordan Lee (board member, by phone)", "Sam Rivera"}
+    assert set(mine) == {"Tauhid Zaman", "Jordan Lee (board member, by phone)", "Ava Milone"}
     assert mine["Jordan Lee (board member, by phone)"]["recorded_by"] == "Tauhid Zaman"
     answers = {r["author"]: {x["key"]: x["answer"] for x in r["answers"]} for r in refl[-3:]}
     # Both sides of the raffle disagreement are kept, word for word.
