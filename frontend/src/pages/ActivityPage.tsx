@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import type { Activity, RunSummary } from "../api/types";
 import { useApi } from "../api/useApi";
 import { INTENT_LABELS, ModeBadge, StatusPill } from "../components/agents";
-import { RunLauncher } from "../components/RunLauncher";
 import { Card, EmptyState, ErrorState, LoadingState, PageHeader, StatTile } from "../components/ui";
 
 const n = (v: number | null | undefined) => (v == null ? "—" : v.toLocaleString());
@@ -18,8 +17,7 @@ export default function ActivityPage() {
       <PageHeader eyebrow="Agent Activity" title="See exactly what the agents did"
         subtitle="Every workflow, step, tool call, model, token, and cost, as recorded." />
 
-      <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-        <RunLauncher examples={[GALA_EXAMPLE, "Find eating disorder research initiatives in New York we could support", "What lessons can we learn from our previous events?"]} />
+      <div className="mb-5">
         <Card title="Recent workflows" icon={<History size={16} aria-hidden="true" />}>
           {runs.loading && <LoadingState rows={3} />}
           {runs.error && <ErrorState message={runs.error.message} onRetry={runs.reload} />}

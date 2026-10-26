@@ -120,6 +120,12 @@ From [restrictions_audit.md](restrictions_audit.md), generated from the code:
 
 **`.gitignore`** excludes `.env*` (except `.env.example`), the local database and uploads, `node_modules`, `.claude/`, and editor files.
 
+**Privacy check before every commit:**
+- The staged files are scanned for two things: API keys, and the foundation's real event details (its real event names, venues, and costs).
+- Those real records live only in the local database, which is never committed.
+- Screenshots that would show them were kept out of the repository.
+- Every commit since the real records were added passed both checks: **no keys and no real event details**.
+
 **Logo:** the authentic logo is in `assets/smile-like-sab.png`, exactly as provided (same SHA-256 as the file Lily supplied).
 
 **Commit:** this stage's commit is local only. It will be pushed after Lily approves publication.

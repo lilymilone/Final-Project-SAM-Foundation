@@ -19,6 +19,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { Logo, Wordmark } from "./Brand";
 import { DemoBadge } from "./ui";
+import { SirsOffice } from "./SirsOffice";
 
 export const NAV = [
   { to: "/", label: "Overview", icon: LayoutDashboard, group: "" },
@@ -158,9 +159,10 @@ export function Layout() {
             <span className="ml-1">You're signed in to a demonstration workspace. All records marked "Demo" are synthetic.</span>
           </div>
         )}
-        <main id="main" className="mx-auto max-w-6xl px-4 py-8 sm:px-8 lg:py-10" aria-label={current?.label}>
+        <main id="main" className="mx-auto max-w-6xl px-4 pb-28 pt-8 sm:px-8 lg:pt-10" aria-label={current?.label}>
           <Outlet />
         </main>
+        <SirsOffice />
       </div>
     </div>
   );

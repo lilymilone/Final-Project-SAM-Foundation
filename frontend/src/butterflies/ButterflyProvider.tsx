@@ -4,7 +4,8 @@ import { Butterfly, type ButterflyPalette } from "./Butterfly";
 /**
  * Success-only butterfly celebrations.
  *
- *   login      – one butterfly glides across the welcome screen
+ *   login      – a small flock flies across the screen after signing in
+ *   ask        – a small flock flies across when a question goes to Sir's Office
  *   workflow   – two or three rise near the completed results panel
  *   save       – a brief butterfly confirms a saved fundraiser
  *   reflection – one rises beside a saved historical event or reflection
@@ -14,7 +15,7 @@ import { Butterfly, type ButterflyPalette } from "./Butterfly";
  * prefers reduced motion. The layer never takes pointer events and is hidden
  * from screen readers.
  */
-export type CelebrationKind = "login" | "workflow" | "save" | "reflection" | "milestone";
+export type CelebrationKind = "login" | "ask" | "workflow" | "save" | "reflection" | "milestone";
 
 type Flight = {
   id: number;
@@ -53,6 +54,26 @@ function rise(x: number, y: number, height: number, sway: number): string {
   return `M ${x} ${y} C ${x - sway} ${y - height * 0.3}, ${x + sway * 1.4} ${y - height * 0.6}, ${x + sway * 0.4} ${y - height}`;
 }
 
+/** A flock crossing the whole screen on gentle S-curves, mostly left to right, staggered so it reads as a flight, not a burst. */
+function flock(count: number, nextId: () => number): Flight[] {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  return Array.from({ length: count }, (_, i) => {
+    const rtl = i % 4 === 3;
+    const [x0, x1] = rtl ? [w + 70, -70] : [-70, w + 70];
+    const y0 = h * (0.15 + Math.random() * 0.7);
+    const y1 = h * (0.1 + Math.random() * 0.75);
+    const c1 = h * (0.05 + Math.random() * 0.9);
+    const c2 = h * (0.05 + Math.random() * 0.9);
+    return {
+      id: nextId(),
+      path: `M ${x0} ${y0} C ${x0 + (x1 - x0) * 0.33} ${c1}, ${x0 + (x1 - x0) * 0.66} ${c2}, ${x1} ${y1}`,
+      duration: jitter(5200, 700), delay: i * 220 + Math.random() * 120, size: Math.round(jitter(36, 10)),
+      palette: (i % 3) as ButterflyPalette, flap: jitter(0.3, 0.05),
+    };
+  });
+}
+
 function buildFlights(kind: CelebrationKind, anchor: DOMRect | null, nextId: () => number): Flight[] {
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -61,11 +82,9 @@ function buildFlights(kind: CelebrationKind, anchor: DOMRect | null, nextId: () 
 
   switch (kind) {
     case "login":
-      return [{
-        id: nextId(),
-        path: `M -60 ${h * 0.72} C ${w * 0.22} ${h * 0.3}, ${w * 0.48} ${h * 0.88}, ${w * 0.7} ${h * 0.42} S ${w * 0.94} ${h * 0.1}, ${w + 70} ${h * 0.2}`,
-        duration: jitter(5600, 300), delay: 250, size: 48, palette: 0, flap: 0.32,
-      }];
+      return flock(8, nextId);
+    case "ask":
+      return flock(6, nextId);
     case "workflow":
       return [0.28, 0.52, 0.76].map((fx, i) => ({
         id: nextId(),

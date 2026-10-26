@@ -7,9 +7,7 @@ import { useAuth } from "../auth/AuthContext";
 import { Butterfly } from "../butterflies/Butterfly";
 import { Logo } from "../components/Brand";
 import { PHILOSOPHY } from "../components/Philosophy";
-import { RunLauncher } from "../components/RunLauncher";
 import { StatusPill } from "../components/agents";
-import { GALA_EXAMPLE } from "./ActivityPage";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, SeverityDot } from "../components/ui";
 
 const clip = (t: string, n = 170) => (t.length > n ? `${t.slice(0, n).replace(/\s+\S*$/, "")}…` : t);
@@ -184,7 +182,6 @@ export default function OverviewPage() {
         </div>
       )}
 
-      <div className="mt-6"><RunLauncher title="Ask the agents anything" examples={[GALA_EXAMPLE]} /></div>
     </>
   );
 }
