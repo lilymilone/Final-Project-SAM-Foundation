@@ -6,7 +6,7 @@ SAM SPACE helps a small, volunteer-run nonprofit board plan fundraisers, learn f
 
 *MGT 409 (AI Foundations) final project · Lily Milone · Yale School of Management*
 
-> **Status:** the seven-agent system works end to end with real tools, real data, and real model calls. The Orchestrator acts as the Boss Agent, and promising venues, charities, and sponsors get unsent outreach drafts automatically. 276 automated tests pass.
+> **Status:** the seven-agent system works end to end with real tools, real data, and real model calls. The Orchestrator acts as the Boss Agent, and promising venues, charities, and sponsors get unsent outreach drafts automatically. 298 automated tests pass.
 > Try it: **Event Studio → Load an example → Practice venues → Generate Event Plan** (about $0.05 and 2 minutes on *Faster*; about $0.35 and 3–4 minutes on *Most thorough*). Each agent's step appears live as the backend records it.
 > Known gaps are listed in [docs/limitations.md](docs/limitations.md); report evidence is indexed in [docs/evidence/README.md](docs/evidence/README.md).
 
@@ -85,7 +85,7 @@ When both keys are present, `AI_PROVIDER=auto` (the default) uses OpenAI. Set `A
 python run.py --port 8001     # if port 8000 is busy
 python run.py --reset-db      # delete the local database and re-create the demo workspace
 python run.py --open          # open the browser automatically
-python -m pytest              # run the automated tests (276 tests, no API key or network needed)
+python -m pytest              # run the automated tests (298 tests, no API key or network needed)
 ```
 
 ---
