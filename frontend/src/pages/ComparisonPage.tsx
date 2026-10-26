@@ -62,7 +62,7 @@ export default function ComparisonPage() {
       {!c && <Card><p className="flex items-center gap-2 text-sm text-plum"><span className="h-2 w-2 animate-pulse rounded-full bg-royal" aria-hidden="true" />Running both plans ({state.status})…{state.error && <span className="text-danger"> {state.error}</span>}</p></Card>}
       {c && (
         <>
-          <div className="mb-5 grid gap-3 md:grid-cols-2">
+          <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-2">
             {(["without_history", "with_history"] as const).map((k) => {
               const r = c.runs[k];
               return (
@@ -97,7 +97,7 @@ export default function ComparisonPage() {
                   <div className="mt-2"><p className="text-xs font-semibold text-amber">Different in B, but no specific lesson found (not counted as an improvement):</p>
                     <ul className="list-disc pl-5 text-xs text-muted">{d.different_without_specific_lesson.slice(0, 4).map((x, i) => <li key={i}>{x.statement}</li>)}</ul></div>
                 )}
-                <div className="mt-2 grid gap-2 text-xs md:grid-cols-2">
+                <div className="mt-2 grid grid-cols-1 gap-2 text-xs md:grid-cols-2">
                   <div><p className="font-semibold text-plum">A said ({d.without_history.length})</p><ul className="list-disc pl-5 text-muted">{d.without_history.slice(0, 4).map((x, i) => <li key={i}>{x}</li>)}</ul>{!d.without_history.length && <p className="text-muted">—</p>}</div>
                   <div><p className="font-semibold text-plum">B said ({d.with_history.length})</p><ul className="list-disc pl-5 text-muted">{d.with_history.slice(0, 4).map((x, i) => <li key={i}>{x}</li>)}</ul>{!d.with_history.length && <p className="text-muted">—</p>}</div>
                 </div>
@@ -105,7 +105,7 @@ export default function ComparisonPage() {
             <p className="mt-3 text-xs text-muted">{c.method_note}</p>
           </Card>
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
             <Card title="Budget figures (computed in code)" icon={<Scale size={16} aria-hidden="true" />}>
               <table className="w-full text-sm"><thead><tr className="text-left text-xs uppercase tracking-wider text-muted"><th className="py-1">Measure</th><th>A</th><th>B</th></tr></thead>
                 <tbody>{c.numbers.map((n) => (

@@ -1,12 +1,12 @@
 import { Archive, Check, ChevronDown, Copy, ExternalLink, FileText, Info, MailX, RotateCcw, Save, ShieldAlert } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { api } from "../api/client";
 import type { Draft } from "../api/types";
 import { formatDate, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { VerificationBadge } from "./agents";
-import { Card, DemoBadge, ErrorState, LoadingState, Toast } from "./ui";
+import { Card, DemoBadge, ErrorState, LoadingState, ShowMore, Toast } from "./ui";
 
 /** Partnerships & Outreach → Drafts for Board Review. Drafts are never sent: a person copies one and sends it outside SAM SPACE. */
 
@@ -56,7 +56,9 @@ function ContactBlock({ d }: { d: Draft }) {
 
 function DraftCard({ d, onChange }: { d: Draft; onChange: (msg: string) => void }) {
   const { can } = useAuth();
-  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const [open, setOpen] = useState(location.hash === `#draft-${d.id}`);
+  useEffect(() => { if (location.hash === `#draft-${d.id}`) setOpen(true); }, [location.hash, d.id]);
   const [subject, setSubject] = useState(d.subject);
   const [body, setBody] = useState(d.body);
   const [busy, setBusy] = useState(false);
@@ -78,7 +80,7 @@ function DraftCard({ d, onChange }: { d: Draft; onChange: (msg: string) => void 
   }
 
   return (
-    <li className="rounded-2xl border border-lavender/35 bg-white/85">
+    <li id={`draft-${d.id}`} className="rounded-2xl border border-lavender/35 bg-white/85">
       <button type="button" className="flex w-full flex-wrap items-start justify-between gap-2 p-4 text-left" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">{CATEGORY[d.category ?? ""] ?? d.draft_type.replace(/_/g, " ")} · {formatDate(d.created_at)}</p>
@@ -104,12 +106,16 @@ function DraftCard({ d, onChange }: { d: Draft; onChange: (msg: string) => void 
             <div className="flex items-center justify-between"><label className="label" htmlFor={`b-${d.id}`}>Message</label><CopyButton text={body} label="Copy message" /></div>
             <textarea id={`b-${d.id}`} rows={12} className="field text-sm" value={body} disabled={!can("run_agents")} onChange={(e) => setBody(e.target.value)} />
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="rounded-xl bg-lilac/30 p-3 text-sm">
               <p className="text-[0.68rem] font-semibold uppercase tracking-wide text-royal">Why the Orchestrator recommended outreach</p>
               <p className="mt-0.5 text-ink">{d.recommendation_reason || "Requested by a board member."}</p>
               <p className="mt-1 text-xs text-muted">Found by: {AGENTS[d.found_by_agent ?? ""] ?? (d.found_by_agent || "—")} · written by: {d.model_used || "—"}
                 {d.run_id && <> · <Link className="text-royal underline" to={`/activity/runs/${d.run_id}`}>agent trace #{d.run_id}</Link></>}</p>
+              <p className="mt-1 text-xs">
+                {d.finding_id ? <Link className="font-semibold text-royal underline" to={`/mission#finding-${d.finding_id}`}>Open the opportunity in Mission Discovery</Link>
+                  : d.category === "venue" && d.run_id ? <Link className="font-semibold text-royal underline" to={`/events/packets/${d.run_id}`}>Open the event plan it came from</Link>
+                  : null}</p>
             </div>
             <div className="rounded-xl bg-ivory/80 p-3 text-sm">
               <p className="text-[0.68rem] font-semibold uppercase tracking-wide text-royal">Financial considerations</p>
@@ -156,13 +162,14 @@ function DraftCard({ d, onChange }: { d: Draft; onChange: (msg: string) => void 
 export function ReviewCenter() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("open");
   const [toast, setToast] = useState<string | null>(null);
+  const location = useLocation();
+  const [limit, setLimit] = useState(location.hash.startsWith("#draft-") ? 1000 : 8);  // a link to one draft shows them all
   const { data, error, loading, reload } = useApi<{ drafts: Draft[] }>(`/api/drafts?kind=outreach${filter === "archived" ? "&archived=true" : ""}`);
   const rows = (data?.drafts ?? []).filter((d) => filter === "open" || filter === "archived" || d.status === filter);
   return (
-    <Card title="Drafts for Board Review" icon={<FileText size={16} aria-hidden="true" />}>
+    <Card id="drafts" title="Drafts for Board Review" icon={<FileText size={16} aria-hidden="true" />}>
       <p className="mb-3 flex items-start gap-2 rounded-xl bg-lilac/50 px-3 py-2 text-xs text-plum">
-        <MailX size={14} className="mt-0.5 shrink-0" aria-hidden="true" /> The agents prepare these automatically when they find a promising venue, sponsor, charity, or
-        research partner. SAM SPACE cannot send email, submit forms, or contact anyone: a person copies a reviewed draft and sends it outside SAM SPACE.
+        <MailX size={14} className="mt-0.5 shrink-0" aria-hidden="true" /> Drafts are never sent from SAM SPACE. Copy a reviewed draft and send it from your own email.
       </p>
       <div role="tablist" className="mb-3 flex flex-wrap gap-1.5">{FILTERS.map(([k, label]) => (
         <button key={k} role="tab" aria-selected={filter === k} className={`rounded-full px-3 py-1 text-xs font-semibold ${filter === k ? "bg-plum text-white" : "bg-lilac/60 text-plum"}`}
@@ -170,7 +177,8 @@ export function ReviewCenter() {
       {loading && <LoadingState rows={2} />}
       {error && <ErrorState message={error.message} onRetry={reload} />}
       {data && (rows.length === 0 ? <p className="rounded-xl bg-ivory/80 px-3 py-2.5 text-sm text-muted">No drafts here.</p> : (
-        <ul className="space-y-3">{rows.map((d) => <DraftCard key={`${d.id}-${d.updated_at ?? ""}`} d={d} onChange={(m) => { setToast(m); reload(); }} />)}</ul>
+        <><ul className="space-y-3">{rows.slice(0, limit).map((d) => <DraftCard key={`${d.id}-${d.updated_at ?? ""}`} d={d} onChange={(m) => { setToast(m); reload(); }} />)}</ul>
+          <ShowMore shown={Math.min(limit, rows.length)} total={rows.length} onMore={() => setLimit(rows.length)} /></>
       ))}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
     </Card>

@@ -17,7 +17,7 @@ Event Studio turns a board member's fundraiser idea into a board-ready **Event S
 - maximum planning budget
 - additional instructions
 
-**Load the default test case** fills in: *Smile Like Sab Spring Gala, 150 guests, Manhattan, April 17–24, 2027, $250 tickets, $40,000 target, $18,000 maximum budget.*
+**Load an example** (formerly *Load the default test case*) fills in: *Smile Like Sab Spring Gala, 150 guests, Manhattan, April 17–24, 2027, $250 tickets, $40,000 target, $18,000 maximum budget.*
 
 **Research source** is a choice between **Live web research** and the **Controlled demo**. A checkbox turns Event Intelligence (historical lessons) on or off.
 

@@ -27,7 +27,7 @@ export function MetricCard({ m }: { m: FinanceMetric }) {
   const muted = m.status === "not_documented";
   return (
     <div className="flex flex-col rounded-2xl border border-lavender/35 bg-white/85 p-4">
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
         <p className="text-xs font-semibold text-muted">{m.label}</p>
         <span className={`shrink-0 rounded-full px-1.5 py-px text-[0.62rem] font-semibold ${cls}`}>{label}</span>
       </div>
@@ -151,7 +151,7 @@ function FigureRow({ f, onDone }: { f: ExtractedFigureRow; onDone: () => void })
       {f.status === "pending" && can("manage_financials") && (
         <div className="mt-2 space-y-2">
           {edit && (
-            <div className="grid gap-2 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <select className="field !py-1 text-xs" aria-label="Kind" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
                 {Object.entries(KIND_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
               <input className="field !py-1 text-xs" aria-label="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
@@ -278,7 +278,7 @@ export function ManualEntry({ onSaved }: { onSaved: () => void }) {
   const set = (k: keyof typeof blank) => (e: { target: { value: string } }) => setForm({ ...form, [k]: e.target.value });
   return (
     <Card title="Enter a figure manually" icon={<PlusCircle size={16} aria-hidden="true" />}>
-      <form onSubmit={(e) => submit(e)} className="grid gap-2 sm:grid-cols-2">
+      <form onSubmit={(e) => submit(e)} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <div><label className="label" htmlFor="m-period">Month (YYYY-MM)</label><input id="m-period" className="field" placeholder="2026-10" value={form.period} onChange={set("period")} required pattern="\d{4}-(0[1-9]|1[0-2])" /></div>
         <div><label className="label" htmlFor="m-kind">Kind</label><select id="m-kind" className="field" value={form.kind} onChange={set("kind")}>
           {Object.entries(KIND_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></div>
@@ -328,7 +328,7 @@ function RecordEditor({ r, onDone }: { r: RecordRow; onDone: () => void }) {
   }
   const c = "field !py-1 text-xs";
   return (
-    <div className="mt-1 grid gap-1.5 sm:grid-cols-5">
+    <div className="mt-1 grid grid-cols-1 gap-1.5 sm:grid-cols-5">
       <input className={c} aria-label="Category" value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} />
       <input className={c} aria-label="Amount" type="number" min={0} step="0.01" value={f.amount_usd} onChange={(e) => setF({ ...f, amount_usd: e.target.value })} />
       <select className={c} aria-label="Restriction" value={f.restriction} onChange={(e) => setF({ ...f, restriction: e.target.value })}>

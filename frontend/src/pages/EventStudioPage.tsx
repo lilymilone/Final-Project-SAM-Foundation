@@ -1,6 +1,6 @@
 import { ArrowRight, CalendarHeart, FileText, FlaskConical, Globe2, History, MapPin, Sparkles, Users, Wand2 } from "lucide-react";
-import { useCallback, useRef, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { EventPlan, ResearchMode, RunDetail, RunSummary } from "../api/types";
 import { formatDate, usd, useApi } from "../api/useApi";
@@ -8,7 +8,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { StatusPill } from "../components/agents";
 import { VenueCandidates } from "../components/outputs";
-import { StrategyProgress } from "../components/studio";
+import { LiveProgress } from "../components/progress";
 import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, PageHeader } from "../components/ui";
 
 type Form = {
@@ -66,6 +66,13 @@ export default function EventStudioPage() {
   const [busy, setBusy] = useState(false);
   const [run, setRun] = useState<RunDetail | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const [params] = useSearchParams();
+  // /events?plan=7 (from the dashboard) opens that saved plan in the form.
+  useEffect(() => {
+    const wanted = Number(params.get("plan"));
+    const p = wanted ? plans.data?.events.find((x) => x.id === wanted) : undefined;
+    if (p) { setPlanId(p.id); setForm(fromPlan(p)); }
+  }, [params, plans.data]);
   const set = (k: keyof Form) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const poll = useCallback(async (id: number) => {
@@ -116,13 +123,13 @@ export default function EventStudioPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Event Studio" title="Plan a fundraiser with the whole team"
-        subtitle="Seven agents work together: lessons from our history, real venue research, a deterministic financial model, affordability checks, revisions, and unsent venue inquiries, assembled into a board-ready Event Strategy Packet." />
+      <PageHeader eyebrow="Event Studio" title="Plan an event"
+        subtitle="Enter the details. The agents research venues, check the budget and past lessons, revise if needed, and draft venue inquiries for your review." />
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <Card title="Event details" icon={<CalendarHeart size={16} aria-hidden="true" />}
           action={<button type="button" className="btn btn-ghost !py-1 text-sm" onClick={() => { setPlanId(null); setForm(DEFAULT_CASE); }}>
-            <Sparkles size={13} aria-hidden="true" /> Load the default test case</button>}>
+            <Sparkles size={13} aria-hidden="true" /> Load an example</button>}>
           {plans.data && plans.data.events.length > 0 && (
             <div className="mb-4">
               <label className="label" htmlFor="es-plan">Start from a saved plan (optional)</label>
@@ -137,7 +144,7 @@ export default function EventStudioPage() {
             </div>
           )}
           <form onSubmit={generate} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">{field("name", "Fundraiser name *", { required: true, maxLength: 200 })}</div>
               <div><label className="label" htmlFor="es-type">Event type</label>
                 <select id="es-type" className="field" value={form.event_type} onChange={set("event_type")}>{TYPES.map((t) => <option key={t}>{t}</option>)}</select></div>
@@ -156,7 +163,7 @@ export default function EventStudioPage() {
                 <textarea id="es-instr" rows={3} className="field" value={form.instructions} onChange={set("instructions")} maxLength={2000}
                   placeholder="Accessibility needs, tone, program, anything the agents should respect" /></div>
             </div>
-            <fieldset className="grid gap-2 sm:grid-cols-2">
+            <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <legend className="label">Venue research</legend>
               {([["live", Globe2, "Live web research", "Real venues. Websites are fetched and prices are checked against the page, otherwise \"Quote required.\""],
                  ["synthetic", FlaskConical, "Controlled demo", "Labeled synthetic Manhattan venues; reliably shows a budget revision."]] as const).map(([v, Icon, label, hint]) => (
@@ -175,25 +182,34 @@ export default function EventStudioPage() {
             {can("run_agents") && can("manage_events") ? (
               <button type="submit" disabled={busy || !form.name.trim() || !form.city.trim() || !form.expected_attendance}
                 className="btn btn-primary w-full !py-3.5 text-base shadow-[0_14px_30px_-12px_rgb(112_64_155/0.9)]">
-                <Wand2 size={18} aria-hidden="true" /> {busy ? "Agents at work…" : "Generate Event Strategy"}
+                <Wand2 size={18} aria-hidden="true" /> {busy ? "Agents at work…" : "Generate Event Plan"}
               </button>
             ) : <p className="text-sm text-muted">Your board role can view strategies but not generate them.</p>}
-            <p className="text-center text-xs text-muted">The agents research, calculate, and draft. Nothing is booked, paid, or sent.</p>
+            <p className="text-center text-xs text-muted">Nothing is booked, paid, or sent.</p>
           </form>
         </Card>
 
         <div className="space-y-6" ref={panelRef}>
           {run && (
-            <Card title={done ? "Strategy ready" : "The agents are working"} icon={<Sparkles size={16} aria-hidden="true" />}
-              action={<Link className="text-xs text-royal hover:underline" to={`/activity/runs/${run.run.id}`}>Full trace</Link>}>
-              <StrategyProgress detail={run} />
-              <p className="mt-3 text-xs text-muted">{run.totals.model_calls} model calls · {run.totals.web_search_calls} web searches · ${run.totals.cost_usd.toFixed(4)} so far</p>
-              {done && (
-                <Link to={`/events/packets/${run.run.id}`} className="btn btn-primary mt-3 w-full">
-                  Open the Event Strategy Packet <ArrowRight size={16} aria-hidden="true" />
-                </Link>
+            <Card title={done ? (run.run.status.startsWith("completed") ? "Event plan ready" : "Planning stopped") : "The agents are working"} icon={<Sparkles size={16} aria-hidden="true" />}>
+              {done && run.result?.recommendation && (
+                <div className="mb-3 rounded-2xl bg-ivory/80 p-3">
+                  <p className="font-semibold text-plum">{run.result.recommendation.headline}</p>
+                  <p className="mt-1 text-xs text-muted">
+                    {(run.result.shortlist ?? []).length} venue{(run.result.shortlist ?? []).length === 1 ? "" : "s"} shortlisted
+                    {run.result.finance?.verdict ? ` · finance: ${run.result.finance.verdict.replace(/_/g, " ")}` : ""}
+                    {` · ${(run.result.drafts ?? []).length} venue inquir${(run.result.drafts ?? []).length === 1 ? "y" : "ies"} drafted`}
+                    {(run.result.revision_history ?? []).length > 1 ? ` · revised ${(run.result.revision_history ?? []).length - 1} time(s)` : ""}
+                  </p>
+                </div>
               )}
-              {run.run.error && <p className="mt-2 text-sm text-danger">{run.run.error}</p>}
+              {done && run.run.status.startsWith("completed") && (
+                <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <Link to={`/events/packets/${run.run.id}`} className="btn btn-primary">Open the event plan <ArrowRight size={16} aria-hidden="true" /></Link>
+                  <Link to="/partnerships#drafts" className="btn btn-soft">Review venue inquiries</Link>
+                </div>
+              )}
+              <LiveProgress detail={run} />
             </Card>
           )}
           <Card title="Your fundraisers" icon={<CalendarHeart size={16} aria-hidden="true" />}>

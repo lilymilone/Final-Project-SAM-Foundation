@@ -25,9 +25,14 @@ type Props = {
   eventPlans?: EventPlan[];
   eventPlanId?: number | null;
   lockIntent?: boolean;
+  submitLabel?: string;
+  placeholder?: string;
+  /** Stay on the page and hand the new run to the caller (for an inline progress view) instead of opening its trace. */
+  onStarted?: (runId: number) => void;
 };
 
-export function RunLauncher({ title = "Ask the agents", intent = "", request = "", mode = "synthetic", examples = [], eventPlans, eventPlanId = null, lockIntent }: Props) {
+export function RunLauncher({ title = "Ask the agents", intent = "", request = "", mode = "synthetic", examples = [], eventPlans, eventPlanId = null, lockIntent,
+  submitLabel = "Run the agents", placeholder, onStarted }: Props) {
   const { can } = useAuth();
   const navigate = useNavigate();
   const [text, setText] = useState(request);
@@ -48,7 +53,8 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
       const res = await api<{ run: RunSummary }>("/api/runs", {
         json: { request: text, intent: chosenIntent || null, research_mode: researchMode, event_plan_id: planId },
       });
-      navigate(`/activity/runs/${res.run.id}`);
+      if (onStarted) { onStarted(res.run.id); setBusy(false); }
+      else navigate(`/activity/runs/${res.run.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not start the workflow.");
       setBusy(false);
@@ -57,10 +63,10 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
 
   return (
     <Card title={title} icon={<Wand2 size={16} aria-hidden="true" />}>
-      <form onSubmit={submit} className="space-y-3">
+      <form onSubmit={submit} className="@container space-y-3">
         <label className="sr-only" htmlFor="run-request">What should the agents do?</label>
         <textarea id="run-request" rows={3} className="field" value={text} onChange={(e) => setText(e.target.value)} maxLength={2000}
-          placeholder="e.g. Plan a 150-person Manhattan fundraising gala using lessons from our past events, and check whether we can afford it." />
+          placeholder={placeholder ?? "e.g. Plan a 150-person Manhattan fundraising gala using lessons from our past events, and check whether we can afford it."} />
         {examples.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {examples.map((ex) => (
@@ -71,7 +77,7 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
             ))}
           </div>
         )}
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 @lg:grid-cols-2">
           {!lockIntent && (
             <div>
               <label className="label" htmlFor="run-intent">Workflow</label>
@@ -92,7 +98,7 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
         </div>
         <fieldset>
           <legend className="label">Research source</legend>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 @sm:grid-cols-2">
             {([
               ["synthetic", "Synthetic demo data", "Labeled practice fixtures: free of web costs, same result every time."],
               ["live", "Live web research", "Real web search; every link is fetched to verify it. About 1¢ per search."],
@@ -107,9 +113,9 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
         </fieldset>
         {error && <p role="alert" className="rounded-xl bg-[#fbeef3] px-3 py-2 text-sm text-danger">{error}</p>}
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs text-muted">Agents research, calculate, and draft. Nothing is ever sent, booked, or paid.</p>
+          <p className="text-xs text-muted">Nothing is ever sent, booked, or paid.</p>
           <button type="submit" className="btn btn-primary" disabled={busy || text.trim().length < 5}>
-            {busy ? "Starting…" : "Run the agents"}
+            {busy ? "Starting…" : submitLabel}
           </button>
         </div>
       </form>

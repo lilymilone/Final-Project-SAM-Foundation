@@ -19,7 +19,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...core.permissions import Permission
-from ...db.models import ResearchFinding
+from ...db.models import OutreachDraft, ResearchFinding
 from ...mission import public_config
 from ...services.impact import impact_metrics
 from ...services.opportunities import opportunity_out
@@ -56,6 +56,16 @@ def list_opportunities(status: Literal["new", "saved", "dismissed", "all", "acti
     rows = db.scalars(select(ResearchFinding).where(ResearchFinding.organization_id == cu.organization_id)
                       .order_by(ResearchFinding.last_checked.desc().nulls_last(), ResearchFinding.created_at.desc()).limit(200)).all()
     cards = [opportunity_out(r) for r in rows]
+    # Contact details come only from an outreach draft for that finding, where they were looked up on the organization's
+    # own website (never guessed). Newest draft wins.
+    contacts: dict[int, dict] = {}
+    for d in db.scalars(select(OutreachDraft).where(OutreachDraft.organization_id == cu.organization_id, OutreachDraft.finding_id.is_not(None))
+                        .order_by(OutreachDraft.created_at)):
+        if d.contact:
+            contacts[d.finding_id] = {k: d.contact.get(k) for k in ("email", "contact_page_url", "source_url", "status", "display", "verified_at")}
+            contacts[d.finding_id]["draft_id"] = d.id
+    for c in cards:
+        c["contact"] = contacts.get(c["id"])
     if status == "active":
         cards = [c for c in cards if c["status"] != "dismissed"]
     elif status != "all":

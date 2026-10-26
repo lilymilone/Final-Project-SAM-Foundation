@@ -6,7 +6,7 @@ import type { Draft, ResearchFindingRow, VenueCandidateRow } from "../api/types"
 import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { VerificationBadge, money } from "./agents";
-import { Card, DemoBadge, EmptyState, ErrorState, LoadingState } from "./ui";
+import { Card, DemoBadge, EmptyState, ErrorState, LoadingState , ShowMore } from "./ui";
 
 // ── Drafts (never sent) ─────────────────────────────────────────────────────────
 
@@ -61,7 +61,7 @@ export function DraftItem({ draft, onChange }: { draft: Draft; onChange: () => v
         </div>
       </div>
       {structured && (
-        <dl className="mt-2 grid gap-2 text-sm md:grid-cols-3">
+        <dl className="mt-2 grid grid-cols-1 gap-2 text-sm md:grid-cols-3">
           {(["purpose", "opportunity", "next_step"] as const).map((k) => (
             <div key={k} className="rounded-xl bg-ivory/80 px-3 py-2">
               <dt className="text-[0.68rem] font-semibold uppercase tracking-wide text-royal">{k === "next_step" ? "Next step" : k}</dt>
@@ -115,6 +115,7 @@ export function DraftItem({ draft, onChange }: { draft: Draft; onChange: () => v
 
 export function DraftsPanel({ kind, title }: { kind: "outreach" | "donor"; title: string }) {
   const [archived, setArchived] = useState(false);
+  const [limit, setLimit] = useState(4);
   const { data, error, loading, reload } = useApi<{ drafts: Draft[] }>(`/api/drafts?kind=${kind}${archived ? "&archived=true" : ""}`);
   return (
     <Card title={title} icon={<FileText size={16} aria-hidden="true" />}
@@ -125,7 +126,8 @@ export function DraftsPanel({ kind, title }: { kind: "outreach" | "donor"; title
       {loading && <LoadingState rows={2} />}
       {error && <ErrorState message={error.message} onRetry={reload} />}
       {data && (data.drafts.length === 0 ? <EmptyState title={archived ? "No archived drafts" : "No drafts yet"}>Run the agents and their drafts will wait here for your review.</EmptyState> : (
-        <ul className="space-y-3">{data.drafts.map((d) => <DraftItem key={`${d.id}-${d.updated_at ?? ""}`} draft={d} onChange={reload} />)}</ul>
+        <><ul className="space-y-3">{data.drafts.slice(0, limit).map((d) => <DraftItem key={`${d.id}-${d.updated_at ?? ""}`} draft={d} onChange={reload} />)}</ul>
+          <ShowMore shown={Math.min(limit, data.drafts.length)} total={data.drafts.length} onMore={() => setLimit(data.drafts.length)} /></>
       ))}
     </Card>
   );

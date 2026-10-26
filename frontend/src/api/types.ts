@@ -46,13 +46,14 @@ export type HistoryStats = {
 
 export type Overview = {
   first_name: string;
-  recent_activity: { id: number; workflow_type: string; status: string; started_at: string; spent_usd: number }[];
+  recent_activity: { id: number; workflow_type: string; status: string; started_at: string; spent_usd: number; request: string }[];
   saved_opportunities: { id: number; title: string; category: string; source_url: string | null; verification_status: string }[];
   planned_events: EventPlan[];
-  drafts_awaiting_review: { id: number; subject: string; recipient_org: string; draft_type: string }[];
+  drafts_awaiting_review: { id: number; subject: string; recipient_org: string; draft_type: string; status: string }[];
+  drafts_awaiting_total: number;
   financial: { restricted: boolean; flags: Flag[]; is_demo?: boolean };
   history: HistoryStats;
-  lessons: { id: number; lesson: string; confidence: string }[];
+  lessons: { id: number; lesson: string; confidence: string; theme: string | null; focus_event_id: number | null; status: string }[];
 };
 
 export type Reflection = {
@@ -370,6 +371,8 @@ export type Opportunity = {
   uncertainty: string | null; is_synthetic: boolean; status: "new" | "saved" | "dismissed"; saved: boolean; board_category: string | null;
   research_requested: boolean; last_checked: string | null; created_at: string | null; notes?: string | null;
   selection_reason?: string; reason?: string;
+  contact?: { email: string | null; contact_page_url: string | null; source_url: string | null; status: string | null; display: string | null;
+              verified_at: string | null; draft_id: number } | null;
 };
 
 export type OpportunityStats = {

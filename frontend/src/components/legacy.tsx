@@ -53,7 +53,7 @@ export function LegacyMetricsStrip({ refreshKey = 0 }: { refreshKey?: number }) 
   if (!data) return <LoadingState rows={1} />;
   return (
     <section aria-label="Impact metrics" className="mb-6 animate-fade-up">
-      <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatTile label="Events recorded" value={data.events_recorded} hint={data.events_demo ? `${data.events_demo} synthetic demo` : undefined} />
         <StatTile label="Reflections" value={data.reflections_collected} hint={`from ${data.contributors} contributor${data.contributors === 1 ? "" : "s"}`} />
         <StatTile label="Lessons generated" value={data.lessons_generated} hint={`${data.lessons_current} current`} />
@@ -165,7 +165,7 @@ export function EventForm({ initial, onSaved, onCancel }: { initial?: LegacyEven
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+    <form onSubmit={submit} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {FIELDS.map((f) => (
         <div key={f.key} className={f.span ? "sm:col-span-2" : ""}>
           <label className="label" htmlFor={`ev-${f.key}`}>{f.label}</label>
@@ -201,7 +201,7 @@ export function ReflectionCard({ r }: { r: LegacyReflection }) {
           Submitted {formatDate(r.created_at)}{r.is_demo && <DemoBadge label="Synthetic" />}
         </p>
       </header>
-      <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+      <dl className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {answered.map((a) => (
           <div key={a.key} className="rounded-xl bg-ivory/80 px-3 py-2">
             <dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-royal">{a.question}</dt>
@@ -241,7 +241,7 @@ export function ReflectionForm({ eventId, questions, onSaved }: { eventId: numbe
   }
   return (
     <form onSubmit={submit} className="space-y-3">
-      <ol className="grid gap-3 sm:grid-cols-2">
+      <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {questions.map((q, i) => (
           <li key={q.key} className={i === questions.length - 1 ? "sm:col-span-2" : ""}>
             <label className="label" htmlFor={`rq-${q.key}`}>{i + 1}. {q.question}</label>
@@ -490,7 +490,7 @@ export function HistoryExperimentCard() {
               <div key={k}><p className="label">Only with history: {k.replace(/_/g, " ")}</p>
                 <ul className="list-disc space-y-1 pl-5 text-sm">{c[k].only_with.slice(0, 6).map((x, i) => <li key={i}>{x}</li>)}</ul></div>
             ))}
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="rounded-xl bg-ivory p-3 text-sm"><p className="label">Without history</p><p className="font-semibold text-plum">{c.headlines.without_history}</p></div>
               <div className="rounded-xl bg-lilac/60 p-3 text-sm"><p className="label">With history</p><p className="font-semibold text-plum">{c.headlines.with_history}</p></div>
             </div>

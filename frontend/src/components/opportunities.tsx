@@ -2,14 +2,14 @@ import {
   AlertTriangle, BookmarkCheck, BookmarkPlus, CalendarClock, ChevronDown, Compass, ExternalLink, FilePenLine, Search, ShieldAlert,
   StickyNote, Undo2, XCircle,
 } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import type { AlignmentLevel, Opportunity, OpportunityStats, RunSummary } from "../api/types";
 import { formatDate, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { VerificationBadge } from "./agents";
-import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, StatTile } from "./ui";
+import { Card, DemoBadge, EmptyState, ErrorState, LoadingState, ShowMore } from "./ui";
 
 export const DRAFT_TYPES: [string, string][] = [
   ["partnership_inquiry", "Partnership inquiry"], ["nonprofit_collaboration", "Nonprofit collaboration"],
@@ -67,12 +67,12 @@ export function AlignmentDetails({ o, open = false }: { o: Opportunity; open?: b
       <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-plum">
         Mission alignment, explained (A–D) <ChevronDown size={15} className="transition group-open:rotate-180" aria-hidden="true" />
       </summary>
-      <div className="mt-3 grid gap-4 md:grid-cols-2">
+      <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Levels title="A · Charitable alignment" levels={a.charitable} />
         <Levels title="B · Philosophical alignment" levels={a.philosophical} />
         <div>
           <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-royal">C · Practical feasibility</p>
-          <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm">
+          <dl className="mt-1 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-0.5 text-sm">
             {(["geography", "cost", "volunteers", "timing", "operations"] as const).map((k) => (
               <div key={k} className="contents"><dt className="capitalize text-muted">{k}</dt><dd className="text-ink/85">{a.practical[k] || "—"}</dd></div>
             ))}
@@ -92,15 +92,27 @@ export function AlignmentDetails({ o, open = false }: { o: Opportunity; open?: b
   );
 }
 
+function ContactLine({ o }: { o: Opportunity }) {
+  const c = o.contact;
+  if (o.is_synthetic && c?.email) return <span className="text-ink/85">{c.email} <span className="text-xs text-muted">(synthetic demo contact)</span></span>;
+  if (c?.email) return <span className="text-ink/85">{c.email} <span className="text-xs text-sage">published on their site</span></span>;
+  if (c?.contact_page_url && !o.is_synthetic)
+    return <a href={c.contact_page_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-royal hover:underline">Official contact page <ExternalLink size={12} aria-hidden="true" /></a>;
+  if (c) return <span className="text-muted">No public email found; use their official website.</span>;
+  return <span className="text-muted">Looked up from their official site when you generate a draft.</span>;
+}
+
 function OpportunityCard({ o, categories, onChange }: { o: Opportunity; categories: string[]; onChange: (o: Opportunity) => void }) {
   const { can } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [open, setOpen] = useState(location.hash === `#finding-${o.id}`);
   const [busy, setBusy] = useState<string | null>(null);
   const [notes, setNotes] = useState(o.notes ?? "");
-  const [notesOpen, setNotesOpen] = useState(false);
   const [draftType, setDraftType] = useState(SUGGESTED[o.category] ?? "partnership_inquiry");
   const [error, setError] = useState<string | null>(null);
   const live = !o.is_synthetic;
+  useEffect(() => { if (location.hash === `#finding-${o.id}`) setOpen(true); }, [location.hash, o.id]);
 
   async function act(label: string, fn: () => Promise<void>) {
     setBusy(label);
@@ -129,22 +141,18 @@ function OpportunityCard({ o, categories, onChange }: { o: Opportunity; categori
 
   const dateStyle = o.date_status ? DATE_STYLE[o.date_status] : undefined;
   return (
-    <li className={`rounded-3xl border p-5 transition ${o.status === "saved" ? "border-royal/60 bg-lilac/30" : o.status === "dismissed" ? "border-lavender/30 bg-white/50 opacity-80" : "border-lavender/35 bg-white/85"}`}>
+    <li id={`finding-${o.id}`} className={`rounded-3xl border p-5 transition ${o.status === "saved" ? "border-royal/60 bg-lilac/30" : o.status === "dismissed" ? "border-lavender/30 bg-white/50 opacity-80" : "border-lavender/35 bg-white/85"}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
             <FitBadge fit={o.fit} />
             <VerificationBadge value={o.verification} />
             <span className="text-xs capitalize text-muted">{o.category}{o.geography ? ` · ${o.geography}` : ""}</span>
             {o.board_category && <span className="rounded-full bg-white px-2 py-0.5 text-[0.7rem] font-semibold text-plum ring-1 ring-lavender/40">{o.board_category}</span>}
-            {o.status !== "new" && <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-royal">{o.status}</span>}
+            {o.is_synthetic && <DemoBadge label="Synthetic" />}
           </div>
-          {o.website && !o.is_synthetic ? (
-            <a href={o.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-display text-xl font-semibold text-royal hover:underline">
-              {o.name} <ExternalLink size={14} aria-hidden="true" />
-            </a>
-          ) : <p className="font-display text-xl font-semibold text-plum">{o.name}</p>}
-          {o.fit_reason && <p className="text-xs text-muted">{o.fit_reason}</p>}
+          <p className="font-display text-xl font-semibold text-plum">{o.name}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-ink/85">{o.purpose || o.summary || "Purpose not stated on the source."}</p>
         </div>
         {can("run_agents") && (
           <div className="flex flex-wrap gap-1.5">
@@ -153,113 +161,136 @@ function OpportunityCard({ o, categories, onChange }: { o: Opportunity; categori
               : <button className="btn btn-soft !py-1.5 text-sm" disabled={!!busy} onClick={() => setStatus("saved")}><BookmarkPlus size={14} aria-hidden="true" /> Save</button>}
             {o.status === "dismissed"
               ? <button className="btn btn-ghost !py-1.5 text-sm" disabled={!!busy} onClick={() => setStatus("new")}><Undo2 size={14} aria-hidden="true" /> Restore</button>
-              : <button className="btn btn-ghost !py-1.5 text-sm" disabled={!!busy} onClick={() => setStatus("dismissed")}><XCircle size={14} aria-hidden="true" /> Dismiss</button>}
+              : <button className="btn btn-ghost !py-1.5 text-sm" disabled={!!busy} onClick={() => setStatus("dismissed")} aria-label={`Dismiss ${o.name}`}><XCircle size={14} aria-hidden="true" /> Dismiss</button>}
           </div>
         )}
       </div>
 
-      <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm md:grid-cols-2">
-        <div className="md:col-span-2"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Mission / purpose</dt><dd className="text-ink">{o.purpose || "Not stated on the source."}</dd></div>
-        {o.activities.length > 0 && <div className="md:col-span-2"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Activities</dt>
-          <dd className="mt-0.5 flex flex-wrap gap-1">{o.activities.map((a) => <span key={a} className="rounded-full bg-ivory px-2 py-0.5 text-xs text-plum ring-1 ring-lavender/30">{a}</span>)}</dd></div>}
-        <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Dates</dt>
-          <dd>{o.dates_text || "Not stated"}{dateStyle && <span className={`ml-1.5 text-xs font-semibold ${dateStyle[1]}`}>· {dateStyle[0]}</span>}</dd></div>
-        <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Known costs (verified on the page)</dt><dd>{o.known_costs || "Not stated on the source"}</dd></div>
-        <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Partnership type</dt><dd>{o.partnership_types.join(", ") || "Not stated"}</dd></div>
-        <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Ways we could contribute</dt><dd>{o.contribution_ways.join("; ") || "—"}</dd></div>
-        <div className="md:col-span-2"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Why it may fit</dt><dd className="text-ink/90">{o.alignment_detail?.summary || o.summary}</dd></div>
-      </dl>
-
-      {o.warnings.length > 0 && (
-        <ul className="mt-3 space-y-1 rounded-2xl bg-[#fbf1e3]/80 px-3 py-2 text-sm text-amber">
-          {o.warnings.map((w) => <li key={w} className="flex gap-1.5">{w.includes("AI system") ? <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" /> : <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />}{w}</li>)}
-        </ul>
-      )}
-      {o.missing_info.length > 0 && (
-        <div className="mt-2 text-sm"><span className="font-semibold text-plum">Missing before outreach:</span> <span className="text-ink/85">{o.missing_info.join(" · ")}</span></div>
-      )}
-      {o.next_step && <p className="mt-1 text-sm"><span className="font-semibold text-plum">Suggested next step:</span> {o.next_step}</p>}
-
-      <AlignmentDetails o={o} />
-
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-        <span className="inline-flex items-center gap-1"><CalendarClock size={13} aria-hidden="true" />Last checked {o.last_checked ? formatDate(o.last_checked) : "—"}
-          {o.website && <> · <a href={o.is_synthetic ? undefined : o.website} className={o.is_synthetic ? "" : "text-royal hover:underline"} target="_blank" rel="noopener noreferrer">{o.is_synthetic ? "example.org fixture" : "source"}</a></>}
-        </span>
-        {o.run_id && <Link to={`/activity/runs/${o.run_id}`} className="text-royal hover:underline">From workflow #{o.run_id}</Link>}
-      </div>
-
-      {can("run_agents") && (
-        <div className="mt-3 space-y-2 border-t border-lavender/30 pt-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="sr-only" htmlFor={`cat-${o.id}`}>Board category</label>
-            <select id={`cat-${o.id}`} className="field !w-auto !py-1.5 text-sm" value={o.board_category ?? ""} disabled={!!busy}
-              onChange={(e) => edit({ board_category: e.target.value })}>
-              <option value="">Categorize…</option>{categories.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <button className="btn btn-ghost !py-1.5 text-sm" onClick={() => setNotesOpen((v) => !v)}><StickyNote size={14} aria-hidden="true" /> {o.notes ? "Private notes" : "Add a note"}</button>
-            <button className="btn btn-ghost !py-1.5 text-sm" disabled={!!busy} onClick={research}><Search size={14} aria-hidden="true" /> {busy === "research" ? "Starting…" : "Request more research"}</button>
-            <span className="inline-flex items-center gap-1.5">
-              <label className="sr-only" htmlFor={`dt-${o.id}`}>Draft type</label>
-              <select id={`dt-${o.id}`} className="field !w-auto !py-1.5 text-sm" value={draftType} onChange={(e) => setDraftType(e.target.value)}>
-                {DRAFT_TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-              </select>
-              <button className="btn btn-soft !py-1.5 text-sm" disabled={!!busy || o.status === "dismissed"} onClick={draft}><FilePenLine size={14} aria-hidden="true" /> {busy === "draft" ? "Starting…" : "Generate draft"}</button>
-            </span>
-          </div>
-          {notesOpen && (
-            <div>
-              <label className="label" htmlFor={`notes-${o.id}`}>Private board notes (never sent to an AI model or a website)</label>
-              <textarea id={`notes-${o.id}`} rows={3} className="field" value={notes} maxLength={4000} onChange={(e) => setNotes(e.target.value)} />
-              <button className="btn btn-primary mt-2 !py-1.5 text-sm" disabled={!!busy} onClick={() => edit({ notes })}>Save note</button>
-            </div>
-          )}
-          {!notesOpen && o.notes && <p className="rounded-xl bg-ivory px-3 py-2 text-sm text-ink/85"><StickyNote size={13} className="mr-1 inline text-royal" aria-hidden="true" />{o.notes}</p>}
-          {error && <p role="alert" className="text-sm text-danger">{error}</p>}
+      {o.activities.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1" aria-label="Programs and activities">
+          {o.activities.slice(0, 6).map((a) => <span key={a} className="rounded-full bg-ivory px-2 py-0.5 text-xs text-plum ring-1 ring-lavender/30">{a}</span>)}
         </div>
       )}
+
+      <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm md:grid-cols-2">
+        <div className="min-w-0"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Website</dt>
+          <dd className="truncate">{o.website && !o.is_synthetic
+            ? <a href={o.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-royal hover:underline">{o.website.replace(/^https?:\/\//, "").slice(0, 60)} <ExternalLink size={12} aria-hidden="true" /></a>
+            : <span className="text-muted">{o.is_synthetic ? "example.org fixture" : "Not found"}</span>}</dd></div>
+        <div className="min-w-0"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Contact</dt><dd><ContactLine o={o} /></dd></div>
+        <div className="md:col-span-2"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Mission alignment</dt>
+          <dd className="text-ink/90">{o.fit_reason || o.alignment_detail?.summary || o.summary}</dd></div>
+      </dl>
+
+      {open && (
+        <div className="mt-3 space-y-3 border-t border-lavender/30 pt-3">
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+            <div className="md:col-span-2"><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Why it may fit</dt><dd className="text-ink/90">{o.alignment_detail?.summary || o.summary}</dd></div>
+            <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Dates</dt>
+              <dd>{o.dates_text || "Not stated"}{dateStyle && <span className={`ml-1.5 text-xs font-semibold ${dateStyle[1]}`}>· {dateStyle[0]}</span>}</dd></div>
+            <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Known costs (on the page)</dt><dd>{o.known_costs || "Not stated on the source"}</dd></div>
+            <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Partnership type</dt><dd>{o.partnership_types.join(", ") || "Not stated"}</dd></div>
+            <div><dt className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Ways we could contribute</dt><dd>{o.contribution_ways.join("; ") || "—"}</dd></div>
+          </dl>
+          {o.warnings.length > 0 && (
+            <ul className="space-y-1 rounded-2xl bg-[#fbf1e3]/80 px-3 py-2 text-sm text-amber">
+              {o.warnings.map((w) => <li key={w} className="flex gap-1.5">{w.includes("AI system") ? <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" /> : <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />}{w}</li>)}
+            </ul>
+          )}
+          {o.missing_info.length > 0 && <p className="text-sm"><span className="font-semibold text-plum">Missing before outreach:</span> <span className="text-ink/85">{o.missing_info.join(" · ")}</span></p>}
+          {o.next_step && <p className="text-sm"><span className="font-semibold text-plum">Suggested next step:</span> {o.next_step}</p>}
+          <AlignmentDetails o={o} />
+          {can("run_agents") && (
+            <div className="flex flex-wrap items-end gap-2">
+              <div><label className="label" htmlFor={`cat-${o.id}`}>Board category</label>
+                <select id={`cat-${o.id}`} className="field !w-auto !py-1.5 text-sm" value={o.board_category ?? ""} disabled={!!busy}
+                  onChange={(e) => edit({ board_category: e.target.value })}>
+                  <option value="">None</option>{categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select></div>
+              <div className="min-w-[240px] flex-1"><label className="label" htmlFor={`notes-${o.id}`}>Private notes (never sent to an AI model or a website)</label>
+                <div className="flex gap-2"><input id={`notes-${o.id}`} className="field !py-1.5 text-sm" value={notes} maxLength={4000} onChange={(e) => setNotes(e.target.value)} />
+                  <button className="btn btn-soft !py-1.5 text-sm" disabled={!!busy || notes === (o.notes ?? "")} onClick={() => edit({ notes })}><StickyNote size={14} aria-hidden="true" /> Save</button></div></div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-lavender/30 pt-3">
+        <span className="inline-flex flex-wrap items-center gap-1 text-xs text-muted"><CalendarClock size={13} aria-hidden="true" />Checked {o.last_checked ? formatDate(o.last_checked) : "—"}
+          {o.source_url && !o.is_synthetic && <> · <a href={o.source_url} className="text-royal hover:underline" target="_blank" rel="noopener noreferrer">source</a></>}
+          {o.run_id && <> · <Link to={`/activity/runs/${o.run_id}`} className="text-royal hover:underline">workflow #{o.run_id}</Link></>}
+          {o.contact?.draft_id && <> · <Link to={`/partnerships#draft-${o.contact.draft_id}`} className="text-royal hover:underline">outreach draft</Link></>}
+        </span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <button className="btn btn-ghost !py-1.5 text-sm" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+            <ChevronDown size={14} className={`transition ${open ? "rotate-180" : ""}`} aria-hidden="true" /> {open ? "Less" : "Details"}</button>
+          {can("run_agents") && (
+            <>
+              <button className="btn btn-ghost !py-1.5 text-sm" disabled={!!busy} onClick={research}><Search size={14} aria-hidden="true" /> {busy === "research" ? "Starting…" : "Analyze further"}</button>
+              <label className="sr-only" htmlFor={`dt-${o.id}`}>Draft type</label>
+              <select id={`dt-${o.id}`} className="field !w-auto max-w-full !py-1.5 text-sm" value={draftType} onChange={(e) => setDraftType(e.target.value)}>
+                {DRAFT_TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </select>
+              <button className="btn btn-soft !py-1.5 text-sm" disabled={!!busy || o.status === "dismissed"} onClick={draft}><FilePenLine size={14} aria-hidden="true" /> {busy === "draft" ? "Starting…" : "Draft outreach"}</button>
+            </>
+          )}
+        </div>
+      </div>
+      {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}
     </li>
   );
 }
 
-const TABS: [string, string][] = [["active", "Active"], ["saved", "Saved"], ["new", "New"], ["dismissed", "Dismissed"], ["all", "All"]];
+const TABS: [string, string][] = [["active", "All open"], ["saved", "Saved"], ["new", "New"], ["dismissed", "Dismissed"]];
+const CATEGORIES: [string, string][] = [["", "Any type"], ["organization", "Organizations"], ["research", "Research"], ["event", "Events"],
+  ["sponsor", "Sponsors"], ["partnership", "Partnerships"]];
+const FITS = ["Strong fit", "Possible fit", "Needs research", "Weak fit"];
 
-export function OpportunityDashboard() {
+export function OpportunityDashboard({ runId, refreshKey = 0, onClearRun }: { runId?: number | null; refreshKey?: number; onClearRun?: () => void }) {
   const [tab, setTab] = useState("active");
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("");
+  const [fit, setFit] = useState("");
+  const location = useLocation();
+  const [limit, setLimit] = useState(location.hash.startsWith("#finding-") ? 1000 : 10);  // a link to one opportunity shows them all
   const { data, error, loading, reload, setData } = useApi<{ opportunities: Opportunity[]; stats: OpportunityStats; board_categories: string[] }>(`/api/opportunities?status=${tab}`);
+  useEffect(() => { if (refreshKey) reload(); }, [refreshKey]);  // eslint-disable-line react-hooks/exhaustive-deps
   function replace(o: Opportunity) {
-    setData((d) => d && { ...d, opportunities: d.opportunities.map((x) => (x.id === o.id ? o : x)) });
-    window.setTimeout(reload, 350);  // refresh stats and filters from the stored records
+    setData((d) => d && { ...d, opportunities: d.opportunities.map((x) => (x.id === o.id ? { ...o, contact: x.contact } : x)) });
+    window.setTimeout(reload, 350);  // refresh counts from the stored records
   }
   const s = data?.stats;
-  const checked = s ? (s.by_verification.verified ?? 0) + (s.by_verification.synthetic ?? 0) : 0;
+  const q = query.trim().toLowerCase();
+  const shown = (data?.opportunities ?? []).filter((o) => (!runId || o.run_id === runId) && (!category || o.category === category) && (!fit || o.fit === fit)
+    && (!q || `${o.name} ${o.purpose ?? ""} ${o.geography ?? ""} ${o.activities.join(" ")}`.toLowerCase().includes(q)));
+  const f = "field !w-auto !py-1.5 text-sm";
   return (
-    <Card title="Research dashboard" icon={<Compass size={16} aria-hidden="true" />}>
-      {s && (
-        <>
-          <div className="grid gap-3 sm:grid-cols-5">
-            <StatTile label="On record" value={s.total} hint={s.synthetic ? `${s.synthetic} synthetic` : undefined} />
-            <StatTile label="Saved" value={s.by_status.saved ?? 0} />
-            <StatTile label="Strong fit" value={s.by_fit["Strong fit"] ?? 0} hint={`${s.by_fit["Possible fit"] ?? 0} possible`} />
-            <StatTile label="Checked sources" value={checked} hint={`${s.by_verification.unverified ?? 0} unverified`} />
-            <StatTile label="Need attention" value={s.with_warnings} hint={s.injection_flagged ? `${s.injection_flagged} flagged page${s.injection_flagged === 1 ? "" : "s"}` : undefined} />
-          </div>
-          <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">Every count comes from stored records{s.last_checked ? `; sources last checked ${formatDate(s.last_checked)}` : ""}.
-            {s.synthetic > 0 && <DemoBadge label={`${s.synthetic} synthetic fixtures (example.org)`} />}</p>
-        </>
-      )}
-      <div role="tablist" aria-label="Filter opportunities" className="mt-4 flex flex-wrap gap-1.5">
-        {TABS.map(([v, l]) => (
-          <button key={v} role="tab" aria-selected={tab === v} onClick={() => setTab(v)}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${tab === v ? "bg-royal text-white" : "bg-lilac/60 text-plum hover:bg-lilac"}`}>{l}</button>
-        ))}
+    <Card title="Opportunities" icon={<Compass size={16} aria-hidden="true" />}
+      action={s ? <span className="text-xs text-muted">{s.total} on record · {s.by_status.saved ?? 0} saved · {s.by_fit["Strong fit"] ?? 0} strong fit</span> : undefined}>
+      <div className="flex flex-wrap items-center gap-2" role="search">
+        <span className="relative"><Search size={14} className="pointer-events-none absolute left-2.5 top-2.5 text-muted" aria-hidden="true" />
+          <input aria-label="Filter by name, program, or place" placeholder="Filter by name, program, place…" className={`${f} !pl-8`} value={query} onChange={(e) => setQuery(e.target.value)} /></span>
+        <select aria-label="Type" className={f} value={category} onChange={(e) => setCategory(e.target.value)}>{CATEGORIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+        <select aria-label="Fit" className={f} value={fit} onChange={(e) => setFit(e.target.value)}><option value="">Any fit</option>{FITS.map((x) => <option key={x}>{x}</option>)}</select>
+        <div role="tablist" aria-label="Status" className="flex flex-wrap gap-1.5">
+          {TABS.map(([v, l]) => (
+            <button key={v} role="tab" aria-selected={tab === v} onClick={() => setTab(v)}
+              className={`rounded-full px-3 py-1 text-sm font-semibold transition ${tab === v ? "bg-royal text-white" : "bg-lilac/60 text-plum hover:bg-lilac"}`}>{l}</button>
+          ))}
+        </div>
       </div>
+      {runId && (
+        <p className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-lilac/60 px-3 py-2 text-sm text-plum">Showing results from this search (workflow #{runId}).
+          {onClearRun && <button className="btn btn-ghost !py-1 text-xs" onClick={onClearRun}>Show all</button>}</p>
+      )}
       <div className="mt-4">
         {loading && !data && <LoadingState rows={3} />}
         {error && <ErrorState message={error.message} onRetry={reload} />}
-        {data && (data.opportunities.length === 0
-          ? <EmptyState title={tab === "active" ? "No opportunities yet" : "Nothing here"}>Ask Mission Discovery a question. Each opportunity it finds appears here with its sources, alignment, and what is still unknown.</EmptyState>
-          : <ul className="space-y-4">{data.opportunities.map((o) => <OpportunityCard key={o.id} o={o} categories={data.board_categories} onChange={replace} />)}</ul>)}
+        {data && (shown.length === 0
+          ? <EmptyState title={data.opportunities.length === 0 ? "No opportunities yet" : "No matches"}>
+              {data.opportunities.length === 0 ? "Search above to find organizations, research, and events aligned with the foundation." : "Try a different filter."}</EmptyState>
+          : <><ul className="space-y-4">{shown.slice(0, limit).map((o) => <OpportunityCard key={o.id} o={o} categories={data.board_categories} onChange={replace} />)}</ul>
+              <ShowMore shown={Math.min(limit, shown.length)} total={shown.length} onMore={() => setLimit(shown.length)} /></>)}
       </div>
     </Card>
   );

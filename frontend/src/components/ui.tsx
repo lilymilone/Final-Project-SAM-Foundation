@@ -130,3 +130,13 @@ export function SeverityDot({ severity }: { severity: "high" | "medium" | "low" 
   const color = severity === "high" ? "bg-danger" : severity === "medium" ? "bg-amber" : "bg-sage";
   return <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${color}`} aria-label={`${severity} severity`} />;
 }
+
+/** "Show more" for long lists: reveals the rest of a list that starts short. */
+export function ShowMore({ shown, total, onMore }: { shown: number; total: number; onMore: () => void }) {
+  if (shown >= total) return null;
+  return (
+    <button type="button" className="btn btn-ghost mt-3 w-full !py-2 text-sm" onClick={onMore}>
+      Show all {total} ({total - shown} more)
+    </button>
+  );
+}

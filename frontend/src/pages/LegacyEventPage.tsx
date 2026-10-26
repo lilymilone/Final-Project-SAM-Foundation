@@ -137,7 +137,7 @@ export default function LegacyEventPage() {
             }} /></div>
           ) : (
             <>
-              <div className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                 <FactRow icon={<Users size={15} />} label="Attendance" value={e.attendance ?? "Not recorded"} />
                 <FactRow icon={<Target size={15} />} label="Fundraising goal" value={usd(e.fundraising_goal_usd)} />
                 <FactRow icon={<CircleDollarSign size={15} />} label="Funds raised" value={<>{usd(e.funds_raised_usd)}{e.goal_pct != null && <span className="ml-1 text-xs font-normal text-muted">({e.goal_pct}% of goal)</span>}</>} />
@@ -154,7 +154,7 @@ export default function LegacyEventPage() {
               {e.summary && <p className="mt-5 max-w-3xl leading-relaxed text-ink">{e.summary}</p>}
               {e.notes && <p className="mt-2 max-w-3xl text-sm text-muted"><b>Notes:</b> {e.notes}</p>}
               {(e.positive_outcomes || e.problems_encountered || e.lessons_learned || e.planned_budget_usd != null) && (
-                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
                   {([["positive_outcomes", "What worked"], ["problems_encountered", "Problems encountered"], ["lessons_learned", "Lessons learned"]] as const).map(([k, label]) => e[k] ? (
                     <div key={k} className="rounded-xl bg-ivory/80 px-3 py-2">
                       <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">{label}</p>
@@ -198,7 +198,7 @@ export default function LegacyEventPage() {
         <Card title="What the Event Intelligence agent found" icon={<Sparkles size={16} aria-hidden="true" />} className="mb-6"
           action={shown.run_id ? <Link to={`/activity/runs/${shown.run_id}`} className="text-xs text-royal hover:underline">Analysis #{shown.run_id}{shown.date ? ` · ${formatDate(shown.date)}` : ""}</Link> : undefined}>
           {shown.themes && shown.themes.length > 0 && (
-            <div className="mb-4"><p className="label">Recurring themes</p><ul className="grid gap-2 sm:grid-cols-2">{shown.themes.map((t) => (
+            <div className="mb-4"><p className="label">Recurring themes</p><ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">{shown.themes.map((t) => (
               <li key={t.name} className={`rounded-xl px-3 py-2 text-sm ${t.polarity === "strength" ? "bg-[#e3f1e8]" : t.polarity === "weakness" ? "bg-[#fbf1e3]" : "bg-lilac/60"}`}>
                 <p className="font-semibold capitalize text-plum">{t.name} <span className="text-xs font-normal text-muted">· {t.polarity}</span></p><p className="text-muted">{t.description}</p></li>))}</ul></div>
           )}
@@ -211,7 +211,7 @@ export default function LegacyEventPage() {
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <div className="space-y-6">
           <Card title={`Board reflections (${e.reflections.length})`} icon={<MessageSquareHeart size={16} aria-hidden="true" />}>
             {e.reflections.length === 0 ? <EmptyState title="No reflections yet">Be the first to share what you learned.</EmptyState>

@@ -7,7 +7,7 @@ SAM SPACE helps a small, volunteer-run nonprofit board plan fundraisers, learn f
 *MGT 409 (AI Foundations) final project · Lily Milone · Yale School of Management*
 
 > **Status:** the seven-agent system works end to end with real tools, real data, and real model calls. The Orchestrator acts as the Boss Agent, and promising venues, charities, and sponsors get unsent outreach drafts automatically. 276 automated tests pass.
-> Try the controlled demo: **Event Studio → Load the default test case → Controlled demo → Generate Event Strategy** (about $0.25 and 3 minutes).
+> Try the controlled demo: **Event Studio → Load an example → Controlled demo → Generate Event Plan** (about $0.25–$0.35 and 3–4 minutes). Each agent's step appears live as the backend records it.
 > Known gaps are listed in [docs/limitations.md](docs/limitations.md); report evidence is indexed in [docs/evidence/README.md](docs/evidence/README.md).
 
 ---
@@ -87,6 +87,22 @@ python run.py --reset-db      # delete the local database and re-create the demo
 python run.py --open          # open the browser automatically
 python -m pytest              # run the automated tests (276 tests, no API key or network needed)
 ```
+
+---
+
+## Using the app
+
+| I want to… | Go to | Press |
+|---|---|---|
+| Plan an event | **Event Studio** (or *Plan an Event* on the dashboard) | **Generate Event Plan**, then **Open the event plan** |
+| Find a cause or partner | **Mission Discovery** | **Find Opportunities**; then **Save**, **Analyze further**, or **Draft outreach** on a result |
+| Review outreach drafts | **Partnerships & Outreach** | open a draft, edit, **Copy**, **Save changes**, **Mark reviewed**, **Archive** (there is no send button) |
+| Check finances | **Financial Intelligence** | **Upload Financial Documents**, **Add Financial Record**, **Analyze Finances**, **Create Budget Scenario** |
+| Record donations | **Donations & Compliance** | **Add Donation**, **Import Donation CSV**, **Generate Acknowledgment Draft**, **Review Missing Information** |
+| Add a past event | **Our Legacy** (or *Add a Past Event* on the dashboard) | **Add a past event**: upload files, describe it, or fill in the form; add reflections and photos on the event's page |
+| See what the agents did | **Agent Activity** | open any workflow for every step, tool call, token, and cost |
+
+How the agents work, what each one may do, and what the money terms mean are on the in-app **Help** page.
 
 ---
 
@@ -172,7 +188,7 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
 
 ## Event Studio (the flagship workflow)
 
-Open **Event Studio**, press **Load the default test case**, then **Generate Event Strategy**. The full walkthrough, with screenshots, measured runs, and the five test scenarios, is in **[docs/event_studio_workflow.md](docs/event_studio_workflow.md)**.
+Open **Event Studio**, press **Load an example**, choose **Live web research** or **Controlled demo**, then **Generate Event Plan**. Each agent's step appears live; when it finishes, **Open the event plan** shows venues, sources, the budget, affordability, lessons, revisions, and the drafted inquiries. The full walkthrough, with screenshots, measured runs, and the five test scenarios, is in **[docs/event_studio_workflow.md](docs/event_studio_workflow.md)**.
 
 - **Inputs:**
   - name, type, location, and date or date range

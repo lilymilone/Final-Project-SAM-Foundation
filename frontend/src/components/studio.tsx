@@ -1,54 +1,9 @@
-import { Calculator, CheckCircle2, Circle, CircleSlash, Loader2, RefreshCcw, Save, XCircle } from "lucide-react";
+import { Calculator, CheckCircle2, CircleSlash, Save, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
-import type { Affordability, EventModel, ModelCheck, RunDetail } from "../api/types";
+import type { Affordability, EventModel, ModelCheck } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import { money } from "./agents";
-
-// ── Live progress through the nine-step flow ─────────────────────────────────
-
-const FLOW = [
-  { n: 1, label: "Orchestrator interprets the request", keys: ["intake"] },
-  { n: 2, label: "Event Intelligence retrieves lessons", keys: ["lessons"] },
-  { n: 3, label: "Events researches venues", keys: ["venues"] },
-  { n: 4, label: "Finance analyzes affordability", keys: ["finance"] },
-  { n: 5, label: "Orchestrator evaluates constraints", keys: ["evaluate"] },
-  { n: 6, label: "Events revises the plan (if needed)", keys: ["venues_revision_1", "finance_revision_1", "evaluate_revision_1", "venues_revision_2", "finance_revision_2", "evaluate_revision_2"] },
-  { n: 7, label: "Outreach drafts venue inquiries", keys: ["outreach"] },
-  { n: 8, label: "Verification code validates results", keys: ["recommendation", "recommendation_fix", "verification"] },
-  { n: 9, label: "Board-ready plan", keys: [] },
-];
-
-export function StrategyProgress({ detail }: { detail: RunDetail }) {
-  const byKey = new Map(detail.steps.map((s) => [s.step_key, s]));
-  const active = ["queued", "running"].includes(detail.run.status);
-  const done = !active;
-  const historySkipped = detail.run.status !== "queued" && !byKey.has("lessons") && byKey.has("venues");
-  return (
-    <ol className="space-y-1.5" aria-label="Strategy progress">
-      {FLOW.map((step) => {
-        const hits = step.keys.map((k) => byKey.get(k)).filter(Boolean);
-        let state: "waiting" | "running" | "done" | "revise" | "skipped" | "failed" = "waiting";
-        if (step.n === 9) state = done ? (detail.run.status.startsWith("completed") ? "done" : "failed") : "waiting";
-        else if (hits.some((h) => h!.status === "running")) state = "running";
-        else if (hits.some((h) => ["failed", "stopped", "refused"].includes(h!.status))) state = "failed";
-        else if (hits.some((h) => h!.status === "needs_revision")) state = "revise";
-        else if (hits.length) state = "done";
-        else if ((step.n === 2 && historySkipped) || (step.n === 6 && done)) state = "skipped";
-        const Icon = state === "running" ? Loader2 : state === "done" ? CheckCircle2 : state === "revise" ? RefreshCcw : state === "failed" ? XCircle : state === "skipped" ? CircleSlash : Circle;
-        const color = { running: "text-royal", done: "text-sage", revise: "text-rose", failed: "text-danger", skipped: "text-muted", waiting: "text-lavender" }[state];
-        return (
-          <li key={step.n} className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm ${state === "running" ? "bg-lilac/70" : state === "revise" ? "bg-blush/50" : "bg-white/60"}`}>
-            <Icon size={17} className={`shrink-0 ${color} ${state === "running" ? "animate-spin" : ""}`} aria-hidden="true" />
-            <span className="w-5 text-xs font-semibold text-muted">{step.n}</span>
-            <span className={state === "waiting" ? "text-muted" : "text-plum"}>{step.label}</span>
-            <span className="ml-auto text-xs capitalize text-muted">{state === "revise" ? "needs revision" : state === "skipped" ? (step.n === 2 ? "history off" : "not needed") : state}</span>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
 
 // ── Financial model with editable assumptions ─────────────────────────────────
 
@@ -129,7 +84,7 @@ export function FinancialModelEditor({ model, affordability, planId, minContinge
   return (
     <div className="space-y-5">
       {edited && <p className="rounded-xl bg-lilac/60 px-3 py-2 text-xs text-plum">Showing your recalculated model. Figures are computed in Python from the assumptions below; no AI is involved.</p>}
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div>
           <p className="label">Costs</p>
           <table className="w-full text-left text-sm"><tbody>
@@ -173,7 +128,7 @@ export function FinancialModelEditor({ model, affordability, planId, minContinge
       {can("view_financials") && (
         <details className="rounded-2xl border border-lavender/40 bg-ivory/60 p-4" open={edited}>
           <summary className="cursor-pointer font-semibold text-plum"><Calculator size={15} className="mr-1 inline" aria-hidden="true" /> Change assumptions and recalculate</summary>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {Object.entries(model.assumptions).map(([k, a]) => {
               const changed = (values[k] ?? "") !== (a.value == null ? "" : String(a.value));
               const kind = changed ? "board" : a.kind;

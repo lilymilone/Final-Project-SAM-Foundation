@@ -162,7 +162,7 @@ export default function ImportReviewPage() {
           This import was {imp.status}.{imp.approved_event_id && <Link className="text-royal underline" to={`/legacy/${imp.approved_event_id}`}>Open the event</Link>}</p></Card>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <div className="space-y-5">
           {conflicts.length > 0 && !decided && (
             <Card title="Sources disagree" icon={<Scale size={16} aria-hidden="true" />}>
@@ -193,7 +193,7 @@ export default function ImportReviewPage() {
               {GROUPS.map((g) => (
                 <fieldset key={g.title} className="mb-5" disabled={decided}>
                   <legend className="mb-2 font-display text-lg font-semibold text-plum">{g.title}</legend>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {g.fields.map((f) => (
                       <div key={f.key} className={f.type === "textarea" ? "sm:col-span-2" : ""}>
                         <label className="label flex items-center gap-2" htmlFor={`f-${f.key}`}>{f.label}

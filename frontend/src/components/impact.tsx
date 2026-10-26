@@ -20,7 +20,7 @@ export function ImpactPanel({ compact = false }: { compact?: boolean }) {
           <ul className={`grid gap-2 ${compact ? "sm:grid-cols-2" : "sm:grid-cols-2"}`}>
             {(compact ? data.metrics.slice(0, 6) : data.metrics).map((m) => (
               <li key={m.key} className="rounded-2xl bg-ivory/80 px-3 py-2.5">
-                <div className="flex items-start justify-between gap-2">
+                <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
                   <p className="text-xs font-semibold text-muted">{m.label}</p>
                   <span className={`shrink-0 rounded-full px-1.5 py-px text-[0.62rem] font-semibold ${TYPE_STYLE[m.type] ?? "bg-lilac text-plum"}`}>{m.type}</span>
                 </div>

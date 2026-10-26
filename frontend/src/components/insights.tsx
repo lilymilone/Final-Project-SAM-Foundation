@@ -17,7 +17,7 @@ export function InsightsPanel() {
   return (
     <Card title="What our events teach us" icon={<BarChart3 size={16} aria-hidden="true" />}
       action={latest ? <Link to={`/activity/runs/${latest.run_id}`} className="text-xs text-royal hover:underline">Analysis #{latest.run_id} · {formatDate(latest.date)}</Link> : undefined}>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div>
           <p className="label flex items-center gap-1.5"><BarChart3 size={13} aria-hidden="true" />Computed from recorded figures</p>
           {data.quantitative_observations.length === 0 ? <p className="text-sm text-muted">Not enough recorded figures to compare yet.</p> : (

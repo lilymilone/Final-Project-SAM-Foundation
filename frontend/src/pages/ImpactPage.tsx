@@ -83,7 +83,7 @@ export default function ImpactPage() {
           )}
 
           <section aria-label="Impact dashboard" className="mb-6">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <StatTile label="Completed evaluations" value={r.completed_evaluations} hint={<><BasisTag kind="observed" /> real participants only</>} />
               <StatTile label="Average time, usual way" value={fmtMin(r.time.manual_avg_minutes)} hint={<><BasisTag kind="observed" /> {r.time.manual_unavailable ? `${r.time.manual_unavailable} without a manual baseline` : "start to finish"}</>} />
               <StatTile label="Average time, SAM SPACE" value={fmtMin(r.time.assisted_avg_minutes)} hint={<><BasisTag kind="observed" /> includes reviewing the AI's work</>} />
@@ -97,7 +97,7 @@ export default function ImpactPage() {
               <StatTile label="Projected hours saved / year" value={r.projection.annual_hours_saved == null ? "—" : `${r.projection.annual_hours_saved} h`}
                 hint={<><BasisTag kind="extrapolated" /> {r.projection.tasks_per_year == null ? "set the tasks-per-year assumption" : `assumes ${r.projection.tasks_per_year} similar tasks a year`}</>} />
             </div>
-            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+            <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
               <CompareBars title="Task time (average, minutes)" manual={r.time.paired_manual_avg} assisted={r.time.paired_assisted_avg} unit=" min"
                 note={r.time.paired_evaluations ? `${r.time.paired_evaluations} evaluation(s) with both times. ${r.time.basis}` : "No evaluation has both times yet."} />
               <CompareBars title="Verified sources per proposal (average)" manual={r.sources.manual_avg_verified} assisted={r.sources.assisted_avg_verified_live} unit=""
@@ -105,7 +105,7 @@ export default function ImpactPage() {
             </div>
           </section>
 
-          <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
             <div className="space-y-5">
               <Card title="Take part" icon={<ClipboardList size={16} aria-hidden="true" />}>
                 {s && (
@@ -138,7 +138,7 @@ export default function ImpactPage() {
                     </li>))}</ul>
                 )}
                 {Object.keys(r.answers).length > 0 && r.completed_evaluations > 0 && (
-                  <div className="mt-3 grid gap-1 text-xs text-muted sm:grid-cols-2">{s?.feedback_questions.filter((q) => q.kind !== "scale" && q.kind !== "text").map((q) => (
+                  <div className="mt-3 grid grid-cols-1 gap-1 text-xs text-muted sm:grid-cols-2">{s?.feedback_questions.filter((q) => q.kind !== "scale" && q.kind !== "text").map((q) => (
                     <p key={q.key}><b className="text-plum">{q.question}</b> {Object.entries(r.answers[q.key] ?? {}).map(([k, n]) => `${ANSWER_LABELS[k] ?? k}: ${n}`).join(" · ") || "—"}</p>))}</div>
                 )}
               </Card>

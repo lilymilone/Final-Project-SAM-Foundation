@@ -36,9 +36,9 @@ export default function SettingsPage() {
       {loading && <LoadingState rows={3} />}
       {error && <ErrorState message={error.message} onRetry={reload} />}
       {data && user && (
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <Card title="Profile" icon={<UserRound size={16} aria-hidden="true" />}>
-            <dl className="grid grid-cols-[8rem_1fr] gap-y-2 text-sm">
+            <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-y-2 text-sm">
               <dt className="text-muted">Name</dt><dd className="font-semibold text-plum">{user.first_name} {user.last_name}</dd>
               <dt className="text-muted">Email</dt><dd>{user.email}</dd>
               <dt className="text-muted">Board role</dt><dd>{user.title}</dd>
@@ -80,7 +80,7 @@ export default function SettingsPage() {
             )}
             <fieldset>
               <legend className="sr-only">AI Model Strategy</legend>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {data.strategies.map((s) => {
                   const checked = data.model_strategy === s.value;
                   return (

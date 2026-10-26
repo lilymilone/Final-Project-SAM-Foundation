@@ -22,6 +22,7 @@ import RunPage from "./pages/RunPage";
 import { MissionDiscoveryPage, PartnershipsPage } from "./pages/PlaceholderPages";
 import SafetyPage from "./pages/SafetyPage";
 import SettingsPage from "./pages/SettingsPage";
+import HelpPage from "./pages/HelpPage";
 
 function Splash() {
   return (
@@ -68,6 +69,7 @@ function Shell() {
           <Route path="safety/impact/evaluations/:id" element={<EvaluationPage />} />
           <Route path="safety/impact/comparisons/:id" element={<ComparisonPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="help" element={<HelpPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

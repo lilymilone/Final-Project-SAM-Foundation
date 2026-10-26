@@ -77,3 +77,20 @@ def test_ledger_csv_import_validates_and_feeds_finance(client):
 def test_member_cannot_import_ledger(client):
     login(client, email=MEMBER)
     assert client.post("/api/finance/import", json={"csv_text": "period,kind,category,amount_usd\n"}).status_code == 403
+
+
+def test_overview_never_lists_donor_drafts(client):
+    """Donor acknowledgment drafts carry donor names: the dashboard lists outreach drafts only, for every role."""
+    from backend.app.api.routes.outputs import DONOR_DRAFTS
+    from backend.app.db.models import OutreachDraft
+    with client.app.state.db.session() as s:
+        s.add(OutreachDraft(organization_id=1, draft_type="donor_thank_you", recipient_name="Private Donor (fictional)", recipient_org="",
+                            subject="Thank you, Private Donor", body="x", status="draft"))
+        s.commit()
+    for email in (None, MEMBER):
+        if email:
+            client.post("/api/auth/logout")
+        assert login(client, **({"email": email} if email else {})).status_code == 200
+        overview = client.get("/api/overview").json()
+        assert all(d["draft_type"] not in DONOR_DRAFTS for d in overview["drafts_awaiting_review"])
+        assert "Private Donor" not in str(overview)

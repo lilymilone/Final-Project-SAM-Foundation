@@ -13,12 +13,12 @@ const TIER_STYLE: Record<string, string> = {
  * Describes the agent(s) behind a tab: purpose, tool allow-list, and which
  * model the router would pick for their typical tasks (no model call is made).
  */
-export function AgentPanel({ agents, upcoming }: { agents: string[]; upcoming: string[] }) {
+export function AgentPanel({ agents, upcoming, title = "The agents behind this tab" }: { agents: string[]; upcoming: string[]; title?: string }) {
   const info = useApi<{ agents: AgentInfo[] }>("/api/agents");
   const models = useApi<ModelsOverview>("/api/models");
 
   return (
-    <Card title="The agents behind this tab" icon={<Bot size={16} aria-hidden="true" />}>
+    <Card title={title} icon={<Bot size={16} aria-hidden="true" />}>
       {(info.loading || models.loading) && <LoadingState rows={2} />}
       {info.error && <ErrorState message={info.error.message} onRetry={info.reload} />}
       {info.data && (
@@ -68,7 +68,7 @@ export function AgentPanel({ agents, upcoming }: { agents: string[]; upcoming: s
           {upcoming.length > 0 && (
             <div>
               <p className="label !mb-2">What it does here</p>
-              <ul className="grid gap-1.5 text-sm text-muted sm:grid-cols-2">
+              <ul className="grid grid-cols-1 gap-1.5 text-sm text-muted sm:grid-cols-2">
                 {upcoming.map((u) => (
                   <li key={u} className="flex gap-2"><span className="text-rose">✦</span>{u}</li>
                 ))}

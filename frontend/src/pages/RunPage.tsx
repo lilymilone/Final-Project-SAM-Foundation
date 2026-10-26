@@ -9,6 +9,7 @@ import type { Check, RunDetail, RunStep } from "../api/types";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { AGENT_LABELS, INTENT_LABELS, ModeBadge, StatusPill, VerificationBadge, money, stepLabel } from "../components/agents";
 import { Card, ErrorState, LoadingState } from "../components/ui";
+import { LiveProgress } from "../components/progress";
 
 const ACTIVE = new Set(["queued", "running"]);
 const fmtTokens = (n: number | null | undefined) => (n == null ? "—" : n.toLocaleString());
@@ -73,7 +74,7 @@ function StepCard({ step, index }: { step: RunStep; index: number }) {
           {step.report && (
             <div className="rounded-xl bg-lilac/30 p-3">
               <p className="label">Structured report to the Orchestrator</p>
-              <dl className="grid gap-x-4 gap-y-1 text-xs sm:grid-cols-2">
+              <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-xs sm:grid-cols-2">
                 <div><dt className="inline font-semibold text-plum">Outreach appropriate: </dt><dd className="inline">{step.report.outreach.appropriate ? "yes" : "no"}. {step.report.outreach.reason}</dd></div>
                 <div><dt className="inline font-semibold text-plum">Other agents suggested: </dt><dd className="inline">{step.report.additional_agents.map((x) => `${AGENT_LABELS[x.agent] ?? x.agent} (${x.reason})`).join("; ") || "none"}</dd></div>
                 <div><dt className="inline font-semibold text-plum">Board review: </dt><dd className="inline">{step.report.approval.board_review ? "needed" : "not needed"}{step.report.approval.professional_review ? " · professional review needed" : ""}{step.report.approval.reasons.length ? ` (${step.report.approval.reasons.join(" ")})` : ""}</dd></div>
@@ -203,7 +204,7 @@ export default function RunPage() {
             {active && <button className="btn btn-soft" onClick={stop} disabled={stopping}><Square size={14} aria-hidden="true" /> {stopping ? "Stopping…" : "Stop"}</button>}
           </div>
         </div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
           <div className="rounded-2xl bg-ivory p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted"><Coins size={12} className="mr-1 inline" aria-hidden="true" />Spend</p>
             <p className="font-display text-2xl font-semibold text-plum">${totals.cost_usd.toFixed(4)}</p>
             <div className="mt-1 h-1.5 rounded-full bg-lilac" aria-hidden="true"><div className="h-1.5 rounded-full bg-gradient-to-r from-royal to-rose" style={{ width: `${spentPct}%` }} /></div>
@@ -231,7 +232,9 @@ export default function RunPage() {
         )}
       </Card>
 
-      <div className="grid gap-5 xl:grid-cols-[1.15fr_1fr]">
+      {active && <Card title="Live progress" className="mb-5"><LiveProgress detail={detail} /></Card>}
+
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <section aria-label="Agent handoffs">
           <h2 className="mb-3 font-display text-2xl font-semibold text-plum">Handoffs, step by step</h2>
           <ol className="space-y-3">

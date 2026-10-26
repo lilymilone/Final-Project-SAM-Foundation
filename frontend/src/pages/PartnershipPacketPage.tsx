@@ -26,7 +26,7 @@ function Selected({ o }: { o: Opportunity }) {
       <p className="mt-1 font-display text-xl font-semibold text-plum">{o.name}</p>
       <p className="text-sm text-ink/90">{o.purpose}</p>
       <p className="mt-1 text-sm"><b className="text-plum">Why selected:</b> {o.selection_reason}</p>
-      <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
+      <dl className="mt-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2">
         <div><dt className="inline text-muted">Dates: </dt><dd className="inline">{o.dates_text || "not stated"}{o.date_status && o.date_status !== "none" ? ` (${o.date_status})` : ""}</dd></div>
         <div><dt className="inline text-muted">Known costs: </dt><dd className="inline">{o.known_costs || "not stated on the source"}</dd></div>
         <div><dt className="inline text-muted">Last checked: </dt><dd className="inline">{o.last_checked ? formatDate(o.last_checked) : "—"}</dd></div>
@@ -92,7 +92,7 @@ export default function PartnershipPacketPage() {
             <>
               <p className="font-display text-2xl font-semibold text-plum">{rec.headline}</p>
               <p className="mt-1 text-ink">{rec.recommendation}</p>
-              <div className="mt-3 grid gap-4 md:grid-cols-2">
+              <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div><p className="eyebrow">Why</p><ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm">{rec.rationale.map((x) => <li key={x}>{x}</li>)}</ul></div>
                 <div><p className="eyebrow">Decisions for the board</p><ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm">{rec.decisions_for_board.map((x) => <li key={x}>{x}</li>)}</ul></div>
                 <div><p className="eyebrow">Risks</p><ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm">{rec.risks.map((x) => <li key={x}>{x}</li>)}</ul></div>
@@ -122,7 +122,7 @@ export default function PartnershipPacketPage() {
             <li key={d.id} className="rounded-2xl border border-lavender/35 bg-white/85 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted">{d.draft_type.replace(/_/g, " ")} · to {d.recipient} · <span className="text-royal">{d.status === "draft" ? "unsent draft" : `${d.status}, unsent`}</span></p>
               <p className="font-display text-lg font-semibold text-plum">{d.subject}</p>
-              <dl className="mt-1 grid gap-1 text-sm md:grid-cols-3">
+              <dl className="mt-1 grid grid-cols-1 gap-1 text-sm md:grid-cols-3">
                 <div><dt className="text-muted">Purpose</dt><dd>{d.purpose || "—"}</dd></div>
                 <div><dt className="text-muted">Opportunity</dt><dd>{d.opportunity || "—"}</dd></div>
                 <div><dt className="text-muted">Next step</dt><dd>{d.next_step || "—"}</dd></div>

@@ -34,7 +34,7 @@ export function Quiet({ children }: { children: ReactNode }) {
 export function CompareBars({ title, manual, assisted, unit, note }: { title: string; manual: number | null; assisted: number | null; unit: string; note?: string }) {
   const max = Math.max(1, manual ?? 0, assisted ?? 0);
   const row = (label: string, value: number | null, color: string) => (
-    <div className="grid grid-cols-[7.5rem_1fr_5rem] items-center gap-2 text-sm">
+    <div className="grid grid-cols-[7.5rem_minmax(0,1fr)_5rem] items-center gap-2 text-sm">
       <span className="text-muted">{label}</span>
       <span className="h-3 rounded-full bg-lilac/40">
         {value != null && <span className="block h-3 rounded-full" style={{ width: `${Math.max(2, (100 * value) / max)}%`, background: color }} />}

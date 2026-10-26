@@ -31,7 +31,7 @@ export default function SafetyPage() {
         subtitle="Which AI provider and models are in use, how each task picks its model, what it costs, and what SAM SPACE will never do." />
       <AnalyticsTabs />
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card title="Configuration" icon={<KeyRound size={16} aria-hidden="true" />}>
           {status.loading && <LoadingState rows={2} />}
           {status.error && <ErrorState message={status.error.message} onRetry={status.reload} />}
@@ -75,7 +75,7 @@ export default function SafetyPage() {
           {models.error && <ErrorState message={models.error.message} onRetry={models.reload} />}
           {models.data && (
             <>
-              <div className="mb-4 grid gap-3 sm:grid-cols-3">
+              <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {Object.entries(models.data.tiers).map(([tier, info]) => {
                   const price = info.effective ? models.data!.pricing.models[info.effective] : undefined;
                   return (
@@ -117,7 +117,7 @@ export default function SafetyPage() {
 
         <Card title="Accounts and sessions" icon={<Gauge size={16} aria-hidden="true" />}>
           {policy.data && (
-            <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 text-sm">
+            <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 text-sm">
               <dt className="text-muted">Session length</dt><dd className="text-right font-semibold text-plum">{policy.data.limits.session_hours} hours</dd>
               <dt className="text-muted">Failed sign-ins before a pause</dt><dd className="text-right font-semibold text-plum">{policy.data.limits.login_attempts}</dd>
             </dl>
@@ -140,7 +140,7 @@ export default function SafetyPage() {
         {overview.data && (
           <div className="space-y-5">
             <SafetySummary data={overview.data} />
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <LimitsCard onSaved={overview.reload} />
               <Card title="How a workflow is stopped" icon={<Ban size={16} aria-hidden="true" />}>
                 <ul className="space-y-2 text-sm text-ink">

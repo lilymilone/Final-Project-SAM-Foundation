@@ -51,7 +51,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+    <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
       {/* Brand panel */}
       <section className="sidebar-surface relative hidden overflow-hidden lg:flex lg:flex-col lg:items-center lg:justify-center lg:px-12">
         <Butterfly size={54} motion="still" palette={0} className="absolute left-[12%] top-[14%] rotate-[-14deg] opacity-70" />
@@ -128,7 +128,7 @@ export default function LoginPage() {
                 Synthetic accounts and data only.
                 {demo.default_password ? <> Password for both: <code className="rounded bg-white/70 px-1.5 py-0.5 text-plum">{DEMO_PASSWORD}</code></> : " The password was changed via DEMO_PASSWORD."}
               </p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {demo.accounts.map((a) => (
                   <button key={a.email} type="button" className="rounded-xl border border-white/80 bg-white/80 px-3.5 py-2.5 text-left transition hover:border-lavender hover:bg-white"
                     onClick={() => { setEmail(a.email); if (demo.default_password) setPassword(DEMO_PASSWORD); }}>

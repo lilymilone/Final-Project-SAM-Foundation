@@ -9,7 +9,8 @@ import type { Draft, RunDetail, StrategyPacket } from "../api/types";
 import { formatDate } from "../api/useApi";
 import { AGENT_LABELS, ModeBadge, StatusPill, VerificationBadge, money, stepLabel } from "../components/agents";
 import { DraftItem } from "../components/outputs";
-import { FinancialModelEditor, StrategyProgress } from "../components/studio";
+import { FinancialModelEditor } from "../components/studio";
+import { LiveProgress } from "../components/progress";
 import { Card, ErrorState, LoadingState } from "../components/ui";
 
 const SECTIONS = [
@@ -100,7 +101,7 @@ export default function PacketPage() {
         </nav>
       </header>
 
-      {live && <Card title="The agents are still working" className="mb-6"><StrategyProgress detail={live} /></Card>}
+      {live && <Card title="The agents are still working" className="mb-6"><LiveProgress detail={live} /></Card>}
       {incomplete && (
         <div role="alert" className="mb-6 flex gap-3 rounded-2xl border border-danger/25 bg-[#fbeef3] p-4 text-sm text-plum">
           <AlertTriangle size={18} className="mt-0.5 shrink-0 text-danger" aria-hidden="true" />
@@ -114,7 +115,7 @@ export default function PacketPage() {
 
       <div className="space-y-6">
         <Section id="overview" title="1. Event overview" icon={<FileText size={16} aria-hidden="true" />}>
-          <dl className="grid gap-2 sm:grid-cols-3">
+          <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {([["Ticket price", money(ev.ticket_price_usd as number | null)], ["Fundraising target", money(ev.fundraising_goal_usd as number | null)],
                ["Maximum planning budget", money(ev.budget_limit_usd as number | null)], ["Expected attendees", ev.attendance], ["Event type", ev.event_type],
                ["Format", ev.event_format ? String(ev.event_format).replace("_", " ") : "chosen by the agents"]] as const).map(([k, v]) => (
@@ -129,7 +130,7 @@ export default function PacketPage() {
           <Section id="recommendation" title="2. Board-ready recommendation" icon={<Lightbulb size={16} aria-hidden="true" />}>
             <p className="font-display text-2xl font-semibold leading-snug text-plum">{rec.headline}</p>
             <p className="mt-2 leading-relaxed">{rec.recommendation}</p>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
               {([["Decisions for the board", rec.decisions_for_board], ["Next steps", rec.next_steps], ["Risks", rec.risks], ["Caveats", rec.caveats]] as const).map(([t, items]) =>
                 items.length ? <div key={t}><p className="label">{t}</p><ul className="list-disc space-y-1 pl-5 text-sm">{items.map((x, i) => <li key={i}>{x}</li>)}</ul></div> : null)}
             </div>
@@ -143,7 +144,7 @@ export default function PacketPage() {
             {packet.mission_contribution && (
               <div className="mt-5 rounded-2xl bg-lilac/40 p-4">
                 <p className="label">Mission contribution (alongside the financial checks, never instead of them)</p>
-                <dl className="mt-1 grid gap-2 text-sm md:grid-cols-2">
+                <dl className="mt-1 grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
                   {([["inclusion", "Inclusion"], ["connection", "Connection"], ["accessibility", "Accessibility"], ["recognition", "Recognition"], ["charitable_alignment", "Charitable alignment"]] as const).map(([k, l]) => (
                     <div key={k}><dt className="font-semibold text-plum">{l}</dt><dd className="text-ink/85">{packet.mission_contribution?.[k] || "—"}</dd></div>))}
                 </dl>
@@ -184,7 +185,7 @@ export default function PacketPage() {
           ))}
           {packet.revision.revised ? (
             <>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Snapshot label="Original plan" s={packet.revision.original} tone="amber" />
                 <Snapshot label="Revised plan" s={packet.revision.revised} tone="green" />
               </div>
@@ -199,7 +200,7 @@ export default function PacketPage() {
         </Section>
 
         <Section id="venues" title="4. Venue shortlist and research" icon={<Building2 size={16} aria-hidden="true" />}>
-          <div className="grid gap-3 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
             {[...packet.venues].sort((a, b) => (a.shortlist_rank ?? 99) - (b.shortlist_rank ?? 99)).map((v) => (
               <article key={v.name} className={`rounded-2xl border p-4 ${v.shortlist_rank ? "border-royal/50 bg-lilac/30" : "border-lavender/35 bg-white/80"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -207,7 +208,7 @@ export default function PacketPage() {
                     <p className="text-xs text-muted">{v.location ?? "Location not stated"}</p></div>
                   <VerificationBadge value={v.verification} />
                 </div>
-                <dl className="mt-2 grid grid-cols-[7rem_1fr] gap-y-1 text-sm">
+                <dl className="mt-2 grid grid-cols-[7rem_minmax(0,1fr)] gap-y-1 text-sm">
                   <dt className="text-muted">Website</dt><dd>{v.website && v.verification !== "synthetic" ? <a href={v.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-royal underline">{new URL(v.website).hostname}<ExternalLink size={11} aria-hidden="true" /></a> : v.website ? <span className="text-muted">example.org (synthetic)</span> : "—"}
                     <span className="ml-1 text-xs text-muted">({v.website_status ?? "unchecked"}{v.verified_at ? `, checked ${formatDate(v.verified_at)}` : ""})</span></dd>
                   <dt className="text-muted">Capacity</dt><dd>{Object.entries(v.capacity).map(([k, n]) => `${k.replace("_", " ")} ${n}`).join(" · ") || "not published"}
@@ -320,7 +321,7 @@ export default function PacketPage() {
         </Section>
 
         <Section id="usage" title="11. Token usage and cost" icon={<Coins size={16} aria-hidden="true" />}>
-          <div className="grid gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
             {([["Model calls", packet.usage.model_calls], ["Web searches", packet.usage.web_search_calls],
                ["Tokens in (cached)", `${packet.usage.input_tokens.toLocaleString()} (${packet.usage.cached_input_tokens.toLocaleString()})`],
                ["Tokens out", packet.usage.output_tokens.toLocaleString()]] as const).map(([k, v]) => (
@@ -328,7 +329,7 @@ export default function PacketPage() {
             ))}
           </div>
           <p className="mt-3 text-sm">Total cost at official list prices: <b className="text-plum">${packet.usage.cost_usd.toFixed(4)}</b></p>
-          <div className="mt-3 grid gap-4 md:grid-cols-2">
+          <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
             {([["By agent", packet.usage.by_agent], ["By model", packet.usage.by_model]] as const).map(([t, rows]) => (
               <div key={t}><p className="label">{t}</p><table className="w-full text-left text-xs"><tbody>
                 {Object.entries(rows).map(([k, r]) => <tr key={k} className="border-t border-lavender/25"><td className="py-1">{AGENT_LABELS[k] ?? k}</td><td className="py-1">{r.calls} calls</td>

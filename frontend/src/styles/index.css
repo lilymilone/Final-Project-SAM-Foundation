@@ -252,3 +252,10 @@
   details { display: block; }
   a { color: inherit !important; }
 }
+
+/* A link to a specific item (for example #draft-56) briefly rings the item it scrolled to. */
+.target-flash { animation: target-flash 2.2s ease-out; scroll-margin-top: 1.5rem; }
+@keyframes target-flash {
+  0%, 35% { box-shadow: 0 0 0 3px var(--color-royal, #6b3fa0); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}

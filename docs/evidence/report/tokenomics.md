@@ -1,6 +1,6 @@
 # Tokenomics: measured from the app's logs
 
-Generated 2026-10-25T23:45:17+00:00 by `python -m backend.scripts.export_report_evidence`. Source: app database (model_usage, agent_runs, agent_handoffs); prices from backend/app/ai/pricing.json (https://developers.openai.com/api/docs/pricing, retrieved 2026-10-24).
+Generated 2026-10-26T01:51:48+00:00 by `python -m backend.scripts.export_report_evidence`. Source: app database (model_usage, agent_runs, agent_handoffs); prices from backend/app/ai/pricing.json (https://developers.openai.com/api/docs/pricing, retrieved 2026-10-24).
 
 All costs are at OpenAI's list prices (standard tier) for the tokens each call actually used. Runs in synthetic mode used real models on labeled demo data, so their token counts and costs are real.
 
@@ -8,26 +8,26 @@ All costs are at OpenAI's list prices (standard tier) for the tokens each call a
 
 | Runs | Model calls | Refused (never sent) | Input tokens | Cached input | Output tokens | Cost |
 |---|---|---|---|---|---|---|
-| 45 | 205 | 4 | 680,054 | 71,535 | 241,510 | $5.65 |
+| 46 | 213 | 4 | 714,811 | 72,597 | 253,050 | $6.00 |
 
 ## By model
 
 | | Calls | Input | Cached input | Output | Web searches | Cost |
 |---|---|---|---|---|---|---|
-| `gpt-6-astra` | 23 | 127,947 | 0 | 33,835 | 0 | $3.29 |
-| `gpt-6.1-sol` | 102 | 317,598 | 58,155 | 154,459 | 0 | $2.20 |
-| `gpt-6-luna` | 80 | 234,509 | 13,380 | 53,216 | 11 | $0.1613 |
+| `gpt-6-astra` | 24 | 136,915 | 0 | 35,585 | 0 | $3.49 |
+| `gpt-6.1-sol` | 107 | 341,390 | 59,217 | 163,422 | 0 | $2.35 |
+| `gpt-6-luna` | 82 | 236,506 | 13,380 | 54,043 | 11 | $0.1620 |
 
 ## By agent
 
 | | Calls | Input | Cached input | Output | Web searches | Cost |
 |---|---|---|---|---|---|---|
-| `orchestrator` | 53 | 187,538 | 0 | 53,593 | 0 | $3.35 |
-| `fundraising_events` | 39 | 191,667 | 18,034 | 57,625 | 4 | $0.8630 |
-| `event_intelligence` | 22 | 80,167 | 25,246 | 51,054 | 0 | $0.5398 |
-| `financial_analysis` | 41 | 72,922 | 21,811 | 29,795 | 0 | $0.3974 |
+| `orchestrator` | 55 | 197,300 | 0 | 55,505 | 0 | $3.55 |
+| `fundraising_events` | 41 | 203,142 | 19,096 | 61,492 | 4 | $0.9278 |
+| `event_intelligence` | 23 | 88,823 | 25,246 | 54,501 | 0 | $0.5959 |
+| `financial_analysis` | 43 | 76,583 | 21,811 | 31,444 | 0 | $0.4231 |
 | `mission_discovery` | 21 | 115,205 | 6,444 | 30,844 | 7 | $0.3895 |
-| `partnerships_outreach` | 24 | 27,742 | 0 | 16,632 | 0 | $0.0977 |
+| `partnerships_outreach` | 25 | 28,945 | 0 | 17,297 | 0 | $0.0981 |
 | `donations_compliance` | 5 | 4,813 | 0 | 1,967 | 0 | $0.0184 |
 
 ## Cost per workflow (completed runs)
@@ -42,13 +42,13 @@ All costs are at OpenAI's list prices (standard tier) for the tokens each call a
 | `legacy_import` | 4 | $0.0006 | $0.0006 | $0.0004–$0.0008 | 1,493 (1,151) / 1,011 |
 | `mission_discovery` | 3 | $0.0886 | $0.0860 | $0.0742–$0.0953 | 23,897 (1,681) / 8,403 |
 | `partnership_outreach` | 4 | $0.1575 | $0.1526 | $0.0680–$0.2271 | 7,857 (0) / 5,223 |
-| `plan_event` | 16 | $0.2412 | $0.2356 | $0.0089–$0.3351 | 23,419 (2,462) / 8,798 |
+| `plan_event` | 17 | $0.2458 | $0.2421 | $0.0089–$0.3468 | 25,332 (2,124) / 9,450 |
 
 ## Cost controls observed in the logs
 
-- **Prompt caching:** 71,535 input tokens were billed at the cached rate, saving $0.1117 against the full input price.
+- **Prompt caching:** 72,597 input tokens were billed at the cached rate, saving $0.1137 against the full input price.
 - **Budget step-downs:** 8 calls ran on a cheaper model than their tier because the remaining budget was tight (each is recorded with the router's note).
-- **Steps that ran in code, with no model call** (completed handoffs): `verification` × 38, `intake` × 33, `evaluate` × 9, `outreach_decision` × 4, `select` × 3, `finance` × 1.
+- **Steps that ran in code, with no model call** (completed handoffs): `verification` × 39, `intake` × 33, `evaluate` × 10, `outreach_decision` × 5, `select` × 3, `finance` × 1.
 
 ## Monthly cost projection
 
@@ -56,7 +56,7 @@ All costs are at OpenAI's list prices (standard tier) for the tokens each call a
 
 | Workflow | Runs per user per month (assumed) | Median cost per run (measured) | Monthly cost per user |
 |---|---|---|---|
-| `plan_event` | 1 | $0.2412 | $0.2412 |
+| `plan_event` | 1 | $0.2458 | $0.2458 |
 | `mission_discovery` | 2 | $0.0886 | $0.1771 |
 | `partnership_outreach` | 1 | $0.1575 | $0.1575 |
 | `financial_review` | 1 | $0.0232 | $0.0232 |
@@ -66,8 +66,8 @@ All costs are at OpenAI's list prices (standard tier) for the tokens each call a
 
 | Users | Monthly model cost |
 |---|---|
-| 1 | $0.6326 |
-| 100 | $63.26 |
-| 10,000 | $6,326.00 |
+| 1 | $0.6372 |
+| 100 | $63.72 |
+| 10,000 | $6,372.00 |
 
 Model cost only: hosting, storage, and web-search fees beyond those already in the per-call costs are not included.

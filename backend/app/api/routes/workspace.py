@@ -7,7 +7,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field, field_validator, model_validator
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ...core.permissions import Permission
@@ -21,6 +21,7 @@ from ...db.models import (
     ResearchFinding,
 )
 from ...services.finance import finance_summary
+from .outputs import DONOR_DRAFTS
 from ...services.legacy import history_stats
 from ..deps import CurrentUser, audit, current_user, get_db, require
 
@@ -50,7 +51,8 @@ def plan_out(p: EventPlan) -> dict:
 @router.get("/overview")
 def overview(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_db)) -> dict:
     org = cu.organization_id
-    runs = db.scalars(select(AgentRun).where(AgentRun.organization_id == org).order_by(AgentRun.started_at.desc()).limit(5)).all()
+    runs = db.scalars(select(AgentRun).where(AgentRun.organization_id == org, AgentRun.status.in_(("completed", "completed_with_warnings")))
+                      .order_by(AgentRun.started_at.desc()).limit(5)).all()
     findings = db.scalars(
         select(ResearchFinding).where(ResearchFinding.organization_id == org, ResearchFinding.saved.is_(True))
         .order_by(ResearchFinding.created_at.desc()).limit(5)
@@ -59,12 +61,16 @@ def overview(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_
         select(EventPlan).where(EventPlan.organization_id == org, EventPlan.status.in_(ACTIVE_PLAN_STATUSES))
         .order_by(EventPlan.target_date)
     ).all()
-    drafts = db.scalars(
-        select(OutreachDraft).where(OutreachDraft.organization_id == org, OutreachDraft.status == "draft")
-        .order_by(OutreachDraft.created_at.desc()).limit(5)
-    ).all()
-    lessons = db.scalars(
-        select(HistoricalLesson).where(HistoricalLesson.organization_id == org).order_by(HistoricalLesson.created_at.desc()).limit(3)
+    # Outreach drafts only: donor acknowledgment drafts carry donor names and stay behind donor-data permission.
+    awaiting = (OutreachDraft.organization_id == org, OutreachDraft.status.in_(("draft", "needs_review")),
+                OutreachDraft.draft_type.not_in(DONOR_DRAFTS))
+    drafts = db.scalars(select(OutreachDraft).where(*awaiting).order_by(OutreachDraft.created_at.desc()).limit(5)).all()
+    drafts_total = db.scalar(select(func.count(OutreachDraft.id)).where(*awaiting)) or 0
+    lessons = db.scalars(  # current lessons only: later analyses supersede earlier ones, and dismissed ones are set aside
+        select(HistoricalLesson).where(HistoricalLesson.organization_id == org,
+                                       HistoricalLesson.status.is_distinct_from("superseded"),
+                                       HistoricalLesson.status.is_distinct_from("dismissed"))
+        .order_by(HistoricalLesson.created_at.desc()).limit(3)
     ).all()
     history = db.scalars(select(HistoricalEvent).where(HistoricalEvent.organization_id == org)).all()
 
@@ -78,7 +84,7 @@ def overview(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_
         "first_name": cu.user.first_name,
         "recent_activity": [
             {"id": r.id, "workflow_type": r.workflow_type, "status": r.status, "started_at": r.started_at.isoformat(),
-             "spent_usd": r.spent_usd}
+             "spent_usd": r.spent_usd, "request": (r.request_text or "")[:140]}
             for r in runs
         ],
         "saved_opportunities": [
@@ -88,12 +94,14 @@ def overview(cu: CurrentUser = Depends(current_user), db: Session = Depends(get_
         ],
         "planned_events": [plan_out(p) for p in plans],
         "drafts_awaiting_review": [
-            {"id": d.id, "subject": d.subject, "recipient_org": d.recipient_org, "draft_type": d.draft_type}
+            {"id": d.id, "subject": d.subject, "recipient_org": d.recipient_org, "draft_type": d.draft_type, "status": d.status}
             for d in drafts
         ],
+        "drafts_awaiting_total": drafts_total,
         "financial": financial,
         "history": history_stats(list(history)),
-        "lessons": [{"id": l.id, "lesson": l.lesson, "confidence": l.confidence} for l in lessons],
+        "lessons": [{"id": l.id, "lesson": l.lesson, "confidence": l.confidence, "theme": l.theme, "focus_event_id": l.focus_event_id,
+                     "status": l.status or "new"} for l in lessons],
     }
 
 

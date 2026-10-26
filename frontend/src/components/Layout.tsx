@@ -1,6 +1,7 @@
 import {
   Activity,
   CalendarHeart,
+  CircleHelp,
   Compass,
   HandCoins,
   HeartHandshake,
@@ -30,6 +31,7 @@ export const NAV = [
   { to: "/activity", label: "Agent Activity", icon: Activity },
   { to: "/safety", label: "Analytics & Safety", icon: ShieldCheck },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
+  { to: "/help", label: "Help", icon: CircleHelp },
 ] as const;
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
@@ -93,6 +95,23 @@ export function Layout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   useEffect(() => setDrawerOpen(false), [location.pathname]);
+  // Links like /partnerships#draft-56 scroll to that item once the page has loaded it, and highlight it briefly.
+  useEffect(() => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    let tries = 0;
+    let timer: number | undefined;
+    const find = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        el.classList.add("target-flash");
+        timer = window.setTimeout(() => el.classList.remove("target-flash"), 2200);
+      } else if (tries++ < 40) timer = window.setTimeout(find, 100);
+    };
+    find();
+    return () => window.clearTimeout(timer);
+  }, [location.pathname, location.hash]);
   const current = NAV.find((n) => (n.to === "/" ? location.pathname === "/" : location.pathname.startsWith(n.to)));
 
   return (

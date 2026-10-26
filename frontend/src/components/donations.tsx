@@ -6,7 +6,7 @@ import type { CampaignRow, ComplianceItem, ComplianceRef, DonationRow, RunSummar
 import { formatDate, useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
-import { Card, DemoBadge, EmptyState, LoadingState } from "./ui";
+import { Card, DemoBadge, EmptyState, LoadingState, ShowMore } from "./ui";
 
 export const money = (n: number | null | undefined) => n == null ? "—" : `$${n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 export const TYPE_LABEL: Record<string, string> = { monetary: "Monetary", in_kind: "In-kind", event_ticket: "Event ticket", sponsorship: "Sponsorship", matching_gift: "Matching gift" };
@@ -72,7 +72,7 @@ export function DonationForm({ campaigns, initial, onDone, onCancel }: { campaig
   }
   const field = "field !py-1.5 text-sm";
   return (
-    <form onSubmit={(e) => submit(e)} className="grid gap-2 sm:grid-cols-3">
+    <form onSubmit={(e) => submit(e)} className="grid grid-cols-1 gap-2 sm:grid-cols-3">
       {!initial && <>
         <div><label className="label" htmlFor="dn">Donor name</label><input id="dn" className={field} required maxLength={200} value={f.donor_name} onChange={set("donor_name")} /></div>
         <div><label className="label" htmlFor="de">Email (optional)</label><input id="de" type="email" className={field} value={f.donor_email} onChange={set("donor_email")} /></div>
@@ -225,12 +225,13 @@ function RefLine({ r }: { r: ComplianceRef }) {
 
 export function ComplianceArea() {
   const { data, loading } = useApi<{ items: ComplianceItem[]; references: ComplianceRef[]; disclaimer: string }>("/api/compliance");
+  const [limit, setLimit] = useState(3);
   return (
     <Card title="Compliance review" icon={<Scale size={16} aria-hidden="true" />}>
       <p className="mb-3 flex items-start gap-2 rounded-xl bg-lilac/60 px-3 py-2 text-xs text-plum"><ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />{data?.disclaimer ?? "Loading…"}</p>
       {loading && <LoadingState rows={3} />}
       {data && (
-        <ul className="space-y-3">{data.items.map((i) => {
+        <><ul className="space-y-3">{data.items.slice(0, limit).map((i) => {
           const [label, cls] = KIND[i.kind];
           return (
             <li key={i.key} className="rounded-2xl border border-lavender/35 bg-white/85 p-3">
@@ -247,6 +248,7 @@ export function ComplianceArea() {
             </li>
           );
         })}</ul>
+        <ShowMore shown={Math.min(limit, data.items.length)} total={data.items.length} onMore={() => setLimit(data.items.length)} /></>
       )}
     </Card>
   );

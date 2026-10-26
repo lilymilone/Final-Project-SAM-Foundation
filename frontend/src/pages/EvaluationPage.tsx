@@ -150,12 +150,12 @@ export default function EvaluationPage() {
             {ev.manual.status !== "unavailable" && <button type="button" className="btn btn-ghost text-sm" onClick={() => timer("manual", "unavailable")}>I can't do a manual comparison</button>}
           </div>
           <details className="mt-2 text-sm"><summary className="cursor-pointer text-royal">Already did it earlier? Enter the times</summary>
-            <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
               <div><label className="label" htmlFor="m-start">Started</label><input id="m-start" type="datetime-local" className={inputCls} value={m.started_at} onChange={(e) => setM({ ...m, started_at: e.target.value })} /></div>
               <div><label className="label" htmlFor="m-end">Finished</label><input id="m-end" type="datetime-local" className={inputCls} value={m.finished_at} onChange={(e) => setM({ ...m, finished_at: e.target.value })} /></div>
               <div><label className="label" htmlFor="m-min">…or total minutes</label><input id="m-min" type="number" min={0} className={inputCls} value={m.minutes} onChange={(e) => setM({ ...m, minutes: e.target.value })} /></div>
             </div></details>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="sm:col-span-3"><label className="label" htmlFor="m-tools">Tools you used (comma-separated)</label><input id="m-tools" className={inputCls} placeholder="Google, Excel, past emails" value={m.tools} onChange={(e) => setM({ ...m, tools: e.target.value })} /></div>
             <div><label className="label" htmlFor="m-venues">Venue options found</label><input id="m-venues" type="number" min={0} className={inputCls} value={m.venues} onChange={(e) => setM({ ...m, venues: e.target.value })} /></div>
             <div><label className="label" htmlFor="m-src">Sources you checked</label><input id="m-src" type="number" min={0} className={inputCls} value={m.verified_sources} onChange={(e) => setM({ ...m, verified_sources: e.target.value })} /></div>
@@ -185,7 +185,7 @@ export default function EvaluationPage() {
           {rm && (
             <div className="mt-3 rounded-xl bg-ivory/80 p-3 text-sm">
               <p className="mb-1 flex items-center gap-2 font-semibold text-plum"><BasisTag kind="logs">From run #{rm.run_id}'s logs</BasisTag> <Link className="text-xs text-royal underline" to={`/activity/runs/${rm.run_id}`}>trace</Link></p>
-              <ul className="grid gap-x-4 gap-y-0.5 sm:grid-cols-2">
+              <ul className="grid grid-cols-1 gap-x-4 gap-y-0.5 sm:grid-cols-2">
                 <li>Agents: {rm.agents_involved.map((x) => x.replace(/_/g, " ")).join(", ")}</li>
                 <li>Venues: {rm.venues_considered} considered, {rm.venues_shortlisted} shortlisted</li>
                 <li>Sources: {rm.sources_verified_live} verified live, {rm.sources_synthetic} synthetic demo</li>
@@ -198,7 +198,7 @@ export default function EvaluationPage() {
               <p className="mt-1 text-xs text-muted">The agents' time is not your task time; your Start–Finish time above is what the comparison uses.</p>
             </div>
           )}
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div><label className="label" htmlFor="a-review">Minutes spent reviewing and correcting</label><input id="a-review" type="number" min={0} className={inputCls} value={a.review_minutes} onChange={(e) => setA({ ...a, review_minutes: e.target.value })} /></div>
             <div><label className="label" htmlFor="a-calc">Were the calculations correct?</label>
               <select id="a-calc" className={inputCls} value={a.calculations_correct} onChange={(e) => setA({ ...a, calculations_correct: e.target.value })}><option value="">—</option><option value="yes">Yes</option><option value="no">No</option><option value="unsure">Unsure</option></select></div>
@@ -230,7 +230,7 @@ export default function EvaluationPage() {
         </Step>
 
         <Step n={5} title="Your feedback" icon={<MessageSquareText size={16} aria-hidden="true" />} done={!!ev.feedback_saved_at}>
-          <ol className="grid gap-3 sm:grid-cols-2">{s.feedback_questions.map((q, i) => (
+          <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2">{s.feedback_questions.map((q, i) => (
             <li key={q.key} className={q.kind === "text" ? "sm:col-span-2" : ""}>
               <p className="label">{i + 1}. {q.question}</p>
               {q.kind === "scale" && <div className="flex gap-1.5" role="radiogroup" aria-label={q.question}>{[1, 2, 3, 4, 5].map((n) => (
@@ -245,7 +245,7 @@ export default function EvaluationPage() {
           <div className="mt-5 rounded-2xl bg-lilac/30 p-4">
             <p className="flex items-center gap-2 font-display text-lg font-semibold text-plum"><Heart size={16} className="text-rose" aria-hidden="true" /> “Be somebody who makes everybody feel like somebody.”</p>
             <p className="mt-1 text-sm text-muted">Did SAM SPACE's recommendations support these parts of the mission? Your judgment only; nothing here is turned into a statistic about how guests felt.</p>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">{s.mission_dimensions.map((d) => (
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">{s.mission_dimensions.map((d) => (
               <label key={d.key} className="flex items-center justify-between gap-2 text-sm"><span className="text-plum">{d.label}</span>
                 <select className="field !w-40 !py-1" value={mission[d.key] ?? ""} onChange={(e) => setMission({ ...mission, [d.key]: e.target.value })}>
                   <option value="">—</option><option value="yes">Yes</option><option value="somewhat">Somewhat</option><option value="no">No</option><option value="not_applicable">Not applicable</option></select></label>))}</div>
@@ -259,7 +259,7 @@ export default function EvaluationPage() {
         </Step>
 
         <Step n={6} title="Review and submit" icon={<Send size={16} aria-hidden="true" />} done={ev.status === "submitted"}>
-          <div className="grid gap-2 text-sm sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-4">
             <p>Usual way: <b className="text-plum">{ev.manual.status === "unavailable" ? "unavailable" : fmtMin(ev.comparison.manual_minutes)}</b></p>
             <p>With SAM SPACE: <b className="text-plum">{fmtMin(ev.comparison.assisted_minutes)}</b></p>
             <p>Minutes saved: <b className="text-plum">{fmtMin(ev.comparison.minutes_saved)}</b> <BasisTag kind="calculated" /></p>

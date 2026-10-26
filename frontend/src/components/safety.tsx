@@ -46,7 +46,7 @@ export function SafetySummary({ data }: { data: SafetyOverview }) {
   const blocked = data.events.blocked_actions.length + data.events.data_access.length;
   const ratio = (rows: SafetyTestRow[]) => (rows.length ? `${rows.filter((t) => t.passed).length}/${rows.length}` : "none yet");
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <StatTile label="Deterministic tests passing" value={ratio(mocked)} hint="pytest, scripted model, latest run of each" />
       <StatTile label="Live-model tests passing" value={ratio(live)} hint="real OpenAI calls, latest run of each" />
       <StatTile label="Safety events, 30 days" value={data.events.total_30_days} hint="from the security event log" />
@@ -194,7 +194,7 @@ export function TestResults({ tests }: { tests: SafetyTestRow[] }) {
         PASS appears only when the executed test's checks held. <b className="text-plum">Mocked</b> tests run the real code with a scripted model (repeatable, free).
         {" "}<b className="text-plum">Live</b> tests send the attack through real OpenAI models.
       </p>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div>
           <h3 className="mb-2 font-display text-lg font-semibold text-plum">Live-model tests</h3>
           {live.length ? <ul className="space-y-2">{live.map((t) => <TestRow key={t.name} t={t} />)}</ul> : <Quiet>No live-model safety tests recorded yet.</Quiet>}

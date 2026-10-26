@@ -1,79 +1,79 @@
 {
-  "generated_at": "2026-10-25T23:45:17+00:00",
+  "generated_at": "2026-10-26T01:51:48+00:00",
   "source": "app database (model_usage, agent_runs, agent_handoffs); prices from backend/app/ai/pricing.json (https://developers.openai.com/api/docs/pricing, retrieved 2026-10-24)",
   "totals": {
-    "runs": 45,
-    "model_calls_ok": 205,
+    "runs": 46,
+    "model_calls_ok": 213,
     "refused_calls": 4,
-    "input_tokens": 680054,
-    "cached_input_tokens": 71535,
-    "output_tokens": 241510,
-    "cost_usd": 5.6511
+    "input_tokens": 714811,
+    "cached_input_tokens": 72597,
+    "output_tokens": 253050,
+    "cost_usd": 5.9979
   },
   "by_model": [
     {
       "key": "gpt-6-astra",
-      "calls": 23,
-      "input_tokens": 127947,
+      "calls": 24,
+      "input_tokens": 136915,
       "cached_input_tokens": 0,
-      "output_tokens": 33835,
-      "cost_usd": 3.290915,
+      "output_tokens": 35585,
+      "cost_usd": 3.490507,
       "web_search_calls": 0
     },
     {
       "key": "gpt-6.1-sol",
-      "calls": 102,
-      "input_tokens": 317598,
-      "cached_input_tokens": 58155,
-      "output_tokens": 154459,
-      "cost_usd": 2.19886,
+      "calls": 107,
+      "input_tokens": 341390,
+      "cached_input_tokens": 59217,
+      "output_tokens": 163422,
+      "cost_usd": 2.345414,
       "web_search_calls": 0
     },
     {
       "key": "gpt-6-luna",
-      "calls": 80,
-      "input_tokens": 234509,
+      "calls": 82,
+      "input_tokens": 236506,
       "cached_input_tokens": 13380,
-      "output_tokens": 53216,
-      "cost_usd": 0.161312,
+      "output_tokens": 54043,
+      "cost_usd": 0.161956,
       "web_search_calls": 11
     }
   ],
   "by_agent": [
     {
       "key": "orchestrator",
-      "calls": 53,
-      "input_tokens": 187538,
+      "calls": 55,
+      "input_tokens": 197300,
       "cached_input_tokens": 0,
-      "output_tokens": 53593,
-      "cost_usd": 3.345386,
+      "output_tokens": 55505,
+      "cost_usd": 3.545139,
       "web_search_calls": 0
     },
     {
       "key": "fundraising_events",
-      "calls": 39,
-      "input_tokens": 191667,
-      "cached_input_tokens": 18034,
-      "output_tokens": 57625,
-      "cost_usd": 0.862956,
+      "calls": 41,
+      "input_tokens": 203142,
+      "cached_input_tokens": 19096,
+      "output_tokens": 61492,
+      "cost_usd": 0.927762,
       "web_search_calls": 4
     },
     {
       "key": "event_intelligence",
-      "calls": 22,
-      "input_tokens": 80167,
+      "calls": 23,
+      "input_tokens": 88823,
       "cached_input_tokens": 25246,
-      "output_tokens": 51054,
-      "cost_usd": 0.539783,
+      "output_tokens": 54501,
+      "cost_usd": 0.595892,
       "web_search_calls": 0
     },
     {
       "key": "financial_analysis",
-      "calls": 41,
-      "input_tokens": 72922,
+      "calls": 43,
+      "input_tokens": 76583,
       "cached_input_tokens": 21811,
-      "output_tokens": 29795,
-      "cost_usd": 0.397442,
+      "output_tokens": 31444,
+      "cost_usd": 0.423081,
       "web_search_calls": 0
     },
     {
@@ -87,11 +87,11 @@
     },
     {
       "key": "partnerships_outreach",
-      "calls": 24,
-      "input_tokens": 27742,
+      "calls": 25,
+      "input_tokens": 28945,
       "cached_input_tokens": 0,
-      "output_tokens": 16632,
-      "cost_usd": 0.09766,
+      "output_tokens": 17297,
+      "cost_usd": 0.098143,
       "web_search_calls": 0
     },
     {
@@ -236,7 +236,7 @@
     },
     {
       "workflow_type": "plan_event",
-      "completed_runs": 16,
+      "completed_runs": 17,
       "run_ids": [
         6,
         7,
@@ -253,26 +253,27 @@
         37,
         38,
         39,
-        40
+        40,
+        46
       ],
-      "median_cost_usd": 0.241219,
-      "mean_cost_usd": 0.235606,
+      "median_cost_usd": 0.245798,
+      "mean_cost_usd": 0.242147,
       "min_cost_usd": 0.008936,
-      "max_cost_usd": 0.335112,
-      "median_input_tokens": 23419,
-      "median_cached_input_tokens": 2462,
-      "median_output_tokens": 8798
+      "max_cost_usd": 0.346789,
+      "median_input_tokens": 25332,
+      "median_cached_input_tokens": 2124,
+      "median_output_tokens": 9450
     }
   ],
   "runs_by_research_mode": {
     "fixture": 2,
     "live": 11,
     "records": 4,
-    "synthetic": 28
+    "synthetic": 29
   },
   "optimization": {
-    "cached_input_tokens": 71535,
-    "saved_by_caching_usd": 0.1117,
+    "cached_input_tokens": 72597,
+    "saved_by_caching_usd": 0.1137,
     "budget_stepdowns": [
       {
         "run_id": 25,
@@ -332,10 +333,10 @@
       }
     ],
     "steps_run_in_code_without_a_model": {
-      "verification": 38,
+      "verification": 39,
       "intake": 33,
-      "evaluate": 9,
-      "outreach_decision": 4,
+      "evaluate": 10,
+      "outreach_decision": 5,
       "select": 3,
       "finance": 1
     }
@@ -346,8 +347,8 @@
       {
         "workflow_type": "plan_event",
         "runs_per_user_per_month": 1,
-        "median_cost_usd": 0.241219,
-        "monthly_cost_per_user_usd": 0.2412
+        "median_cost_usd": 0.245798,
+        "monthly_cost_per_user_usd": 0.2458
       },
       {
         "workflow_type": "mission_discovery",
@@ -386,11 +387,11 @@
         "monthly_cost_per_user_usd": 0.0319
       }
     ],
-    "per_user_usd": 0.6326,
+    "per_user_usd": 0.6372,
     "by_users": {
-      "1": 0.6326,
-      "100": 63.26,
-      "10000": 6326.0
+      "1": 0.6372,
+      "100": 63.72,
+      "10000": 6372.0
     }
   }
 }
