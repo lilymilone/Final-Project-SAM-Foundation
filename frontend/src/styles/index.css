@@ -259,3 +259,18 @@
   0%, 35% { box-shadow: 0 0 0 3px var(--color-royal, #6b3fa0); }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
+
+/* Butterflies drifting up the edges of the screen while a workflow runs. */
+.working-butterflies { position: fixed; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
+.working-butterfly { position: absolute; bottom: -70px; opacity: 0; animation-name: working-rise; animation-timing-function: linear; animation-iteration-count: infinite; }
+.working-left { left: var(--inset); }
+.working-right { right: var(--inset); }
+@media (min-width: 1024px) { .working-left { left: calc(18rem + var(--inset)); } }
+@keyframes working-rise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: 0.9; }
+  50% { transform: translate(var(--drift), -55vh); }
+  88% { opacity: 0.9; }
+  100% { transform: translate(0, -112vh); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .working-butterflies { display: none !important; } }

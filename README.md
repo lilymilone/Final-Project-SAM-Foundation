@@ -7,7 +7,7 @@ SAM SPACE helps a small, volunteer-run nonprofit board plan fundraisers, learn f
 *MGT 409 (AI Foundations) final project · Lily Milone · Yale School of Management*
 
 > **Status:** the seven-agent system works end to end with real tools, real data, and real model calls. The Orchestrator acts as the Boss Agent, and promising venues, charities, and sponsors get unsent outreach drafts automatically. 276 automated tests pass.
-> Try the controlled demo: **Event Studio → Load an example → Controlled demo → Generate Event Plan** (about $0.25–$0.35 and 3–4 minutes). Each agent's step appears live as the backend records it.
+> Try it: **Event Studio → Load an example → Practice venues → Generate Event Plan** (about $0.05 and 2 minutes on *Faster*; about $0.35 and 3–4 minutes on *Most thorough*). Each agent's step appears live as the backend records it.
 > Known gaps are listed in [docs/limitations.md](docs/limitations.md); report evidence is indexed in [docs/evidence/README.md](docs/evidence/README.md).
 
 ---
@@ -188,7 +188,7 @@ The fixtures are labeled synthetic everywhere and live on `example.org`. **Live 
 
 ## Event Studio (the flagship workflow)
 
-Open **Event Studio**, press **Load an example**, choose **Live web research** or **Controlled demo**, then **Generate Event Plan**. Each agent's step appears live; when it finishes, **Open the event plan** shows venues, sources, the budget, affordability, lessons, revisions, and the drafted inquiries. The full walkthrough, with screenshots, measured runs, and the five test scenarios, is in **[docs/event_studio_workflow.md](docs/event_studio_workflow.md)**.
+Open **Event Studio**, press **Load an example**, choose **Live web research** or **Practice venues** and a speed (**Faster** or **Most thorough**), then **Generate Event Plan**. Each agent's step appears live; when it finishes, **Open the event plan** shows venues, sources, the budget, affordability, lessons, revisions, and the drafted inquiries. The full walkthrough, with screenshots, measured runs, and the five test scenarios, is in **[docs/event_studio_workflow.md](docs/event_studio_workflow.md)**.
 
 - **Inputs:**
   - name, type, location, and date or date range

@@ -77,6 +77,7 @@ Each draft in the `boss_outreach/*_run_*.json` files contains:
 | Cost per workflow (median of completed runs) and the monthly projection for 1, 100, and 10,000 users (**usage pattern is an assumption**) | same files |
 | Cost controls observed: prompt caching, budget step-downs, steps run in code with no model | same files |
 | Caching before/after on the same task (run #5 $0.0319 vs run #8 $0.0215) | [../legacy_workflow.md](../legacy_workflow.md) §4 |
+| **Cost cut with a quality check:** the same event plan on Faster vs Most thorough (runs #46, #48, #49): 206 s → 131–135 s and $0.347 → $0.045, with the same venue, verdict, revisions, drafts, and 9/9 verification | [report/speed_ab.md](report/speed_ab.md) |
 | Per-run usage for every workflow (each trace's `model_calls`) | `*/trace_run_*.json` |
 
 ## 7. Historical learning (Our Legacy)

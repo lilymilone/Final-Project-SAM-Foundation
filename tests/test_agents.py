@@ -421,3 +421,25 @@ def test_event_type_is_canonicalized_for_format_and_history():
     assert canonical_event_type("Fundraising Gala") == "gala"
     assert canonical_event_type("benefit dinner") == "dinner"
     assert canonical_event_type(None) is None
+
+
+def test_a_run_can_ask_for_the_faster_strategy(client):
+    """Event Studio's "Faster" choice routes this run on the economy strategy (mostly gpt-6-luna) without changing the
+    board member's own setting; an unknown strategy is refused."""
+    client.app.state.provider = AIProvider("openai", ScriptedClient())
+    login(client)
+    assert client.post("/api/runs", json={"request": GALA, "strategy": "turbo"}).status_code == 422
+    r = client.post("/api/runs", json={"request": GALA, "research_mode": "synthetic", "event_plan_id": gala_plan_id(client.app),
+                                       "strategy": "economy"})
+    assert r.status_code == 202 and r.json()["run"]["strategy"] == "economy"
+    run_id = r.json()["run"]["id"]
+    for _ in range(100):
+        detail = client.get(f"/api/runs/{run_id}").json()
+        if detail["run"]["status"] not in ("queued", "running"):
+            break
+        time.sleep(0.05)
+    assert detail["run"]["status"] == "completed"
+    with client.app.state.db.session() as s:
+        models = set(s.scalars(select(ModelUsage.selected_model).where(ModelUsage.run_id == run_id, ModelUsage.status == "ok")))
+    assert models and "gpt-6-astra" not in models  # economy never uses the advanced tier
+    assert client.get("/api/settings").json()["model_strategy"] == "auto"  # the board member's own setting is unchanged

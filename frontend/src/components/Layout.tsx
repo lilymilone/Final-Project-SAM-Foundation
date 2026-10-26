@@ -21,17 +21,17 @@ import { Logo, Wordmark } from "./Brand";
 import { DemoBadge } from "./ui";
 
 export const NAV = [
-  { to: "/", label: "Overview", icon: LayoutDashboard },
-  { to: "/mission", label: "Mission Discovery", icon: Compass },
-  { to: "/events", label: "Event Studio", icon: CalendarHeart },
-  { to: "/finance", label: "Financial Intelligence", icon: Landmark },
-  { to: "/donations", label: "Donations & Compliance", icon: HandCoins },
-  { to: "/partnerships", label: "Partnerships & Outreach", icon: HeartHandshake },
-  { to: "/legacy", label: "Our Legacy", icon: Sprout },
-  { to: "/activity", label: "Agent Activity", icon: Activity },
-  { to: "/safety", label: "Analytics & Safety", icon: ShieldCheck },
-  { to: "/settings", label: "Settings", icon: SettingsIcon },
-  { to: "/help", label: "Help", icon: CircleHelp },
+  { to: "/", label: "Overview", icon: LayoutDashboard, group: "" },
+  { to: "/events", label: "Event Studio", icon: CalendarHeart, group: "Plan & connect" },
+  { to: "/mission", label: "Mission Discovery", icon: Compass, group: "Plan & connect" },
+  { to: "/partnerships", label: "Partnerships & Outreach", icon: HeartHandshake, group: "Plan & connect" },
+  { to: "/legacy", label: "Our Legacy", icon: Sprout, group: "Records" },
+  { to: "/finance", label: "Financial Intelligence", icon: Landmark, group: "Records" },
+  { to: "/donations", label: "Donations & Compliance", icon: HandCoins, group: "Records" },
+  { to: "/activity", label: "Agent Activity", icon: Activity, group: "Oversight" },
+  { to: "/safety", label: "Analytics & Safety", icon: ShieldCheck, group: "Oversight" },
+  { to: "/settings", label: "Settings", icon: SettingsIcon, group: "Account" },
+  { to: "/help", label: "Help", icon: CircleHelp, group: "Account" },
 ] as const;
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
@@ -44,14 +44,17 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </div>
       <nav aria-label="Main" className="flex-1 overflow-y-auto px-3 py-2">
         <ul className="space-y-1">
-          {NAV.map(({ to, label, icon: Icon }) => (
+          {NAV.map(({ to, label, icon: Icon, group }, i) => (
             <li key={to}>
+              {group && group !== NAV[i - 1]?.group && (
+                <p className="mb-1 mt-4 px-3.5 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-lilac/55">{group}</p>
+              )}
               <NavLink
                 to={to}
                 end={to === "/"}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[0.92rem] font-medium transition-colors ${
+                  `group flex items-center gap-3 rounded-xl px-3.5 py-2 text-[0.92rem] font-medium transition-colors ${
                     isActive ? "bg-lilac text-plum shadow-sm" : "text-lilac/85 hover:bg-white/10 hover:text-white"
                   }`
                 }

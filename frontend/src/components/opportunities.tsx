@@ -128,14 +128,14 @@ function OpportunityCard({ o, categories, onChange }: { o: Opportunity; categori
   const research = () => act("research", async () => {
     const res = await api<{ run: RunSummary }>("/api/runs", { json: {
       request: `Research more about ${o.name}: ${o.missing_info.slice(0, 2).join(" ") || "confirm details"}`.slice(0, 1900),
-      intent: "mission_discovery", research_mode: live ? "live" : "synthetic", follow_up_finding_id: o.id } });
+      intent: "mission_discovery", research_mode: live ? "live" : "synthetic", follow_up_finding_id: o.id, strategy: "economy" } });
     navigate(`/activity/runs/${res.run.id}`);
   });
   const draft = () => act("draft", async () => {
     const label = DRAFT_TYPES.find(([v]) => v === draftType)?.[1] ?? "outreach draft";
     const res = await api<{ run: RunSummary }>("/api/runs", { json: {
       request: `Draft a ${label.toLowerCase()} to ${o.name}`.slice(0, 1900), intent: "partnership_outreach",
-      research_mode: live ? "live" : "synthetic", finding_ids: [o.id], draft_type: draftType } });
+      research_mode: live ? "live" : "synthetic", finding_ids: [o.id], draft_type: draftType, strategy: "economy" } });
     navigate(`/activity/runs/${res.run.id}`);
   });
 

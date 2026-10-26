@@ -1,79 +1,79 @@
 {
-  "generated_at": "2026-10-26T01:51:48+00:00",
+  "generated_at": "2026-10-26T02:18:33+00:00",
   "source": "app database (model_usage, agent_runs, agent_handoffs); prices from backend/app/ai/pricing.json (https://developers.openai.com/api/docs/pricing, retrieved 2026-10-24)",
   "totals": {
-    "runs": 46,
-    "model_calls_ok": 213,
+    "runs": 49,
+    "model_calls_ok": 234,
     "refused_calls": 4,
-    "input_tokens": 714811,
-    "cached_input_tokens": 72597,
-    "output_tokens": 253050,
-    "cost_usd": 5.9979
+    "input_tokens": 803676,
+    "cached_input_tokens": 89471,
+    "output_tokens": 282156,
+    "cost_usd": 6.3259
   },
   "by_model": [
     {
       "key": "gpt-6-astra",
-      "calls": 24,
-      "input_tokens": 136915,
+      "calls": 25,
+      "input_tokens": 142876,
       "cached_input_tokens": 0,
-      "output_tokens": 35585,
-      "cost_usd": 3.490507,
+      "output_tokens": 37289,
+      "cost_usd": 3.650212,
       "web_search_calls": 0
     },
     {
       "key": "gpt-6.1-sol",
-      "calls": 107,
-      "input_tokens": 341390,
-      "cached_input_tokens": 59217,
-      "output_tokens": 163422,
-      "cost_usd": 2.345414,
+      "calls": 111,
+      "input_tokens": 371724,
+      "cached_input_tokens": 61909,
+      "output_tokens": 171880,
+      "cost_usd": 2.499362,
       "web_search_calls": 0
     },
     {
       "key": "gpt-6-luna",
-      "calls": 82,
-      "input_tokens": 236506,
-      "cached_input_tokens": 13380,
-      "output_tokens": 54043,
-      "cost_usd": 0.161956,
+      "calls": 98,
+      "input_tokens": 289076,
+      "cached_input_tokens": 27562,
+      "output_tokens": 72987,
+      "cost_usd": 0.176309,
       "web_search_calls": 11
     }
   ],
   "by_agent": [
     {
       "key": "orchestrator",
-      "calls": 55,
-      "input_tokens": 197300,
+      "calls": 61,
+      "input_tokens": 222860,
       "cached_input_tokens": 0,
-      "output_tokens": 55505,
-      "cost_usd": 3.545139,
+      "output_tokens": 60882,
+      "cost_usd": 3.781849,
       "web_search_calls": 0
     },
     {
       "key": "fundraising_events",
-      "calls": 41,
-      "input_tokens": 203142,
-      "cached_input_tokens": 19096,
-      "output_tokens": 61492,
-      "cost_usd": 0.927762,
+      "calls": 46,
+      "input_tokens": 230053,
+      "cached_input_tokens": 23344,
+      "output_tokens": 71636,
+      "cost_usd": 0.961657,
       "web_search_calls": 4
     },
     {
       "key": "event_intelligence",
-      "calls": 23,
-      "input_tokens": 88823,
-      "cached_input_tokens": 25246,
-      "output_tokens": 54501,
-      "cost_usd": 0.595892,
+      "calls": 26,
+      "input_tokens": 114455,
+      "cached_input_tokens": 35472,
+      "output_tokens": 63755,
+      "cost_usd": 0.650059,
       "web_search_calls": 0
     },
     {
       "key": "financial_analysis",
-      "calls": 43,
-      "input_tokens": 76583,
+      "calls": 47,
+      "input_tokens": 83807,
       "cached_input_tokens": 21811,
-      "output_tokens": 31444,
-      "cost_usd": 0.423081,
+      "output_tokens": 33890,
+      "cost_usd": 0.425207,
       "web_search_calls": 0
     },
     {
@@ -87,11 +87,11 @@
     },
     {
       "key": "partnerships_outreach",
-      "calls": 25,
-      "input_tokens": 28945,
-      "cached_input_tokens": 0,
-      "output_tokens": 17297,
-      "cost_usd": 0.098143,
+      "calls": 28,
+      "input_tokens": 32483,
+      "cached_input_tokens": 2400,
+      "output_tokens": 19182,
+      "cost_usd": 0.099252,
       "web_search_calls": 0
     },
     {
@@ -107,21 +107,22 @@
   "by_workflow": [
     {
       "workflow_type": "auto",
-      "completed_runs": 5,
+      "completed_runs": 6,
       "run_ids": [
         1,
         2,
         3,
         4,
-        19
+        19,
+        47
       ],
-      "median_cost_usd": 0.196687,
-      "mean_cost_usd": 0.163305,
+      "median_cost_usd": 0.217106,
+      "mean_cost_usd": 0.175675,
       "min_cost_usd": 0.000852,
       "max_cost_usd": 0.315125,
-      "median_input_tokens": 15278,
+      "median_input_tokens": 15654,
       "median_cached_input_tokens": 0,
-      "median_output_tokens": 6705
+      "median_output_tokens": 6786
     },
     {
       "workflow_type": "document_extraction",
@@ -236,7 +237,7 @@
     },
     {
       "workflow_type": "plan_event",
-      "completed_runs": 17,
+      "completed_runs": 19,
       "run_ids": [
         6,
         7,
@@ -254,26 +255,28 @@
         38,
         39,
         40,
-        46
+        46,
+        48,
+        49
       ],
-      "median_cost_usd": 0.245798,
-      "mean_cost_usd": 0.242147,
+      "median_cost_usd": 0.23664,
+      "mean_cost_usd": 0.22142,
       "min_cost_usd": 0.008936,
       "max_cost_usd": 0.346789,
-      "median_input_tokens": 25332,
-      "median_cached_input_tokens": 2124,
-      "median_output_tokens": 9450
+      "median_input_tokens": 27236,
+      "median_cached_input_tokens": 2262,
+      "median_output_tokens": 10181
     }
   ],
   "runs_by_research_mode": {
     "fixture": 2,
     "live": 11,
     "records": 4,
-    "synthetic": 29
+    "synthetic": 32
   },
   "optimization": {
-    "cached_input_tokens": 72597,
-    "saved_by_caching_usd": 0.1137,
+    "cached_input_tokens": 89471,
+    "saved_by_caching_usd": 0.1201,
     "budget_stepdowns": [
       {
         "run_id": 25,
@@ -333,10 +336,10 @@
       }
     ],
     "steps_run_in_code_without_a_model": {
-      "verification": 39,
+      "verification": 42,
       "intake": 33,
-      "evaluate": 10,
-      "outreach_decision": 5,
+      "evaluate": 13,
+      "outreach_decision": 8,
       "select": 3,
       "finance": 1
     }
@@ -347,8 +350,8 @@
       {
         "workflow_type": "plan_event",
         "runs_per_user_per_month": 1,
-        "median_cost_usd": 0.245798,
-        "monthly_cost_per_user_usd": 0.2458
+        "median_cost_usd": 0.23664,
+        "monthly_cost_per_user_usd": 0.2366
       },
       {
         "workflow_type": "mission_discovery",
@@ -387,11 +390,11 @@
         "monthly_cost_per_user_usd": 0.0319
       }
     ],
-    "per_user_usd": 0.6372,
+    "per_user_usd": 0.628,
     "by_users": {
-      "1": 0.6372,
-      "100": 63.72,
-      "10000": 6372.0
+      "1": 0.628,
+      "100": 62.8,
+      "10000": 6280.0
     }
   }
 }

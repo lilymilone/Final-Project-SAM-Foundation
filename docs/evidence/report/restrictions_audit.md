@@ -104,7 +104,7 @@ Refused: **23 of 23**.
 
 ## 4. Restriction tests (pytest, scripted model)
 
-Result: **10 passed in 1.13s**
+Result: **10 passed in 1.06s**
 
 - PASSED tests/test_boss_outreach.py::test_no_sending_and_no_spending_capability_exists
 - PASSED tests/test_boss_outreach.py::test_a_draft_cannot_contain_an_invented_email_or_phone

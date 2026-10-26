@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import type { RunDetail, RunStep } from "../api/types";
+import { WorkingButterflies } from "../butterflies/WorkingButterflies";
 import { AGENT_LABELS, StatusPill } from "./agents";
 
 const ACTIVE = new Set(["queued", "running"]);
@@ -124,6 +125,7 @@ export function LiveProgress({ detail, onStop }: { detail: RunDetail; onStop?: (
   }
   return (
     <div className="space-y-3" aria-live="polite">
+      {active && <WorkingButterflies />}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <StatusPill status={detail.run.status} />

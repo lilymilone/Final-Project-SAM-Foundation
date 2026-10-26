@@ -38,6 +38,7 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
   const [text, setText] = useState(request);
   const [chosenIntent, setChosenIntent] = useState<Intent | "">(intent);
   const [researchMode, setResearchMode] = useState<ResearchMode>(mode);
+  const [speed, setSpeed] = useState<"economy" | "auto">("economy");
   const [planId, setPlanId] = useState<number | null>(eventPlanId);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -51,7 +52,7 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
     setError(null);
     try {
       const res = await api<{ run: RunSummary }>("/api/runs", {
-        json: { request: text, intent: chosenIntent || null, research_mode: researchMode, event_plan_id: planId },
+        json: { request: text, intent: chosenIntent || null, research_mode: researchMode, event_plan_id: planId, strategy: speed },
       });
       if (onStarted) { onStarted(res.run.id); setBusy(false); }
       else navigate(`/activity/runs/${res.run.id}`);
@@ -86,6 +87,13 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
               </select>
             </div>
           )}
+          <div>
+            <label className="label" htmlFor="run-speed">Speed</label>
+            <select id="run-speed" className="field" value={speed} onChange={(e) => setSpeed(e.target.value as "economy" | "auto")}>
+              <option value="economy">Faster (mostly the fast model, lowest cost)</option>
+              <option value="auto">Most thorough (stronger models, slower)</option>
+            </select>
+          </div>
           {eventPlans && eventPlans.length > 0 && (chosenIntent === "plan_event" || chosenIntent === "") && (
             <div>
               <label className="label" htmlFor="run-plan">Event plan (budget limit, date)</label>
@@ -100,8 +108,8 @@ export function RunLauncher({ title = "Ask the agents", intent = "", request = "
           <legend className="label">Research source</legend>
           <div className="grid grid-cols-1 gap-2 @sm:grid-cols-2">
             {([
-              ["synthetic", "Synthetic demo data", "Labeled practice fixtures: free of web costs, same result every time."],
-              ["live", "Live web research", "Real web search; every link is fetched to verify it. About 1¢ per search."],
+              ["synthetic", "Practice data", "Demo organizations and venues. Free and repeatable, good for trying things out."],
+              ["live", "Live web research", "Real organizations and venues from the web, with every link checked."],
             ] as const).map(([value, label, hint]) => (
               <label key={value} className={`cursor-pointer rounded-2xl border p-3 text-sm transition ${researchMode === value ? "border-royal bg-lilac/60" : "border-lavender/40 bg-white/70 hover:border-lavender"}`}>
                 <input type="radio" name="research-mode" value={value} checked={researchMode === value} onChange={() => setResearchMode(value)} className="sr-only" />

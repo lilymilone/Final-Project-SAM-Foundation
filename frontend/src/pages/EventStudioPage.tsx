@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarHeart, FileText, FlaskConical, Globe2, History, MapPin, Sparkles, Users, Wand2 } from "lucide-react";
+import { ArrowRight, CalendarHeart, FileText, FlaskConical, Gem, Globe2, History, MapPin, Sparkles, Users, Wand2, Zap } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
@@ -62,6 +62,7 @@ export default function EventStudioPage() {
   const [form, setForm] = useState<Form>(DEFAULT_CASE);
   const [mode, setMode] = useState<ResearchMode>("live");
   const [useHistory, setUseHistory] = useState(true);
+  const [speed, setSpeed] = useState<"economy" | "auto">("economy");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [run, setRun] = useState<RunDetail | null>(null);
@@ -105,7 +106,8 @@ export default function EventStudioPage() {
         : await api<{ event: EventPlan }>("/api/events", { json: body });
       setPlanId(saved.event.id);
       const res = await api<{ run: RunSummary }>("/api/runs", {
-        json: { request: requestText(form), intent: "plan_event", event_plan_id: saved.event.id, research_mode: mode, use_history: useHistory, interpret: true },
+        json: { request: requestText(form), intent: "plan_event", event_plan_id: saved.event.id, research_mode: mode, use_history: useHistory, interpret: true,
+                strategy: speed },
       });
       poll(res.run.id);
       window.setTimeout(() => panelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
@@ -145,6 +147,7 @@ export default function EventStudioPage() {
           )}
           <form onSubmit={generate} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <p className="sm:col-span-2 -mb-1 mt-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-royal"><span className="grid h-5 w-5 place-items-center rounded-full bg-lilac text-[0.7rem]">1</span>The event</p>
               <div className="sm:col-span-2">{field("name", "Fundraiser name *", { required: true, maxLength: 200 })}</div>
               <div><label className="label" htmlFor="es-type">Event type</label>
                 <select id="es-type" className="field" value={form.event_type} onChange={set("event_type")}>{TYPES.map((t) => <option key={t}>{t}</option>)}</select></div>
@@ -156,19 +159,34 @@ export default function EventStudioPage() {
               {field("target_date", "Date (or start of range)", { type: "date" })}
               {field("date_end", "End of date range (optional)", { type: "date" })}
               {field("expected_attendance", "Expected attendees *", { type: "number", min: 1, max: 5000, required: true })}
+              <div className="hidden sm:block" />
+              <p className="sm:col-span-2 -mb-1 mt-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-royal"><span className="grid h-5 w-5 place-items-center rounded-full bg-lilac text-[0.7rem]">2</span>Money</p>
               {field("ticket_price_usd", "Ticket price (USD)", { type: "number", min: 0 })}
               {field("fundraising_goal_usd", "Fundraising target (USD)", { type: "number", min: 0 })}
               {field("budget_limit_usd", "Maximum planning budget (USD)", { type: "number", min: 0 })}
+              <div className="hidden sm:block" />
               <div className="sm:col-span-2"><label className="label" htmlFor="es-instr">Additional instructions</label>
                 <textarea id="es-instr" rows={3} className="field" value={form.instructions} onChange={set("instructions")} maxLength={2000}
                   placeholder="Accessibility needs, tone, program, anything the agents should respect" /></div>
             </div>
+            <p className="sm:col-span-2 -mb-1 mt-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-royal"><span className="grid h-5 w-5 place-items-center rounded-full bg-lilac text-[0.7rem]">3</span>How the agents should work</p>
             <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <legend className="label">Venue research</legend>
               {([["live", Globe2, "Live web research", "Real venues. Websites are fetched and prices are checked against the page, otherwise \"Quote required.\""],
-                 ["synthetic", FlaskConical, "Controlled demo", "Labeled synthetic Manhattan venues; reliably shows a budget revision."]] as const).map(([v, Icon, label, hint]) => (
+                 ["synthetic", FlaskConical, "Practice venues", "Demo Manhattan venues, clearly labeled. Good for trying it out."]] as const).map(([v, Icon, label, hint]) => (
                 <label key={v} className={`cursor-pointer rounded-2xl border p-3 text-sm transition ${mode === v ? "border-royal bg-lilac/60" : "border-lavender/40 bg-white/70 hover:border-lavender"}`}>
                   <input type="radio" name="es-mode" className="sr-only" checked={mode === v} onChange={() => setMode(v)} />
+                  <span className="flex items-center gap-1.5 font-semibold text-plum"><Icon size={14} aria-hidden="true" /> {label}</span>
+                  <span className="block text-xs text-muted">{hint}</span>
+                </label>
+              ))}
+            </fieldset>
+            <fieldset className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <legend className="label">Speed</legend>
+              {([["economy", Zap, "Faster", "About 2 minutes. Mostly the fast model; lowest cost."],
+                 ["auto", Gem, "Most thorough", "About 3–4 minutes. Stronger models for strategy and the final recommendation."]] as const).map(([v, Icon, label, hint]) => (
+                <label key={v} className={`cursor-pointer rounded-2xl border p-3 text-sm transition ${speed === v ? "border-royal bg-lilac/60" : "border-lavender/40 bg-white/70 hover:border-lavender"}`}>
+                  <input type="radio" name="es-speed" className="sr-only" checked={speed === v} onChange={() => setSpeed(v)} />
                   <span className="flex items-center gap-1.5 font-semibold text-plum"><Icon size={14} aria-hidden="true" /> {label}</span>
                   <span className="block text-xs text-muted">{hint}</span>
                 </label>

@@ -43,6 +43,9 @@ class RunIn(BaseModel):
     document_id: int | None = None  # Financial Intelligence: organize figures from an uploaded PDF
     force_reextract: bool = False  # organize a document again even though its figures are already staged
     donation_ids: list[int] | None = Field(default=None, max_length=12)  # Donations: draft for these gifts only
+    # Speed for this run only ("economy" = faster, mostly gpt-6-luna). Omitted: the board member's own setting. The course
+    # Portkey key still keeps every call on gpt-6-luna, whatever is chosen here.
+    strategy: Literal["auto", "economy", "balanced", "advanced"] | None = None
     drafts_only: bool = False
 
     @field_validator("request")
@@ -121,7 +124,7 @@ def start_run(
         options.update(historical_event_id=past.id, historical_event_name=past.name)
     run = AgentRun(
         organization_id=cu.organization_id, user_id=cu.user.id, workflow_type=body.intent or "auto", request_text=body.request,
-        status="queued", strategy=cu.user.model_strategy, provider=settings.provider, budget_usd=settings.workflow_budget_usd,
+        status="queued", strategy=body.strategy or cu.user.model_strategy, provider=settings.provider, budget_usd=settings.workflow_budget_usd,
         research_mode=body.research_mode, event_plan_id=body.event_plan_id, plan={"options": options},
     )
     db.add(run)
@@ -129,7 +132,7 @@ def start_run(
     audit(db, cu, "workflow_started", f"run:{run.id}", intent=body.intent or "auto", research_mode=body.research_mode)
     db.commit()
     manager.start(run.id, user_id=cu.user.id, organization_id=cu.organization_id, permissions=cu.permissions,
-                  strategy=cu.user.model_strategy, research_mode=body.research_mode, request=body.request,
+                  strategy=body.strategy or cu.user.model_strategy, research_mode=body.research_mode, request=body.request,
                   intent_hint=body.intent, event_plan_id=body.event_plan_id, options=options)
     return {"run": run_summary(run)}
 
