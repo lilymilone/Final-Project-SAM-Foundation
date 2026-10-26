@@ -320,7 +320,15 @@ export default function RunPage() {
           )}
           {result?.donations && (
             <Card title="Donations summary">
-              <p className="text-sm">{result.donations.drafts_created} acknowledgment drafts created (names merged locally; the AI saw only counts).</p>
+              {(result.donations.needing_acknowledgment ?? []).length > 0 && (
+                <div className="mb-3">
+                  <p className="label !mb-1">Gifts that still need a thank-you ({result.donations.needing_acknowledgment!.length})</p>
+                  <ul className="divide-y divide-lavender/25 text-sm">{result.donations.needing_acknowledgment!.map((g) => (
+                    <li key={g.id} className="flex flex-wrap justify-between gap-2 py-1.5"><span className="text-plum">{g.donor_name} <span className="text-xs text-muted">{g.code}</span>{g.campaign ? <span className="text-xs text-muted"> · {g.campaign}</span> : null}{g.copies > 1 && <span className="text-xs text-amber"> · entered {g.copies}×, check for a duplicate</span>}</span>
+                      <span className="tabular-nums text-muted">{g.amount_usd != null ? money(g.amount_usd) : "in-kind"} · {g.received_on ?? ""} · {g.ack_status === "prepared" ? "draft ready" : "not started"}</span></li>))}</ul>
+                </div>
+              )}
+              <p className="text-sm">{result.donations.drafts_created} acknowledgment drafts created (names filled in by the app; the AI saw only counts).</p>
               <Link className="btn btn-ghost mt-2 !px-0 text-sm" to="/donations">Review acknowledgments →</Link>
             </Card>
           )}

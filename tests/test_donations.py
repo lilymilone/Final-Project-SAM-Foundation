@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from backend.app.agents.contracts import AgentName
 from backend.app.agents.registry import AGENTS_BY_NAME
@@ -284,6 +284,18 @@ def test_donation_review_routing_sources_and_usage_logging(client):
     for u in usage:
         assert u.agent and u.selected_model and u.input_tokens and u.output_tokens is not None and u.cached_input_tokens is not None
         assert u.estimated_cost_usd > 0 and u.latency_ms is not None and u.handoff_id and u.status == "ok"
+    # The answer lists the gifts that still need a thank-you, read from the records in code (names never reach a model),
+    # and only for a role that may see donor records.
+    needing = run.result["donations"]["needing_acknowledgment"]
+    with client.app.state.db.session() as s:
+        expected = s.scalar(select(func.count(Donation.id)).where(Donation.payment_status == "received", Donation.ack_status.in_(("not_started", "prepared"))))
+    assert needing and sum(g["copies"] for g in needing) == expected and all(g["donor_name"] and g["code"].startswith("DON-") for g in needing)
+    assert len({(g["donor_name"], g["amount_usd"], g["received_on"]) for g in needing}) == len(needing)  # duplicates listed once
+    login(client)
+    assert client.get(f"/api/runs/{run.id}").json()["result"]["donations"]["needing_acknowledgment"]
+    client.post("/api/auth/logout")
+    login(client, email=MEMBER)
+    assert "donations" not in (client.get(f"/api/runs/{run.id}").json()["result"] or {})
 
 
 def test_portkey_keeps_finance_and_donation_work_on_luna(make_client):

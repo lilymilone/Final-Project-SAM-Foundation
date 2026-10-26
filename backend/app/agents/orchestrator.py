@@ -118,6 +118,20 @@ PARTNERSHIP_INSTRUCTIONS = """Write a board-ready partnership opportunity packet
   imply an existing relationship with any organization."""
 
 
+ANSWER_FIRST = """How to write for the board (this matters most):
+- Answer the board member's actual request ("request" in the data) first, in plain English, the way a knowledgeable
+  colleague would. Cover EVERY part of what they asked: if they asked for a meeting schedule, give the schedule (how often,
+  and what each meeting decides); if they asked whether something is affordable, say yes, no, or what it depends on, with
+  the figure; if they asked which records need attention, say which and how many.
+- headline: one plain sentence that answers the request.
+- recommendation: 3-6 short sentences: the answer, then the single most important caution. No boilerplate hedging.
+- Plain words only. Never use internal or technical terms: no permission or tool names (such as view_financials), and not
+  "supplied", "modeled", "payload", "handoff", "fixture", or "verification". Call demo data "demo" or "practice" data.
+- Never say a venue is available, booked, or confirmed; say what to ask the venue instead.
+- caveats: at most the three that matter most. Do not repeat the same caution across fields.
+- next_steps: 3-6 concrete actions, each with who or when where possible."""
+
+
 CANONICAL_TYPES = ("gala", "dinner", "walk", "panel", "concert", "auction", "brunch", "reception", "run")
 
 
@@ -302,6 +316,7 @@ class _OrchestratorSelf(BaseAgent):
         elif intent == "plan_event":
             instructions = f"{SYNTHESIS_INSTRUCTIONS}\n- Note how the plan serves inclusion, connection, accessibility, and recognition " \
                            "(see the Events agent's mission_contribution), alongside, never instead of, financial feasibility."
+        instructions = f"{instructions}\n\n{ANSWER_FIRST}"
         rec = self.think(ctx, profile, instructions, task.inputs["payload"], BoardRecommendation,
                          reasoning="medium" if profile in (BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY) else "low", max_output_tokens=4000)
         return self.result(task, "completed", rec.headline, data={"recommendation": rec.model_dump()},
@@ -420,10 +435,17 @@ class Orchestrator:
         figures = self._figures(results)
         option_ids = {o["option_id"] for r in results.values() for o in (r.data.get("options") or []) if isinstance(o, dict) and "option_id" in o}
         payload = self._synthesis_payload(intent, request, results, extra, figures, option_ids, ctx)
+        gifts = self._gifts_needing_acknowledgment(ctx) if intent == "donations_review" and "donations" in results else []
+        if gifts:  # the model gets codes, amounts, and dates only; the app shows the board the names
+            payload["gifts_needing_acknowledgment"] = {
+                "note": "These received gifts still need a thank-you. The app shows the board each donor's name next to this list, so refer "
+                        "to gifts by code, amount, and date, and never say the details are unavailable.",
+                "gifts": [{k: g[k] for k in ("code", "amount_usd", "received_on", "ack_status", "campaign", "copies")} for g in gifts]}
         rec_result = self.dispatch(ctx, self._task(ctx, "recommendation", A.ORCHESTRATOR, "Write the board-ready recommendation",
                                                    inputs={"intent": intent, "payload": payload}))
         rec = BoardRecommendation.model_validate(rec_result.data["recommendation"]) if rec_result.status == "completed" else None
         allowed = collect_numbers(figures) | collect_numbers({k: r.data for k, r in results.items()})
+        allowed |= {float(g["amount_usd"]) for g in gifts if g["amount_usd"] is not None}
         if intent in ("partnership_outreach", "mission_discovery"):  # published costs quoted in research ("$150 table fee")
             allowed |= collect_amounts({k: r.data for k, r in results.items()})
         report = verify_workflow(ctx.db, ctx.run_id, results, rec, allowed, option_ids)
@@ -495,8 +517,33 @@ class Orchestrator:
             if "venues" in results and results["venues"].status == "completed" else None,
             "community_insights": results["lessons"].data.get("community_insights", [])
             if "lessons" in results and results["lessons"].status == "completed" else [],
-            "donations": results["donations"].data if "donations" in results else None,
+            # The agent sees only counts (donor names never reach a model); the list of gifts that still need a thank-you is
+            # read from the records here, in code, for the board member who asked. Roles without donor access never see it.
+            "donations": {**results["donations"].data, "needing_acknowledgment": gifts}
+            if "donations" in results else None,
         }
+
+    @staticmethod
+    def _gifts_needing_acknowledgment(ctx: RunContext) -> list[dict]:
+        from sqlalchemy import select
+        from ..db.models import Campaign, Donation
+        from ..services.donations import donation_code
+        with ctx.db.session() as s:
+            rows = s.execute(select(Donation, Campaign.name).outerjoin(Campaign, Campaign.id == Donation.campaign_id)
+                             .where(Donation.organization_id == ctx.organization_id, Donation.payment_status == "received",
+                                    Donation.ack_status.in_(("not_started", "prepared")))
+                             .order_by(Donation.received_on.desc())).all()
+            gifts: dict[tuple, dict] = {}
+            for d, campaign in rows:  # the same donor, amount, and date twice is a possible duplicate: list it once and say so
+                amount = None if d.contribution_type == "in_kind" else d.amount_usd
+                key = (d.donor_name.strip().lower(), amount, d.received_on)
+                if key in gifts:
+                    gifts[key]["copies"] += 1
+                    continue
+                gifts[key] = {"id": d.id, "code": donation_code(d.id), "donor_name": d.donor_name, "amount_usd": amount,
+                              "received_on": d.received_on.isoformat() if d.received_on else None, "ack_status": d.ack_status,
+                              "campaign": campaign, "is_demo": d.is_demo, "copies": 1}
+            return list(gifts.values())
 
     def _plan_event(self, ctx: RunContext, analysis: RequestAnalysis, request: str, event_plan_id: int | None,
                     results: dict[str, AgentResult], extra: dict, use_history: bool = True) -> None:

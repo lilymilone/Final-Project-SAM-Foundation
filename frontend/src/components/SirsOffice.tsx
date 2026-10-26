@@ -67,7 +67,7 @@ export function SirsOffice() {
   const [text, setText] = useState("");
   const [intent, setIntent] = useState<Intent | "">("");
   const [speed, setSpeed] = useState<"economy" | "auto">("economy");
-  const [mode, setMode] = useState<ResearchMode>("synthetic");
+  const [mode, setMode] = useState<ResearchMode>("live");
   const [runId, setRunId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -102,6 +102,8 @@ export function SirsOffice() {
   }
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } };
   const done = detail && !ACTIVE.has(detail.run.status);
+  const rec = detail?.result?.recommendation ?? null;
+  const gifts = detail?.result?.donations?.needing_acknowledgment ?? [];
   const intentDone = detail?.result?.intent ?? detail?.run.workflow_type ?? "";
   const resultLink = detail ? (RESULT_PAGE[intentDone]?.(detail.run.id) ?? `/activity/runs/${detail.run.id}`) : "";
 
@@ -123,10 +125,34 @@ export function SirsOffice() {
             {detail ? (
               <>
                 <p className="rounded-2xl bg-lilac/50 px-3 py-2 text-sm text-plum">“{detail.run.request}”</p>
-                <LiveProgress detail={detail} />
+                {done && rec && (
+                  <div className="space-y-2 rounded-2xl border border-lavender/40 bg-white p-3.5" aria-label="Answer">
+                    <p className="font-semibold leading-snug text-plum">{rec.headline}</p>
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-ink/90">{rec.recommendation}</p>
+                    {gifts.length > 0 && (
+                      <div><p className="label !mb-1">Gifts that still need a thank-you ({gifts.length})</p>
+                        <ul className="space-y-0.5 text-sm">{gifts.slice(0, 8).map((g) => (
+                          <li key={g.id} className="flex justify-between gap-2"><span className="truncate text-plum">{g.donor_name} <span className="text-xs text-muted">{g.code}</span>{g.copies > 1 && <span className="text-xs text-amber"> · entered {g.copies}×, check for a duplicate</span>}</span>
+                            <span className="shrink-0 tabular-nums text-muted">{g.amount_usd != null ? `$${g.amount_usd.toLocaleString()}` : "in-kind"} · {g.received_on ?? ""}</span></li>))}</ul>
+                        {gifts.length > 8 && <p className="mt-0.5 text-xs text-muted">and {gifts.length - 8} more in Donations</p>}
+                      </div>
+                    )}
+                    {rec.next_steps.length > 0 && (
+                      <div><p className="label !mb-1">Next steps</p>
+                        <ul className="list-disc space-y-0.5 pl-5 text-sm text-ink/90">{rec.next_steps.slice(0, 6).map((n) => <li key={n}>{n}</li>)}</ul></div>
+                    )}
+                  </div>
+                )}
+                {done && detail.run.status.startsWith("completed") ? (
+                  <details className="group rounded-2xl bg-ivory/70 px-3 py-2 text-sm">
+                    <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-plum">How SAM SPACE worked on this
+                      <ChevronDown size={14} className="transition group-open:rotate-180" aria-hidden="true" /></summary>
+                    <div className="mt-2"><LiveProgress detail={detail} /></div>
+                  </details>
+                ) : <LiveProgress detail={detail} />}
                 {done && (
                   <div className="flex flex-wrap gap-2">
-                    {detail.run.status.startsWith("completed") && <Link to={resultLink} className="btn btn-primary !py-2 text-sm">See the results <ArrowRight size={14} aria-hidden="true" /></Link>}
+                    {detail.run.status.startsWith("completed") && <Link to={resultLink} className="btn btn-primary !py-2 text-sm">{rec ? "Open the full results" : "See the results"} <ArrowRight size={14} aria-hidden="true" /></Link>}
                     <button type="button" className="btn btn-soft !py-2 text-sm" onClick={() => { setRunId(null); setText(""); }}>Ask something else</button>
                   </div>
                 )}
@@ -150,7 +176,7 @@ export function SirsOffice() {
                       </select></label>
                     <label className="text-xs font-semibold text-plum">Research
                       <select className="field mt-1 !py-1.5 text-sm" value={mode} onChange={(e) => setMode(e.target.value as ResearchMode)}>
-                        <option value="synthetic">Practice data (free)</option><option value="live">Live web research</option>
+                        <option value="live">Live web research (real organizations and venues)</option><option value="synthetic">Practice data (demo, free)</option>
                       </select></label>
                   </div>
                 </details>

@@ -327,7 +327,8 @@ export type RunResult = {
   lessons: { kind: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string }[];
   disagreements: { topic: string; positions: string[]; evidence_reflection_ids: number[] }[];
   findings?: { id: number; title: string; url: string | null; category: string; alignment: string; verification: string; summary: string; date: string | null; uncertainty: string }[];
-  donations: { aggregate: Record<string, unknown>; drafts_created: number; review_items: { issue: string; why_professional_review: string }[] } | null;
+  donations: { aggregate: Record<string, unknown>; drafts_created: number; review_items: { issue: string; why_professional_review: string }[];
+    needing_acknowledgment?: { id: number; code: string; donor_name: string; received_on: string | null; amount_usd: number | null; ack_status: string; campaign: string | null; is_demo: boolean; copies: number }[] } | null;
   event_plan_id: number | null;
 };
 
