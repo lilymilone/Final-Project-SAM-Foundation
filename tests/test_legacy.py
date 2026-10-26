@@ -80,9 +80,9 @@ def test_structured_reflections_from_multiple_members_preserve_identity(client):
     login(client, email=MEMBER)
     assert client.post(f"/api/legacy/events/{eid}/reflections", json={"went_well": "Member view", "rating": 5}).status_code == 201
     detail = client.get(f"/api/legacy/events/{eid}").json()
-    mine = [r for r in detail["event"]["reflections"] if r["author"] in ("Tauhid Brooks", "Sam Rivera")]
-    assert {r["author"] for r in mine} == {"Tauhid Brooks", "Sam Rivera"}
-    chair = next(r for r in mine if r["author"] == "Tauhid Brooks")
+    mine = [r for r in detail["event"]["reflections"] if r["author"] in ("Tauhid Zaman", "Sam Rivera")]
+    assert {r["author"] for r in mine} == {"Tauhid Zaman", "Sam Rivera"}
+    chair = next(r for r in mine if r["author"] == "Tauhid Zaman")
     # The seven core questions come first, in the board's order; the community questions follow.
     assert [a["question"] for a in chair["answers"]][:7] == [
         "What worked?", "What was difficult, or did not go as planned?", "What would you repeat?", "What would you change?",

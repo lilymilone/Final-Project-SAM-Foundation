@@ -286,7 +286,7 @@ def test_named_attribution_needs_both_choices(client):
     complete(client, only_name, 60, 30)
     complete(client, both, 60, 30)
     names = [f["participant"] for f in client.get("/api/impact/overview").json()["real_feedback"]]
-    assert sum("Tauhid Brooks" in n for n in names) == 1 and any(n.startswith("P1") for n in names)
+    assert sum("Tauhid Zaman" in n for n in names) == 1 and any(n.startswith("P1") for n in names)
 
 
 # 17: export

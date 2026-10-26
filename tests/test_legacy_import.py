@@ -309,13 +309,13 @@ def test_multiple_reflections_keep_identity_original_words_and_disagreement(clie
     assert client.post(f"/api/legacy/events/{eid}/reflections", json={"challenges": "Volunteers did not know their roles."}).status_code == 201
     refl = client.get(f"/api/legacy/events/{eid}").json()["event"]["reflections"]
     mine = {r["author"]: r for r in refl[-3:]}
-    assert set(mine) == {"Tauhid Brooks", "Jordan Lee (board member, by phone)", "Sam Rivera"}
-    assert mine["Jordan Lee (board member, by phone)"]["recorded_by"] == "Tauhid Brooks"
+    assert set(mine) == {"Tauhid Zaman", "Jordan Lee (board member, by phone)", "Sam Rivera"}
+    assert mine["Jordan Lee (board member, by phone)"]["recorded_by"] == "Tauhid Zaman"
     answers = {r["author"]: {x["key"]: x["answer"] for x in r["answers"]} for r in refl[-3:]}
     # Both sides of the raffle disagreement are kept, word for word.
-    assert answers["Tauhid Brooks"]["do_differently"] == "Cut the raffle; it ran long."
+    assert answers["Tauhid Zaman"]["do_differently"] == "Cut the raffle; it ran long."
     assert answers["Jordan Lee (board member, by phone)"]["went_well"] == "Keep the raffle exactly as it was."
-    assert answers["Tauhid Brooks"]["inclusion_improvements"] == "Greeters at the door for first-time guests."
+    assert answers["Tauhid Zaman"]["inclusion_improvements"] == "Greeters at the door for first-time guests."
     assert all(r["created_at"] for r in refl[-3:])
 
 
