@@ -98,7 +98,7 @@ def test_over_budget_event_is_revised_and_packet_explains_why(client):
     assert run.result["original_plan"]["verdict"] == "not_affordable_as_planned"
     assert run.result["revised_plan"]["venue"] == "Chelsea Atelier (synthetic)"
     reasons = {r["type"] for r in run.result["revision_reasons"]}
-    assert {"over_budget_limit", "upfront_cash_exceeds_available"} <= reasons
+    assert "over_budget_limit" in reasons
     packet = client.get(f"/api/runs/{run.id}/packet").json()["packet"]
     assert packet["revision"]["original"]["total_usd"] > 18000 >= packet["revision"]["revised"]["total_usd"]
     assert packet["drafts"] and all(d["status"] == "draft" for d in packet["drafts"])

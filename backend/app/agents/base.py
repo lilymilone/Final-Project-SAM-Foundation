@@ -36,6 +36,18 @@ Ground rules:
 - Write in a warm, clear, professional voice for a volunteer board."""
 
 
+KNOWLEDGE_RULES = """Foundation knowledge ("foundation_knowledge" in the data) holds facts the board recorded about this foundation:
+its history, signature events, vendors, relationships, community, and preferences. Use the facts that bear on this task to
+make your work specific to this foundation rather than generic, and list the ids you relied on in knowledge_used (e.g. "KB-4").
+- Respect each fact's status: "verified" may be stated plainly; "board_reported" is what a board member reported (say "the
+  board reports" or "reportedly"); "estimate" is approximate (say "about" and that it is unconfirmed); "needs_confirmation"
+  must be flagged as unconfirmed; facts marked sample are invented demo data and must be called samples.
+- Never add what the facts do not say: no invented attendance, revenue, profit, prices, contracts, contacts, partnerships,
+  or biography.
+- A vendor or organization the foundation worked with before is not a current contract, booking, or formal partnership
+  unless a fact says so. Historical event costs are never current available funds."""
+
+
 class AgentError(RuntimeError):
     pass
 
@@ -105,6 +117,35 @@ class BaseAgent(ABC):
             max_output_tokens=max_output_tokens,
         )
         return parsed
+
+    def knowledge(self, ctx: RunContext, task: AgentTask, query: str, limit: int = 6) -> dict | None:
+        """Ask the shared, permission-checked retrieval service for the facts this task needs. The Orchestrator's picks
+        (task.inputs["foundation_context"]) come first. Returns None when nothing relevant is recorded."""
+        passed = (task.inputs.get("foundation_context") or {}).get("fact_ids") or []
+        got = self.tool(ctx, "read_foundation_knowledge", agent=self.name.value, query=query[:600], include_ids=passed, limit=limit)
+        facts = (got.data or {}).get("facts") if got.ok else None
+        if not facts:
+            return None
+        return {"note": "Facts the board recorded about the foundation. Respect each fact's verification status.",
+                "facts": [{k: f[k] for k in ("id", "section", "title", "fact", "verification", "source", "updated")}
+                          | ({"sample": True} if f.get("sample") else {})
+                          | ({"shareable_in_outreach": f["shareable_in_outreach"]} if self.name == AgentName.PARTNERSHIPS_OUTREACH else {})
+                          for f in facts],
+                "_ids": [f["id"] for f in facts], "_sources": got.sources}
+
+    @staticmethod
+    def knowledge_in(pack: dict | None) -> dict | None:
+        """The part of a knowledge pack that goes to the model."""
+        return {k: v for k, v in pack.items() if not k.startswith("_")} if pack else None
+
+    @staticmethod
+    def knowledge_record(pack: dict | None, used: list[str] | None) -> dict:
+        """What the agent was given and which ids it says it relied on (ids it was not given are dropped)."""
+        if not pack:
+            return {"knowledge_used": [], "knowledge_supplied": []}
+        supplied = pack["_ids"]
+        return {"knowledge_used": [k for k in dict.fromkeys(used or []) if k in supplied],
+                "knowledge_supplied": [{k: f[k] for k in ("id", "title", "verification", "fact")} for f in pack["facts"]]}
 
     def result(self, task: AgentTask, status: str, summary: str, **fields: Any) -> AgentResult:
         return AgentResult(run_id=task.run_id, step_key=task.step_key, agent=self.name, status=status, summary=summary, **fields)

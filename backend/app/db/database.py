@@ -55,10 +55,13 @@ class Database:
                 upgrade_demo_history(db)  # idempotent: fills new demo fields in older databases
                 upgrade_demo_books(db)
                 upgrade_demo_donations(db)
+                _seed_knowledge(db)
                 return False
             from .seed import seed_demo_workspace
 
             seed_demo_workspace(db)
+            db.flush()
+            _seed_knowledge(db)
             return True
 
     def _add_missing_columns(self) -> None:
@@ -84,6 +87,14 @@ class Database:
         self.engine.dispose()
         if self.path.exists():
             self.path.unlink()
+
+
+def _seed_knowledge(db: Session) -> None:
+    """Give every workspace without a knowledge base its starting entries (identity and labeled samples)."""
+    from ..services.knowledge import seed_knowledge
+
+    for org_id in db.scalars(select(Organization.id)).all():
+        seed_knowledge(db, org_id)
 
 
 def _enable_foreign_keys(dbapi_connection, _record) -> None:

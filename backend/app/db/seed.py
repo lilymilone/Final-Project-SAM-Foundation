@@ -237,21 +237,7 @@ def upgrade_demo_history(db: Session) -> int:
 
 
 def _seed_books(db: Session, org_id: int) -> None:
-    rows = [
-        # period, kind, category, amount
-        ("2026-05", "income", "Individual donations", 4200), ("2026-05", "expense", "Programs", 3100),
-        ("2026-05", "expense", "Operations", 650),
-        ("2026-06", "income", "Individual donations", 2900), ("2026-06", "expense", "Programs", 3600),
-        ("2026-06", "expense", "Operations", 640),
-        ("2026-07", "income", "Event revenue", 1800), ("2026-07", "expense", "Programs", 2800),
-        ("2026-07", "expense", "Operations", 700),
-        ("2026-08", "income", "Individual donations", 3500), ("2026-08", "expense", "Programs", 2500),
-        ("2026-08", "expense", "Operations", 660),
-        ("2026-09", "income", "Grants", 5000), ("2026-09", "expense", "Programs", 3900),
-        ("2026-09", "expense", "Operations", 720),
-        ("2026-09", "reserve", "Operating reserve balance", 21500),
-    ] + DEMO_BOOK_ADDITIONS
-    for period, kind, category, amount in rows:
+    for period, kind, category, amount in DEMO_BOOKS + DEMO_BOOK_ADDITIONS:
         restriction, purpose = DEMO_BOOK_TAGS.get(category, (None, None))
         budget = kind.startswith("budget_")
         db.add(
@@ -263,25 +249,57 @@ def _seed_books(db: Session, org_id: int) -> None:
         )
 
 
-# Prompt 6: restriction and purpose tags for the demo books, and a cash balance. The $5,000 grant is
-# restricted to programs, so it is never counted as spendable for events. Totals are unchanged.
+# Five months of synthetic books, resized (2026-10-26, at the chair's request) so that a larger gala is a real question
+# for the demo rather than out of reach. Still invented and labeled demo.
+DEMO_BOOKS = [
+    # period, kind, category, amount
+    ("2026-05", "income", "Individual donations", 9800), ("2026-05", "expense", "Programs", 7400),
+    ("2026-05", "expense", "Operations", 1500),
+    ("2026-06", "income", "Individual donations", 7600), ("2026-06", "expense", "Programs", 8200),
+    ("2026-06", "expense", "Operations", 1450),
+    ("2026-07", "income", "Event revenue", 6200), ("2026-07", "expense", "Programs", 6900),
+    ("2026-07", "expense", "Operations", 1600),
+    ("2026-08", "income", "Individual donations", 8900), ("2026-08", "expense", "Programs", 6300),
+    ("2026-08", "expense", "Operations", 1500),
+    ("2026-09", "income", "Grants", 12000), ("2026-09", "expense", "Programs", 9100),
+    ("2026-09", "expense", "Operations", 1650),
+    ("2026-09", "reserve", "Operating reserve balance", 62000),
+]
+
+# Prompt 6: restriction and purpose tags for the demo books, and a cash balance. The grant is
+# restricted to programs, so it is never counted as spendable for events.
 DEMO_BOOK_TAGS = {
     "Individual donations": ("unrestricted", None), "Event revenue": ("unrestricted", None),
     "Grants": ("temporarily_restricted", None), "Programs": (None, "program"), "Operations": (None, "operations"),
     "Operating reserve balance": ("unrestricted", None), "Cash in bank (all accounts)": (None, None),
 }
 DEMO_BOOK_ADDITIONS = [
-    ("2026-09", "cash", "Cash in bank (all accounts)", 26500),
+    ("2026-09", "cash", "Cash in bank (all accounts)", 84000),
     # A board-approved budget for the same five months, so budget-vs-actual variance can be explained.
-    ("2026-09", "budget_income", "Individual donations", 12000), ("2026-09", "budget_income", "Event revenue", 2500),
-    ("2026-09", "budget_income", "Grants", 5000), ("2026-09", "budget_expense", "Programs", 16000),
-    ("2026-09", "budget_expense", "Operations", 3000),
+    ("2026-09", "budget_income", "Individual donations", 28000), ("2026-09", "budget_income", "Event revenue", 6000),
+    ("2026-09", "budget_income", "Grants", 12000), ("2026-09", "budget_expense", "Programs", 38000),
+    ("2026-09", "budget_expense", "Operations", 7500),
 ]
+
+# The smaller demo books used before 2026-10-26. An older database is rescaled row by row, and only where a demo row still
+# holds its original figure (a figure someone edited is left alone).
+OLD_DEMO_AMOUNTS = {
+    ("2026-05", "income", "Individual donations"): 4200, ("2026-05", "expense", "Programs"): 3100, ("2026-05", "expense", "Operations"): 650,
+    ("2026-06", "income", "Individual donations"): 2900, ("2026-06", "expense", "Programs"): 3600, ("2026-06", "expense", "Operations"): 640,
+    ("2026-07", "income", "Event revenue"): 1800, ("2026-07", "expense", "Programs"): 2800, ("2026-07", "expense", "Operations"): 700,
+    ("2026-08", "income", "Individual donations"): 3500, ("2026-08", "expense", "Programs"): 2500, ("2026-08", "expense", "Operations"): 660,
+    ("2026-09", "income", "Grants"): 5000, ("2026-09", "expense", "Programs"): 3900, ("2026-09", "expense", "Operations"): 720,
+    ("2026-09", "reserve", "Operating reserve balance"): 21500, ("2026-09", "cash", "Cash in bank (all accounts)"): 26500,
+    ("2026-09", "budget_income", "Individual donations"): 12000, ("2026-09", "budget_income", "Event revenue"): 2500,
+    ("2026-09", "budget_income", "Grants"): 5000, ("2026-09", "budget_expense", "Programs"): 16000,
+    ("2026-09", "budget_expense", "Operations"): 3000,
+}
 DEMO_BUDGET = {"period_months": 5, "period_label": "Budget, May to Sep 2026 (sample)"}
 
 
 def upgrade_demo_books(db: Session) -> int:
-    """Tag older demo ledgers and add the demo cash balance. Never touches non-demo records."""
+    """Tag older demo ledgers, add the demo cash balance, and rescale the older, smaller demo figures. Never touches
+    non-demo records."""
     changes = 0
     demo = db.scalars(select(FinancialRecord).where(FinancialRecord.is_demo.is_(True))).all()
     if not demo:
@@ -294,6 +312,11 @@ def upgrade_demo_books(db: Session) -> int:
             r.purpose, changes = purpose, changes + 1
         if r.verification is None:
             r.verification, r.currency = "demo", "USD"
+    current = {(p, k, c): a for p, k, c, a in DEMO_BOOKS + DEMO_BOOK_ADDITIONS}
+    for r in demo:
+        key = (r.period, r.kind, r.category)
+        if key in current and r.amount_usd == OLD_DEMO_AMOUNTS.get(key) and r.source == "demo":
+            r.amount_usd, changes = current[key], changes + 1
     org_id = demo[0].organization_id
     for period, kind, category, amount in DEMO_BOOK_ADDITIONS:
         if not any(r.kind == kind and r.category == category for r in demo):

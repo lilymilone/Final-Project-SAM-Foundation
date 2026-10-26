@@ -29,7 +29,7 @@ def test_chair_sees_financials_with_computed_flags(client):
     login(client)
     body = client.get("/api/finance/summary").json()
     assert body["is_demo"] is True
-    assert body["reserve_usd"] == 21500
+    assert body["reserve_usd"] == 62000
     titles = [f["title"] for f in body["flags"]]
     assert "Months with a deficit" in titles
 

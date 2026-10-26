@@ -1,7 +1,8 @@
-import { BrainCircuit, Sparkles, UserRound } from "lucide-react";
+import { BookHeart, BrainCircuit, Sparkles, UserRound } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import type { Strategy, UserSettings } from "../api/types";
+import type { KnowledgeBase, Strategy, UserSettings } from "../api/types";
 import { useApi } from "../api/useApi";
 import { useAuth } from "../auth/AuthContext";
 import { useButterflies } from "../butterflies/ButterflyProvider";
@@ -11,6 +12,7 @@ export default function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { celebrate, reducedMotion } = useButterflies();
   const { data, error, loading, reload, setData } = useApi<UserSettings>("/api/settings");
+  const { data: kb } = useApi<KnowledgeBase>("/api/knowledge");
   const [toast, setToast] = useState<{ message: string; tone: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
   const previewRef = useRef<HTMLButtonElement>(null);
@@ -37,6 +39,20 @@ export default function SettingsPage() {
       {error && <ErrorState message={error.message} onRetry={reload} />}
       {data && user && (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <Card title="Foundation Knowledge Base" icon={<BookHeart size={16} aria-hidden="true" />} className="lg:col-span-2"
+            action={<Link to="/settings/knowledge" className="btn btn-primary !py-1.5 text-sm">Open</Link>}>
+            <p className="text-sm text-muted">
+              What SAM SPACE knows about the foundation itself: its history, signature events, vendors and venues, charitable relationships,
+              community, board, priorities, financial guidelines, and how it introduces itself. Every fact keeps its source and whether
+              it is verified, and each agent reads only the facts its task needs.
+            </p>
+            {kb && (
+              <p className="mt-3 text-sm text-plum">
+                {kb.entries.filter((e) => !e.is_demo).length} facts recorded · {kb.counts.verified ?? 0} verified · {kb.gaps.length} gaps to fill
+              </p>
+            )}
+          </Card>
+
           <Card title="Profile" icon={<UserRound size={16} aria-hidden="true" />}>
             <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-y-2 text-sm">
               <dt className="text-muted">Name</dt><dd className="font-semibold text-plum">{user.first_name} {user.last_name}</dd>

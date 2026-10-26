@@ -54,6 +54,20 @@ A price or capacity counts only if a fetched page shows it; otherwise the venue 
 - Board reflections are self-reported. Lessons drawn from them are AI interpretations linked to their evidence; the board reviews, adopts, or dismisses each.
 - The history comparisons show that history changed the plans (lesson-backed changes). They do not show that the changed plans raise more money. That needs real events.
 
+## Foundation knowledge
+
+- **Only what the board records.** The knowledge base holds what one board member has described so far. Most facts are
+  board-reported, not yet verified by the chair or treasurer, and attendance, revenue, and vendor contacts are missing
+  ([evidence/report/knowledge_base.md](evidence/report/knowledge_base.md) §6).
+- **Keyword retrieval.** Facts are ranked by word overlap with the task (plus a short list of event-type synonyms), not by
+  meaning. A request worded very differently from the recorded facts can miss one; "What an agent would see" shows exactly
+  what each agent gets.
+- **The cost model is built for galas and dinners.** For a spin class or a tournament it uses reception placeholders
+  (labeled as such) until the board enters real quotes.
+- **No board directory yet,** so reviewer suggestions fall back to app roles.
+- **The demo books are invented** and were resized on 2026-10-26 so that a larger gala is a real question. They are not
+  the foundation's finances, and every finance answer says so.
+
 ## Model availability and cost
 
 - **Models:** gpt-6-luna, gpt-6.1-sol, and gpt-6-astra were checked on 2026-10-24 with the project's OpenAI key. If a model becomes unavailable, the router uses a recorded fallback.

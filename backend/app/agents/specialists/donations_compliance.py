@@ -23,7 +23,7 @@ import re
 from ...compliance import REFERENCES
 from ...mission import PHILOSOPHY
 from ...services.donations import duplicate_key
-from ..base import BaseAgent
+from ..base import KNOWLEDGE_RULES, BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding
 from ..outputs import AcknowledgmentTemplate, DonationReview
 from ..registry import ACK_TEMPLATE, DONATION_REVIEW
@@ -38,6 +38,10 @@ and a compliance checklist computed in code; you never see donors.
   ONLY. kind: verified_requirement only when a cited reference states the rule; general_guidance when it depends on facts;
   needs_professional_review when no reference covers it. Name the jurisdiction in the question.
 - Never give a definitive tax or legal opinion, never say a gift is or is not deductible, and never suggest SAM SPACE file or send anything."""
+
+KNOWLEDGE_INSTRUCTIONS = """- "foundation_knowledge" holds the board's recorded campaign priorities, relationships, and acknowledgment preferences.
+  Follow recorded preferences, and list the ids you used in knowledge_used. They never settle a legal or tax question: those
+  still go to an accountant or attorney."""
 
 ACK_INSTRUCTIONS = f"""Write ONE warm donor thank-you letter template.
 - The body MUST include the merge fields {{{{donor_name}}}}, {{{{gift}}}}, and {{{{date}}}}. {{{{gift}}}} is the gift itself ("$250.00" or
@@ -81,12 +85,15 @@ class DonationsComplianceAgent(BaseAgent):
         demo = any(d.get("is_demo") for d in items)
 
         review, compliance = None, None
+        pack = self.knowledge(ctx, task, "donations acknowledgment thank-you letters campaigns donors " + task.objective)
         if not drafts_only:
             compliance = self.tool(ctx, "read_compliance_items").data
-            out = self.think(ctx, DONATION_REVIEW, REVIEW_INSTRUCTIONS,
+            out = self.think(ctx, DONATION_REVIEW, f"{REVIEW_INSTRUCTIONS}\n{KNOWLEDGE_INSTRUCTIONS}\n\n{KNOWLEDGE_RULES}" if pack
+                             else REVIEW_INSTRUCTIONS,
                              {"aggregate": aggregate, "compliance_checklist": compliance["items"],
                               "references": [{k: r[k] for k in ("id", "title", "authority", "jurisdiction", "kind", "checked_on", "points")}
-                                             for r in compliance["references"]]}, DonationReview)
+                                             for r in compliance["references"]], "foundation_knowledge": self.knowledge_in(pack)},
+                             DonationReview)
             questions = []
             for q in out.reporting_questions:
                 refs = [r for r in q.ref_ids if r in REFERENCES]
@@ -125,6 +132,9 @@ class DonationsComplianceAgent(BaseAgent):
             payload = {"gift_types": sorted({by_id[i]["contribution_type"] for i in targets}),
                        "has_restricted_gifts": any(by_id[i]["restriction"] in ("temporarily_restricted", "permanently_restricted") for i in targets),
                        "campaign_names": sorted({by_id[i]["campaign"] for i in targets if by_id[i]["campaign"]})}
+            prefs = [f["fact"] for f in (pack or {}).get("facts", []) if f["section"] == "Communication preferences"]
+            if prefs:  # the board's own wording preferences for thank-you letters (never donor details)
+                payload["acknowledgment_preferences"] = prefs[:3]
             template = self.think(ctx, ACK_TEMPLATE, ACK_INSTRUCTIONS, payload, AcknowledgmentTemplate)
             problems = template_problems(template.subject, template.body)
             if problems:  # one bounded rewrite
@@ -158,5 +168,6 @@ class DonationsComplianceAgent(BaseAgent):
                         if review else []),
             data={"aggregate": aggregate, "review": review, "compliance": compliance["items"] if compliance else None,
                   "thank_you_drafts": thank_you, "contribution_acknowledgment_drafts": contrib, "draft_ids": draft_ids,
-                  "drafts_created": thank_you + contrib, "template_subject": template.subject if template else None},
+                  "drafts_created": thank_you + contrib, "template_subject": template.subject if template else None,
+                  **self.knowledge_record(pack, (review or {}).get("knowledge_used"))},
         )

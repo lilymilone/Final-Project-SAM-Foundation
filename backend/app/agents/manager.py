@@ -81,6 +81,7 @@ class WorkflowManager:
             run_id=run_id, organization_id=organization_id, user_id=user_id, user_permissions=permissions, strategy=strategy,
             research_mode=research_mode, db=st.db, router=ModelRouter(settings.provider, st.availability.available),
             budget=budget, settings=settings, llm=llm, cancel=cancel, safety=safety, fixtures=fixtures,
+            use_knowledge=bool(options.get("use_knowledge", True)),
         )
         ctx.tools = build_tool_registry(ctx)
         with st.db.transaction() as s:

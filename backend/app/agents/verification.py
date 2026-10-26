@@ -80,17 +80,45 @@ COMMITMENT_CLAIMS = re.compile(
 )
 
 
-def outreach_violations(text: str, allowed_amounts: set[float] | None = None) -> list[str]:
+PAST_RELATIONSHIP = re.compile(r"\b(?:our|the)\s+(?:past|previous)\s+(?:relationship|collaboration)\b", re.IGNORECASE)
+ONGOING_RELATIONSHIP = re.compile(r"\b(?:our|the)\s+(?:ongoing|existing|continued)\s+(?:partnership|relationship|collaboration)\b",
+                                  re.IGNORECASE)
+
+
+def outreach_violations(text: str, allowed_amounts: set[float] | None = None, known_relationship: dict | None = None) -> list[str]:
     """Reasons a draft must not be saved: claims of actions taken, invented
-    relationships, commitments, or dollar amounts that are not in the research."""
+    relationships, commitments, or dollar amounts that are not in the research. When the Foundation Knowledge Base
+    records a relationship with the recipient, wording about that past connection is allowed (an ongoing partnership only
+    if a formal one is recorded); claims of conversations or meetings are never allowed."""
     problems = [f"claims an action was taken (“{c}”)" for c in action_claims(text)]
-    problems += [f"implies a relationship that does not exist (“{m.group(0)}”)" for m in RELATIONSHIP_CLAIMS.finditer(text)]
+
+    def recorded(m: re.Match) -> bool:
+        if not known_relationship:
+            return False
+        if PAST_RELATIONSHIP.fullmatch(m.group(0)):
+            return True
+        return bool(known_relationship.get("formal_partnership")) and bool(ONGOING_RELATIONSHIP.fullmatch(m.group(0)))
+
+    problems += [f"implies a relationship that does not exist (“{m.group(0)}”)" for m in RELATIONSHIP_CLAIMS.finditer(text)
+                 if not recorded(m)]
     problems += [f"commits the foundation (“{m.group(0)}”)" for m in COMMITMENT_CLAIMS.finditer(text)]
     if allowed_amounts is not None:
         stray = [a for a in dollar_amounts(text) if a not in allowed_amounts]
         if stray:
             problems.append("mentions dollar amounts that are not in the research (" + ", ".join(f"${a:,.0f}" for a in stray) + ")")
     return problems
+
+
+ACKNOWLEDGES = re.compile(r"\b(?:again|previous(?:ly)?|past|before|prior|return(?:ing)?|last (?:year|time)|earlier|featured|hosted|held)\b",
+                          re.IGNORECASE)
+
+
+def acknowledges_relationship(text: str, relationship: dict) -> bool:
+    """A draft to an organization the foundation already knows must say so (a returning word, or a year from the record),
+    so it never reads as a first introduction."""
+    record = " ".join(str(relationship.get(k) or "") for k in ("summary", "nature", "activities"))
+    years = set(re.findall(r"\b(?:19|20)\d{2}\b", record))
+    return bool(ACKNOWLEDGES.search(text)) or any(y in text for y in years)
 
 
 def dollar_amounts(text: str) -> list[float]:

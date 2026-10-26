@@ -24,7 +24,7 @@ from typing import Any
 from ..ai.llm import StructuredOutputError
 from ..ai.router import BudgetExceededError
 from ..core.permissions import Permission
-from .base import BaseAgent
+from .base import KNOWLEDGE_RULES, BaseAgent
 from .contracts import AgentName, AgentResult, AgentTask, Constraint, Finding
 from .outputs import BoardRecommendation, RequestAnalysis
 from .registry import BOARD_RECOMMENDATION, CLASSIFY, PARTNERSHIP_STRATEGY, SUMMARY_REPORT
@@ -37,6 +37,7 @@ from .specialists.mission_discovery import MissionDiscoveryAgent
 from .specialists.partnerships_outreach import PartnershipsOutreachAgent
 from .verification import collect_amounts, collect_numbers, verify_workflow
 from ..mission import mission_instructions
+from ..services import knowledge as kb
 from ..services.opportunities import requested_count
 from ..tools.web import dates_in_text
 
@@ -133,6 +134,9 @@ ANSWER_FIRST = """How to write for the board (this matters most):
 
 
 CANONICAL_TYPES = ("gala", "dinner", "walk", "panel", "concert", "auction", "brunch", "reception", "run")
+# Other kinds of fundraiser, recognized so a spin class or a sports tournament is not planned as a gala.
+TYPE_ALIASES = (("spin", "spin class"), ("cycl", "spin class"), ("tournament", "sports tournament"), ("softball", "sports tournament"),
+                ("field day", "sports tournament"), ("5k", "run"), ("trivia", "trivia night"), ("picnic", "picnic"))
 
 
 def _past_date(dates_text: str | None, today: date) -> str | None:
@@ -165,7 +169,8 @@ def canonical_event_type(value: str | None) -> str | None:
     if not value:
         return None
     low = value.lower()
-    return next((t for t in CANONICAL_TYPES if t in low), low.strip())
+    alias = next((label for word, label in TYPE_ALIASES if word in low), None)
+    return alias or next((t for t in CANONICAL_TYPES if t in low), low.strip())
 
 
 def keyword_analysis(request: str) -> RequestAnalysis:
@@ -179,11 +184,12 @@ def keyword_analysis(request: str) -> RequestAnalysis:
                 intent = name
                 break
     attendance = None
-    m = re.search(r"(\d{2,4})\s*[- ]?\s*(?:person|people|guest|attendee|seat)", text)
+    m = re.search(r"(\d{2,4})\s*[- ]?\s*(?:person|people|guest|attendee|seat|rider|cyclist|participant|player|runner|walker)", text)
     if m:
         attendance = int(m.group(1))
     city = next((label for pattern, label in CITY_PATTERNS if re.search(pattern, text)), None)
-    event_type = next((t for t in ("gala", "dinner", "walk", "panel", "concert", "auction", "brunch") if t in text), None)
+    event_type = (next((label for word, label in TYPE_ALIASES if word in text), None)
+                  or next((t for t in ("gala", "dinner", "walk", "panel", "concert", "auction", "brunch") if t in text), None))
     fmt = "reception" if "reception" in text or "cocktail" in text else "seated_dinner" if "seated" in text else None
     budget = None
     b = re.search(r"budget[^$\d]{0,20}\$?\s?(\d[\d,]*)\s*(k)?", text)
@@ -254,11 +260,18 @@ class _OrchestratorSelf(BaseAgent):
             elif analysis.intent in ("document_extraction", "legacy_import"):  # only an upload or import can start an extraction
                 analysis = analysis.model_copy(update={"intent": "unsupported"})
         agents = INTENT_AGENTS[analysis.intent]
+        foundation = None
+        if analysis.intent not in ("document_extraction", "legacy_import", "unsupported"):
+            # The Boss Agent reads what the board recorded about the foundation before planning, then hands each specialist
+            # only the facts for its own sections (see Orchestrator._task).
+            query = " ".join(str(x) for x in (request, analysis.event_type, analysis.city, analysis.research_topic) if x)
+            got = self.tool(ctx, "read_foundation_knowledge", agent="orchestrator", query=query, limit=8)
+            foundation = got.data if got.ok else None
         return self.result(task, "completed",
                            f"Intent: {analysis.intent.replace('_', ' ')} ({routing} routing). "
                            f"Specialists: {', '.join(a.value.replace('_', ' ') for a in agents) or 'none'}.",
                            warnings=warnings, data={"analysis": analysis.model_dump(), "routing": routing,
-                                                    "agents": [a.value for a in agents]})
+                                                    "agents": [a.value for a in agents], "foundation_context": foundation})
 
     def _evaluate(self, task: AgentTask, ctx: RunContext) -> AgentResult:
         """Step 5: combine Finance's conflicts with checks on neglected history lessons (deterministic)."""
@@ -317,6 +330,10 @@ class _OrchestratorSelf(BaseAgent):
             instructions = f"{SYNTHESIS_INSTRUCTIONS}\n- Note how the plan serves inclusion, connection, accessibility, and recognition " \
                            "(see the Events agent's mission_contribution), alongside, never instead of, financial feasibility."
         instructions = f"{instructions}\n\n{ANSWER_FIRST}"
+        if task.inputs["payload"].get("foundation_knowledge"):
+            instructions += (f"\n\n{KNOWLEDGE_RULES}\n- Where the foundation's own history applies (a past event of the same kind, a "
+                             "vendor it used, an organization it already knows), say so in the answer so the plan fits this "
+                             "foundation, with the fact's status. Keep demo books and real history apart.")
         rec = self.think(ctx, profile, instructions, task.inputs["payload"], BoardRecommendation,
                          reasoning="medium" if profile in (BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY) else "low", max_output_tokens=4000)
         return self.result(task, "completed", rec.headline, data={"recommendation": rec.model_dump()},
@@ -329,6 +346,8 @@ class Orchestrator:
         self.reports: dict = {}  # step_key -> AgentReport: what each specialist reported to the Boss Agent
         self.decisions: list[dict] = []  # what the Boss Agent decided after reading the reports, and why
         self.me = _OrchestratorSelf()
+        self.foundation: dict = {}  # the facts the Boss Agent read at intake (Foundation Knowledge Base)
+        self.request = ""
         self.agents: dict[AgentName, BaseAgent] = {
             A.ORCHESTRATOR: self.me,
             A.EVENT_INTELLIGENCE: EventIntelligenceAgent(),
@@ -373,6 +392,13 @@ class Orchestrator:
                 "missing": ["A board-ready recommendation", "Any step after the stop"]}
 
     def _task(self, ctx: RunContext, step: str, agent: AgentName, objective: str, **kw: Any) -> AgentTask:
+        facts = self.foundation.get("facts") or []
+        if agent != A.ORCHESTRATOR and facts:  # pass on the facts in this specialist's sections; it retrieves around them
+            sections = kb.AGENT_SECTIONS.get(agent.value, ())
+            inputs = dict(kw.pop("inputs", None) or {})
+            inputs.setdefault("foundation_context", {"focus": self.request[:300],
+                                                     "fact_ids": [f["id"] for f in facts if f.get("section_key") in sections]})
+            kw["inputs"] = inputs
         return AgentTask(run_id=ctx.run_id, step_key=step, agent=agent, objective=objective, **kw)
 
     # -- workflow ---------------------------------------------------------------------
@@ -388,6 +414,7 @@ class Orchestrator:
             raise RuntimeError(intake.summary)
         analysis = RequestAnalysis.model_validate(intake.data["analysis"])
         intent = analysis.intent
+        self.foundation, self.request = intake.data.get("foundation_context") or {}, request
         results: dict[str, AgentResult] = {}
         extra: dict[str, Any] = {"revision_history": []}
 
@@ -441,11 +468,17 @@ class Orchestrator:
                 "note": "These received gifts still need a thank-you. The app shows the board each donor's name next to this list, so refer "
                         "to gifts by code, amount, and date, and never say the details are unavailable.",
                 "gifts": [{k: g[k] for k in ("code", "amount_usd", "received_on", "ack_status", "campaign", "copies")} for g in gifts]}
+        knowledge = self._knowledge_payload(results)
+        if knowledge:
+            payload["foundation_knowledge"] = knowledge
         rec_result = self.dispatch(ctx, self._task(ctx, "recommendation", A.ORCHESTRATOR, "Write the board-ready recommendation",
                                                    inputs={"intent": intent, "payload": payload}))
         rec = BoardRecommendation.model_validate(rec_result.data["recommendation"]) if rec_result.status == "completed" else None
+        rec = self._only_supplied_ids(rec)
         allowed = collect_numbers(figures) | collect_numbers({k: r.data for k, r in results.items()})
         allowed |= {float(g["amount_usd"]) for g in gifts if g["amount_usd"] is not None}
+        if knowledge:  # figures the board recorded (e.g. a past event's approximate cost) may be quoted, with their status
+            allowed |= collect_amounts(knowledge)
         if intent in ("partnership_outreach", "mission_discovery"):  # published costs quoted in research ("$150 table fee")
             allowed |= collect_amounts({k: r.data for k, r in results.items()})
         report = verify_workflow(ctx.db, ctx.run_id, results, rec, allowed, option_ids)
@@ -456,7 +489,7 @@ class Orchestrator:
             retry = self.dispatch(ctx, self._task(ctx, "recommendation_fix", A.ORCHESTRATOR, "Correct the recommendation after verification",
                                                   kind="revision", revision_round=1, inputs={"intent": intent, "payload": payload}))
             if retry.status == "completed":
-                rec = BoardRecommendation.model_validate(retry.data["recommendation"])
+                rec = self._only_supplied_ids(BoardRecommendation.model_validate(retry.data["recommendation"]))
                 report = verify_workflow(ctx.db, ctx.run_id, results, rec, allowed, option_ids)
         self.dispatch(ctx, self._task(ctx, "verification", A.ORCHESTRATOR, "Verify the final result in code", inputs={"report": report}))
         if not report["passed"] and ctx.safety is not None:
@@ -521,7 +554,46 @@ class Orchestrator:
             # read from the records here, in code, for the board member who asked. Roles without donor access never see it.
             "donations": {**results["donations"].data, "needing_acknowledgment": gifts}
             if "donations" in results else None,
+            "foundation_context": self._knowledge_summary(results, rec),
+            "review_by": self._reviewers(ctx, intent),
         }
+
+    def _knowledge_payload(self, results: dict[str, AgentResult]) -> dict | None:
+        """The facts the Boss Agent read at intake, plus any a specialist relied on, for the final answer."""
+        facts = {f["id"]: f for f in self.foundation.get("facts") or []}
+        if not facts:
+            return None
+        used = {k: r.data.get("knowledge_used") for k, r in results.items() if r.data.get("knowledge_used")}
+        return {"note": "Facts the board recorded about the foundation. Respect each fact's verification status.",
+                "facts": [{k: f[k] for k in ("id", "section", "title", "fact", "verification", "source")}
+                          | ({"sample": True} if f.get("sample") else {}) for f in facts.values()],
+                "relied_on_by_specialists": used}
+
+    def _only_supplied_ids(self, rec: BoardRecommendation | None) -> BoardRecommendation | None:
+        """knowledge_used may name only facts the Boss Agent actually supplied; anything else is dropped."""
+        if rec is None:
+            return None
+        ids = {f["id"] for f in self.foundation.get("facts") or []}
+        return rec.model_copy(update={"knowledge_used": [k for k in rec.knowledge_used or [] if k in ids]})
+
+    def _knowledge_summary(self, results: dict[str, AgentResult], rec: BoardRecommendation | None) -> dict:
+        facts = self.foundation.get("facts") or []
+        supplied = {k: [f["id"] for f in r.data.get("knowledge_supplied") or []] for k, r in results.items() if r.data.get("knowledge_supplied")}
+        used = {k: r.data.get("knowledge_used") for k, r in results.items() if r.data.get("knowledge_used")}
+        ids = {f["id"] for f in facts}
+        if rec is not None and rec.knowledge_used:
+            used["recommendation"] = [k for k in rec.knowledge_used if k in ids]
+        return {"facts": [{k: f.get(k) for k in ("id", "title", "section", "verification", "sample")} for f in facts],
+                "considered": self.foundation.get("considered", 0), "est_tokens": self.foundation.get("est_tokens", 0),
+                "supplied_to": supplied, "used_by": used, "switched_off": bool(self.foundation.get("switched_off"))}
+
+    @staticmethod
+    def _reviewers(ctx: RunContext, intent: str) -> dict | None:
+        """Which board member should review this (a suggestion from the board directory; nothing is assigned)."""
+        if intent in ("document_extraction", "legacy_import", "unsupported"):
+            return None
+        with ctx.db.session() as s:
+            return kb.suggest_reviewers(s, ctx.organization_id, intent)
 
     @staticmethod
     def _gifts_needing_acknowledgment(ctx: RunContext) -> list[dict]:

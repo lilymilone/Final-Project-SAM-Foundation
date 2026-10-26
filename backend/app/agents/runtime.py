@@ -51,6 +51,7 @@ class RunContext:
     counters: dict[str, int] = field(default_factory=lambda: {"handoffs": 0, "web_searches": 0, "page_fetches": 0, "contact_pages": 0})
     safety: Any = None  # SafetyManager (safety/manager.py)
     fixtures: dict | None = None  # research_mode "fixture": server-side test fixtures (venues and page HTML); never set from the API
+    use_knowledge: bool = True  # False only for a with/without comparison of the Foundation Knowledge Base
 
     def check_cancelled(self) -> None:
         if self.cancel.is_set():
@@ -100,6 +101,8 @@ def open_handoff(ctx: RunContext, task: AgentTask, from_agent: str) -> int:
         history["contingency_pct"] = task.inputs["contingency_pct"]
     if history:
         payload["history_passed"] = history
+    if (task.inputs.get("foundation_context") or {}).get("fact_ids"):  # foundation facts the Orchestrator passed on (ids only)
+        payload["foundation_passed"] = task.inputs["foundation_context"]["fact_ids"]
     with ctx.db.transaction() as s:
         row = HandoffRow(
             run_id=ctx.run_id, step_key=task.step_key, kind=task.kind, revision_round=task.revision_round,

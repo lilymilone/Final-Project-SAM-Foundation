@@ -102,6 +102,7 @@ python -m pytest              # run the automated tests (276 tests, no API key o
 | Add a past event | **Our Legacy** (or *Add a Past Event* on the dashboard) | **Add a past event**: upload files, describe it, or fill in the form; add reflections and photos on the event's page |
 | See what the agents did | **Agent Activity** | open any workflow for every step, tool call, token, and cost |
 | Ask anything | **Sir's Office**, the button in the bottom-right corner of every page (named for Sir, the dog Sabrina adored) | type a question and press **Enter**; each agent's step appears live, then **See the results** |
+| Teach SAM SPACE about the foundation | **Settings → Foundation Knowledge Base** | **Add a fact** (or **Blank template**, fill it in, import); mark facts verified; try **What an agent would see** |
 
 How the agents work, what each one may do, and what the money terms mean are on the in-app **Help** page.
 

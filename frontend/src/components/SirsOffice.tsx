@@ -105,6 +105,9 @@ export function SirsOffice() {
   const rec = detail?.result?.recommendation ?? null;
   const gifts = detail?.result?.donations?.needing_acknowledgment ?? [];
   const intentDone = detail?.result?.intent ?? detail?.run.workflow_type ?? "";
+  const knowledge = detail?.result?.foundation_context;
+  const knownFacts = knowledge ? new Set(Object.values(knowledge.used_by).flat()).size : 0;
+  const reviewer = detail?.result?.review_by?.reviewers.map((r) => `${r.name}, ${r.role}`).join(", ");
   const resultLink = detail ? (RESULT_PAGE[intentDone]?.(detail.run.id) ?? `/activity/runs/${detail.run.id}`) : "";
 
   return (
@@ -140,6 +143,12 @@ export function SirsOffice() {
                     {rec.next_steps.length > 0 && (
                       <div><p className="label !mb-1">Next steps</p>
                         <ul className="list-disc space-y-0.5 pl-5 text-sm text-ink/90">{rec.next_steps.slice(0, 6).map((n) => <li key={n}>{n}</li>)}</ul></div>
+                    )}
+                    {(knownFacts > 0 || reviewer) && (
+                      <p className="text-xs text-muted">
+                        {knownFacts > 0 && <>Drew on {knownFacts} fact{knownFacts === 1 ? "" : "s"} from the <Link to="/settings/knowledge" className="text-royal underline">Knowledge Base</Link>. </>}
+                        {reviewer && <>Suggested reviewer: {reviewer}.</>}
+                      </p>
                     )}
                   </div>
                 )}

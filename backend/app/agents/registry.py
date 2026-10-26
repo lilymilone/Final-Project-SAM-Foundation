@@ -55,20 +55,21 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
         A.ORCHESTRATOR, "Orchestrator",
         "Reads the board's request, picks the specialists, manages dependencies and revisions, and writes the board-ready recommendation.",
         ("read_event_plan", "create_event_plan", "evaluate_constraints", "read_opportunities", "select_opportunities",
-         "verify_final_result", "find_relevant_events"),
+         "verify_final_result", "find_relevant_events", "read_foundation_knowledge"),
         (CLASSIFY, BOARD_RECOMMENDATION, PARTNERSHIP_STRATEGY, SUMMARY_REPORT),
     ),
     AgentSpec(
         A.MISSION_DISCOVERY, "Mission Discovery",
         "Researches mental-health and eating-disorder organizations, research initiatives, awareness events, and partnership "
         "opportunities, and explains their fit with the foundation's mission and philosophy from sources.",
-        ("search_web", "fetch_source", "classify_mission_alignment", "save_research_finding"),
+        ("search_web", "fetch_source", "classify_mission_alignment", "save_research_finding", "read_foundation_knowledge"),
         (MISSION_PLAN, MISSION_SEARCH, MISSION_ALIGNMENT),
     ),
     AgentSpec(
         A.FUNDRAISING_EVENTS, "Fundraising & Events",
         "Researches venues (Manhattan first), builds fundraising strategy, and prices every option with the budget calculator.",
-        ("search_venues", "fetch_source", "save_venue_candidate", "compute_event_model", "get_historical_lessons", "read_event_plan"),
+        ("search_venues", "fetch_source", "save_venue_candidate", "compute_event_model", "get_historical_lessons", "read_event_plan",
+         "read_foundation_knowledge"),
         (VENUE_SEARCH, VENUE_STRATEGY),
     ),
     AgentSpec(
@@ -76,7 +77,7 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
         "Analyzes recorded financial data, organizes figures from uploaded statements for board review, and checks event "
         "affordability. All arithmetic is deterministic Python.",
         ("read_financial_records", "compute_financial_position", "compute_financial_analysis", "recompute_event_model",
-         "check_event_affordability", "read_document_text", "save_extracted_figures"),
+         "check_event_affordability", "read_document_text", "save_extracted_figures", "read_foundation_knowledge"),
         (FINANCE_EXTRACT, FINANCE_NARRATIVE),
     ),
     AgentSpec(
@@ -84,7 +85,7 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
         "Organizes contribution records by campaign, flags incomplete records and acknowledgments, drafts thank-you letters, and "
         "lists reporting questions for an accountant or attorney, citing sources. It never sends, files, or changes records.",
         ("read_donations", "flag_donation_issues", "read_compliance_items", "create_acknowledgment_drafts",
-         "create_contribution_acknowledgments"),
+         "create_contribution_acknowledgments", "read_foundation_knowledge"),
         (DONATION_REVIEW, ACK_TEMPLATE),
     ),
     AgentSpec(
@@ -92,14 +93,14 @@ AGENT_SPECS: tuple[AgentSpec, ...] = (
         "Writes personalized, unsent outreach drafts from verified research, with public inquiry details read from each "
         "organization's own website. It can only read findings and official pages and save drafts: it has no mail, messaging, "
         "form-submission, or scheduling tool.",
-        ("read_saved_findings", "lookup_inquiry_details", "create_outreach_draft"),
+        ("read_saved_findings", "lookup_inquiry_details", "create_outreach_draft", "read_foundation_knowledge"),
         (OUTREACH_DRAFTS, OUTREACH_PERSONALIZED),
     ),
     AgentSpec(
         A.EVENT_INTELLIGENCE, "Event Intelligence & Learning",
         "Compares past events and board reflections, surfaces disagreements, and shares evidence-backed lessons with the Events agent.",
         ("read_historical_events", "read_board_reflections", "compare_event_outcomes", "get_historical_lessons", "save_historical_lesson",
-         "read_import_sources", "stage_event_extraction"),
+         "read_import_sources", "stage_event_extraction", "read_foundation_knowledge"),
         (LESSONS, EVENT_EXTRACT),
     ),
 )

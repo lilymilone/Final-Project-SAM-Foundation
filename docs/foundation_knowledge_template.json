@@ -1,0 +1,170 @@
+{
+  "about": "Blank Foundation Knowledge Base template. Fill in entries and import them in Settings → Foundation Knowledge Base (or with python -m backend.scripts.load_foundation_profile FILE). Keep the filled-in file out of git.",
+  "verification_values": {
+    "verified": "Verified",
+    "board_reported": "Board-reported",
+    "estimate": "Approximate",
+    "needs_confirmation": "Needs confirmation",
+    "demo": "Sample"
+  },
+  "sections": {
+    "mission_history": {
+      "label": "Mission and history",
+      "hint": "Who the foundation is, why it exists, and how its story should be told. Only what the board confirms.",
+      "fields": {
+        "established": "Established",
+        "mission_areas": "Mission areas",
+        "story": "Story the board approves"
+      }
+    },
+    "signature_events": {
+      "label": "Signature events",
+      "hint": "The foundation's recurring events (for example a gala or a community fundraiser): what they are, who comes, what they cost and raise, and what to keep or change.",
+      "fields": {
+        "event_name": "Event name",
+        "years_and_dates": "Years and dates",
+        "location": "Location",
+        "venue": "Venue",
+        "attendance": "Attendance",
+        "ticket_pricing": "Ticket or participation pricing",
+        "sponsorships": "Sponsorships",
+        "catering": "Catering",
+        "entertainment": "Entertainment",
+        "vendors": "Vendors",
+        "volunteers": "Volunteers",
+        "extras": "Raffles and other fundraising",
+        "revenue": "Revenue",
+        "expenses": "Expenses",
+        "net_proceeds": "Net proceeds",
+        "feedback": "Board or participant feedback",
+        "what_worked": "What worked",
+        "what_should_change": "What should change",
+        "challenges": "Operational challenges"
+      }
+    },
+    "past_fundraisers": {
+      "label": "Past fundraisers",
+      "hint": "One occurrence of an event (for example the 2025 gala). Link it to its Our Legacy record so figures stay in one place.",
+      "fields": {
+        "date": "Date",
+        "location": "Location",
+        "highlights": "Highlights",
+        "figures": "Figures"
+      }
+    },
+    "vendors_venues": {
+      "label": "Vendors and venues",
+      "hint": "Venues, caterers, entertainment, planners, studios, printers, photographers, sponsors, and community partners the foundation has used. Mark a vendor as used only when an event record or a board member confirms it.",
+      "fields": {
+        "category": "Category",
+        "events": "Events it was used for",
+        "services": "Services provided",
+        "contact": "Contact details",
+        "previous_costs": "Previous costs",
+        "quality": "Quality",
+        "reliability": "Reliability",
+        "lessons": "Lessons learned",
+        "relationship_status": "Current relationship status"
+      }
+    },
+    "relationships": {
+      "label": "Charitable relationships",
+      "hint": "Organizations the foundation has worked with or featured. Keep historical collaboration separate from a formal, ongoing partnership.",
+      "fields": {
+        "website": "Website",
+        "organization_mission": "Organization's mission",
+        "relationship_type": "Relationship type",
+        "nature": "Nature of the relationship",
+        "activities": "Events or activities connected to it",
+        "verified_contacts": "Verified contacts",
+        "records": "Correspondence or records",
+        "date_last_confirmed": "Date last confirmed",
+        "future_opportunities": "Possible future collaboration"
+      }
+    },
+    "community_audience": {
+      "label": "Community and audience",
+      "hint": "Hometown roots, who usually comes to events, networks, volunteers, supporters, and prospective sponsors. No statistics or assumptions about anyone's health.",
+      "fields": {
+        "group": "Group",
+        "connection": "Connection to the foundation",
+        "involvement": "Typical involvement"
+      }
+    },
+    "board": {
+      "label": "Board structure",
+      "hint": "Board members, roles, committees, and what each would like to review. Contact details are shown only to the chair.",
+      "fields": {
+        "role": "Role",
+        "committee": "Committee or responsibilities",
+        "reviews": "Reviews these kinds of work",
+        "event_involvement": "Event involvement",
+        "expertise": "Relevant expertise",
+        "tasks": "Tasks assigned",
+        "preferred_involvement": "Preferred involvement",
+        "contact": "Contact (chair only)"
+      }
+    },
+    "fundraising_priorities": {
+      "label": "Fundraising priorities",
+      "hint": "Goals for the year, what the board wants events to achieve, and campaigns.",
+      "fields": {
+        "year": "Year",
+        "goal": "Goal",
+        "priority": "Priority"
+      }
+    },
+    "financial_guidelines": {
+      "label": "Financial guidelines",
+      "hint": "Board-approved budgets, typical event cost ranges, reserve and restricted-fund rules. Say which kind of figure each is.",
+      "fields": {
+        "dataset": "Kind of figure",
+        "amount": "Amount",
+        "period": "Period",
+        "rule": "Guideline"
+      }
+    },
+    "communication": {
+      "label": "Communication preferences",
+      "hint": "How the foundation introduces itself, tone, and what to include or avoid in letters and outreach.",
+      "fields": {
+        "audience": "Audience",
+        "preference": "Preference",
+        "example_language": "Example wording"
+      }
+    }
+  },
+  "entries": [
+    {
+      "section": "signature_events",
+      "title": "",
+      "body": "",
+      "details": {
+        "event_name": "",
+        "years_and_dates": "",
+        "location": "",
+        "venue": "",
+        "attendance": "",
+        "ticket_pricing": "",
+        "sponsorships": "",
+        "catering": "",
+        "entertainment": "",
+        "vendors": "",
+        "volunteers": "",
+        "extras": "",
+        "revenue": "",
+        "expenses": "",
+        "net_proceeds": "",
+        "feedback": "",
+        "what_worked": "",
+        "what_should_change": "",
+        "challenges": ""
+      },
+      "aliases": [],
+      "source": "",
+      "contributor": "",
+      "verification": "board_reported",
+      "share_externally": false
+    }
+  ]
+}

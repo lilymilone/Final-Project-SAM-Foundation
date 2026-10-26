@@ -21,6 +21,7 @@ class Permission(str, Enum):
     WRITE_REFLECTIONS = "write_reflections"
     RUN_AGENTS = "run_agents"
     MANAGE_USERS = "manage_users"
+    MANAGE_KNOWLEDGE = "manage_knowledge"  # verify, remove, and import Foundation Knowledge Base facts
 
 
 ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
@@ -35,6 +36,7 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
             Permission.MANAGE_EVENTS,
             Permission.WRITE_REFLECTIONS,
             Permission.RUN_AGENTS,
+            Permission.MANAGE_KNOWLEDGE,
         }
     ),
     # Board members plan events, share reflections, and can read the finances (so the Financial Analysis agent can check

@@ -1,5 +1,5 @@
 import {
-  ArrowLeft, ArrowRight, CheckCircle2, ChevronDown, CircleSlash, Coins, FileText, FlaskConical, Gauge, Lightbulb, ListChecks,
+  ArrowLeft, ArrowRight, BookHeart, CheckCircle2, ChevronDown, CircleSlash, Coins, FileText, FlaskConical, Gauge, Lightbulb, ListChecks,
   RefreshCcw, ShieldAlert, ShieldCheck, Square, Wrench, XCircle,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -257,6 +257,37 @@ export default function RunPage() {
                 (items as string[]).length ? (
                   <div key={label as string} className="mt-4"><p className="label">{label as string}</p><ul className="list-disc space-y-1 pl-5 text-sm">{(items as string[]).map((x, i) => <li key={i}>{x}</li>)}</ul></div>
                 ) : null)}
+            </Card>
+          )}
+          {result?.foundation_context && (result.foundation_context.facts.length > 0 || result.foundation_context.switched_off) && (
+            <Card title="Foundation knowledge used" icon={<BookHeart size={16} aria-hidden="true" />}
+              action={<Link className="btn btn-ghost !py-1 text-sm" to="/settings/knowledge">Knowledge Base →</Link>}>
+              {result.foundation_context.switched_off ? (
+                <p className="text-sm text-muted">Switched off for this run (a with/without comparison).</p>
+              ) : (
+                <>
+                  <p className="mb-3 text-sm text-muted">The Orchestrator read {result.foundation_context.facts.length} of {result.foundation_context.considered} recorded
+                    facts (about {result.foundation_context.est_tokens} tokens) and passed each specialist only those for its own work.</p>
+                  <ul className="space-y-1.5 text-sm">
+                    {result.foundation_context.facts.map((f) => {
+                      const users = Object.entries(result.foundation_context!.used_by).filter(([, ids]) => ids.includes(f.id)).map(([k]) => k);
+                      return (
+                        <li key={f.id} className="flex flex-wrap items-baseline gap-x-2">
+                          <b className="text-plum">{f.id} {f.title}</b>
+                          <span className="text-xs text-muted">{f.section} · {f.sample ? "sample" : f.verification.replace(/_/g, " ")}</span>
+                          {users.length > 0 && <span className="text-xs text-royal">relied on by: {users.join(", ")}</span>}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="mt-3 text-xs text-muted">Given to: {Object.entries(result.foundation_context.supplied_to).map(([k, ids]) => `${k} (${ids.length})`).join(" · ") || "no specialist"}</p>
+                </>
+              )}
+              {result.review_by && result.review_by.reviewers.length > 0 && (
+                <p className="mt-3 rounded-xl bg-lilac/50 px-3 py-2 text-sm text-plum">
+                  Suggested reviewer: <b>{result.review_by.reviewers.map((r) => `${r.name}, ${r.role}`).join(", ")}</b>. <span className="text-muted">{result.review_by.note}</span>
+                </p>
+              )}
             </Card>
           )}
           {result?.revision_history && result.revision_history.length > 0 && (

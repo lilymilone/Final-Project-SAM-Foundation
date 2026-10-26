@@ -35,6 +35,7 @@ class RunIn(BaseModel):
     event_plan_id: int | None = None
     historical_event_id: int | None = None
     use_history: bool = True
+    use_knowledge: bool = True  # False: a comparison run without the Foundation Knowledge Base
     interpret: bool = False  # Event Studio: the model interprets the request details even though the workflow is fixed
     finding_ids: list[int] | None = Field(default=None, max_length=5)  # Partnerships: draft for these opportunities
     draft_type: Literal["partnership_inquiry", "corporate_sponsorship", "nonprofit_collaboration", "venue_inquiry",
@@ -88,7 +89,7 @@ def start_run(
         plan = db.get(EventPlan, body.event_plan_id)
         if is_foreign_or_missing(db, cu, plan, "plan"):
             raise HTTPException(404, "Event plan not found.")
-    options = {"use_history": body.use_history, "interpret": body.interpret}
+    options = {"use_history": body.use_history, "interpret": body.interpret, "use_knowledge": body.use_knowledge}
     wanted = list(body.finding_ids or []) + ([body.follow_up_finding_id] if body.follow_up_finding_id else [])
     if wanted:
         rows = db.scalars(select(ResearchFinding).where(ResearchFinding.id.in_(wanted),

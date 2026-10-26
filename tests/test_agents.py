@@ -152,13 +152,14 @@ def test_gala_collaboration_and_revision(client):
     first_finance = steps[keys.index("finance")]
     assert first_finance.status == "needs_revision"
     conflict_types = {c["type"] for c in first_finance.result["data"]["conflicts"]}
-    assert {"over_budget_limit", "upfront_cash_exceeds_available"} <= conflict_types
+    assert "over_budget_limit" in conflict_types  # the demo books (resized 2026-10-26) now cover the deposit, so only the cap binds
+    assert "upfront_cash_exceeds_available" not in conflict_types
 
     revision = steps[keys.index("venues_revision_1")]
     assert revision.kind == "revision" and revision.revision_round == 1 and revision.from_agent == "orchestrator"
     constraints = {c["name"]: c.get("value") for c in revision.payload["constraints"]}
     assert constraints["max_total_usd"] == 18000
-    assert constraints["max_upfront_usd"] == pytest.approx(9938.0)
+    assert "max_upfront_usd" not in constraints  # the deposit fits the planning budget, so it is not a revision constraint
     assert constraints["min_contingency_pct"] == 0.15  # historical feedback from Event Intelligence
     assert "history:lock_guest_count" in constraints
 
@@ -181,7 +182,7 @@ def test_finance_numbers_are_deterministic(client):
     model = run.result["finance"]["model"]
     assert model["total_cost_usd"] == 16100.0  # (1,800 + 150×58 + 1,500 + 600 + 900 + 500) × 1.15
     assert model["upfront_cash_usd"] == 4250.0  # 0.3 × (1,800 + 8,700) + 600 marketing + 500 insurance
-    assert run.result["finance"]["position"]["available_planning_budget_usd"] == 9938.0
+    assert run.result["finance"]["position"]["available_planning_budget_usd"] == 34640.0  # $62,000 reserve − 3 × $9,120
     assert model["break_even_attendance"] == 6
     assert model["scenarios"]["base"]["net_usd"] == 30742.5
 
@@ -216,7 +217,9 @@ def test_allow_lists_are_narrow_and_distinct():
     finance = set(AGENTS_BY_NAME[AgentName.FINANCIAL_ANALYSIS].allowed_tools)
     donations = set(AGENTS_BY_NAME[AgentName.DONATIONS_COMPLIANCE].allowed_tools)
     outreach = set(AGENTS_BY_NAME[AgentName.PARTNERSHIPS_OUTREACH].allowed_tools)
-    assert not finance & donations and "read_donations" not in outreach and "read_financial_records" not in outreach
+    # The only shared tool is the read-only Foundation Knowledge Base, which gives each agent only its own sections.
+    assert finance & donations == {"read_foundation_knowledge"}
+    assert "read_donations" not in outreach and "read_financial_records" not in outreach
     for spec in AGENT_SPECS:
         assert not set(spec.allowed_tools) & set(PROHIBITED_ACTIONS)
         assert not any("send" in t or "email" in t or "delegate" in t for t in spec.allowed_tools), spec.name

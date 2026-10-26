@@ -19,6 +19,7 @@ Finances, donors, and board members in the demo workspace are synthetic. No real
 | App walkthrough screenshots (sign-in, dashboard with butterflies, every workspace, member restrictions) | `../screenshots/walkthrough-01-login.jpg` … `walkthrough-16-member-donations-restricted.jpg` |
 | Integration audit: pages, errors, restrictions, tests | [report/integration_audit.md](report/integration_audit.md) |
 | **Answer quality before and after** the answer-first fix (runs #47 vs #51, #50 vs #53): direct answers, live research by default, donation answers that list the gifts | [report/answer_quality.md](report/answer_quality.md) |
+| **Foundation Knowledge Base**: tests A–F (18 tests), live runs #54–#60 ($0.348) with and without the knowledge base, the token cost of the context (+11.8% input, +$0.0077 per planning run), two problems the live runs exposed and their fixes, and the remaining gaps | [report/knowledge_base.md](report/knowledge_base.md), walkthrough [../knowledge_base_workflow.md](../knowledge_base_workflow.md) |
 | The working interface, task by task: 10 board-member acceptance tests through the UI (including a full event plan, run #46) and 33 free controls clicked on every page | [report/ui_acceptance_tests.md](report/ui_acceptance_tests.md), screenshots `../screenshots/app-*.jpg` |
 
 ## 2. The Boss Agent (Orchestrator) coordinating real specialists

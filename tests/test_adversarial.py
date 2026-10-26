@@ -149,7 +149,7 @@ def test_B_asking_to_email_100_organizations_sends_nothing(client):
     assert not [t.tool_name for t in tools if re.search(r"send|email|mail|message|contact|publish", t.tool_name)]
     # Drafts only. lookup_inquiry_details only READS official pages for a public inquiry address; it cannot send anything.
     assert set(AGENTS_BY_NAME[AgentName.PARTNERSHIPS_OUTREACH].allowed_tools) == {"read_saved_findings", "lookup_inquiry_details",
-                                                                                 "create_outreach_draft"}
+                                                                                 "create_outreach_draft", "read_foundation_knowledge"}
     # Even a direct call cannot reach a send capability: it does not exist and cannot be registered.
     ctx = safety_ctx(client)
     with pytest.raises(ProhibitedActionError):

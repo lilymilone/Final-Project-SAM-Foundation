@@ -248,7 +248,7 @@ def test_history_cannot_override_finance(client):
     assert [c["value"] for c in limits] == [18000] and limits[0]["source_agent"] == "financial_analysis"
     assert any(c["name"] == "history:max_total_usd" for c in rev.payload["constraints"])  # history kept, but namespaced
     assert run.result["finance"]["model"]["total_cost_usd"] <= 18000
-    assert run.result["finance"]["position"]["available_planning_budget_usd"] == 9938.0
+    assert run.result["finance"]["position"]["available_planning_budget_usd"] == 34640.0
 
 
 def test_dollar_figures_at_sentence_end_are_read_correctly():

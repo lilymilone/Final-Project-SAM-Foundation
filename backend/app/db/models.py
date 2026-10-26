@@ -801,3 +801,33 @@ class AuditLog(Base):
     target: Mapped[str] = mapped_column(String(200), default="")
     detail: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = _created()
+
+
+class KnowledgeEntry(Base):
+    """One fact in the Foundation Knowledge Base: who the foundation is, its signature events, vendors, relationships,
+    community, board, priorities, finance guidelines, and communication preferences. Every fact keeps its source,
+    contributor, dates, and verification status. Real entries live only in the local database; the repository ships
+    a blank template and a few labeled samples (services/knowledge.py)."""
+
+    __tablename__ = "knowledge_entries"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"), index=True)
+    section: Mapped[str] = mapped_column(String(40), index=True)
+    title: Mapped[str] = mapped_column(String(200))
+    body: Mapped[str] = mapped_column(Text, default="")  # short narrative
+    details: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)  # the section's structured fields
+    aliases: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)  # other names, used to recognize an organization or vendor
+    historical_event_id: Mapped[int | None] = mapped_column(ForeignKey("historical_events.id", ondelete="SET NULL"), nullable=True)
+    source: Mapped[str] = mapped_column(String(300), default="")
+    source_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    contributor: Mapped[str] = mapped_column(String(120), default="")
+    verification: Mapped[str] = mapped_column(String(30), default="needs_confirmation")  # verified|board_reported|estimate|needs_confirmation|demo
+    verified_by: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    share_externally: Mapped[bool] = mapped_column(Boolean, default=False)  # may appear in an outreach draft
+    status: Mapped[str] = mapped_column(String(20), default="active")  # active | removed
+    removed_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
+    recorded_at: Mapped[datetime] = _created()
+    updated_at: Mapped[datetime] = _created()
+    updated_by: Mapped[str] = mapped_column(String(120), default="")

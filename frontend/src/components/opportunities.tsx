@@ -150,8 +150,15 @@ function OpportunityCard({ o, categories, onChange }: { o: Opportunity; categori
             <span className="text-xs capitalize text-muted">{o.category}{o.geography ? ` · ${o.geography}` : ""}</span>
             {o.board_category && <span className="rounded-full bg-white px-2 py-0.5 text-[0.7rem] font-semibold text-plum ring-1 ring-lavender/40">{o.board_category}</span>}
             {o.is_synthetic && <DemoBadge label="Synthetic" />}
+            {o.known_relationship && (
+              <Link to="/settings/knowledge" title={o.known_relationship.summary}
+                className="rounded-full bg-royal px-2 py-0.5 text-[0.7rem] font-semibold text-white hover:bg-plum">
+                Known to the foundation · {o.known_relationship.relationship_type}
+              </Link>
+            )}
           </div>
           <p className="font-display text-xl font-semibold text-plum">{o.name}</p>
+          {o.known_relationship && <p className="mt-0.5 text-xs text-royal">{o.known_relationship.summary}</p>}
           <p className="mt-1 line-clamp-2 text-sm text-ink/85">{o.purpose || o.summary || "Purpose not stated on the source."}</p>
         </div>
         {can("run_agents") && (

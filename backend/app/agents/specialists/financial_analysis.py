@@ -23,7 +23,8 @@ import re
 
 from ...safety.policy import wrap_untrusted
 from ...services import documents as docs
-from ..base import BaseAgent
+from ...services.knowledge import classify_financial_sources
+from ..base import KNOWLEDGE_RULES, BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding, SourceRecord
 from ..outputs import ExtractedFigures, FinanceNarrative, FinancialReview
 from ..registry import FINANCE_EXTRACT, FINANCE_NARRATIVE
@@ -36,6 +37,15 @@ INSTRUCTIONS = """Explain the computed financial results to a volunteer board.
 - If inputs are missing, say exactly which ones and what the board must provide. Never fill gaps with guesses.
 - conditions: what must be true to proceed (e.g. sponsorship commitments before deposits).
 - questions_for_board: decisions only the board can make."""
+
+
+SOURCES_INSTRUCTIONS = """Which financial information supports what ("data_sources"):
+- Keep four kinds apart and say which one supports each conclusion: (1) synthetic demonstration data, (2) verified historical
+  information, (3) approximate board-provided estimates, (4) current authorized budgets.
+- If data_sources.ledger.kind is "demo", say plainly that balances and affordability come from practice (demo) books, not the
+  foundation's real accounts.
+- Never infer current available funds from historical event costs or estimates. A past event's cost may be used only to size
+  this event (e.g. "the board reports a past gala cost about $X")."""
 
 
 REVIEW_INSTRUCTIONS = """Explain the foundation's computed financial analysis to a volunteer board in plain English.
@@ -82,31 +92,40 @@ def _position_findings(position: dict) -> list[Finding]:
 class FinancialAnalysisAgent(BaseAgent):
     name = AgentName.FINANCIAL_ANALYSIS
 
-    def _review(self, task: AgentTask, ctx: RunContext, position: dict, sources: list, assumptions: list) -> AgentResult:
+    def _review(self, task: AgentTask, ctx: RunContext, position: dict, sources: list, assumptions: list, records: list) -> AgentResult:
         """Plain-English financial review. Code computes; the model explains; code checks every dollar it quotes."""
         analysis = self.tool(ctx, "compute_financial_analysis").data
         payload = {k: analysis[k] for k in ("basis", "metrics", "income_by_category", "expense_by_category", "expense_ratios",
                                             "restrictions", "variances", "statements", "scenarios", "warnings", "missing", "pending_review")}
         payload["metrics"] = [{k: m[k] for k in ("label", "display", "status", "basis")} for m in payload["metrics"]]
+        pack = self.knowledge(ctx, task, f"financial guidelines reserve restricted budget priorities {task.objective}")
+        payload["data_sources"] = data_sources = classify_financial_sources(records, (pack or {}).get("facts", []))
+        if pack:
+            payload["foundation_knowledge"] = self.knowledge_in(pack)
         allowed = collect_amounts(payload)
-        review = self.think(ctx, FINANCE_NARRATIVE, REVIEW_INSTRUCTIONS, payload, FinancialReview)
+        instructions = f"{REVIEW_INSTRUCTIONS}\n\n{SOURCES_INSTRUCTIONS}" + (f"\n\n{KNOWLEDGE_RULES}" if pack else "")
+        review = self.think(ctx, FINANCE_NARRATIVE, instructions, payload, FinancialReview)
         unsupported = sorted({a for a in dollar_amounts(" ".join(map(str, review.model_dump().values()))) if not is_supported(a, allowed)})
         if unsupported:  # one bounded correction, then flag whatever remains
             payload["verification_feedback"] = ("These dollar figures are not in the data: " + ", ".join(f"${a:,.0f}" for a in unsupported)
                                                 + ". Remove them or quote figures from the data.")
-            review = self.think(ctx, FINANCE_NARRATIVE, REVIEW_INSTRUCTIONS, payload, FinancialReview)
+            review = self.think(ctx, FINANCE_NARRATIVE, instructions, payload, FinancialReview)
             unsupported = sorted({a for a in dollar_amounts(" ".join(map(str, review.model_dump().values()))) if not is_supported(a, allowed)})
         warnings = review.uncertainties + [w["title"] + ": " + w["detail"] for w in analysis["warnings"]]
         if unsupported:
             warnings.append("Unverified figures in the explanation: " + ", ".join(f"${a:,.0f}" for a in unsupported))
         findings = _position_findings(position) + [
             Finding(claim=f"{m['label']}: {m['display']}. {m['basis']}", kind="computed", source_ids=["ledger"])
-            for m in analysis["metrics"] if m["status"] != "not_documented"]
+            for m in analysis["metrics"] if m["status"] != "not_documented"] + [
+            Finding(claim=data_sources["ledger"]["statement"], kind="computed", source_ids=["ledger"])]
+        if pack:
+            sources = sources + pack["_sources"]
         return self.result(task, "completed", review.summary, findings=findings, sources=sources,
                            assumptions=assumptions + ["Every figure is computed in code; the explanation is checked against them."],
                            warnings=warnings, next_steps=review.questions_for_board,
                            data={"position": position, "analysis": analysis, "review": review.model_dump(),
-                                 "unverified_figures": unsupported})
+                                 "unverified_figures": unsupported, "data_sources": data_sources,
+                                 **self.knowledge_record(pack, review.knowledge_used)})
 
     def _extract(self, task: AgentTask, ctx: RunContext) -> AgentResult:
         """Organize figures from an uploaded PDF into records waiting for board review. Code checks every one."""
@@ -208,17 +227,20 @@ class FinancialAnalysisAgent(BaseAgent):
                                data={"position": position, "considerations": considerations})
         choice = task.inputs.get("top_choice")
         if not choice:  # a financial review without an event
-            return self._review(task, ctx, position, sources, assumptions)
+            return self._review(task, ctx, position, sources, assumptions, records.data or [])
 
         model = self.tool(ctx, "recompute_event_model", assumptions=choice["model"]["assumptions"],
                           max_budget_usd=task.inputs.get("budget_limit_usd"), target_usd=task.inputs.get("fundraising_goal_usd")).data
         aff = self.tool(ctx, "check_event_affordability", model=model, position=position,
                         min_contingency_pct=task.inputs.get("min_contingency_pct")).data
-        narrative = self.think(ctx, FINANCE_NARRATIVE, INSTRUCTIONS, {
+        pack = self.knowledge(ctx, task, f"budget reserve restricted cost guideline {choice['venue']['name']} {task.objective}")
+        data_sources = classify_financial_sources(records.data, (pack or {}).get("facts", []), task.inputs.get("budget_limit_usd"))
+        narrative = self.think(ctx, FINANCE_NARRATIVE, f"{INSTRUCTIONS}\n\n{SOURCES_INSTRUCTIONS}" + (f"\n\n{KNOWLEDGE_RULES}" if pack else ""), {
             "option": {"venue": choice["venue"]["name"], "format": choice["event_format"], "pricing_status": choice["venue"].get("pricing_status")},
             "model": {k: model[k] for k in ("lines", "subtotal_usd", "contingency_pct", "contingency_usd", "total_cost_usd", "upfront_cash_usd",
                                             "scenarios", "break_even_attendance", "break_even_note", "missing_inputs", "scenario_definitions")},
-            "position": position, "affordability": aff,
+            "position": position, "affordability": aff, "data_sources": data_sources,
+            "foundation_knowledge": self.knowledge_in(pack),
         }, FinanceNarrative)
 
         findings = _position_findings(position) + [
@@ -226,6 +248,9 @@ class FinancialAnalysisAgent(BaseAgent):
                     kind="computed", source_ids=[f"{choice['venue']['source_id']}:website"]),
         ] + [Finding(claim=f"{'PASS' if c['passed'] else 'FAIL' if c['passed'] is False else 'UNKNOWN'}: {c['name']}. {c['detail']}",
                      kind="computed", source_ids=["ledger"]) for c in aff["checks"]]
+        findings.append(Finding(claim=data_sources["ledger"]["statement"], kind="computed", source_ids=["ledger"]))
+        if pack:
+            sources = sources + pack["_sources"]
         model_assumptions = sorted({a["basis"] for a in model["assumptions"].values() if a["kind"] in ("placeholder", "hypothetical", "missing")})
         warnings = narrative.risks + aff["warnings"] + ([f"Missing inputs: {', '.join(model['missing_inputs'])}."] if model["missing_inputs"] else [])
         return self.result(
@@ -234,5 +259,6 @@ class FinancialAnalysisAgent(BaseAgent):
             next_steps=narrative.conditions + narrative.questions_for_board,
             data={"position": position, "model": model, "option_id": choice["option_id"], "venue": choice["venue"]["name"],
                   "event_format": choice["event_format"], "affordability": aff, "verdict": aff["verdict"],
-                  "conflicts": aff["conflicts"], "narrative": narrative.model_dump()},
+                  "conflicts": aff["conflicts"], "narrative": narrative.model_dump(), "data_sources": data_sources,
+                  **self.knowledge_record(pack, narrative.knowledge_used)},
         )

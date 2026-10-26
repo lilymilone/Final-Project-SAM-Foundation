@@ -36,14 +36,14 @@ def test_dashboard_separates_revenue_cash_and_restricted_funds(client):
     login(client)
     body = client.get("/api/finance/dashboard").json()
     m = {x["key"]: x for x in body["metrics"]}
-    assert body["is_demo"] and m["revenue"]["value"] == 17400 and m["expenses"]["value"] == 19270 and m["net"]["value"] == -1870
-    assert "not cash" in m["revenue"]["explanation"] and m["cash"]["value"] == 26500  # revenue is never presented as cash
-    assert m["restricted"]["value"] == 5000 and "cannot pay for events" in m["restricted"]["explanation"]
-    assert m["capacity"]["value"] == 9938 and "not approval to spend" in m["capacity"]["explanation"]
-    assert m["program_funds"]["value"] == 15900 and m["event_spending"]["status"] == "partial"
+    assert body["is_demo"] and m["revenue"]["value"] == 44500 and m["expenses"]["value"] == 45600 and m["net"]["value"] == -1100
+    assert "not cash" in m["revenue"]["explanation"] and m["cash"]["value"] == 84000  # revenue is never presented as cash
+    assert m["restricted"]["value"] == 12000 and "cannot pay for events" in m["restricted"]["explanation"]
+    assert m["capacity"]["value"] == 34640 and "not approval to spend" in m["capacity"]["explanation"]
+    assert m["program_funds"]["value"] == 37900 and m["event_spending"]["status"] == "partial"
     assert {w["title"] for w in body["warnings"]} >= {"Months with a deficit", "Restricted funds are excluded from spending capacity"}
     ops = next(r for v in body["variances"] if v["kind"] == "expense" for r in v["rows"] if r["category"] == "Operations")
-    assert (ops["variance_usd"], ops["direction"]) == (370, "unfavorable")
+    assert (ops["variance_usd"], ops["direction"]) == (200, "unfavorable")  # $7,700 actual vs $7,500 budget
     assert body["scenarios"]["rows"][0]["scenario"] == "Recent averages" and body["gifts_by_month"]
     assert all(m[k]["explanation"] and m[k]["basis"] is not None for k in m)
 
@@ -237,7 +237,7 @@ def test_financial_review_explains_computed_figures_and_checks_every_dollar(clie
     fin = next(s for s in steps if s.to_agent == "financial_analysis")
     assert calls["n"] == 2  # one bounded correction
     assert "$75,000" not in str(fin.result["data"]["review"]) and fin.result["data"]["unverified_figures"] == []
-    assert fin.result["data"]["analysis"]["metrics"][0]["value"] == 17400
+    assert fin.result["data"]["analysis"]["metrics"][0]["value"] == 44500
     with client.app.state.db.session() as s:
         models = {u.task: u.selected_model for u in s.scalars(select(ModelUsage).where(ModelUsage.run_id == run.id))}
     assert models["Explain computed financial results"] == "gpt-6.1-sol"

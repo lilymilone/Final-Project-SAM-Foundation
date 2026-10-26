@@ -64,8 +64,13 @@ def list_opportunities(status: Literal["new", "saved", "dismissed", "all", "acti
         if d.contact:
             contacts[d.finding_id] = {k: d.contact.get(k) for k in ("email", "contact_page_url", "source_url", "status", "display", "verified_at")}
             contacts[d.finding_id]["draft_id"] = d.id
+    # Checked against the relationship directory as it is now, so a relationship recorded later shows on older cards too.
+    from ...services import knowledge as kb
+    known = kb.active_entries(db, cu.organization_id)
     for c in cards:
         c["contact"] = contacts.get(c["id"])
+        hit = kb.match_relationship(known, c.get("name") or c.get("title"), c.get("website") or c.get("source_url"))
+        c["known_relationship"] = kb.relationship_note(hit) if hit else None
     if status == "active":
         cards = [c for c in cards if c["status"] != "dismissed"]
     elif status != "all":

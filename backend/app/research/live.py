@@ -66,12 +66,19 @@ def live_web_search(ctx, query: str, purpose: str) -> ToolResult:
                       warnings=[hits.search_notes] if hits.search_notes else [])
 
 
-def live_venue_search(ctx, city: str, attendance: int, formats: list) -> ToolResult:
+def live_venue_search(ctx, city: str, attendance: int, formats: list, prior_venues: list | None = None,
+                      event_type: str | None = None) -> ToolResult:
     fmt_text = " or ".join("seated dinner" if f == "seated_dinner" else "standing reception" for f in formats)
-    query = f"Private event venues in {city} for a {attendance}-guest nonprofit fundraising gala ({fmt_text})."
+    kind = (event_type or "gala").strip()
+    gala = any(t in kind for t in ("gala", "dinner", "benefit", "reception", "auction", "brunch"))
+    query = (f"Private event venues in {city} for a {attendance}-guest nonprofit fundraising gala ({fmt_text})." if gala else
+             f"Venues or studios in {city} that host a private {kind} for about {attendance} people, for a nonprofit fundraiser.")
+    if prior_venues:  # venues the foundation has used before are checked first (names only; nothing private is sent)
+        query += f" Include these venues if they can host it: {', '.join(prior_venues)}."
     found: VenueHits = _search(
         ctx, "fundraising_events", VENUE_SEARCH, query,
         f"Find up to 5 real event venues in {city} that can host about {attendance} guests as a {fmt_text}. "
+        + ("" if gala else f"The event is a {kind}, not a dinner: look for places that host one (formats: use reception). ") +
         "website_url = the venue's official site; source_url = the page where you found the details (may be the same). "
         "Report capacity, rental price, per-guest catering, and food-and-beverage minimums ONLY if a source states them, "
         "with the exact wording in capacity_quote / pricing_quote; otherwise null. Never estimate. "

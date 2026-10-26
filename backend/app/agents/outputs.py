@@ -135,6 +135,7 @@ class LessonsOutput(BaseModel):
     uncertainties: list[str]
     # None-default fields are still required in the strict schema sent to the model (None defaults are stripped).
     community_insights: list[CommunityInsight] | None = None
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
 
     @field_validator("recommended_contingency_pct")
     @classmethod
@@ -173,6 +174,8 @@ class EventStrategyOutput(BaseModel):
     risks: list[str]
     uncertainties: list[str]
     mission_contribution: MissionContribution | None = None
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
+    prior_vendors_considered: list[str] | None = None  # recorded past venues/vendors and how they compare to the new options
 
     @field_validator("shortlist")
     @classmethod
@@ -207,6 +210,7 @@ class FinancialReview(BaseModel):
     scenario_comparison: str
     uncertainties: list[str]
     questions_for_board: list[str]
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
 
 
 class ExtractedFigures(BaseModel):
@@ -227,6 +231,7 @@ class FinanceNarrative(BaseModel):
     conditions: list[str]
     risks: list[str]
     questions_for_board: list[str]
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
 
 
 # --- Donations & Compliance -------------------------------------------------------
@@ -268,6 +273,7 @@ class DonationReview(BaseModel):
     incomplete_records: list[str]
     campaign_notes: list[str]
     reporting_questions: list[ReportingQuestion]
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
 
 
 # --- Mission Discovery ------------------------------------------------------------
@@ -341,6 +347,7 @@ class MissionAnalysis(BaseModel):
     summary: str
     opportunities: list[OpportunityAnalysis]
     gaps: list[str]
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
 
 
 class SearchHit(BaseModel):
@@ -400,6 +407,7 @@ class DraftOut(BaseModel):
     next_step: str
     personalization_basis: str
     source_ids: list[str]
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)
 
 
 class DraftsOutput(BaseModel):
@@ -427,3 +435,4 @@ class BoardRecommendation(BaseModel):
     lessons_applied: list[str]
     caveats: list[str]
     mission_impact_considerations: list[str] | None = None  # optional; never overrides financial constraints
+    knowledge_used: list[str] | None = None  # Foundation Knowledge Base ids relied on (code keeps only ids it supplied)

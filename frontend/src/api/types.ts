@@ -319,6 +319,11 @@ export type RunResult = {
     budget?: { total_usd: number; upfront_cash_usd: number; line_items: { name: string; amount_usd: number; basis: string }[]; contingency_pct: number; contingency_usd: number; assumptions: string[] };
     model?: { lines: { category: string; amount_usd: number; basis: string }[]; contingency_pct: number; contingency_usd: number; total_cost_usd: number; upfront_cash_usd: number };
   } | null;
+  foundation_context?: {
+    facts: { id: string; title: string; section: string; verification: string; sample?: boolean }[];
+    considered: number; est_tokens: number; supplied_to: Record<string, string[]>; used_by: Record<string, string[]>; switched_off: boolean;
+  };
+  review_by?: { reviewers: { name: string; role: string; basis: string; sample: boolean }[]; note: string } | null;
   // A stopped workflow keeps only what it finished (never a recommendation).
   stopped?: boolean; stop_reason?: string; verified_partial_steps?: number; missing?: string[];
   completed_steps?: { step_key: string; agent: string; status: string; summary: string; warnings: string[] }[];
@@ -372,6 +377,8 @@ export type Opportunity = {
   uncertainty: string | null; is_synthetic: boolean; status: "new" | "saved" | "dismissed"; saved: boolean; board_category: string | null;
   research_requested: boolean; last_checked: string | null; created_at: string | null; notes?: string | null;
   selection_reason?: string; reason?: string;
+  known_relationship?: { entry_id: string; organization: string; relationship_type: string; summary: string; verification: string;
+                         formal_partnership: boolean } | null;
   contact?: { email: string | null; contact_page_url: string | null; source_url: string | null; status: string | null; display: string | null;
               verified_at: string | null; draft_id: number } | null;
 };
@@ -776,3 +783,37 @@ export type HistoryComparison = {
     other_differences: number; budget_numbers_changed: boolean };
   method_note: string;
 };
+
+// Foundation Knowledge Base (Settings → Foundation Knowledge Base)
+export type KnowledgeVerification = "verified" | "board_reported" | "estimate" | "needs_confirmation" | "demo";
+
+export type KnowledgeEntry = {
+  id: number; code: string; section: string; section_label: string; title: string; body: string;
+  details: Record<string, string | string[]>; aliases: string[]; historical_event_id: number | null; historical_event_name: string | null;
+  source: string; source_url: string | null; contributor: string; verification: KnowledgeVerification; verification_label: string;
+  verified_by: string | null; verified_at: string | null; share_externally: boolean; status: "active" | "removed";
+  removed_reason: string | null; is_demo: boolean; recorded_at: string | null; updated_at: string | null; updated_by: string;
+  used_by_agents?: boolean;
+};
+
+export type KnowledgeSection = { key: string; label: string; hint: string; fields: { key: string; label: string }[] };
+
+export type FinancialSources = {
+  ledger: { kind: "demo" | "mixed" | "real" | "none"; demo_rows: number; verified_rows: number; other_rows: number; statement: string };
+  verified_history: string[]; board_estimates: string[]; authorized_budgets: string[]; rule: string;
+};
+
+export type KnowledgeBase = {
+  sections: KnowledgeSection[]; verification_labels: Record<string, string>; datasets: Record<string, string>;
+  entries: KnowledgeEntry[]; counts: Record<string, number>; gaps: { section: string; detail: string; entry_id?: number }[];
+  financial_sources: FinancialSources | null; legacy_events: { id: number; name: string }[]; agents: string[];
+  can_edit: boolean; can_verify: boolean;
+};
+
+export type KnowledgeFact = {
+  id: string; section: string; section_key: string; title: string; fact: string; verification: KnowledgeVerification; source: string;
+  updated: string | null; sample: boolean; why?: string;
+};
+
+export type KnowledgePreview = { facts: KnowledgeFact[]; agent: string; considered: number; returned: number; sections: string[];
+  chars: number; est_tokens: number; query_terms: string[] };

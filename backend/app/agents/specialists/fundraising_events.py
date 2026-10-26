@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from ...mission import EVENT_CONSIDERATIONS, PHILOSOPHY
 from ...safety.policy import wrap_untrusted
-from ..base import BaseAgent
+from ..base import KNOWLEDGE_RULES, BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding, SourceRecord
 from ..outputs import EventStrategyOutput
 from ..registry import VENUE_STRATEGY
@@ -45,6 +45,13 @@ INSTRUCTIONS = """Rank the venue options and write a fundraising strategy for th
   community_lessons_applied: which "community_insights" from past events you used, naming the event; [] if none were given.
   Never invent feedback or claim the event will create belonging; describe what the plan makes possible.
   open_questions: what to ask the venue or board to make the event more welcoming."""
+
+KNOWLEDGE_INSTRUCTIONS = """- Make the plan specific to this foundation with "foundation_knowledge": say which of its own past events this
+  resembles and what those records imply for budget, catering, entertainment, extras such as raffles, and audience. A
+  close-knit hometown community event and a larger city gala call for different plans; follow what the facts say about who comes.
+- prior_vendors_considered: one line per recorded past venue or vendor that fits this event: whether it is among the options,
+  and what to ask it (availability, current pricing) before choosing an entirely new vendor. [] if none is recorded.
+  Never say a past vendor is available, contracted, or priced unless the data says so."""
 
 GALA_TYPES = ("gala", "dinner", "benefit")
 ALL_FORMATS = ["seated_dinner", "reception"]
@@ -143,12 +150,18 @@ class FundraisingEventsAgent(BaseAgent):
         lessons = task.inputs.get("lessons")
         if lessons is None:
             lessons = self.tool(ctx, "get_historical_lessons").data
+        pack = self.knowledge(ctx, task, " ".join(str(x) for x in (event.get("name"), event_type, city, event.get("instructions"),
+                                                                    "venue catering entertainment audience budget") if x))
+        prior_venues = [f["title"] for f in (pack or {}).get("facts", [])
+                        if f["section"] == "Vendors and venues" and not f.get("sample")
+                        and any(w in f["fact"].lower() for w in ("venue", "studio", "park", "hall"))]
 
         warnings: list[str] = []
         sources: list[SourceRecord] = []
         venues = task.inputs.get("candidates")
         if venues is None:  # research once; revisions reuse these candidates
-            found = self.tool(ctx, "search_venues", city=city, attendance=attendance, formats=ALL_FORMATS)
+            found = self.tool(ctx, "search_venues", city=city, attendance=attendance, formats=ALL_FORMATS, prior_venues=prior_venues,
+                              event_type=event_type)
             venues = found.data or []
             sources += found.sources
             warnings += found.warnings
@@ -187,7 +200,8 @@ class FundraisingEventsAgent(BaseAgent):
             "catering_minimum_risk": o["model"].get("catering_minimum_risk"), "missing_inputs": o["model"]["missing_inputs"],
             "assumption_kinds": {k: a["kind"] for k, a in o["model"]["assumptions"].items()},
         } for o in options]
-        out = self.think(ctx, VENUE_STRATEGY, INSTRUCTIONS, {
+        instructions = f"{INSTRUCTIONS}\n{KNOWLEDGE_INSTRUCTIONS}\n\n{KNOWLEDGE_RULES}" if pack else INSTRUCTIONS
+        out = self.think(ctx, VENUE_STRATEGY, instructions, {
             "event": {k: event.get(k) for k in ("name", "event_type", "city", "attendance", "target_date", "date_end", "ticket_price_usd",
                                                 "fundraising_goal_usd", "budget_limit_usd", "instructions")},
             "options": prompt_options, "lessons": lessons,
@@ -197,6 +211,7 @@ class FundraisingEventsAgent(BaseAgent):
             "constraints": [c.model_dump(mode="json") for c in task.constraints],
             "previous_shortlist": task.inputs.get("previous_shortlist"),
             "finance_feedback": task.inputs.get("finance_feedback"),
+            "foundation_knowledge": self.knowledge_in(pack),
         }, EventStrategyOutput)
 
         by_id = {o["option_id"]: o for o in options}
@@ -253,6 +268,8 @@ class FundraisingEventsAgent(BaseAgent):
                                     kind="recommendation", source_ids=[f"{s['venue']['source_id']}:website"]))
         assumptions = sorted({f"{a['basis']}" for s in shortlist for k, a in s["model"]["assumptions"].items()
                               if a["kind"] in ("placeholder", "hypothetical")})
+        if pack:
+            sources += pack["_sources"]
         return self.result(
             task, "completed", out.summary, findings=findings, sources=dedupe_sources(sources), assumptions=assumptions,
             warnings=warnings + out.uncertainties + out.risks,
@@ -264,5 +281,6 @@ class FundraisingEventsAgent(BaseAgent):
                   "shortlist": shortlist, "top_choice": top,
                   "fundraising_strategy": out.fundraising_strategy, "logistics_notes": out.logistics_notes,
                   "changes_from_previous": out.changes_from_previous, "research_mode": ctx.research_mode,
-                  "mission_contribution": contribution},
+                  "mission_contribution": contribution, "prior_vendors_considered": (out.prior_vendors_considered or []) if pack else [],
+                  **self.knowledge_record(pack, out.knowledge_used)},
         )

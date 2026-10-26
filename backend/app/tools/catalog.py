@@ -68,6 +68,7 @@ TOOL_SCOPES = {
     **{t: "opportunities" for t in ("read_opportunities", "select_opportunities")},
     **{t: "event_plan" for t in ("read_event_plan", "create_event_plan", "save_venue_candidate", "compute_event_model")},
     "create_outreach_draft": "drafts",
+    "read_foundation_knowledge": "foundation_knowledge",
 }
 
 
@@ -95,6 +96,47 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
 
     def add(name, description, kind, func, permission=None, sensitive=False):
         reg.register(ToolSpec(name, description, kind, func, permission, sensitive, data_scope=TOOL_SCOPES.get(name, "general")))
+
+    # ── Shared: the Foundation Knowledge Base ─────────────────────────────────────────
+
+    def read_foundation_knowledge(agent: str, query: str = "", include_ids: list | None = None, limit: int = 6,
+                                  organizations: list | None = None) -> ToolResult:
+        """The few recorded facts about the foundation that bear on one agent's task (services/knowledge.py). With
+        organizations=[{name, website}], it instead says which of them the relationship directory already records."""
+        if organizations is not None:
+            from ..services import knowledge as kb
+            if not getattr(ctx, "use_knowledge", True):
+                return ToolResult(tool="read_foundation_knowledge", ok=True, data={"matches": {}}, summary="Relationship check switched off")
+            with db.session() as s:
+                entries = kb.active_entries(s, org)
+                matches = {}
+                for o in organizations[:12]:
+                    sections = ("vendors_venues", "relationships") if o.get("kind") == "venue" else ("relationships", "vendors_venues")
+                    hit = kb.match_relationship(entries, o.get("name"), o.get("website"), sections=sections)
+                    if hit is not None:
+                        matches[o.get("name")] = kb.relationship_note(hit)
+            return ToolResult(tool="read_foundation_knowledge", ok=True, data={"matches": matches},
+                              summary=f"Relationship directory: {len(matches)} of {len(organizations[:12])} organization(s) already known"
+                                      + (f" ({', '.join(matches)})" if matches else ""))
+        if not getattr(ctx, "use_knowledge", True):
+            return ToolResult(tool="read_foundation_knowledge", ok=True, data={"facts": [], "returned": 0, "considered": 0, "chars": 0,
+                                                                              "est_tokens": 0, "agent": agent, "switched_off": True},
+                              summary="Foundation knowledge switched off for this run (comparison run)")
+        from ..services import knowledge as kb
+        ids = [int(str(i).removeprefix("KB-")) for i in include_ids or [] if str(i).removeprefix("KB-").isdigit()]
+        with db.session() as s:
+            pack = kb.retrieve(s, org, agent=agent, query=query, include_ids=ids, limit=max(1, min(int(limit), 8)))
+        for f in pack["facts"]:  # board-entered text is screened like any other stored text before a model reads it
+            f["fact"], _ = _screen(f["fact"], f"knowledge {f['id']}", agent)
+        sources = [SourceRecord(id=f["id"], title=f"{f['title']} (Foundation Knowledge Base)", verification="internal",
+                                note=f"{f['section']}; {f['verification'].replace('_', ' ')}; source: {f['source']}") for f in pack["facts"]]
+        titles = "; ".join(f"{f['id']} {f['title']}" for f in pack["facts"][:4])
+        return ToolResult(tool="read_foundation_knowledge", ok=True, data=pack, sources=sources,
+                          summary=f"{pack['returned']} of {pack['considered']} facts for this task (~{pack['est_tokens']} tokens)"
+                                  + (f": {titles}" if titles else ""))
+
+    add("read_foundation_knowledge", "Task-relevant facts from the Foundation Knowledge Base, with source and verification status.",
+        ToolKind.READ, read_foundation_knowledge)
 
     # ── Event Intelligence ─────────────────────────────────────────────────────────
 
@@ -274,7 +316,7 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             s.flush()
             return ToolResult(tool="create_event_plan", ok=True, summary=f"event plan #{p.id}", data={"id": p.id})
 
-    def search_venues(city: str, attendance: int, formats: list) -> ToolResult:
+    def search_venues(city: str, attendance: int, formats: list, prior_venues: list | None = None, event_type: str | None = None) -> ToolResult:
         if synthetic:
             if not any(a in _norm_city(city) for a in NYC_ALIASES):
                 return ToolResult(tool="search_venues", ok=True, data=[], summary="no synthetic venues for this city",
@@ -304,7 +346,8 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
             return ToolResult(tool="search_venues", ok=True, data=out, summary=f"{len(out)} fixture venue(s) (server-side test)",
                               warnings=["Test fixture, not live web research."])
         from ..research.live import live_venue_search
-        return live_venue_search(ctx, city, attendance, formats)
+        return live_venue_search(ctx, city, attendance, formats, prior_venues=[str(v)[:80] for v in (prior_venues or [])][:3],
+                                 event_type=event_type)
 
     def save_venue_candidate(event_plan_id: int, venue: dict, event_format: str, budget_total_usd: float) -> ToolResult:
         with db.transaction() as s:
@@ -357,7 +400,7 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         with db.session() as s:
             rows = s.scalars(select(FinancialRecord).where(FinancialRecord.organization_id == org)).all()
         data = [{"period": r.period, "kind": r.kind, "category": r.category, "amount_usd": r.amount_usd, "is_demo": r.is_demo,
-                 "restriction": r.restriction, "purpose": r.purpose} for r in rows]
+                 "restriction": r.restriction, "purpose": r.purpose, "verification": r.verification} for r in rows]
         demo = any(r["is_demo"] for r in data)
         return ToolResult(tool="read_financial_records", ok=True, summary=f"{len(data)} ledger rows | contents redacted", data=data,
                           sources=[SourceRecord(id="ledger", title="Financial records (synthetic demo books)" if demo else "Financial records",
@@ -598,7 +641,9 @@ def build_tool_registry(ctx) -> ToolRegistry:  # ctx: RunContext (import avoided
         with db.session() as s:
             donors = s.scalars(select(Donation.donor_name).where(Donation.organization_id == org)).all()
             users = s.execute(select(User.first_name, User.last_name)).all()
-        return [d for d in donors if d] + [f"{a} {b}".strip() for a, b in users if b]
+            from ..services.knowledge import private_terms as board_terms
+            board = board_terms(s, org)  # board directory names and contacts
+        return [d for d in donors if d] + [f"{a} {b}".strip() for a, b in users if b] + board
 
     def search_web(query: str, purpose: str) -> ToolResult:
         clean, removed = scrub_outbound_query(query, private_terms())

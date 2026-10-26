@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from ...mission import REFLECTION_LENSES
 from ...services.legacy_import import FIGURE_LABELS, LIST_LABELS, TEXT_LABELS, validate_extraction
-from ..base import BaseAgent
+from ..base import KNOWLEDGE_RULES, BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Constraint, Finding
 from ..outputs import EventExtraction, LessonsOutput
 from ..registry import EVENT_EXTRACT, LESSONS
@@ -75,6 +75,9 @@ CHUNK = 1400
 
 
 INSTRUCTIONS = INSTRUCTIONS_TEMPLATE.replace("{lenses}", " ".join(REFLECTION_LENSES))
+KNOWLEDGE_INSTRUCTIONS = """- "foundation_knowledge" describes the foundation's signature events, vendors, and relationships as the board recorded
+  them. Use it to connect lessons to those events and vendors (say which), and list the ids you used in knowledge_used. Every
+  lesson must still cite event or reflection ids as its evidence; a knowledge fact alone is not evidence of an outcome."""
 LENS_LABELS = {"welcomed": "Welcome and inclusion", "connection": "Connection", "volunteers": "Volunteer appreciation",
                "community": "Sense of community", "accessibility": "Accessibility and inclusion", "improvement": "Improvements"}
 EVIDENCE_LABELS = {"board_observation": "Board observation (not a verified outcome)",
@@ -179,7 +182,11 @@ class EventIntelligenceAgent(BaseAgent):
         }
         if relevant:
             payload["relevant_events"] = [{"id": r["id"], "name": r["name"], "why_relevant": r["reasons"]} for r in relevant]
-        out = self.think(ctx, LESSONS, INSTRUCTIONS, payload, LessonsOutput)
+        pack = self.knowledge(ctx, task, f"{focus} " + " ".join(r["name"] for r in relevant) + " vendors lessons")
+        if pack:
+            payload["foundation_knowledge"] = self.knowledge_in(pack)
+        out = self.think(ctx, LESSONS, f"{INSTRUCTIONS}\n{KNOWLEDGE_INSTRUCTIONS}\n\n{KNOWLEDGE_RULES}" if pack else INSTRUCTIONS,
+                         payload, LessonsOutput)
 
         event_ids = {e["id"] for e in events.data}
         refl_ids = {r["id"] for r in reflections.data}
@@ -250,7 +257,7 @@ class EventIntelligenceAgent(BaseAgent):
             warnings=warnings + out.uncertainties,
             next_steps=["Review the lessons in Our Legacy: mark them reviewed, adopted, or dismissed."] +
                        (["Share these lessons with the Events agent."] if mode == "planning" else []),
-            data={"lessons": kept, "themes": themes, "disagreements": disagreements,
+            data={**self.knowledge_record(pack, out.knowledge_used), "lessons": kept, "themes": themes, "disagreements": disagreements,
                   "strengths": [l for l in kept if l["kind"] == "what_worked"],
                   "weaknesses": [l for l in kept if l["kind"] == "recurring_problem"],
                   "recommendations": [l for l in kept if l["kind"] == "recommendation"],

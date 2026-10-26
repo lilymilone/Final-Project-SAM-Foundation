@@ -321,7 +321,7 @@ def test_no_sending_and_no_spending_capability_exists(client):
     assert not [r.path for r in client.app.routes if re.search(r"send|deliver|dispatch|schedule|publish|pay|transfer|book|purchase|donate",
                                                                getattr(r, "path", ""))]
     assert set(AGENTS_BY_NAME[AgentName.PARTNERSHIPS_OUTREACH].allowed_tools) == {"read_saved_findings", "lookup_inquiry_details",
-                                                                                 "create_outreach_draft"}
+                                                                                 "create_outreach_draft", "read_foundation_knowledge"}
     run, _, _ = run_flow(client, GALA, intent="plan_event", plan_id=1)
     d = drafts_for(client, run.id)[0]
     for bad in ("sent", "approved", "scheduled"):

@@ -22,12 +22,12 @@ import re
 
 from ...mission import FOUNDATION, PHILOSOPHY
 from ...safety.policy import wrap_untrusted
-from ..base import BaseAgent
+from ..base import KNOWLEDGE_RULES, BaseAgent
 from ..contracts import AgentName, AgentResult, AgentTask, Finding
 from ..outputs import DRAFT_TYPES, DraftsOutput
 from ..registry import OUTREACH_DRAFTS, OUTREACH_PERSONALIZED
 from ..runtime import RunContext
-from ..verification import collect_amounts, outreach_violations
+from ..verification import acknowledges_relationship, collect_amounts, outreach_violations
 
 CONTACT_RULES = """Contact details: each target has a "contact" checked on the organization's official website. Write an email
 address only if it is contact.email, exactly. Never write any other email address, any phone number, or the name of a person.
@@ -36,7 +36,8 @@ If contact.email is null, write no address at all: the board will use the offici
 INSTRUCTIONS = f"""Write one outreach draft per target (use only target_id values from "targets").
 Fields:
 - draft_type: the target's suggested_type unless the target data clearly fits another of: {", ".join(DRAFT_TYPES)}.
-- subject; purpose (one sentence: why we are writing); foundation_background (2-3 sentences from "foundation" only);
+- subject; purpose (one sentence: why we are writing); foundation_background (2-3 sentences from "foundation" and the
+  shareable facts in "foundation_knowledge");
   opportunity (the specific opportunity, from the target data); next_step (one low-commitment ask, e.g. a short call);
   personalization_basis (which target facts you used); source_ids (the target's source_ids you relied on).
 - body: the complete, ready-to-review message, greeting to sign-off. Warm and professional, specific to the recipient,
@@ -63,9 +64,27 @@ VENUE_INSTRUCTIONS = """Write one short venue-inquiry draft per target (use only
 - source_ids: the target's source_ids. personalization_basis: which venue facts you used.
 - Use only facts in the data; do not invent anything about the venue. Never claim anything was sent, booked, or agreed.
 - Include: the venue name, a short introduction to the foundation, the proposed event concept, the estimated attendance,
-  questions about availability, capacity, pricing, catering, and any nonprofit accommodations, and a professional closing.
+  questions about availability, capacity, pricing, and any nonprofit accommodations (ask about catering only for a meal or
+  reception), and a professional closing.
+- Make each draft specific to its venue: mention at least one detail from that venue's own data (its neighborhood, format,
+  amenities, or published terms), so no two drafts read the same.
 - Sign off with placeholders like [Board member name] and [Phone]. No donor names, amounts, or private financial details.
 """ + CONTACT_RULES
+
+KNOWLEDGE_INSTRUCTIONS = """Describing the foundation ("foundation_knowledge"):
+- Introduce the foundation accurately from these facts (for example, that it was established in Sabrina's memory and
+  supports mental health awareness, eating disorder research, and community connection). Quote the guiding philosophy only
+  where it fits naturally.
+- Only facts with shareable_in_outreach true may appear in a draft. The others (costs, internal notes, board details) are
+  background for you and must stay out of the message.
+- Adapt the introduction to the recipient instead of repeating one paragraph: a venue inquiry centers on the proposed event;
+  a research or charity introduction centers on the shared charitable purpose; a sponsorship inquiry explains the fundraising
+  opportunity and who it reaches.
+- If a target has "known_relationship", the foundation already knows this organization: acknowledge the recorded connection
+  accurately and modestly (for example, that the foundation has featured its work or held an event there), call it a
+  partnership only if formal_partnership is true, and never introduce the foundation as if it were a stranger. Claim no
+  conversation, meeting, or contact that is not recorded. A target without known_relationship is a first contact.
+- Never invent fundraising results, attendance, or history."""
 
 DRAFT_CATEGORY = {"venue_inquiry": "venue", "corporate_sponsorship": "sponsor", "research_support": "research",
                   "nonprofit_collaboration": "charity", "partnership_inquiry": "partner", "community_program": "partner"}
@@ -148,12 +167,29 @@ class PartnershipsOutreachAgent(BaseAgent):
                                                                  "status": (t["contact"] or {}).get("status")}}
             if t["contact"] and not t["contact"].get("email"):
                 t["review_notes"] = list(t["review_notes"]) + [t["contact"]["display"]]
+        # The relationship directory (and past vendors) first: a known organization is never approached as a stranger.
+        orgs = [{"name": t["name"], "website": (t["details"] or {}).get("website"),
+                 "kind": "venue" if t["suggested_type"] == "venue_inquiry" else "organization"} for t in targets]
+        known = self.tool(ctx, "read_foundation_knowledge", agent=self.name.value, organizations=orgs).data.get("matches", {})
+        for t in targets:
+            rel = known.get(t["name"])
+            t["known_relationship"] = ({k: rel[k] for k in ("summary", "relationship_type", "formal_partnership", "verification",
+                                                            "entry_id")} if rel else None)
+            if rel:
+                t["review_notes"] = list(t["review_notes"]) + [rel["summary"]]
+        topic = " ".join([t["name"] for t in targets] + [t["suggested_type"].replace("_", " ") for t in targets] +
+                         [str((event or {}).get(k) or "") for k in ("name", "event_type", "city")] + [task.inputs.get("request") or ""])
+        pack = self.knowledge(ctx, task, topic, limit=7)
         personalized = any(t["finding_id"] for t in targets)
         profile = OUTREACH_PERSONALIZED if personalized else OUTREACH_DRAFTS
         instructions = INSTRUCTIONS if personalized else VENUE_INSTRUCTIONS
+        if pack or any(t["known_relationship"] for t in targets):
+            instructions = f"{instructions}\n{KNOWLEDGE_INSTRUCTIONS}\n\n{KNOWLEDGE_RULES}"
         payload = {"foundation": {**FOUNDATION, "background": _background()}, "event": event,
+                   "foundation_knowledge": self.knowledge_in(pack),
                    "targets": [{k: v for k, v in t.items() if k not in ("sources", "review_notes", "finding_id", "contact")} for t in targets]}
-        allowed_amounts = collect_amounts({"targets": payload["targets"], "event": event})
+        shareable = [f for f in (pack or {}).get("facts", []) if f.get("shareable_in_outreach")]
+        allowed_amounts = collect_amounts({"targets": payload["targets"], "event": event, "shareable": shareable})
 
         by_id = {t["target_id"]: t for t in targets}
         accepted: dict[str, object] = {}
@@ -170,8 +206,12 @@ class PartnershipsOutreachAgent(BaseAgent):
                 if d.target_id in accepted:
                     continue
                 text = f"{d.subject}\n{d.body}\n{d.opportunity}\n{d.next_step}"
-                problems = outreach_violations(text, allowed_amounts)
+                problems = outreach_violations(text, allowed_amounts, target.get("known_relationship"))
                 problems += contact_violations(text, (target.get("contact") or {}).get("email"))
+                rel = target.get("known_relationship")
+                if rel and not acknowledges_relationship(text, rel):
+                    problems.append("reads as a first introduction, but the foundation already knows this organization ("
+                                    + rel["summary"][:160] + "); acknowledge that connection accurately")
                 if problems:
                     rejected[d.target_id] = problems
                 else:
@@ -204,7 +244,9 @@ class PartnershipsOutreachAgent(BaseAgent):
                 made.append({"id": row.data["id"], "recipient": target["name"], "subject": d.subject, "draft_type": draft_type,
                              "contact_status": (contact or {}).get("status"), "contact_email": (contact or {}).get("email"),
                              "finding_id": target["finding_id"], "synthetic_target": target["synthetic"], "status": "draft",
-                             "purpose": d.purpose, "next_step": d.next_step, "sources": used, "review_notes": target["review_notes"]})
+                             "purpose": d.purpose, "next_step": d.next_step, "sources": used, "review_notes": target["review_notes"],
+                             "known_relationship": (target.get("known_relationship") or {}).get("summary"),
+                             "knowledge_used": [k for k in (d.knowledge_used or []) if pack and k in pack["_ids"]]})
         findings = [Finding(claim=f"Unsent {m['draft_type'].replace('_', ' ')} draft to {m['recipient']}: “{m['subject']}”",
                             kind="recommendation", source_ids=by_id[f"finding:{m['finding_id']}"]["source_ids"] if m["finding_id"] else [])
                     for m in made]
@@ -213,5 +255,6 @@ class PartnershipsOutreachAgent(BaseAgent):
             assumptions=(["Some recipients are synthetic fixtures (example.org), not real organizations."] if any(m["synthetic_target"] for m in made) else []) +
                         ["Nothing was sent. SAM SPACE has no tool that can send, schedule, or publish a message."],
             next_steps=["Review and edit each draft in Partnerships & Outreach. If the board agrees, a person sends it outside SAM SPACE."],
-            data={"drafts": made, "rejected": [{"recipient": by_id[t]["name"], "problems": p} for t, p in rejected.items()]},
+            data={"drafts": made, "rejected": [{"recipient": by_id[t]["name"], "problems": p} for t, p in rejected.items()],
+                  **self.knowledge_record(pack, [k for d in accepted.values() for k in (d.knowledge_used or [])])},
         )

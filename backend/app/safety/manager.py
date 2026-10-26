@@ -31,13 +31,13 @@ from .redact import configured_secrets, redact
 # Least-privilege data scopes: what kinds of records each agent's tools may touch. A tool whose scope is not
 # listed for an agent is refused even if it were mistakenly added to that agent's allow-list.
 DATA_SCOPES: dict[str, frozenset[str]] = {
-    "orchestrator": frozenset({"general", "event_plan", "opportunities", "event_summaries"}),
-    "mission_discovery": frozenset({"general", "public_web", "research_findings"}),
-    "fundraising_events": frozenset({"general", "public_web", "event_plan", "board_lessons"}),
-    "financial_analysis": frozenset({"general", "financial_records", "event_plan"}),
-    "donations_compliance": frozenset({"general", "donor_records"}),
-    "partnerships_outreach": frozenset({"general", "research_findings", "drafts", "public_web"}),  # public_web: official contact pages only
-    "event_intelligence": frozenset({"general", "board_records", "board_lessons"}),
+    "orchestrator": frozenset({"general", "foundation_knowledge", "event_plan", "opportunities", "event_summaries"}),
+    "mission_discovery": frozenset({"general", "foundation_knowledge", "public_web", "research_findings"}),
+    "fundraising_events": frozenset({"general", "foundation_knowledge", "public_web", "event_plan", "board_lessons"}),
+    "financial_analysis": frozenset({"general", "foundation_knowledge", "financial_records", "event_plan"}),
+    "donations_compliance": frozenset({"general", "foundation_knowledge", "donor_records"}),
+    "partnerships_outreach": frozenset({"general", "foundation_knowledge", "research_findings", "drafts", "public_web"}),  # public_web: official contact pages only
+    "event_intelligence": frozenset({"general", "foundation_knowledge", "board_records", "board_lessons"}),
 }
 
 CATEGORY_LABELS = {

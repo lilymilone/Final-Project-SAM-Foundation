@@ -1,4 +1,4 @@
-import { CircleHelp, ShieldCheck } from "lucide-react";
+import { BookHeart, CircleHelp, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AgentPanel } from "../components/AgentPanel";
 import { AckGuide } from "../components/donations";
@@ -25,6 +25,14 @@ export default function HelpPage() {
             </ol>
             <p className="mt-3 text-sm text-muted">Every step, tool call, token, and cost is in <Link to="/activity" className="text-royal underline">Agent Activity</Link>.
               Limits, permissions, and safety test results are in <Link to="/safety" className="text-royal underline">Analytics &amp; Safety</Link>.</p>
+          </Card>
+          <Card title="What the agents know about us" icon={<BookHeart size={16} aria-hidden="true" />}>
+            <p className="text-sm text-ink/90">
+              The <Link to="/settings/knowledge" className="text-royal underline">Foundation Knowledge Base</Link> holds what the board has recorded
+              about the foundation: its signature events, vendors, the organizations it already knows, its community, and how it
+              introduces itself. Each agent reads only the few facts its task needs, says which ones it relied on, and treats
+              anything not verified as reported or approximate. Past costs are never treated as money available today.
+            </p>
           </Card>
           <AgentPanel agents={ALL_AGENTS} upcoming={[]} title="The seven agents and their tools" />
         </div>

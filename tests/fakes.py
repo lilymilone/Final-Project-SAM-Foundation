@@ -170,7 +170,9 @@ def drafts(p: dict, kw: dict) -> dict:
                     "subject": f"{'Inquiry' if venue else 'Introduction'}: {t['name']}",
                     "purpose": "To ask about a possible collaboration.", "foundation_background": "Smile Like Sab.",
                     "opportunity": "Event inquiry." if venue else (t["details"].get("purpose") or "")[:120],
-                    "body": f"Hello {t['name']} team,\nWe are writing to ask whether you would be open to a short conversation.\n"
+                    "body": f"Hello {t['name']} team,\n"
+                            + ("We were glad to share your work at one of our events before. " if t.get("known_relationship") else "")
+                            + "We are writing to ask whether you would be open to a short conversation.\n"
                             "[Board member name]", "next_step": "A 20-minute call.", "personalization_basis": "Target details.",
                     "source_ids": t["source_ids"]})
     return {"summary": f"{len(p['targets'])} drafts.", "drafts": out}
