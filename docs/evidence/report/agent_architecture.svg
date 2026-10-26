@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 780" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">SAM SPACE agent architecture</title>
+  <desc id="desc">A board member's request goes to the Orchestrator (Boss Agent), which delegates to six specialist agents. Each specialist returns a structured report. Every model call goes through the ModelRouter and budgets; every tool call goes through the tool registry and the SafetyManager. Outputs are recommendations and unsent drafts for human review.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b3fa0"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #c9b6e4; stroke-width: 1.5; }
+      .boss { fill: #3b1458; stroke: #3b1458; }
+      .soft { fill: #f6f0fb; stroke: #c9b6e4; stroke-width: 1.2; }
+      .guard { fill: #fdf2f6; stroke: #e3a9bf; stroke-width: 1.2; }
+      .h { font-size: 15px; font-weight: 700; fill: #3b1458; }
+      .hw { font-size: 17px; font-weight: 700; fill: #ffffff; }
+      .t { font-size: 11.5px; fill: #4a3a5c; }
+      .tw { font-size: 12px; fill: #eadcf7; }
+      .tool { font-size: 10px; fill: #6b3fa0; font-family: Menlo, Consolas, monospace; }
+      .lab { font-size: 11px; fill: #6b3fa0; font-style: italic; }
+      .cap { font-size: 12px; font-weight: 700; fill: #c2577a; letter-spacing: 0.06em; }
+      .line { stroke: #6b3fa0; stroke-width: 1.4; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="780" fill="#fbf8fe"/>
+  <text x="30" y="34" class="h" style="font-size:20px">SAM SPACE: the Boss Agent and six specialists</text>
+  <text x="30" y="54" class="t">Seven agents. Only the Orchestrator delegates; specialists report back in a structured AgentReport. Nothing is ever sent, booked, or paid.</text>
+
+  <!-- Board member -->
+  <rect x="300" y="72" width="400" height="52" rx="14" class="soft"/>
+  <text x="500" y="94" text-anchor="middle" class="h">Board member (React UI, role-based access)</text>
+  <text x="500" y="112" text-anchor="middle" class="t">asks a question · reviews, edits, and decides · sends anything themselves</text>
+  <path d="M500 124 L500 150" class="line" marker-end="url(#arrow)"/>
+
+  <!-- Orchestrator -->
+  <rect x="190" y="152" width="620" height="126" rx="16" class="boss"/>
+  <text x="500" y="178" text-anchor="middle" class="hw">Orchestrator: the Boss Agent (AI Chief of Staff)</text>
+  <text x="500" y="200" text-anchor="middle" class="tw">intake → delegate → read structured reports → evaluate conflicts (Finance limits, history, verification)</text>
+  <text x="500" y="218" text-anchor="middle" class="tw">→ one bounded revision → outreach_decision (code) → board-ready recommendation → verification (code)</text>
+  <text x="500" y="238" text-anchor="middle" class="tool" style="fill:#d9c6f0">read_event_plan · evaluate_constraints · select_opportunities</text>
+  <text x="500" y="252" text-anchor="middle" class="tool" style="fill:#d9c6f0">find_relevant_events · verify_final_result</text>
+  <text x="500" y="270" text-anchor="middle" class="tw" style="font-size:11px">dispatch() is the only place a handoff happens: every handoff, report, tool call, and model call is logged (Agent Activity)</text>
+
+  <!-- connectors to specialists -->
+  <path d="M500 278 L500 295 M150 295 L850 295" class="line"/>
+  <path d="M150 295 L150 310" class="line" marker-end="url(#arrow)"/>
+  <path d="M500 295 L500 310" class="line" marker-end="url(#arrow)"/>
+  <path d="M850 295 L850 310" class="line" marker-end="url(#arrow)"/>
+  <text x="512" y="291" class="lab">tasks with objective, inputs, constraints ↓   ↑ AgentReport</text>
+
+  <!-- Row 1 specialists -->
+  <rect x="30" y="312" width="300" height="118" rx="14" class="box"/>
+  <text x="46" y="336" class="h">Mission Discovery</text>
+  <text x="46" y="354" class="t">finds and verifies mission-aligned charities,</text>
+  <text x="46" y="369" class="t">research initiatives, events, and sponsors</text>
+  <text x="46" y="392" class="tool">search_web · fetch_source</text>
+  <text x="46" y="408" class="tool">classify_mission_alignment</text>
+  <text x="46" y="424" class="tool">save_research_finding</text>
+
+  <rect x="350" y="312" width="300" height="118" rx="14" class="box"/>
+  <text x="366" y="336" class="h">Fundraising &amp; Events</text>
+  <text x="366" y="354" class="t">venues, formats, and a cost model with labeled</text>
+  <text x="366" y="369" class="t">assumptions; revises after Finance feedback</text>
+  <text x="366" y="392" class="tool">search_venues · fetch_source</text>
+  <text x="366" y="408" class="tool">compute_event_model · save_venue_candidate</text>
+  <text x="366" y="424" class="tool">get_historical_lessons</text>
+
+  <rect x="670" y="312" width="300" height="118" rx="14" class="box"/>
+  <text x="686" y="336" class="h">Financial Analysis</text>
+  <text x="686" y="354" class="t">affordability, cash position, conflicts;</text>
+  <text x="686" y="369" class="t">analyzes and recommends only, never spends</text>
+  <text x="686" y="392" class="tool">read_financial_records · read_document_text</text>
+  <text x="686" y="408" class="tool">compute_financial_position</text>
+  <text x="686" y="424" class="tool">check_event_affordability</text>
+
+  <!-- Row 2 specialists -->
+  <path d="M150 430 L150 446 M500 430 L500 446 M850 430 L850 446" class="line" style="stroke-dasharray:3 3"/>
+  <rect x="30" y="448" width="300" height="136" rx="14" class="box"/>
+  <text x="46" y="472" class="h">Event Intelligence &amp; Learning</text>
+  <text x="46" y="490" class="t">lessons from past events and reflections,</text>
+  <text x="46" y="505" class="t">each linked to its evidence (Our Legacy)</text>
+  <text x="46" y="522" class="tool">read_historical_events</text>
+  <text x="46" y="535" class="tool">read_board_reflections</text>
+  <text x="46" y="548" class="tool">compare_event_outcomes</text>
+  <text x="46" y="561" class="tool">save_historical_lesson</text>
+  <text x="46" y="574" class="tool">stage_event_extraction (board approves)</text>
+
+  <rect x="350" y="448" width="300" height="136" rx="14" class="box"/>
+  <text x="366" y="472" class="h">Partnerships &amp; Outreach</text>
+  <text x="366" y="490" class="t">unsent drafts; contacts only from the</text>
+  <text x="366" y="505" class="t">organization's own website, never guessed</text>
+  <text x="366" y="528" class="tool">read_saved_findings</text>
+  <text x="366" y="544" class="tool">lookup_inquiry_details</text>
+  <text x="366" y="560" class="tool">create_outreach_draft (drafts only)</text>
+
+  <rect x="670" y="448" width="300" height="136" rx="14" class="box"/>
+  <text x="686" y="472" class="h">Donations &amp; Compliance</text>
+  <text x="686" y="490" class="t">gift review, issues to fix, acknowledgment</text>
+  <text x="686" y="505" class="t">drafts, cited compliance sources</text>
+  <text x="686" y="528" class="tool">read_donations · flag_donation_issues</text>
+  <text x="686" y="544" class="tool">read_compliance_items</text>
+  <text x="686" y="560" class="tool">create_acknowledgment_drafts</text>
+
+  <!-- Guardrails -->
+  <text x="30" y="620" class="cap">EVERY CALL PASSES THROUGH</text>
+  <rect x="30" y="630" width="300" height="78" rx="12" class="guard"/>
+  <text x="46" y="652" class="h" style="font-size:13.5px">ModelRouter + LLMService</text>
+  <text x="46" y="670" class="t">Luna (fast) · Sol (intermediate) · Astra (advanced)</text>
+  <text x="46" y="686" class="t">per-workflow and daily budgets, worst-case reserved</text>
+  <text x="46" y="701" class="t">Portkey course key: Luna only</text>
+
+  <rect x="350" y="630" width="300" height="78" rx="12" class="guard"/>
+  <text x="366" y="652" class="h" style="font-size:13.5px">Tool registry + SafetyManager</text>
+  <text x="366" y="670" class="t">per-agent allow-lists and data scopes</text>
+  <text x="366" y="686" class="t">23 prohibited actions refused (send, pay, book…)</text>
+  <text x="366" y="701" class="t">untrusted web text screened; loop and handoff caps</text>
+
+  <rect x="670" y="630" width="300" height="78" rx="12" class="guard"/>
+  <text x="686" y="652" class="h" style="font-size:13.5px">Outputs for human review</text>
+  <text x="686" y="670" class="t">board packet with sources and assumptions</text>
+  <text x="686" y="686" class="t">Drafts for Board Review: copy, edit, never sent</text>
+  <text x="686" y="701" class="t">Agent Activity: every step, tool, token, and cost</text>
+
+  <text x="30" y="744" class="t">Storage: SQLite (runs, handoffs with reports, tool calls, model usage, security events). Deterministic code does the arithmetic, the</text>
+  <text x="30" y="760" class="t">outreach decision, contact checks, and verification; models do the reading, judgment, and writing.</text>
+</svg>

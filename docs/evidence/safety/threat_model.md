@@ -1,6 +1,6 @@
 # Threat model and test outcomes
 
-Generated 2026-10-25 12:20 UTC by `python -m backend.scripts.export_safety_evidence` from the recorded results. **Deterministic** tests run the real code with a scripted model (`mocked_test_results.md`); **live** tests send the attack through real OpenAI models (`live/live_test_results.md`). An outcome says PASS only if that executed test's checks held.
+Generated 2026-10-25 23:26 UTC by `python -m backend.scripts.export_safety_evidence` from the recorded results. **Deterministic** tests run the real code with a scripted model (`mocked_test_results.md`); **live** tests send the attack through real OpenAI models (`live/live_test_results.md`). An outcome says PASS only if that executed test's checks held.
 
 ## What we protect
 

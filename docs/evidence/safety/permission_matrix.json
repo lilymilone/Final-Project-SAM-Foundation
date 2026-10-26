@@ -180,16 +180,21 @@
     {
       "agent": "partnerships_outreach",
       "name": "Partnerships & Outreach",
-      "purpose": "Writes personalized, unsent outreach drafts from verified research. It can only read findings and save drafts: it has no web, mail, messaging, or scheduling tool.",
+      "purpose": "Writes personalized, unsent outreach drafts from verified research, with public inquiry details read from each organization's own website. It can only read findings and official pages and save drafts: it has no mail, messaging, form-submission, or scheduling tool.",
       "data_scopes": [
         "drafts",
         "general",
+        "public_web",
         "research_findings"
       ],
       "tools": [
         {
           "tool": "read_saved_findings",
           "data_scope": "research_findings"
+        },
+        {
+          "tool": "lookup_inquiry_details",
+          "data_scope": "public_web"
         },
         {
           "tool": "create_outreach_draft",
@@ -302,6 +307,34 @@
     {
       "name": "make_commitment",
       "label": "Make commitments on the foundation's behalf"
+    },
+    {
+      "name": "reply_email",
+      "label": "Reply to an email"
+    },
+    {
+      "name": "forward_message",
+      "label": "Forward a message"
+    },
+    {
+      "name": "submit_contact_form",
+      "label": "Submit a website contact form"
+    },
+    {
+      "name": "schedule_outbound_communication",
+      "label": "Schedule an outbound communication"
+    },
+    {
+      "name": "transfer_funds",
+      "label": "Transfer money"
+    },
+    {
+      "name": "allocate_funds",
+      "label": "Allocate or commit charitable funds"
+    },
+    {
+      "name": "sign_contract",
+      "label": "Enter a contract"
     }
   ],
   "notes": [

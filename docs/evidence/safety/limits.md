@@ -15,3 +15,4 @@ Active values for the demo workspace and the hard caps in `safety/limits.py`. Th
 | Revision rounds per plan | 1 | 0 | 2 |
 | Web searches per workflow | 4 | 0 | 10 |
 | Page fetches per workflow | 10 | 0 | 25 |
+| Contact pages read per outreach draft | 2 | 0 | 3 |

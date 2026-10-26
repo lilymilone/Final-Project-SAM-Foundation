@@ -9,7 +9,7 @@ Generated from `agents/registry.py` (allow-lists), `safety/manager.py` (data sco
 | **Fundraising & Events** | board_lessons, event_plan, general, public_web | `search_venues` (public_web), `fetch_source` (public_web), `save_venue_candidate` (event_plan), `compute_event_model` (event_plan), `get_historical_lessons` (board_lessons), `read_event_plan` (event_plan) |
 | **Financial Analysis** | event_plan, financial_records, general | `read_financial_records` (financial_records), `compute_financial_position` (financial_records), `compute_financial_analysis` (financial_records), `recompute_event_model` (general), `check_event_affordability` (general), `read_document_text` (financial_records), `save_extracted_figures` (financial_records) |
 | **Donations & Compliance** | donor_records, general | `read_donations` (donor_records), `flag_donation_issues` (donor_records), `read_compliance_items` (donor_records), `create_acknowledgment_drafts` (donor_records), `create_contribution_acknowledgments` (donor_records) |
-| **Partnerships & Outreach** | drafts, general, research_findings | `read_saved_findings` (research_findings), `create_outreach_draft` (drafts) |
+| **Partnerships & Outreach** | drafts, general, public_web, research_findings | `read_saved_findings` (research_findings), `lookup_inquiry_details` (public_web), `create_outreach_draft` (drafts) |
 | **Event Intelligence & Learning** | board_lessons, board_records, general | `read_historical_events` (board_records), `read_board_reflections` (board_records), `compare_event_outcomes` (board_records), `get_historical_lessons` (board_lessons), `save_historical_lesson` (board_records), `read_import_sources` (board_records), `stage_event_extraction` (board_records) |
 
 ## Never available to any agent
@@ -32,6 +32,13 @@ Generated from `agents/registry.py` (allow-lists), `safety/manager.py` (data sco
 | `schedule_outreach` | Schedule outreach |
 | `publish_message` | Publish messages |
 | `make_commitment` | Make commitments on the foundation's behalf |
+| `reply_email` | Reply to an email |
+| `forward_message` | Forward a message |
+| `submit_contact_form` | Submit a website contact form |
+| `schedule_outbound_communication` | Schedule an outbound communication |
+| `transfer_funds` | Transfer money |
+| `allocate_funds` | Allocate or commit charitable funds |
+| `sign_contract` | Enter a contract |
 
 - Only the Orchestrator delegates, in code; no agent has a delegation tool.
 - No agent has a shell, filesystem, general database, mail, payment, booking, or publishing tool.

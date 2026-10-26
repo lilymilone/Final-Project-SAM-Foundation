@@ -11,8 +11,10 @@ The Orchestrator acts as SAM SPACE's **AI Chief of Staff**. It delegates work to
 > - Every number here comes from logged runs, exported to `docs/evidence/boss_outreach/`.
 > - All three workflows ran live with real models and live web research (§9): A is run #40, B is run #43, C is run #44.
 > - A and B produced the intended drafts.
-> - C (sponsorship) **did not find a business sponsor**. It drafted introductions to other charities' galas instead. This is an honest result that shows a gap in the decision rule (§12).
-> - Earlier attempts at B and C (runs #41, #42) were stopped by the $5 daily AI budget. The chair raised the limit to $10 for runs #43 and #44, then set it back to $5.
+> - C (sponsorship) **did not find a business sponsor** in two live searches.
+>   - Run #44 drafted introductions to other charities' galas instead. That exposed a gap in the decision rule, which is now fixed.
+>   - Rerun #45, after the fix, skipped every non-sponsor and drafted nothing.
+> - Earlier attempts at B and C (runs #41, #42) were stopped by the $5 daily AI budget. The chair raised the limit to $10 for runs #43–#45, setting it back to $5 after each session.
 
 ![Drafts for Board Review, with the live Lincoln Center draft open](screenshots/outreach-review-center-draft.jpg)
 
@@ -297,7 +299,35 @@ Request: *"Find possible local business sponsors in Manhattan for our spring gal
   - Fixed after the run, covered by `test_published_costs_and_fit_reasons_stay_readable`.
   - The stored draft was left as it was created.
 
-**The sponsorship-draft path itself** (category `sponsor` → `corporate_sponsorship` draft with the prospective-income note) is covered only by `test_sponsor_discovery_triggers_a_sponsorship_draft`. It has not yet run live.
+### Workflow C rerun after the fixes (live, run #45, completed with warnings, $0.0886, 5 model calls)
+
+Same request, run on 2026-10-25 after the sponsor-request and past-event fixes. The chair raised the daily limit to $10 for this run and set it back to $5 right after.
+
+**Research:** the live search again found **no business that sponsors**. It returned:
+- a charity's corporate-giving page (NAMI-NYC)
+- two galas: Project Healthy Minds (October 8, 2026) and the NEDA gala (May 11, 2026), both already past
+- the Manhattan Chamber of Commerce's event-sponsorship page
+- two unverified sources
+
+**Decision (the fix working):** the Orchestrator skipped all six, and recorded why for each:
+- four with *"not a sponsor (listed as an organization/event); the board asked for sponsors"*
+- two with *"Needs research, source unverified"*
+
+**Result:** no draft was written, so nothing off-request reached the Review Center.
+
+**Recommendation (Luna):** *"Use verified Manhattan business networks for sponsor research; no sponsor is confirmed."*
+
+**Why "with warnings":**
+- The verification step flagged an availability claim ("are available") that no source confirms.
+- One bounded fix ran, and the claim still did not pass, so the run carries the warning to the board instead of hiding it.
+
+**Conclusion:**
+- Workflow C behaves correctly: it does not draft to the wrong kind of organization.
+- But two live searches (#44, #45) found no business sponsor. Mission Discovery's search looks for mission-aligned opportunities, and sponsor queries surface charities' sponsorship pages rather than businesses.
+- A dedicated sponsor-prospecting search would be a new feature (see [limitations.md](limitations.md)).
+- The sponsorship-draft path itself (category `sponsor` → `corporate_sponsorship` draft with the prospective-income note) is verified by `test_sponsor_discovery_triggers_a_sponsorship_draft`, not by a live run.
+
+Files: `docs/evidence/boss_outreach/C_sponsor_live_run_45.json`, `trace_run_45.json`.
 
 ### Earlier stopped attempts (runs #41, #42)
 

@@ -6,8 +6,9 @@ SAM SPACE helps a small, volunteer-run nonprofit board plan fundraisers, learn f
 
 *MGT 409 (AI Foundations) final project · Lily Milone · Yale School of Management*
 
-> **Build stage 2:** the seven-agent system works end to end with real tools, real data, and real model calls.
-> Try the controlled demo in two clicks: **Event Studio → Plan with the agents → Run the agents**.
+> **Status:** the seven-agent system works end to end with real tools, real data, and real model calls. The Orchestrator acts as the Boss Agent, and promising venues, charities, and sponsors get unsent outreach drafts automatically. 276 automated tests pass.
+> Try the controlled demo: **Event Studio → Load the default test case → Controlled demo → Generate Event Strategy** (about $0.25 and 3 minutes).
+> Known gaps are listed in [docs/limitations.md](docs/limitations.md); report evidence is indexed in [docs/evidence/README.md](docs/evidence/README.md).
 
 ---
 
@@ -84,7 +85,7 @@ When both keys are present, `AI_PROVIDER=auto` (the default) uses OpenAI. Set `A
 python run.py --port 8001     # if port 8000 is busy
 python run.py --reset-db      # delete the local database and re-create the demo workspace
 python run.py --open          # open the browser automatically
-python -m pytest              # run the automated tests (148 tests, no API key or network needed)
+python -m pytest              # run the automated tests (276 tests, no API key or network needed)
 ```
 
 ---
@@ -113,7 +114,7 @@ python -m pytest              # run the automated tests (148 tests, no API key o
 | Fundraising & Events | search venues, fetch source, budget, revenue scenarios, save venue | rank options, fundraising strategy, mission contribution (inclusion, connection, accessibility, recognition) | every budget; re-ranks if a revision still breaks Finance's limits |
 | Financial Analysis | ledger, position, full analysis, event model, affordability, document text, stage figures | plain-English review; organizes figures from uploaded PDFs | all arithmetic, the verdict, conflicts, structured feedback to Events; every extracted figure checked against its page and held for board review |
 | Donations & Compliance | donations, flags, compliance checklist, thank-you drafts, contribution acknowledgments | reporting questions citing sources (Sol); one thank-you template (Luna) | merges donor details locally (the AI never sees them); builds contribution acknowledgments in code; never sends, files, or changes records |
-| Partnerships & Outreach | saved findings, create draft (**no web, mail, messaging, or scheduling tool**) | personalized drafts with purpose, opportunity, next step | saves drafts as unsent; rejects drafts that claim an action, invent a relationship, commit the foundation, or quote an amount not in the research (one bounded rewrite) |
+| Partnerships & Outreach | saved findings, public inquiry-details lookup (reads the organization's own website), create draft (**no mail, messaging, form, or scheduling tool**) | personalized drafts with purpose, opportunity, next step | finds contact details on the official site only (never guessed); saves drafts as unsent; rejects drafts that claim an action, invent a relationship, commit the foundation, quote an amount not in the research, or contain an unverified email or any phone number (one bounded rewrite) |
 | Mission Discovery | web search, fetch source, alignment check, save finding | plan the search; explain alignment in four parts (A charitable, B philosophical, C practical, D evidence) | scrubs private details from queries; fetches every link; removes injected instructions; checks dates and costs against the page; applies the fit rubric |
 
 **The controlled example.** With the demo gala plan ($18,000 limit) and synthetic research:
@@ -331,7 +332,7 @@ The walkthrough is in **[docs/boss_outreach_workflow.md](docs/boss_outreach_work
 - **Live runs** (evidence in [docs/evidence/boss_outreach/](docs/evidence/boss_outreach/)):
   - **Venue inquiry, run #40 ($0.21):** one draft, with an events email published on the venue's own page.
   - **Charity introductions, run #43 ($0.10):** three drafts; contact pages only, no emails invented.
-  - **Sponsor search, run #44 ($0.07):** found no business sponsor and drafted introductions to other charities' galas instead. This is a known gap, described in the walkthrough.
+  - **Sponsor search, runs #44 and #45 ($0.07, $0.09):** no business sponsor found. #44 drafted to other charities' galas, which exposed a gap. After the fix, #45 skipped every non-sponsor and drafted nothing. The sponsorship-draft path is covered by automated tests.
 - **Microsoft Outlook** is a planned future integration, read-only and with no send permission. It is not implemented: see [docs/roadmap.md](docs/roadmap.md).
 
 ## Impact & Evaluation (real-user pilot)
@@ -410,6 +411,31 @@ Prices are USD per 1M tokens, standard tier, prompts up to 272K input tokens. So
 
 Routing rule: `score = complexity (0–2) + 1 if multi-step reasoning + 1 if high risk`. The chosen strategy maps the score to a tier (see `backend/app/ai/router.py`).
 
+## Technology stack
+
+| Layer | What |
+|---|---|
+| Backend | Python 3.11+, FastAPI, Uvicorn, SQLAlchemy 2 on SQLite, Pydantic v2 |
+| AI | Official OpenAI SDK (Responses API, structured outputs); Portkey gateway for the course key (gpt-6-luna only) |
+| Agents | Seven agents in plain Python: an Orchestrator (Boss Agent) and six specialists, with a tool registry, allow-lists, and a SafetyManager |
+| Documents | pypdf (PDF text), openpyxl (XLSX), both in an isolated worker process |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4; prebuilt into `frontend/dist` and served by FastAPI |
+| Tests | pytest with a scripted model (`tests/fakes.py`): no API key or network needed |
+
+## Known limitations
+
+The full list, with what each means for the board, is in **[docs/limitations.md](docs/limitations.md)**. In short:
+
+- **No real-user evaluation yet.** The pilot framework works, but no board member has completed it, so time savings are not yet measured.
+- **Demo data.** Finances, donors, board members, and most past events are labeled synthetic. Two live outreach workflows used real public web pages.
+- **Web research is shallow by design.** A few searches and page reads per run; prices count only if a fetched page shows them.
+- **The Smile Like Sab logo file is not in the repository yet**, so a text fallback shows.
+- **Microsoft Outlook is planned, not built:** read-only, with no send permission ([docs/roadmap.md](docs/roadmap.md)).
+
+## Evidence for the report
+
+Everything the report cites is indexed in **[docs/evidence/README.md](docs/evidence/README.md)**: live workflow traces, outreach drafts and their contact sources, tokenomics measured from the logs, safety and spending-limit results, historical-learning comparisons, the clean-clone test, and the agent architecture diagram.
+
 ## Project layout
 
 ```
@@ -426,7 +452,8 @@ backend/app/
   mission.py  FoundationMission: philosophy, criteria, fit rubric (shared by the agents)
   compliance.py  cited compliance sources (IRS, NY, CT) with jurisdiction and check date
 backend/scripts/  verify_models.py, create_user.py, export_packet.py, export_partnership_packet.py, export_trace.py,
-                  run_safety_suite.py, run_live_safety.py, export_safety_evidence.py, export_impact_evidence.py
+                  run_safety_suite.py, run_live_safety.py, export_safety_evidence.py, export_impact_evidence.py,
+                  export_report_evidence.py (tokenomics, spending limits), audit_restrictions.py (no send / no spend audit)
 frontend/     React + TypeScript + Vite + Tailwind (built output in frontend/dist)
 tests/        pytest suite
 assets/       Smile Like Sab logo (smile-like-sab.png)

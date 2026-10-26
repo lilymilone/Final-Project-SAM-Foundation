@@ -1,0 +1,1165 @@
+{
+  "run": {
+    "id": 45,
+    "status": "completed_with_warnings",
+    "research_mode": "live",
+    "strategy": "auto",
+    "provider": "openai",
+    "request": "Find possible local business sponsors in Manhattan for our spring gala.",
+    "started_at": "2026-10-25T23:41:45.923669",
+    "duration_ms": 143253,
+    "spent_usd": 0.08856297,
+    "model_calls": 5,
+    "error": null
+  },
+  "handoffs": [
+    {
+      "id": 297,
+      "step_key": "intake",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "board",
+      "to": "orchestrator",
+      "objective": "Understand the request and choose specialists",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "Intent: mission discovery (board routing). Specialists: mission discovery.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 298,
+      "step_key": "research",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "mission_discovery",
+      "objective": "Research mission-aligned opportunities and explain their fit",
+      "status": "completed",
+      "duration_ms": 117544,
+      "constraints": [],
+      "summary": "These sources offer indirect routes to Manhattan gala sponsors, but none verifies a local business currently willing to sponsor the foundation. The Manhattan Chamber of Commerce is the clearest business-network lead. NAMI-NYC and the NEDA gala search snippets name potential business prospects, but those names are not confirmed in the supplied page excerpts. Most sponsorship pages invite businesses to fund their own programs, rather than offer funding to other charities.",
+      "warnings": [
+        "I found NYC gala and sponsorship sources related to mental health and eating-disorder support, plus a Manhattan business network with sponsorship opportunities. The surfaced eating-disorder gala date (May 11, 2026) and Project Healthy Minds gala date (October 8, 2026) are past as of October 25, 2026; the NAMI deck identifies the annual May timing but does not give a specific upcoming date."
+      ],
+      "report": {
+        "task_id": 298,
+        "workflow_id": 45,
+        "step_key": "research",
+        "agent": "mission_discovery",
+        "objective": "Research mission-aligned opportunities and explain their fit",
+        "status": "completed",
+        "work_completed": "These sources offer indirect routes to Manhattan gala sponsors, but none verifies a local business currently willing to sponsor the foundation. The Manhattan Chamber of Commerce is the clearest business-network lead. NAMI-NYC and the NEDA gala search snippets name potential business prospects, but those names are not confirmed in the supplied page excerpts. Most sponsorship pages invite businesses to fund their own programs, rather than offer funding to other charities.",
+        "key_findings": [
+          {
+            "claim": "NAMI-NYC Corporate Giving: Strong fit. NAMI-NYC has strong mission alignment through mental-health education and support. Its corporate-giving page is an indirect prospect-research lead, not evidence that NAMI-NYC or its listed business partners will sponsor the foundation.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:1"
+            ]
+          },
+          {
+            "claim": "NAMIWalks NYC 2026: Needs research. This could become a useful mental-health sponsor-research lead, but the substantive information is snippet-only. It does not yet identify a verified business prospect for the foundation's gala.",
+            "kind": "estimate",
+            "confidence": "medium",
+            "source_ids": [
+              "web:2"
+            ]
+          },
+          {
+            "claim": "National Eating Disorders Association Gala 2026: Possible fit. This Manhattan event is a relevant historical lead for businesses interested in eating-disorder philanthropy. The supplied excerpt does not verify the named sponsors or establish their willingness to support another foundation.",
+            "kind": "verified_fact",
+            "confidence": "medium",
+            "source_ids": [
+              "web:3"
+            ]
+          },
+          {
+            "claim": "Project Healthy Minds Annual Gala 2026: Strong fit. The gala has strong mental-health awareness alignment and a Manhattan business audience. It is a prospect-research route rather than a spring event match or a confirmed source of sponsorship funding.",
+            "kind": "verified_fact",
+            "confidence": "high",
+            "source_ids": [
+              "web:4"
+            ]
+          },
+          {
+            "claim": "StrongSteps Behavioral Health: Needs research. The snippet suggests a mental-health connection, but this is a low-priority lead because geography and all substantive offerings remain unverified. Nothing supplied identifies a Manhattan business sponsor for the foundation.",
+            "kind": "estimate",
+            "confidence": "medium",
+            "source_ids": [
+              "web:5"
+            ]
+          },
+          {
+            "claim": "Manhattan Chamber of Commerce: Possible fit. This is the strongest geographic and business-network match for the request, although its direct mental-health and eating-disorder alignment is unclear. Its value is as a route to local prospects, not as a verified sponsor or charitable-program partner.",
+            "kind": "verified_fact",
+            "confidence": "medium",
+            "source_ids": [
+              "web:6"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "web:1",
+            "title": "Corporate Giving - National Alliance on Mental Illness of New York City , Inc.",
+            "url": "https://naminycmetro.org/donate/corporate-giving/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:2",
+            "title": "NAMIWalks NYC 2026 Sponsorship Deck",
+            "url": "https://naminycmetro.org/wp-content/uploads/2025/12/NAMIWalks-Sponsorship-Deck-2026.pdf",
+            "verification": "unverified"
+          },
+          {
+            "id": "web:3",
+            "title": "National Eating Disorders Association Gala 2026",
+            "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+            "verification": "verified"
+          },
+          {
+            "id": "web:4",
+            "title": "Gala 2026 | Project Healthy Minds",
+            "url": "https://www.projecthealthyminds.com/events/gala-2026",
+            "verification": "verified"
+          },
+          {
+            "id": "web:5",
+            "title": "Sponsorship Opportunities \u2014 StrongSteps Behavioral Health",
+            "url": "https://strongstepsbh.org/get-involved/sponsor/",
+            "verification": "unverified"
+          },
+          {
+            "id": "web:6",
+            "title": "Signature Events - Manhattan Chamber of CommerceSignature Events + Sponsorship \u2014 Manhattan Chamber of Commerce",
+            "url": "https://www.manhattancc.org/signature-events/",
+            "verification": "verified"
+          }
+        ],
+        "assumptions": [
+          "4 of 6 sources verified by fetching the page just now."
+        ],
+        "risks_uncertainties": [
+          "I found NYC gala and sponsorship sources related to mental health and eating-disorder support, plus a Manhattan business network with sponsorship opportunities. The surfaced eating-disorder gala date (May 11, 2026) and Project Healthy Minds gala date (October 8, 2026) are past as of October 25, 2026; the NAMI deck identifies the annual May timing but does not give a specific upcoming date."
+        ],
+        "financial_considerations": [
+          "National Eating Disorders Association Gala 2026: known costs \"Price $1,500 - $50,000\""
+        ],
+        "recommended_next_actions": [
+          "No supplied checked excerpt verifies a named local business as an available sponsor for the foundation.",
+          "Business names in the NAMI-NYC and NEDA search snippets need official confirmation before being treated as verified prospects.",
+          "The foundation's spring gala year, date, venue, audience, sponsorship benefits, and requested support are not provided.",
+          "No business giving criteria, application deadlines, decision-maker contacts, or willingness to fund outside galas are established.",
+          "Manhattan business locations are not verified for the companies named in search snippets."
+        ],
+        "outreach": {
+          "appropriate": true,
+          "reason": "4 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+          "candidates": [
+            "NAMI-NYC Corporate Giving",
+            "Project Healthy Minds Annual Gala 2026",
+            "National Eating Disorders Association Gala 2026",
+            "Manhattan Chamber of Commerce"
+          ]
+        },
+        "additional_agents": [
+          {
+            "agent": "partnerships_outreach",
+            "reason": "Draft introductory messages to the promising opportunities."
+          },
+          {
+            "agent": "financial_analysis",
+            "reason": "State what the foundation could responsibly consider supporting, if the board's role allows financial access."
+          }
+        ],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "tool_calls": [
+          {
+            "tool": "search_web",
+            "allowed": true,
+            "ok": true,
+            "summary": "6 live results (links not yet verified)"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Corporate Giving - National Alliance on Mental Illness of New York City , Inc."
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": false,
+            "summary": "HTTP 200 "
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 National Eating Disorders Association Gala 2026"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Gala 2026 | Project Healthy Minds"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment high"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": false,
+            "summary": "HTTP None "
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment low"
+          },
+          {
+            "tool": "fetch_source",
+            "allowed": true,
+            "ok": true,
+            "summary": "HTTP 200 Signature Events - Manhattan Chamber of CommerceSignature Events + Sponsorship \u2014"
+          },
+          {
+            "tool": "classify_mission_alignment",
+            "allowed": true,
+            "ok": true,
+            "summary": "keyword alignment none"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "refreshed opportunity #8"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "refreshed opportunity #8"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "refreshed opportunity #26"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #29"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #30"
+          },
+          {
+            "tool": "save_research_finding",
+            "allowed": true,
+            "ok": true,
+            "summary": "new opportunity #31"
+          }
+        ],
+        "model_usage": {
+          "model_calls": 3,
+          "input_tokens": 26284,
+          "cached_input_tokens": 0,
+          "output_tokens": 6351,
+          "web_search_calls": 2,
+          "cost_usd": 0.086711,
+          "models": [
+            "gpt-6-luna",
+            "gpt-6.1-sol"
+          ]
+        }
+      }
+    },
+    {
+      "id": 299,
+      "step_key": "outreach_decision",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Decide whether introductory drafts would help with the opportunities Mission Discovery found",
+      "status": "completed",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "No opportunity qualifies for an outreach draft; the reason for each is recorded.",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 300,
+      "step_key": "recommendation",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Write the board-ready recommendation",
+      "status": "completed",
+      "duration_ms": 11771,
+      "constraints": [],
+      "summary": "Use the Manhattan Chamber as the first prospect-research route\u2014not as a confirmed sponsor",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 301,
+      "step_key": "recommendation_fix",
+      "kind": "revision",
+      "revision_round": 1,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Correct the recommendation after verification",
+      "status": "completed",
+      "duration_ms": 13908,
+      "constraints": [],
+      "summary": "Use verified Manhattan business networks for sponsor research; no sponsor is confirmed",
+      "warnings": [],
+      "report": null
+    },
+    {
+      "id": 302,
+      "step_key": "verification",
+      "kind": "task",
+      "revision_round": 0,
+      "from": "orchestrator",
+      "to": "orchestrator",
+      "objective": "Verify the final result in code",
+      "status": "needs_revision",
+      "duration_ms": 2,
+      "constraints": [],
+      "summary": "1 check(s) failed: No unconfirmed availability claims",
+      "warnings": [],
+      "report": null
+    }
+  ],
+  "tool_calls": [
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "search_web",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 15846,
+      "summary": "6 live results (links not yet verified)",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 580,
+      "summary": "HTTP 200 Corporate Giving - National Alliance on Mental Illness of New York City , Inc.",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": false,
+      "duration_ms": 477,
+      "summary": "HTTP 200 ",
+      "denial": null,
+      "error": "Unsupported content type (application/pdf); only web pages are read."
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 3811,
+      "summary": "HTTP 200 National Eating Disorders Association Gala 2026",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 992,
+      "summary": "HTTP 200 Gala 2026 | Project Healthy Minds",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment high",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": false,
+      "duration_ms": 8340,
+      "summary": "HTTP None ",
+      "denial": null,
+      "error": "ReadTimeout"
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment low",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "fetch_source",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1986,
+      "summary": "HTTP 200 Signature Events - Manhattan Chamber of CommerceSignature Events + Sponsorship \u2014",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "classify_mission_alignment",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 0,
+      "summary": "keyword alignment none",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 9,
+      "summary": "refreshed opportunity #8",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "refreshed opportunity #8",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "refreshed opportunity #26",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 2,
+      "summary": "new opportunity #29",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #30",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "tool": "save_research_finding",
+      "allowed": true,
+      "ok": true,
+      "duration_ms": 1,
+      "summary": "new opportunity #31",
+      "denial": null,
+      "error": null
+    },
+    {
+      "handoff_id": 302,
+      "agent": "orchestrator",
+      "tool": "verify_final_result",
+      "allowed": true,
+      "ok": false,
+      "duration_ms": 0,
+      "summary": "6/7 checks passed",
+      "denial": null,
+      "error": null
+    }
+  ],
+  "model_calls": [
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "task": "Understand the research request (extraction)",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0031 fits the remaining budget of $0.5000.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 490,
+      "cached_input_tokens": 0,
+      "output_tokens": 70,
+      "web_search_calls": 0,
+      "cost_usd": 8.4e-05,
+      "latency_ms": 10280,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "task": "Web search: mission-aligned opportunities",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 0 (complexity=low, reasoning=no, risk=low) under Auto \u2192 Luna (fast) tier. Estimated $0.0016 fits the remaining budget of $0.4999.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 21254,
+      "cached_input_tokens": 0,
+      "output_tokens": 1029,
+      "web_search_calls": 2,
+      "cost_usd": 0.022759,
+      "latency_ms": 15842,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 298,
+      "agent": "mission_discovery",
+      "task": "Compare sources and synthesize mission alignment",
+      "tier": "intermediate",
+      "selected_model": "gpt-6.1-sol",
+      "model_used": "gpt-6.1-sol",
+      "reason": "Score 2 (complexity=medium, reasoning=yes, risk=low) under Auto \u2192 Sol (intermediate) tier. Estimated $0.1320 fits the remaining budget of $0.4772.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 4540,
+      "cached_input_tokens": 0,
+      "output_tokens": 5252,
+      "web_search_calls": 0,
+      "cost_usd": 0.0638685,
+      "latency_ms": 75181,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 300,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0025 fits the remaining budget of $0.4133.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 3287,
+      "cached_input_tokens": 0,
+      "output_tokens": 1017,
+      "web_search_calls": 0,
+      "cost_usd": 0.0009193,
+      "latency_ms": 11765,
+      "status": "ok"
+    },
+    {
+      "handoff_id": 301,
+      "agent": "orchestrator",
+      "task": "Summarize specialist results for the board",
+      "tier": "fast",
+      "selected_model": "gpt-6-luna",
+      "model_used": "gpt-6-luna",
+      "reason": "Score 1 (complexity=medium, reasoning=no, risk=medium) under Auto \u2192 Luna (fast) tier. Estimated $0.0025 fits the remaining budget of $0.4124.",
+      "substitution": null,
+      "attempt": 1,
+      "input_tokens": 3318,
+      "cached_input_tokens": 0,
+      "output_tokens": 1035,
+      "web_search_calls": 0,
+      "cost_usd": 0.00093217,
+      "latency_ms": 13901,
+      "status": "ok"
+    }
+  ],
+  "result": {
+    "intent": "mission_discovery",
+    "routing": "board",
+    "analysis": {
+      "intent": "mission_discovery",
+      "city": "Manhattan, New York, NY",
+      "attendance": null,
+      "event_type": "gala",
+      "event_format": null,
+      "budget_limit_usd": null,
+      "research_topic": "Find possible local business sponsors in Manhattan for our spring gala.",
+      "rationale": "Intent chosen by the board member."
+    },
+    "research_mode": "live",
+    "options": {
+      "use_history": true,
+      "historical_event_id": null
+    },
+    "history_constraints": [],
+    "events_consulted": [],
+    "boss_decisions": [
+      {
+        "step": "outreach_decision",
+        "trigger": "4 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+        "selected": [],
+        "skipped": [
+          {
+            "name": "NAMI-NYC Corporate Giving",
+            "reason": "not a sponsor (listed as an organization); the board asked for sponsors"
+          },
+          {
+            "name": "Project Healthy Minds Annual Gala 2026",
+            "reason": "not a sponsor (listed as an event); the board asked for sponsors"
+          },
+          {
+            "name": "National Eating Disorders Association Gala 2026",
+            "reason": "not a sponsor (listed as an event); the board asked for sponsors"
+          },
+          {
+            "name": "Manhattan Chamber of Commerce",
+            "reason": "not a sponsor (listed as an organization); the board asked for sponsors"
+          },
+          {
+            "name": "NAMIWalks NYC 2026",
+            "reason": "Needs research, source unverified"
+          },
+          {
+            "name": "StrongSteps Behavioral Health",
+            "reason": "Needs research, source unverified"
+          }
+        ],
+        "provenance": {}
+      }
+    ],
+    "outreach_drafts": [],
+    "quantitative_observations": [],
+    "events_strategy": null,
+    "themes": [],
+    "comparison": null,
+    "recommendation": {
+      "headline": "Use verified Manhattan business networks for sponsor research; no sponsor is confirmed",
+      "recommendation": "Prioritize the Manhattan Chamber of Commerce as a route to local business prospects, and use verified mental-health and eating-disorder organizations only to seek public sponsor information or permitted introductions. Treat every prospect as unconfirmed until its Manhattan presence, giving criteria, and willingness to support the foundation are independently verified.",
+      "rationale": [
+        "The Manhattan Chamber of Commerce is the clearest geographic and business-network match, but the supplied material does not confirm that it assists nonprofits seeking sponsors or provides relevant introductions.",
+        "NAMI-NYC and Project Healthy Minds have mental-health relevance, while the National Eating Disorders Association provides a relevant historical research lead. None is evidence of a business willing to sponsor this foundation.",
+        "The search snippets naming businesses associated with NAMI-NYC and the National Eating Disorders Association are not confirmed in the supplied page excerpts and should not be treated as verified prospects.",
+        "No supplied source verifies a local business as a prospective sponsor, its current interest, or its eligibility to support the foundation."
+      ],
+      "options": [
+        {
+          "title": "Research through the Manhattan Chamber of Commerce",
+          "option_id": null,
+          "summary": "Explore whether the Chamber can provide permitted introductions or public business resources relevant to nonprofit sponsor research. Its direct mission alignment and assistance to nonprofits are unclear."
+        },
+        {
+          "title": "Research public business-partner information through mental-health organizations",
+          "option_id": null,
+          "summary": "Ask NAMI-NYC or Project Healthy Minds whether public business-supporter information or permitted referrals are available. No current business roster or willingness to make referrals is confirmed."
+        },
+        {
+          "title": "Seek an eating-disorder philanthropy lead",
+          "option_id": null,
+          "summary": "Ask the National Eating Disorders Association whether it has a public historical sponsor roster for independent prospect research. The names in the supplied search snippet are unconfirmed, and the event described is past."
+        }
+      ],
+      "risks": [
+        "A business appearing in another organization's materials may not have a Manhattan presence, accept outside sponsorship requests, or be interested in this gala.",
+        "The foundation's gala year, date, venue, audience, sponsorship benefits, and requested support are not provided, limiting the ability to assess sponsor fit.",
+        "The Chamber's membership requirements, outreach rules, relevant contacts, and nonprofit-support role are unknown.",
+        "NAMIWalks NYC and StrongSteps information is unverified or inaccessible and should remain low-priority until confirmed."
+      ],
+      "decisions_for_board": [
+        "Decide whether to authorize staff or volunteers to conduct prospect research and make permitted inquiries through the identified organizations.",
+        "Set the gala details and sponsorship package needed before approaching prospective businesses.",
+        "Determine which mission areas and forms of support\u2014such as financial sponsorship, in-kind contributions, or educational collaboration\u2014are appropriate to pursue."
+      ],
+      "next_steps": [
+        "Confirm the gala year, date, venue, audience, sponsorship benefits, and requested support.",
+        "Ask the Manhattan Chamber of Commerce whether it offers relevant public business resources or permitted introductions to nonprofits.",
+        "Ask NAMI-NYC and Project Healthy Minds whether they can point to publicly available business-supporter information or permitted referral channels.",
+        "Request a public historical sponsor roster from the National Eating Disorders Association, if available, and independently verify any names before treating them as prospects.",
+        "Verify each candidate business's Manhattan presence, charitable-giving criteria, decision-maker contact, deadlines, and willingness to support outside galas before pursuing a request."
+      ],
+      "lessons_applied": [],
+      "caveats": [
+        "The supplied research describes four of six sources as verified by fetching, but verification of a page does not verify a sponsor lead or willingness to fund the foundation.",
+        "Business names in the NAMI-NYC and National Eating Disorders Association search snippets are unconfirmed in the supplied excerpts.",
+        "NAMIWalks NYC and StrongSteps information is snippet-only or inaccessible.",
+        "The supplied records describe the National Eating Disorders Association Gala 2026 and Project Healthy Minds Annual Gala 2026 as past; neither establishes a current spring sponsorship opportunity.",
+        "The Manhattan Chamber's 2027 street-fair dates appear only in a search snippet and are unconfirmed.",
+        "The foundation's gala details and sponsorship package are unknown; no sponsor availability or funding is established."
+      ],
+      "mission_impact_considerations": [
+        "Mental-health and eating-disorder sponsor research may support the foundation's awareness, research, and community objectives, but no prospective sponsor's fit or contribution is confirmed.",
+        "Prioritizing Manhattan business-network research offers geographic relevance, while the Chamber's direct mission alignment is unclear.",
+        "The board may wish to compare the time and resources devoted to sponsor prospecting with other uses that directly advance the foundation's charitable objectives."
+      ]
+    },
+    "verification": {
+      "passed": false,
+      "checks": [
+        {
+          "name": "Every dollar figure traces to a calculation",
+          "passed": true,
+          "detail": "All figures match computed results."
+        },
+        {
+          "name": "No claims that anything was sent, booked, or paid",
+          "passed": true,
+          "detail": "None found."
+        },
+        {
+          "name": "No unconfirmed availability claims",
+          "passed": false,
+          "detail": "Claims availability without confirmation: \u201care available\u201d"
+        },
+        {
+          "name": "No links that are not in the sources",
+          "passed": true,
+          "detail": "Every link appears in the run's sources."
+        },
+        {
+          "name": "All outreach drafts remain unsent",
+          "passed": true,
+          "detail": "0 draft(s) saved; none sent (SAM SPACE has no sending tool)."
+        },
+        {
+          "name": "Sources are labeled by provenance",
+          "passed": true,
+          "detail": "2 unverified, 4 verified"
+        },
+        {
+          "name": "Specialists finished",
+          "passed": true,
+          "detail": "All specialists completed."
+        }
+      ],
+      "unsupported_figures": []
+    },
+    "figures": {},
+    "revision_history": [],
+    "unresolved_conflicts": [],
+    "event_plan_id": null,
+    "specialists": {
+      "research": {
+        "agent": "mission_discovery",
+        "status": "completed",
+        "summary": "These sources offer indirect routes to Manhattan gala sponsors, but none verifies a local business currently willing to sponsor the foundation. The Manhattan Chamber of Commerce is the clearest business-network lead. NAMI-NYC and the NEDA gala search snippets name potential business prospects, but those names are not confirmed in the supplied page excerpts. Most sponsorship pages invite businesses to fund their own programs, rather than offer funding to other charities."
+      }
+    },
+    "finance": null,
+    "event": null,
+    "venues": [],
+    "shortlist": [],
+    "original_plan": null,
+    "revised_plan": null,
+    "revision_reasons": [],
+    "evaluation": null,
+    "proposal_comparison": [],
+    "finance_feedback": [],
+    "authorized_budget_usd": null,
+    "drafts": [],
+    "lessons": [],
+    "disagreements": [],
+    "findings": [
+      {
+        "id": 8,
+        "refreshed": true,
+        "name": "NAMI-NYC Corporate Giving",
+        "url": "https://naminycmetro.org/donate/corporate-giving/",
+        "category": "organization",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": "NYC",
+        "purpose": "Corporate giving in support of mental health and the NAMI-NYC community.",
+        "alignment_summary": "NAMI-NYC has strong mission alignment through mental-health education and support. Its corporate-giving page is an indirect prospect-research lead, not evidence that NAMI-NYC or its listed business partners will sponsor the foundation.",
+        "contribution_ways": [
+          "Explore a mental-health education collaboration using the listed speaker or public-education offerings.",
+          "Ask whether NAMI-NYC can suggest publicly available business-partner resources relevant to gala prospect research."
+        ],
+        "partnership_types": [
+          "Corporate giving",
+          "Volunteering"
+        ],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "A verified current corporate-partner list",
+          "Which partners have a Manhattan presence and support outside charity galas",
+          "Whether NAMI-NYC offers introductions or referrals",
+          "The foundation's gala date and sponsorship package",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet names Citi, Deutsche Bank, Mizuho, SMBC, and Talkspace as past or current partners; those names are absent from the supplied page excerpt; Seeds of Hope gala sponsorship and workplace campaigns are described in the search snippet but not confirmed in the excerpt."
+        ],
+        "next_step": "Ask whether NAMI-NYC has a current public corporate-partner list the board can use for independent prospect research.",
+        "injection_flagged": false,
+        "source_id": "web:1",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:1",
+            "title": "Corporate Giving - National Alliance on Mental Illness of New York City , Inc.",
+            "url": "https://naminycmetro.org/donate/corporate-giving/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:42:12+00:00"
+          }
+        ]
+      },
+      {
+        "id": 29,
+        "refreshed": false,
+        "name": "Project Healthy Minds Annual Gala 2026",
+        "url": "https://www.projecthealthyminds.com/events/gala-2026",
+        "category": "event",
+        "fit": "Strong fit",
+        "fit_reason": "Strong alignment with a purpose area, a checked source, and no blocking feasibility issue.",
+        "verification": "verified",
+        "geography": "Spring Studios, 50 Varick St, Tribeca, NYC",
+        "purpose": "Unite cultural, artistic, business, and civic leaders to champion mental health awareness.",
+        "alignment_summary": "The gala has strong mental-health awareness alignment and a Manhattan business audience. It is a prospect-research route rather than a spring event match or a confirmed source of sponsorship funding.",
+        "contribution_ways": [
+          "Explore whether its brand-partnership team can point to public business-supporter information.",
+          "Research verified business supporters for potential overlap with the foundation's mental-health awareness goals."
+        ],
+        "partnership_types": [
+          "Brand partnerships"
+        ],
+        "known_costs": null,
+        "dates_text": "Thursday, October 8, 2026; cocktails at 6pm and art reveal, dinner, and performances at 7pm. The supplied source record describes the event as past.",
+        "date_status": "confirmed",
+        "missing_info": [
+          "A current public business-sponsor roster",
+          "Brand-partnership eligibility and contact details",
+          "Whether supporters accept requests from other charities",
+          "Future spring collaboration opportunities",
+          "Costs or giving levels are not stated on the source."
+        ],
+        "warnings": [],
+        "next_step": "Ask the brand-partnership team whether a public gala business-supporter list is available.",
+        "injection_flagged": false,
+        "source_id": "web:4",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:4",
+            "title": "Gala 2026 | Project Healthy Minds",
+            "url": "https://www.projecthealthyminds.com/events/gala-2026",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:42:16+00:00"
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "refreshed": true,
+        "name": "National Eating Disorders Association Gala 2026",
+        "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+        "category": "event",
+        "fit": "Possible fit",
+        "fit_reason": "Aligned, but alignment is partial.",
+        "verification": "verified",
+        "geography": "Guastavino's, 409 E 59th St, New York, NY 10022",
+        "purpose": "A gala presented by the National Eating Disorders Association.",
+        "alignment_summary": "This Manhattan event is a relevant historical lead for businesses interested in eating-disorder philanthropy. The supplied excerpt does not verify the named sponsors or establish their willingness to support another foundation.",
+        "contribution_ways": [
+          "Use verified historical sponsor information, if obtained, to identify businesses with an eating-disorder philanthropy connection.",
+          "Ask the organizer whether a public sponsor roster is available for independent prospect research."
+        ],
+        "partnership_types": [],
+        "known_costs": "\"Price $1,500 - $50,000\"",
+        "dates_text": "Monday, 05/11/2026, 6:00pm\u201310:00pm EDT. Registration has ended; the supplied source record describes the event as past.",
+        "date_status": "confirmed",
+        "missing_info": [
+          "A verified sponsor roster",
+          "Sponsor business locations and charitable-giving contacts",
+          "Whether the named businesses accept outside sponsorship requests",
+          "The gala's stated use of proceeds"
+        ],
+        "warnings": [
+          "Unconfirmed: The search snippet names CBRE, Greenberg Traurig, Skadden, Equip Health, and Weil as sponsors; the supplied excerpt does not confirm these names."
+        ],
+        "next_step": "Ask NEDA for a public sponsor roster for this gala before researching the named businesses individually.",
+        "injection_flagged": false,
+        "source_id": "web:3",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:3",
+            "title": "National Eating Disorders Association Gala 2026",
+            "url": "https://secure.qgiv.com/for/nationaleatingdisordersassociation/event/nationaleatingdisordersassociationgala2026/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:42:13+00:00"
+          }
+        ]
+      },
+      {
+        "id": 31,
+        "refreshed": false,
+        "name": "Manhattan Chamber of Commerce",
+        "url": "https://www.manhattancc.org/signature-events/",
+        "category": "organization",
+        "fit": "Possible fit",
+        "fit_reason": "Aligned, but alignment is partial.",
+        "verification": "verified",
+        "geography": "Manhattan",
+        "purpose": "Convene Manhattan businesses and offer signature-event sponsorship.",
+        "alignment_summary": "This is the strongest geographic and business-network match for the request, although its direct mental-health and eating-disorder alignment is unclear. Its value is as a route to local prospects, not as a verified sponsor or charitable-program partner.",
+        "contribution_ways": [
+          "Explore a permitted introduction to Manhattan businesses interested in charitable sponsorship.",
+          "Use the listed local-vendor and networking resources to develop a business prospect list."
+        ],
+        "partnership_types": [
+          "Event sponsorship"
+        ],
+        "known_costs": null,
+        "dates_text": "The page states that the 2027 event lineup is open for sponsorship. May and September 2027 street-fair dates appear only in the search snippet and are unconfirmed.",
+        "date_status": "unconfirmed",
+        "missing_info": [
+          "Whether the Chamber assists nonprofits seeking business sponsors",
+          "Membership requirements, fees, and outreach rules",
+          "Relevant business contacts or a public member directory",
+          "Confirmed spring networking dates",
+          "Costs or giving levels are not stated on the source."
+        ],
+        "warnings": [
+          "Date not confirmed: The date \u201cMay & September 2027\u201d could not be read as a calendar date.",
+          "Unconfirmed: May and September 2027 street fairs supporting local small businesses are described only in the search snippet; Year-round sponsorship is stated in the search snippet but not confirmed in the supplied excerpt."
+        ],
+        "next_step": "Ask whether the Chamber offers a nonprofit-friendly way to connect with Manhattan businesses interested in sponsoring a spring charity gala.",
+        "injection_flagged": false,
+        "source_id": "web:6",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:6",
+            "title": "Signature Events - Manhattan Chamber of CommerceSignature Events + Sponsorship \u2014 Manhattan Chamber of Commerce",
+            "url": "https://www.manhattancc.org/signature-events/",
+            "verification": "verified",
+            "retrieved_at": "2026-10-25T23:42:26+00:00"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "refreshed": true,
+        "name": "NAMIWalks NYC 2026",
+        "url": "https://naminycmetro.org/wp-content/uploads/2025/12/NAMIWalks-Sponsorship-Deck-2026.pdf",
+        "category": "event",
+        "fit": "Needs research",
+        "fit_reason": "The source could not be reached or the organization's purpose is unclear.",
+        "verification": "unverified",
+        "geography": "NYC",
+        "purpose": "A mental-health awareness event described in the search snippet as taking place during Mental Health Awareness Month.",
+        "alignment_summary": "This could become a useful mental-health sponsor-research lead, but the substantive information is snippet-only. It does not yet identify a verified business prospect for the foundation's gala.",
+        "contribution_ways": [
+          "Explore employee-volunteer or in-kind collaboration if the described opportunities are confirmed.",
+          "Use an accessible sponsorship deck to research businesses already interested in mental-health awareness."
+        ],
+        "partnership_types": [
+          "Funding",
+          "In-kind support",
+          "Employee volunteering"
+        ],
+        "known_costs": null,
+        "dates_text": "The search snippet says annually in May; the supplied date check marks this unconfirmed because the page was not reachable.",
+        "date_status": "unconfirmed",
+        "missing_info": [
+          "An accessible official sponsorship deck",
+          "Confirmed event date and location",
+          "Named business sponsors",
+          "Whether any sponsors support other Manhattan charitable events",
+          "Costs or giving levels are not stated on the source."
+        ],
+        "warnings": [
+          "Date not confirmed: The date May could not be checked (page not reachable).",
+          "The link could not be verified (Unsupported content type (application/pdf); only web pages are read.).",
+          "Unconfirmed: The event occurs annually in May during Mental Health Awareness Month; Companies can provide funding, in-kind support, and employee volunteers."
+        ],
+        "next_step": "Request an accessible current sponsorship deck from NAMI-NYC before adding businesses to the prospect list.",
+        "injection_flagged": false,
+        "source_id": "web:2",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:2",
+            "title": "NAMIWalks NYC 2026 Sponsorship Deck",
+            "url": "https://naminycmetro.org/wp-content/uploads/2025/12/NAMIWalks-Sponsorship-Deck-2026.pdf",
+            "verification": "unverified",
+            "retrieved_at": "2026-10-25T23:42:12+00:00"
+          }
+        ]
+      },
+      {
+        "id": 30,
+        "refreshed": false,
+        "name": "StrongSteps Behavioral Health",
+        "url": "https://strongstepsbh.org/get-involved/sponsor/",
+        "category": "organization",
+        "fit": "Needs research",
+        "fit_reason": "The source could not be reached or the organization's purpose is unclear.",
+        "verification": "unverified",
+        "geography": null,
+        "purpose": "The search snippet describes sponsorship supporting mental-health education, community events, and a Community Impact Awards Gala.",
+        "alignment_summary": "The snippet suggests a mental-health connection, but this is a low-priority lead because geography and all substantive offerings remain unverified. Nothing supplied identifies a Manhattan business sponsor for the foundation.",
+        "contribution_ways": [
+          "Explore an education or community-event collaboration only after the organization and its offerings are verified."
+        ],
+        "partnership_types": [
+          "Event sponsorship",
+          "Year-round partnership"
+        ],
+        "known_costs": null,
+        "dates_text": null,
+        "date_status": "none",
+        "missing_info": [
+          "An accessible official source confirming the organization and offerings",
+          "Service area and Manhattan presence",
+          "Named business partners",
+          "Event dates and partnership terms",
+          "Costs or giving levels are not stated on the source.",
+          "No dates are stated."
+        ],
+        "warnings": [
+          "The link could not be verified (ReadTimeout).",
+          "Unconfirmed: Businesses of any size can sponsor its gala, mental-health education, community events, or a year-round partnership."
+        ],
+        "next_step": "Locate an accessible official organizational page confirming its service area before pursuing this lead.",
+        "injection_flagged": false,
+        "source_id": "web:5",
+        "status": "new",
+        "is_synthetic": false,
+        "sources": [
+          {
+            "source_id": "web:5",
+            "title": "Sponsorship Opportunities \u2014 StrongSteps Behavioral Health",
+            "url": "https://strongstepsbh.org/get-involved/sponsor/",
+            "verification": "unverified",
+            "retrieved_at": "2026-10-25T23:42:17+00:00"
+          }
+        ]
+      }
+    ],
+    "selection": null,
+    "mission_contribution": null,
+    "community_insights": [],
+    "donations": "[redacted]"
+  }
+}

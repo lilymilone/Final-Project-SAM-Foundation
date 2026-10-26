@@ -1,0 +1,396 @@
+{
+  "generated_at": "2026-10-25T23:45:17+00:00",
+  "source": "app database (model_usage, agent_runs, agent_handoffs); prices from backend/app/ai/pricing.json (https://developers.openai.com/api/docs/pricing, retrieved 2026-10-24)",
+  "totals": {
+    "runs": 45,
+    "model_calls_ok": 205,
+    "refused_calls": 4,
+    "input_tokens": 680054,
+    "cached_input_tokens": 71535,
+    "output_tokens": 241510,
+    "cost_usd": 5.6511
+  },
+  "by_model": [
+    {
+      "key": "gpt-6-astra",
+      "calls": 23,
+      "input_tokens": 127947,
+      "cached_input_tokens": 0,
+      "output_tokens": 33835,
+      "cost_usd": 3.290915,
+      "web_search_calls": 0
+    },
+    {
+      "key": "gpt-6.1-sol",
+      "calls": 102,
+      "input_tokens": 317598,
+      "cached_input_tokens": 58155,
+      "output_tokens": 154459,
+      "cost_usd": 2.19886,
+      "web_search_calls": 0
+    },
+    {
+      "key": "gpt-6-luna",
+      "calls": 80,
+      "input_tokens": 234509,
+      "cached_input_tokens": 13380,
+      "output_tokens": 53216,
+      "cost_usd": 0.161312,
+      "web_search_calls": 11
+    }
+  ],
+  "by_agent": [
+    {
+      "key": "orchestrator",
+      "calls": 53,
+      "input_tokens": 187538,
+      "cached_input_tokens": 0,
+      "output_tokens": 53593,
+      "cost_usd": 3.345386,
+      "web_search_calls": 0
+    },
+    {
+      "key": "fundraising_events",
+      "calls": 39,
+      "input_tokens": 191667,
+      "cached_input_tokens": 18034,
+      "output_tokens": 57625,
+      "cost_usd": 0.862956,
+      "web_search_calls": 4
+    },
+    {
+      "key": "event_intelligence",
+      "calls": 22,
+      "input_tokens": 80167,
+      "cached_input_tokens": 25246,
+      "output_tokens": 51054,
+      "cost_usd": 0.539783,
+      "web_search_calls": 0
+    },
+    {
+      "key": "financial_analysis",
+      "calls": 41,
+      "input_tokens": 72922,
+      "cached_input_tokens": 21811,
+      "output_tokens": 29795,
+      "cost_usd": 0.397442,
+      "web_search_calls": 0
+    },
+    {
+      "key": "mission_discovery",
+      "calls": 21,
+      "input_tokens": 115205,
+      "cached_input_tokens": 6444,
+      "output_tokens": 30844,
+      "cost_usd": 0.389501,
+      "web_search_calls": 7
+    },
+    {
+      "key": "partnerships_outreach",
+      "calls": 24,
+      "input_tokens": 27742,
+      "cached_input_tokens": 0,
+      "output_tokens": 16632,
+      "cost_usd": 0.09766,
+      "web_search_calls": 0
+    },
+    {
+      "key": "donations_compliance",
+      "calls": 5,
+      "input_tokens": 4813,
+      "cached_input_tokens": 0,
+      "output_tokens": 1967,
+      "cost_usd": 0.018359,
+      "web_search_calls": 0
+    }
+  ],
+  "by_workflow": [
+    {
+      "workflow_type": "auto",
+      "completed_runs": 5,
+      "run_ids": [
+        1,
+        2,
+        3,
+        4,
+        19
+      ],
+      "median_cost_usd": 0.196687,
+      "mean_cost_usd": 0.163305,
+      "min_cost_usd": 0.000852,
+      "max_cost_usd": 0.315125,
+      "median_input_tokens": 15278,
+      "median_cached_input_tokens": 0,
+      "median_output_tokens": 6705
+    },
+    {
+      "workflow_type": "document_extraction",
+      "completed_runs": 1,
+      "run_ids": [
+        16
+      ],
+      "median_cost_usd": 0.000484,
+      "mean_cost_usd": 0.000484,
+      "min_cost_usd": 0.000484,
+      "max_cost_usd": 0.000484,
+      "median_input_tokens": 1157,
+      "median_cached_input_tokens": 0,
+      "median_output_tokens": 678
+    },
+    {
+      "workflow_type": "donations_review",
+      "completed_runs": 3,
+      "run_ids": [
+        20,
+        21,
+        22
+      ],
+      "median_cost_usd": 0.000568,
+      "mean_cost_usd": 0.006516,
+      "min_cost_usd": 0.000543,
+      "max_cost_usd": 0.018438,
+      "median_input_tokens": 1584,
+      "median_cached_input_tokens": 0,
+      "median_output_tokens": 824
+    },
+    {
+      "workflow_type": "event_learning",
+      "completed_runs": 3,
+      "run_ids": [
+        5,
+        8,
+        35
+      ],
+      "median_cost_usd": 0.031931,
+      "mean_cost_usd": 0.038109,
+      "min_cost_usd": 0.021485,
+      "max_cost_usd": 0.06091,
+      "median_input_tokens": 5007,
+      "median_cached_input_tokens": 0,
+      "median_output_tokens": 3267
+    },
+    {
+      "workflow_type": "financial_review",
+      "completed_runs": 2,
+      "run_ids": [
+        17,
+        18
+      ],
+      "median_cost_usd": 0.023217,
+      "mean_cost_usd": 0.023217,
+      "min_cost_usd": 0.011244,
+      "max_cost_usd": 0.035189,
+      "median_input_tokens": 7021,
+      "median_cached_input_tokens": 1269,
+      "median_output_tokens": 3331
+    },
+    {
+      "workflow_type": "legacy_import",
+      "completed_runs": 4,
+      "run_ids": [
+        31,
+        32,
+        33,
+        34
+      ],
+      "median_cost_usd": 0.00056,
+      "mean_cost_usd": 0.000582,
+      "min_cost_usd": 0.000378,
+      "max_cost_usd": 0.000828,
+      "median_input_tokens": 1493,
+      "median_cached_input_tokens": 1151,
+      "median_output_tokens": 1011
+    },
+    {
+      "workflow_type": "mission_discovery",
+      "completed_runs": 3,
+      "run_ids": [
+        43,
+        44,
+        45
+      ],
+      "median_cost_usd": 0.088563,
+      "mean_cost_usd": 0.086017,
+      "min_cost_usd": 0.074185,
+      "max_cost_usd": 0.095304,
+      "median_input_tokens": 23897,
+      "median_cached_input_tokens": 1681,
+      "median_output_tokens": 8403
+    },
+    {
+      "workflow_type": "partnership_outreach",
+      "completed_runs": 4,
+      "run_ids": [
+        13,
+        14,
+        24,
+        27
+      ],
+      "median_cost_usd": 0.157522,
+      "mean_cost_usd": 0.152556,
+      "min_cost_usd": 0.068041,
+      "max_cost_usd": 0.227138,
+      "median_input_tokens": 7857,
+      "median_cached_input_tokens": 0,
+      "median_output_tokens": 5223
+    },
+    {
+      "workflow_type": "plan_event",
+      "completed_runs": 16,
+      "run_ids": [
+        6,
+        7,
+        10,
+        11,
+        12,
+        15,
+        23,
+        25,
+        26,
+        29,
+        30,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "median_cost_usd": 0.241219,
+      "mean_cost_usd": 0.235606,
+      "min_cost_usd": 0.008936,
+      "max_cost_usd": 0.335112,
+      "median_input_tokens": 23419,
+      "median_cached_input_tokens": 2462,
+      "median_output_tokens": 8798
+    }
+  ],
+  "runs_by_research_mode": {
+    "fixture": 2,
+    "live": 11,
+    "records": 4,
+    "synthetic": 28
+  },
+  "optimization": {
+    "cached_input_tokens": 71535,
+    "saved_by_caching_usd": 0.1117,
+    "budget_stepdowns": [
+      {
+        "run_id": 25,
+        "agent": "event_intelligence",
+        "requested_tier": "intermediate",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6.1-sol."
+      },
+      {
+        "run_id": 25,
+        "agent": "fundraising_events",
+        "requested_tier": "intermediate",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6.1-sol."
+      },
+      {
+        "run_id": 25,
+        "agent": "financial_analysis",
+        "requested_tier": "intermediate",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6.1-sol."
+      },
+      {
+        "run_id": 25,
+        "agent": "fundraising_events",
+        "requested_tier": "intermediate",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6.1-sol."
+      },
+      {
+        "run_id": 25,
+        "agent": "financial_analysis",
+        "requested_tier": "intermediate",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6.1-sol."
+      },
+      {
+        "run_id": 25,
+        "agent": "orchestrator",
+        "requested_tier": "advanced",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6-astra."
+      },
+      {
+        "run_id": 28,
+        "agent": "event_intelligence",
+        "requested_tier": "intermediate",
+        "model": "gpt-6-luna",
+        "note": "Budget limit: used gpt-6-luna instead of gpt-6.1-sol."
+      },
+      {
+        "run_id": 40,
+        "agent": "orchestrator",
+        "requested_tier": "advanced",
+        "model": "gpt-6.1-sol",
+        "note": "Budget limit: used gpt-6.1-sol instead of gpt-6-astra."
+      }
+    ],
+    "steps_run_in_code_without_a_model": {
+      "verification": 38,
+      "intake": 33,
+      "evaluate": 9,
+      "outreach_decision": 4,
+      "select": 3,
+      "finance": 1
+    }
+  },
+  "monthly_projection": {
+    "ASSUMPTION": "runs per board member per month (typed in, not measured)",
+    "lines": [
+      {
+        "workflow_type": "plan_event",
+        "runs_per_user_per_month": 1,
+        "median_cost_usd": 0.241219,
+        "monthly_cost_per_user_usd": 0.2412
+      },
+      {
+        "workflow_type": "mission_discovery",
+        "runs_per_user_per_month": 2,
+        "median_cost_usd": 0.088563,
+        "monthly_cost_per_user_usd": 0.1771
+      },
+      {
+        "workflow_type": "partnership_outreach",
+        "runs_per_user_per_month": 1,
+        "median_cost_usd": 0.157522,
+        "monthly_cost_per_user_usd": 0.1575
+      },
+      {
+        "workflow_type": "financial_review",
+        "runs_per_user_per_month": 1,
+        "median_cost_usd": 0.023217,
+        "monthly_cost_per_user_usd": 0.0232
+      },
+      {
+        "workflow_type": "donations_review",
+        "runs_per_user_per_month": 1,
+        "median_cost_usd": 0.000568,
+        "monthly_cost_per_user_usd": 0.0006
+      },
+      {
+        "workflow_type": "legacy_import",
+        "runs_per_user_per_month": 2,
+        "median_cost_usd": 0.00056,
+        "monthly_cost_per_user_usd": 0.0011
+      },
+      {
+        "workflow_type": "event_learning",
+        "runs_per_user_per_month": 1,
+        "median_cost_usd": 0.031931,
+        "monthly_cost_per_user_usd": 0.0319
+      }
+    ],
+    "per_user_usd": 0.6326,
+    "by_users": {
+      "1": 0.6326,
+      "100": 63.26,
+      "10000": 6326.0
+    }
+  }
+}

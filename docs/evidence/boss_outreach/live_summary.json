@@ -852,5 +852,109 @@
         "body": "Dear WithAll team,\n\nI\u2019m writing on behalf of the Sabrina Audrey Milone Foundation (Smile Like Sab), established in memory of Sabrina Audrey Milone. Our focus includes mental health awareness, eating disorder research and support, and community-building initiatives.\n\nWithAll\u2019s eating-disorder recovery and prevention work aligns with those purposes. We learned about your Keys in Bloom Gala in Golden Valley, Minnesota, and would welcome a better understanding of the programs it supports and their impact.\n\nOur current sponsor research is focused on Manhattan, so the gala is outside that geographic scope. If our board considers broader opportunities, information about your stated event sponsorship options and any cross-organization collaboration pathways would help us assess relevance. We are seeking information only, without a commitment to participation or funding.\n\nWould you be willing to share a brief overview of your programs and available ways for another foundation to learn more or explore collaboration?\n\nThank you for your time and consideration.\n\nWarm regards,\n[Board member name]\n[Title]\nSabrina Audrey Milone Foundation\n[Email]\n[Phone]"
       }
     ]
+  },
+  {
+    "workflow": "C_sponsor_live",
+    "run_id": 45,
+    "status": "completed_with_warnings",
+    "error": null,
+    "cost_usd": 0.088563,
+    "model_calls": 5,
+    "route": [
+      [
+        "board",
+        "orchestrator",
+        "intake"
+      ],
+      [
+        "orchestrator",
+        "mission_discovery",
+        "research"
+      ],
+      [
+        "orchestrator",
+        "orchestrator",
+        "outreach_decision"
+      ],
+      [
+        "orchestrator",
+        "orchestrator",
+        "recommendation"
+      ],
+      [
+        "orchestrator",
+        "orchestrator",
+        "recommendation_fix"
+      ],
+      [
+        "orchestrator",
+        "orchestrator",
+        "verification"
+      ]
+    ],
+    "reports": {
+      "research": {
+        "outreach": {
+          "appropriate": true,
+          "reason": "4 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+          "candidates": [
+            "NAMI-NYC Corporate Giving",
+            "Project Healthy Minds Annual Gala 2026",
+            "National Eating Disorders Association Gala 2026",
+            "Manhattan Chamber of Commerce"
+          ]
+        },
+        "additional_agents": [
+          {
+            "agent": "partnerships_outreach",
+            "reason": "Draft introductory messages to the promising opportunities."
+          },
+          {
+            "agent": "financial_analysis",
+            "reason": "State what the foundation could responsibly consider supporting, if the board's role allows financial access."
+          }
+        ],
+        "approval": {
+          "board_review": false,
+          "professional_review": false,
+          "reasons": []
+        },
+        "financial_considerations": [
+          "National Eating Disorders Association Gala 2026: known costs \"Price $1,500 - $50,000\""
+        ]
+      }
+    },
+    "decision": {
+      "trigger": "4 opportunity(ies) are well aligned and sourced; an introductory note could learn more.",
+      "selected": [],
+      "skipped": [
+        {
+          "name": "NAMI-NYC Corporate Giving",
+          "reason": "not a sponsor (listed as an organization); the board asked for sponsors"
+        },
+        {
+          "name": "Project Healthy Minds Annual Gala 2026",
+          "reason": "not a sponsor (listed as an event); the board asked for sponsors"
+        },
+        {
+          "name": "National Eating Disorders Association Gala 2026",
+          "reason": "not a sponsor (listed as an event); the board asked for sponsors"
+        },
+        {
+          "name": "Manhattan Chamber of Commerce",
+          "reason": "not a sponsor (listed as an organization); the board asked for sponsors"
+        },
+        {
+          "name": "NAMIWalks NYC 2026",
+          "reason": "Needs research, source unverified"
+        },
+        {
+          "name": "StrongSteps Behavioral Health",
+          "reason": "Needs research, source unverified"
+        }
+      ],
+      "provenance": {}
+    },
+    "drafts": []
   }
 ]

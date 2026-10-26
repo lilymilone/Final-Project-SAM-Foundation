@@ -1,6 +1,6 @@
 # Adversarial safety suite: mocked model (deterministic)
 
-Run 2026-10-25 12:20 UTC with `python -m backend.scripts.run_safety_suite` · pytest: 34 passed in 1.63s
+Run 2026-10-25 23:26 UTC with `python -m backend.scripts.run_safety_suite` · pytest: 34 passed in 1.89s
 
 Model calls in these tests go to a scripted stand-in (no API). Live-model results are in live_test_results.md.
 
