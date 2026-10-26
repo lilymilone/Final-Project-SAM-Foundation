@@ -34,7 +34,7 @@ from .models import (
 DEMO_PASSWORD_DEFAULT = "SmileLikeSab-demo"
 DEMO_ACCOUNTS = [
     # email, first, last, role, title
-    ("chair@demo.samspace", "Avery", "Brooks", "chair", "Board Chair (demo)"),
+    ("chair@demo.samspace", "Tauhid", "Brooks", "chair", "Board Chair (demo)"),
     ("member@demo.samspace", "Sam", "Rivera", "member", "Board Member (demo)"),
 ]
 

@@ -270,7 +270,7 @@ def test_authorization_and_privacy(client):
     assert [e["id"] for e in client.get("/api/impact/evaluations").json()["evaluations"]] == [mine]
     # Names appear in reports only with both choices made.
     o = client.get("/api/impact/overview").json()
-    assert o["real_feedback"][0]["participant"].startswith("P1") and "Avery" not in str(o["real_feedback"])
+    assert o["real_feedback"][0]["participant"].startswith("P1") and "Tauhid" not in str(o["real_feedback"])
     from .test_adversarial import _second_workspace
     _second_workspace(client)
     client.post("/api/auth/logout")
@@ -286,7 +286,7 @@ def test_named_attribution_needs_both_choices(client):
     complete(client, only_name, 60, 30)
     complete(client, both, 60, 30)
     names = [f["participant"] for f in client.get("/api/impact/overview").json()["real_feedback"]]
-    assert sum("Avery Brooks" in n for n in names) == 1 and any(n.startswith("P1") for n in names)
+    assert sum("Tauhid Brooks" in n for n in names) == 1 and any(n.startswith("P1") for n in names)
 
 
 # 17: export
@@ -300,7 +300,7 @@ def test_export_is_anonymized_and_states_missing_data(client):
     complete(client, eid, 100, 40)
     bundle = client.get("/api/impact/export").json()
     ev = bundle["real"]["evaluations"][0]
-    assert ev["display_name"].startswith("P1") and "Avery" not in str(bundle["real"])
+    assert ev["display_name"].startswith("P1") and "Tauhid" not in str(bundle["real"])
     assert bundle["real"]["summary"]["time"]["minutes_saved"] == 60.0 and bundle["calculations"]["pct_reduction"]
     md = client.get("/api/impact/export.md").text
     assert "Pilot pending" not in md and "| Minutes saved (paired evaluations: 1) | 60.0 min | Calculated |" in md

@@ -33,10 +33,10 @@ def test_protected_routes_need_login(client):
 def test_login_sets_httponly_cookie_and_personalizes(client):
     r = login(client)
     assert r.status_code == 200
-    assert r.json()["user"]["first_name"] == "Avery"
+    assert r.json()["user"]["first_name"] == "Tauhid"
     cookie = r.headers["set-cookie"].lower()
     assert "httponly" in cookie and "samesite=strict" in cookie
-    assert client.get("/api/overview").json()["first_name"] == "Avery"
+    assert client.get("/api/overview").json()["first_name"] == "Tauhid"
 
 
 def test_wrong_password_rejected(client):
@@ -56,7 +56,7 @@ def test_session_token_is_stored_hashed(client):
 
 def test_logout_revokes_session(client):
     login(client)
-    assert client.get("/api/auth/session").json()["user"]["first_name"] == "Avery"
+    assert client.get("/api/auth/session").json()["user"]["first_name"] == "Tauhid"
     assert client.post("/api/auth/logout").status_code == 200
     assert client.get("/api/auth/me").status_code == 401
     assert client.get("/api/auth/session").json() == {"user": None}
