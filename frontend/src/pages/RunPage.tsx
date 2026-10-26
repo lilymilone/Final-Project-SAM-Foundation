@@ -8,7 +8,7 @@ import { api } from "../api/client";
 import type { Check, RunDetail, RunStep } from "../api/types";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { AGENT_LABELS, INTENT_LABELS, ModeBadge, StatusPill, VerificationBadge, money, stepLabel } from "../components/agents";
-import { Card, ErrorState, LoadingState } from "../components/ui";
+import { Card, ErrorState, ExtLink, Linkify, LoadingState, isPublicUrl } from "../components/ui";
 import { LiveProgress } from "../components/progress";
 
 const ACTIVE = new Set(["queued", "running"]);
@@ -104,6 +104,7 @@ function StepCard({ step, index }: { step: RunStep; index: number }) {
                 <li key={t.id} className="flex flex-wrap gap-2">
                   <code className={`rounded px-1.5 ${t.allowed ? "bg-ivory text-plum" : "bg-[#fbeef3] text-danger"}`}>{t.tool}</code>
                   <span className="text-muted">{t.allowed ? (t.ok === false ? `error: ${t.error}` : t.summary) : `denied: ${t.denial}`}</span>
+                  {t.allowed && isPublicUrl(t.url) && <ExtLink href={t.url}>open page</ExtLink>}
                   <span className="text-muted">{t.duration_ms != null ? `${t.duration_ms} ms` : ""}</span>
                 </li>))}</ul></div>
           )}
@@ -248,14 +249,14 @@ export default function RunPage() {
           {rec && (
             <Card title="Board recommendation" icon={<Lightbulb size={16} aria-hidden="true" />}>
               <p className="font-display text-2xl font-semibold leading-snug text-plum">{rec.headline}</p>
-              <p className="mt-2 text-sm leading-relaxed text-ink">{rec.recommendation}</p>
+              <p className="mt-2 text-sm leading-relaxed text-ink"><Linkify text={rec.recommendation} /></p>
               {rec.options.length > 0 && (
                 <div className="mt-4 space-y-2">{rec.options.map((o, i) => (
                   <div key={i} className="rounded-xl bg-ivory px-3 py-2 text-sm"><p className="font-semibold text-plum">{o.title}</p><p className="text-muted">{o.summary}</p></div>))}</div>
               )}
               {[["Why", rec.rationale], ["Decisions for the board", rec.decisions_for_board], ["Risks", rec.risks], ["Next steps", rec.next_steps], ["Lessons applied", rec.lessons_applied], ["Caveats", rec.caveats]].map(([label, items]) =>
                 (items as string[]).length ? (
-                  <div key={label as string} className="mt-4"><p className="label">{label as string}</p><ul className="list-disc space-y-1 pl-5 text-sm">{(items as string[]).map((x, i) => <li key={i}>{x}</li>)}</ul></div>
+                  <div key={label as string} className="mt-4"><p className="label">{label as string}</p><ul className="list-disc space-y-1 pl-5 text-sm">{(items as string[]).map((x, i) => <li key={i}><Linkify text={x} /></li>)}</ul></div>
                 ) : null)}
             </Card>
           )}
@@ -300,7 +301,7 @@ export default function RunPage() {
                 </li>))}</ol>
             </Card>
           )}
-          {result?.finance && (() => {
+          {result?.finance?.verdict && result.finance.affordability && (() => {  // research runs carry a capacity note, not a verdict
             const f = result.finance;
             const lines = f.budget?.line_items ?? (f.model?.lines ?? []).map((l) => ({ name: l.category, amount_usd: l.amount_usd, basis: l.basis }));
             const contingencyPct = f.budget?.contingency_pct ?? f.model?.contingency_pct ?? 0;
@@ -308,7 +309,7 @@ export default function RunPage() {
             const total = f.budget?.total_usd ?? f.model?.total_cost_usd ?? null;
             return (
               <Card title="Affordability (computed in Python)" icon={<ListChecks size={16} aria-hidden="true" />}>
-                <p className="mb-3 text-sm">Verdict for <b>{f.venue}</b>: <span className="font-semibold capitalize text-royal">{f.verdict.replace(/_/g, " ")}</span></p>
+                <p className="mb-3 text-sm">Verdict for <b>{f.venue}</b>: <span className="font-semibold capitalize text-royal">{(f.verdict ?? "").replace(/_/g, " ")}</span></p>
                 <ul className="space-y-2">{f.affordability.checks.map((c) => <CheckRow key={c.name} c={c} />)}</ul>
                 {lines.length > 0 && (
                   <table className="mt-4 w-full text-left text-sm"><tbody>
@@ -343,9 +344,11 @@ export default function RunPage() {
             <Card title="Research findings" action={<Link className="btn btn-ghost !py-1 text-sm" to="/mission">Save the best →</Link>}>
               <ul className="space-y-2 text-sm">{result.findings.map((f) => (
                 <li key={f.id} className="rounded-xl bg-ivory px-3 py-2">
-                  <div className="flex flex-wrap items-center gap-2"><VerificationBadge value={f.verification} /><span className="text-xs capitalize text-muted">{f.category} · {f.alignment} alignment</span></div>
-                  {f.url && f.verification !== "synthetic" ? <a className="font-semibold text-royal underline" href={f.url} target="_blank" rel="noopener noreferrer">{f.title}</a> : <p className="font-semibold text-plum">{f.title}</p>}
-                  <p className="text-muted">{f.summary}</p>
+                  <div className="flex flex-wrap items-center gap-2"><VerificationBadge value={f.verification} />
+                    <span className="text-xs capitalize text-muted">{f.category}{f.fit ? ` · ${f.fit}` : f.alignment ? ` · ${f.alignment} alignment` : ""}</span>
+                    {f.known_relationship && <span className="rounded-full bg-royal px-2 py-0.5 text-[0.68rem] font-semibold text-white">Known to the foundation</span>}</div>
+                  {isPublicUrl(f.url) ? <ExtLink href={f.url} className="font-semibold">{f.name ?? f.title}</ExtLink> : <p className="font-semibold text-plum">{f.name ?? f.title}</p>}
+                  <p className="text-muted">{f.alignment_summary ?? f.summary}</p>
                 </li>))}</ul>
             </Card>
           )}

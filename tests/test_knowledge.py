@@ -353,3 +353,15 @@ def test_board_names_never_leave_in_a_web_search(client):
     with client.app.state.db.session() as s:
         terms = kb.private_terms(s, 1)
     assert "Jordan Example (test)" in terms and "jordan.example@example.org" in terms
+
+
+def test_research_pages_can_be_opened_from_the_trace_but_fixtures_cannot():
+    from types import SimpleNamespace as NS
+
+    from backend.app.api.routes.runs import public_page
+    live = NS(tool_name="fetch_source", arguments={"url": "https://www.example-charity.test/donate", "source_id": "web:1"})
+    fixture = NS(tool_name="fetch_source", arguments={"url": "https://example.org/synthetic/organizations/x"})
+    other = NS(tool_name="search_web", arguments={"query": "eating disorder research"})
+    contact = NS(tool_name="lookup_inquiry_details", arguments={"name": "A venue", "website": "https://venue.test/"})
+    assert public_page(live) == "https://www.example-charity.test/donate" and public_page(contact) == "https://venue.test/"
+    assert public_page(fixture) is None and public_page(other) is None

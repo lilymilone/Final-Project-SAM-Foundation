@@ -1,5 +1,5 @@
-import { ArrowRight, ChevronDown, Minus, Send } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { ArrowRight, ChevronDown, Maximize2, Minimize2, Minus, MoveDiagonal, Send } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import type { Intent, ResearchMode, RunSummary } from "../api/types";
@@ -7,6 +7,7 @@ import { useAuth } from "../auth/AuthContext";
 import { Butterfly } from "../butterflies/Butterfly";
 import { useButterflies } from "../butterflies/ButterflyProvider";
 import { LiveProgress, useRunPoll } from "./progress";
+import { ExtLink, Linkify, isPublicUrl } from "./ui";
 
 const SIR_PHOTO = "/brand/sir.webp";
 const ACTIVE = new Set(["queued", "running"]);
@@ -56,6 +57,23 @@ function SirAvatar({ size }: { size: number }) {
   );
 }
 
+type Size = { w: number; h: number };
+const SIZE_KEY = "sirs-office-size";
+const DEFAULT_SIZE: Size = { w: 420, h: 640 };
+const LARGE_SIZE = (): Size => ({ w: Math.min(780, window.innerWidth - 48), h: Math.min(900, window.innerHeight - 120) });
+// Anchored to the bottom-right corner, so the box grows up and to the left; it never leaves the screen.
+const clampSize = ({ w, h }: Size): Size => ({
+  w: Math.round(Math.max(340, Math.min(w, window.innerWidth - 32))),
+  h: Math.round(Math.max(380, Math.min(h, window.innerHeight - 110))),
+});
+function savedSize(): Size {
+  try {
+    const s = JSON.parse(localStorage.getItem(SIZE_KEY) ?? "null");
+    if (s && typeof s.w === "number" && typeof s.h === "number") return clampSize(s);
+  } catch { /* ignore a bad saved value */ }
+  return DEFAULT_SIZE;
+}
+
 /**
  * Sir's Office: the "ask SAM SPACE anything" box, always in the bottom-right corner. Named for Sir, the dog Sabrina adored.
  * It starts a real workflow, shows each agent's step live, and links to the results. Nothing is ever sent or paid.
@@ -68,13 +86,28 @@ export function SirsOffice() {
   const [intent, setIntent] = useState<Intent | "">("");
   const [speed, setSpeed] = useState<"economy" | "auto">("economy");
   const [mode, setMode] = useState<ResearchMode>("live");
-  const [runId, setRunId] = useState<number | null>(null);
+  // The last question's run survives a page reload in this tab, so its answer and links stay in Sir's Office.
+  const [runId, setRunIdState] = useState<number | null>(() => Number(sessionStorage.getItem("sirs-office-run")) || null);
+  const setRunId = (id: number | null) => {
+    setRunIdState(id);
+    if (id) sessionStorage.setItem("sirs-office-run", String(id)); else sessionStorage.removeItem("sirs-office-run");
+  };
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const [size, setSize] = useState<Size>(savedSize);  // the board member's own size, kept on this computer
+  const drag = useRef<{ x: number; y: number; start: Size } | null>(null);
+  const resize = (next: Size) => setSize(clampSize(next));
+  const large = size.w >= LARGE_SIZE().w - 4;
   const detail = useRunPoll(runId);
   const working = !!detail && ACTIVE.has(detail.run.status);
 
+  useEffect(() => { localStorage.setItem(SIZE_KEY, JSON.stringify(size)); }, [size]);
+  useEffect(() => {
+    const fit = () => setSize((s) => clampSize(s));
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
   useEffect(() => { sessionStorage.setItem("sirs-office-open", open ? "1" : "0"); if (open) window.setTimeout(() => input.current?.focus(), 50); }, [open]);
   useEffect(() => {
     if (!open) return;
@@ -100,12 +133,33 @@ export function SirsOffice() {
       setBusy(false);
     }
   }
+  const startDrag = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = { x: e.clientX, y: e.clientY, start: size };
+  };
+  const onDrag = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const d = drag.current;
+    if (d) resize({ w: d.start.w + (d.x - e.clientX), h: d.start.h + (d.y - e.clientY) });
+  };
+  const onGripKey = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const step = e.shiftKey ? 80 : 24;
+    const by: Record<string, Size> = { ArrowLeft: { w: step, h: 0 }, ArrowRight: { w: -step, h: 0 }, ArrowUp: { w: 0, h: step }, ArrowDown: { w: 0, h: -step } };
+    if (by[e.key]) { e.preventDefault(); resize({ w: size.w + by[e.key].w, h: size.h + by[e.key].h }); }
+  };
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } };
   const done = detail && !ACTIVE.has(detail.run.status);
   const rec = detail?.result?.recommendation ?? null;
   const gifts = detail?.result?.donations?.needing_acknowledgment ?? [];
   const intentDone = detail?.result?.intent ?? detail?.run.workflow_type ?? "";
   const knowledge = detail?.result?.foundation_context;
+  // What the research turned up, each with its own website, so the board can open it straight from the answer.
+  const found: { key: string; name: string; url: string | null | undefined; note?: string; known?: boolean; kind: "org" | "venue" }[] =
+    (detail?.result?.findings ?? []).length > 0
+      ? (detail?.result?.findings ?? []).map((f) => ({ key: `f${f.id}`, name: f.name ?? f.title ?? "Organization", url: f.url, note: f.fit ?? undefined,
+                                                      known: !!f.known_relationship, kind: "org" as const }))
+      : (detail?.result?.shortlist ?? []).map((v) => ({ key: v.option_id, name: v.venue, url: v.website ?? v.source_url,
+                                                        note: v.event_format.replace(/_/g, " "), kind: "venue" as const }));
   const knownFacts = knowledge ? new Set(Object.values(knowledge.used_by).flat()).size : 0;
   const reviewer = detail?.result?.review_by?.reviewers.map((r) => `${r.name}, ${r.role}`).join(", ");
   const resultLink = detail ? (RESULT_PAGE[intentDone]?.(detail.run.id) ?? `/activity/runs/${detail.run.id}`) : "";
@@ -113,13 +167,24 @@ export function SirsOffice() {
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
       {open && (
-        <section role="dialog" aria-label="Sir's Office" className="sirs-office flex max-h-[min(78vh,720px)] w-[min(420px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-lavender/50 bg-white shadow-[0_24px_60px_-20px_rgb(59_20_88/0.55)]">
+        <section role="dialog" aria-label="Sir's Office" style={detail ? { width: size.w, height: size.h } : { width: size.w, maxHeight: size.h }}
+          className="sirs-office relative flex max-h-[calc(100vh-7rem)] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-3xl border border-lavender/50 bg-white shadow-[0_24px_60px_-20px_rgb(59_20_88/0.55)]">
           <header className="flex items-center gap-3 bg-gradient-to-br from-royal to-plum px-4 py-3.5 text-white">
+            <button type="button" aria-label="Resize Sir's Office (drag, or use the arrow keys)" title="Drag to resize"
+              onPointerDown={startDrag} onPointerMove={onDrag} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}
+              onKeyDown={onGripKey} onDoubleClick={() => resize(DEFAULT_SIZE)}
+              className="-ml-2 -mt-1.5 hidden cursor-nwse-resize touch-none self-start rounded-lg p-1 text-lilac/70 transition hover:bg-white/15 hover:text-white sm:block">
+              <MoveDiagonal size={14} aria-hidden="true" />
+            </button>
             <SirAvatar size={48} />
             <div className="min-w-0 flex-1">
               <p className="font-display text-xl font-semibold leading-tight">Sir's Office</p>
               <p className="text-xs text-lilac/90">Ask SAM SPACE anything</p>
             </div>
+            <button type="button" onClick={() => resize(large ? DEFAULT_SIZE : LARGE_SIZE())} aria-label={large ? "Make Sir's Office smaller" : "Make Sir's Office larger"}
+              title={large ? "Smaller" : "Larger"} className="hidden rounded-lg p-2 text-lilac/90 transition hover:bg-white/15 hover:text-white sm:block">
+              {large ? <Minimize2 size={17} aria-hidden="true" /> : <Maximize2 size={17} aria-hidden="true" />}
+            </button>
             <button type="button" onClick={() => setOpen(false)} className="rounded-lg p-2 text-lilac/90 transition hover:bg-white/15 hover:text-white" aria-label="Minimize Sir's Office">
               <Minus size={18} aria-hidden="true" />
             </button>
@@ -131,7 +196,18 @@ export function SirsOffice() {
                 {done && rec && (
                   <div className="space-y-2 rounded-2xl border border-lavender/40 bg-white p-3.5" aria-label="Answer">
                     <p className="font-semibold leading-snug text-plum">{rec.headline}</p>
-                    <p className="whitespace-pre-line text-sm leading-relaxed text-ink/90">{rec.recommendation}</p>
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-ink/90"><Linkify text={rec.recommendation} /></p>
+                    {found.length > 0 && (
+                      <div><p className="label !mb-1">{found[0].kind === "venue" ? "Venues to look at" : "Organizations found"} ({found.length})</p>
+                        <ul className="space-y-1 text-sm">{found.slice(0, 8).map((f) => (
+                          <li key={f.key} className="flex flex-wrap items-baseline gap-x-2">
+                            {isPublicUrl(f.url) ? <ExtLink href={f.url} className="font-semibold">{f.name}</ExtLink> : <span className="font-semibold text-plum">{f.name}</span>}
+                            {f.note && <span className="text-xs text-muted">{f.note}</span>}
+                            {f.known && <span className="text-xs font-semibold text-royal">Known to the foundation</span>}
+                          </li>))}</ul>
+                        {found.some((f) => !isPublicUrl(f.url)) && <p className="mt-0.5 text-xs text-muted">Names without a link are practice (demo) entries or had no website.</p>}
+                      </div>
+                    )}
                     {gifts.length > 0 && (
                       <div><p className="label !mb-1">Gifts that still need a thank-you ({gifts.length})</p>
                         <ul className="space-y-0.5 text-sm">{gifts.slice(0, 8).map((g) => (

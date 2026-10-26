@@ -58,6 +58,18 @@ class RunIn(BaseModel):
         return v
 
 
+def public_page(t: AgentToolCall) -> str | None:
+    """The public web page a research tool opened, so the board can open it too. Synthetic example.org pages are left out."""
+    if t.tool_name not in ("fetch_source", "lookup_inquiry_details"):
+        return None
+    args = t.arguments or {}
+    url = args.get("url") or args.get("website")
+    if not isinstance(url, str) or not url.lower().startswith(("https://", "http://")):
+        return None
+    host = url.split("/")[2].split(":")[0].lower() if url.count("/") >= 2 else ""
+    return None if host.endswith(("example.org", "example.net", "example.com")) else url
+
+
 def run_summary(r: AgentRun) -> dict:
     return {
         "id": r.id, "request": r.request_text, "workflow_type": r.workflow_type,
@@ -173,7 +185,8 @@ def run_detail(run_id: int, cu: CurrentUser = Depends(current_user), db: Session
             "result": None if redacted or h.result is None else h.result,
             "report": None if redacted else h.report,
             "tool_calls": [{"id": t.id, "tool": t.tool_name, "allowed": t.allowed, "ok": t.ok, "duration_ms": t.duration_ms,
-                            "summary": None if redacted else t.result_summary, "denial": t.denial_reason, "error": t.error}
+                            "summary": None if redacted else t.result_summary, "denial": t.denial_reason, "error": t.error,
+                            "url": None if redacted else public_page(t)}
                            for t in tools if t.handoff_id == h.id],
             "model_calls": [{"id": c.id, "task": c.task, "tier": c.requested_tier, "model": c.selected_model, "model_used": c.model_used,
                              "reason": c.selection_reason, "substitution": c.substitution_note, "input_tokens": c.input_tokens,

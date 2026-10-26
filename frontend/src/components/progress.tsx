@@ -5,6 +5,7 @@ import { api } from "../api/client";
 import type { RunDetail, RunStep } from "../api/types";
 import { WorkingButterflies } from "../butterflies/WorkingButterflies";
 import { AGENT_LABELS, StatusPill } from "./agents";
+import { ExtLink, isPublicUrl } from "./ui";
 
 const ACTIVE = new Set(["queued", "running"]);
 
@@ -92,7 +93,8 @@ function StepRow({ step }: { step: RunStep }) {
               {step.tool_calls.length > 0 && (
                 <ul className="space-y-1">{step.tool_calls.map((t) => (
                   <li key={t.id} className="flex gap-1.5"><Wrench size={12} className="mt-0.5 shrink-0 text-lavender" aria-hidden="true" />
-                    <span><code className="text-plum">{t.tool}</code> <span className="text-muted">{t.allowed ? (t.summary ?? "") : `refused: ${t.denial}`}</span></span></li>))}
+                    <span><code className="text-plum">{t.tool}</code> <span className="text-muted">{t.allowed ? (t.summary ?? "") : `refused: ${t.denial}`}</span>
+                      {t.allowed && isPublicUrl(t.url) && <> · <ExtLink href={t.url}>open page</ExtLink></>}</span></li>))}
                 </ul>
               )}
               {findings.length > 0 && (
@@ -109,6 +111,10 @@ function StepRow({ step }: { step: RunStep }) {
     </li>
   );
 }
+
+const COUNTS_HELP = "Steps: each hand-off from the Orchestrator to an agent (more appear as the work continues). AI calls: requests to a "
+  + "language model, including web searches. Tool actions: lookups, page checks, and calculations done in code, which cost nothing. "
+  + "The dollar figure is the AI cost so far.";
 
 /**
  * Live view of a workflow, built only from what the backend has recorded: each handoff appears when the
@@ -129,8 +135,9 @@ export function LiveProgress({ detail, onStop }: { detail: RunDetail; onStop?: (
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <StatusPill status={detail.run.status} />
-          <span className="text-xs text-muted">
-            {steps.length} step{steps.length === 1 ? "" : "s"} · {detail.totals.model_calls} model calls · {detail.totals.tool_calls} tool calls · ${detail.totals.cost_usd.toFixed(4)}
+          <span className="text-xs text-muted" title={COUNTS_HELP}>
+            {active ? "So far: " : ""}{steps.length} step{steps.length === 1 ? "" : "s"} · {detail.totals.model_calls} AI call{detail.totals.model_calls === 1 ? "" : "s"}
+            {" · "}{detail.totals.tool_calls} tool action{detail.totals.tool_calls === 1 ? "" : "s"} · ${detail.totals.cost_usd.toFixed(4)}{active ? "" : " total"}
           </span>
         </div>
         <div className="flex items-center gap-2">

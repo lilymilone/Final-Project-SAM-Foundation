@@ -1,4 +1,4 @@
-import { AlertTriangle, Lock, RefreshCw, Sparkles } from "lucide-react";
+import { AlertTriangle, ExternalLink, Lock, RefreshCw, Sparkles } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { Butterfly } from "../butterflies/Butterfly";
 
@@ -139,4 +139,34 @@ export function ShowMore({ shown, total, onMore }: { shown: number; total: numbe
       Show all {total} ({total - shown} more)
     </button>
   );
+}
+
+/** True for a real http(s) page; the synthetic example.org fixtures are not real sites. */
+export function isPublicUrl(url: string | null | undefined): url is string {
+  if (!url || !/^https?:\/\//i.test(url)) return false;
+  try {
+    return !/(^|\.)example\.(org|net|com)$/i.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+/** A link to an outside website: opens in a new tab, never shares this page's address. */
+export function ExtLink({ href, children, className = "" }: { href: string; children: ReactNode; className?: string }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`text-royal underline decoration-lavender underline-offset-2 hover:decoration-royal ${className}`}>
+      {children}<ExternalLink size={11} className="ml-1 inline align-[-1px]" aria-hidden="true" />
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  );
+}
+
+const URL_IN_TEXT = /(https?:\/\/[^\s<>"')\]]+[^\s<>"')\].,;:!?])/g;
+
+/** Plain text with any web address in it turned into a link that opens the page. */
+export function Linkify({ text }: { text: string }) {
+  const parts = text.split(URL_IN_TEXT);
+  return <>{parts.map((part, i) => (i % 2 === 1 && isPublicUrl(part)
+    ? <ExtLink key={i} href={part}>{part.replace(/^https?:\/\/(www\.)?/, "").slice(0, 60)}</ExtLink>
+    : <span key={i}>{part}</span>))}</>;
 }

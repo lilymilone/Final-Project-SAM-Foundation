@@ -281,7 +281,7 @@ export type RunStep = {
   redacted: boolean;
   constraints: { name: string; detail: string; value: number | string | null; source_agent: string | null }[];
   result: AgentResultData | null;
-  tool_calls: { id: number; tool: string; allowed: boolean; ok: boolean | null; duration_ms: number | null; summary: string | null; denial: string | null; error: string | null }[];
+  tool_calls: { id: number; tool: string; allowed: boolean; ok: boolean | null; duration_ms: number | null; summary: string | null; denial: string | null; error: string | null; url?: string | null }[];
   model_calls: {
     id: number; task: string; tier: string; model: string; model_used: string | null; reason: string; substitution: string | null;
     input_tokens: number | null; cached_input_tokens: number | null; output_tokens: number | null; web_search_calls: number | null;
@@ -327,11 +327,14 @@ export type RunResult = {
   // A stopped workflow keeps only what it finished (never a recommendation).
   stopped?: boolean; stop_reason?: string; verified_partial_steps?: number; missing?: string[];
   completed_steps?: { step_key: string; agent: string; status: string; summary: string; warnings: string[] }[];
-  shortlist: { option_id: string; venue: string; event_format: string; total_usd: number; upfront_cash_usd: number; rationale: string; verification: string; source_url: string | null }[];
+  shortlist: { option_id: string; venue: string; event_format: string; total_usd: number; upfront_cash_usd: number; rationale: string; verification: string; source_url: string | null; website?: string | null }[];
   drafts?: { id: number; recipient: string; subject: string; draft_type: string; synthetic_target: boolean }[];
   lessons: { kind: string; text: string; event_ids: number[]; reflection_ids: number[]; confidence: string }[];
   disagreements: { topic: string; positions: string[]; evidence_reflection_ids: number[] }[];
-  findings?: { id: number; title: string; url: string | null; category: string; alignment: string; verification: string; summary: string; date: string | null; uncertainty: string }[];
+  // Mission Discovery findings (newer runs carry name/fit/alignment_summary; older runs title/alignment/summary).
+  findings?: { id: number; name?: string; title?: string; url: string | null; category: string; fit?: string | null; alignment?: string;
+               alignment_summary?: string; summary?: string; verification: string; is_synthetic?: boolean;
+               known_relationship?: { summary: string; relationship_type: string } | null }[];
   donations: { aggregate: Record<string, unknown>; drafts_created: number; review_items: { issue: string; why_professional_review: string }[];
     needing_acknowledgment?: { id: number; code: string; donor_name: string; received_on: string | null; amount_usd: number | null; ack_status: string; campaign: string | null; is_demo: boolean; copies: number }[] } | null;
   event_plan_id: number | null;
